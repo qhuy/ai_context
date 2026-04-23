@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## v0.8.0 — 2026-04-23
+
+Cohérence du mesh + i18n reminder.
+
+### Nouveau
+- **`check-features.sh` — warn deprecated/archived** : si une feature `active` ou `draft` a une entrée `depends_on` pointant vers une feature `deprecated` ou `archived`, un warn explicite s'affiche (non bloquant). Signal de dette : migrer la dépendance avant que la cible soit archivée.
+- **Reminder i18n** : `.ai/reminder.md` est généré en anglais si `commit_language=en`, en français sinon. La version EN miroir la version FR, avec "Conventional Commits (en)" dans la règle DoD.
+
+### Tests
+- Smoke-test étendu à **23 étapes** :
+  - #21 warn deprecated visible quand une feature active dépend d'une deprecated.
+  - #22 `copier copy --data commit_language=en` produit un reminder 100% anglais (pas de résidu FR).
+
+### Philosophie
+v0.8 ferme deux angles morts : (a) la dette silencieuse cross-status (une feature active qui s'appuie sur du deprecated sans alerte), (b) la règle projet "Conventional Commits en anglais" qui restait contredite par un reminder francophone. Les deux changements sont additifs — pas de breaking.
+
+### Breaking
+- Aucun. Les projets existants en FR gardent leur reminder. Les projets en EN bénéficient de la localisation sans action.
+
 ## v0.7.2 — 2026-04-23
 
 Durcissement post-audit : corruption silencieuse fermée, docs synchronisées.

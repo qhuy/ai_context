@@ -1,7 +1,17 @@
+{% if commit_language == 'en' -%}
+🚨 {{ project_name }} — hard rules
+
+- Read `.ai/index.md` BEFORE any action (loading sequence is described there).
+- One scope per turn; cross-scope ⇒ HANDOFF + user confirmation.
+- Every feature MUST exist under `{{ docs_root }}/features/<scope>/<id>.md` before `feat:`.
+- Before DONE: evidence (build/tests) + feature up-to-date + Conventional Commits (en) — BLOCKING.
+- No full diffs. No `grep -r`.
+{%- else -%}
 🚨 {{ project_name }} — hard rules
 
 - Lire `.ai/index.md` AVANT toute action (séquence de chargement y est décrite).
 - Un scope par tour ; cross-scope ⇒ HANDOFF + confirmation utilisateur.
 - Toute feature DOIT exister sous `{{ docs_root }}/features/<scope>/<id>.md` avant `feat:`.
-- Avant DONE : evidence (build/tests) + feature à jour + Conventional Commits ({{ 'fr' if commit_language == 'fr' else 'en' }}) — BLOQUANT.
+- Avant DONE : evidence (build/tests) + feature à jour + Conventional Commits (fr) — BLOQUANT.
 - Pas de full diffs. Pas de `grep -r`.
+{%- endif %}

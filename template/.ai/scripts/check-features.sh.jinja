@@ -85,6 +85,15 @@ for f in "${files[@]}"; do
     if [[ ! -f "$target" ]]; then
       ko "$f : depends_on '$dep' → $target introuvable"
       file_fail=1
+    else
+      # Warn si current feature active/draft dépend d'une feature deprecated/archived
+      dep_fm=$(awk '/^---$/{c++;next} c==1' "$target")
+      dep_status=$(echo "$dep_fm" | grep -E '^status:' | sed -E 's/^status:[[:space:]]*//; s/["'"'"']//g' | tr -d '[:space:]')
+      if [[ "$dep_status" == "deprecated" || "$dep_status" == "archived" ]]; then
+        if [[ "$declared_status" == "active" || "$declared_status" == "draft" || -z "$declared_status" ]]; then
+          warn "$f : depends_on '$dep' est '$dep_status' (envisager de migrer)"
+        fi
+      fi
     fi
   done <<< "$deps"
 
