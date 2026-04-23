@@ -1,0 +1,54 @@
+# Quality Gate — {{ project_name }}
+
+Critères **BLOQUANTS** avant de déclarer une tâche DONE. À lire avec `.ai/index.md`.
+
+## Evidence (obligatoire)
+
+Avant DONE, fournir :
+
+1. **Diff ciblé** des fichiers touchés (pas de `git diff` complet).
+2. **Build** vert (commande locale + nom).
+3. **Tests** passés sur le périmètre touché (commande + résultat).
+4. **Lint / format** OK si le projet en a.
+
+## Risk Ledger (par tâche non triviale)
+
+Lister explicitement :
+
+- Changements breaking ?
+- Migrations de données / schéma ?
+- Impact sur la sécurité / auth / tenancy ?
+- Compatibilité arrière cassée ?
+
+Si une case est cochée → confirmation utilisateur avant merge.
+
+## Doc Impact Decision (BLOQUANTE)
+
+Avant DONE, choisir **une** des trois options et l'écrire :
+
+- **A — Domain hub** : la tâche change un comportement à l'échelle d'un domaine → update du hub dans `{{ docs_root }}/domains/<domain>.md`.
+- **B — Feature spec** : la tâche change le comportement d'une feature identifiée → update de `{{ docs_root }}/features/<feature>.md`.
+- **C — Skip** : aucune doc à maj, avec **justification explicite** (ex : refactor pur sans impact fonctionnel, fix de typo, renommage interne).
+
+## Scope checklist (par scope)
+
+| Scope | Items bloquants |
+|---|---|
+| core | Pack A chargé, HANDOFF clair si cross-scope |
+| quality | Evidence + Doc Impact Decision remplis |
+| workflow | Commits {{ 'fr' if commit_language == 'fr' else 'en' }}, pas de full diff |
+{%- if 'back' in scopes %}
+| back | Validation paramètres, injection SQL, transactions, tests d'intégration |
+{%- endif %}
+{%- if 'front' in scopes %}
+| front | Build/typecheck OK, états loading/error gérés, a11y respectée |
+{%- endif %}
+{%- if 'architecture' in scopes %}
+| architecture | Layering respecté, pas de dépendance circulaire, ADR si changement structurel |
+{%- endif %}
+{%- if 'security' in scopes %}
+| security | Authz vérifiée, secrets non logués, rate limit si exposé, CORS à jour |
+{%- endif %}
+{%- if 'handoff' in scopes %}
+| handoff | Template HANDOFF rempli (scope, status, fichiers, risques, état validation) |
+{%- endif %}

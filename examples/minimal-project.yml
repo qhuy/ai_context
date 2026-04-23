@@ -1,0 +1,8 @@
+project_name: mini-app
+project_description: Projet minimal de démo
+scope_profile: minimal
+commit_language: fr
+docs_root: .docs
+agents:
+  - claude
+enable_ci_guard: false

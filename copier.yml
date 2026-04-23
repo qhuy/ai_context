@@ -1,0 +1,104 @@
+# copier.yml — Configuration du template ai_context
+# Documentation : https://copier.readthedocs.io/
+
+_subdirectory: template
+_templates_suffix: .jinja
+_envops:
+  keep_trailing_newline: true
+_answers_file: .copier-answers.yml
+
+_exclude:
+  - "**.pyc"
+  - "__pycache__"
+  - ".DS_Store"
+  # Shims conditionnels selon les agents choisis
+  - "{% if 'claude' not in agents %}CLAUDE.md{% endif %}"
+  - "{% if 'claude' not in agents %}.claude{% endif %}"
+  - "{% if 'cursor' not in agents %}.cursor{% endif %}"
+  - "{% if 'gemini' not in agents %}GEMINI.md{% endif %}"
+  - "{% if 'copilot' not in agents %}.github/copilot-instructions.md{% endif %}"
+  # Règles de scope conditionnelles
+  - "{% if 'back' not in scopes %}.ai/rules/back.md{% endif %}"
+  - "{% if 'front' not in scopes %}.ai/rules/front.md{% endif %}"
+  - "{% if 'architecture' not in scopes %}.ai/rules/architecture.md{% endif %}"
+  - "{% if 'security' not in scopes %}.ai/rules/security.md{% endif %}"
+  - "{% if 'handoff' not in scopes %}.ai/rules/handoff.md{% endif %}"
+  # CI opt-in
+  - "{% if not enable_ci_guard %}.github/workflows{% endif %}"
+
+_message_after_copy: |
+  ✅ AI context scaffoldé.
+
+  Prochaines étapes :
+    1. Lire README_AI_CONTEXT.md à la racine du projet.
+    2. Éditer .ai/rules/<scope>.md pour enrichir les règles métier.
+    3. Vérifier : bash .ai/scripts/check-shims.sh
+    4. (Claude uniquement) ouvrir /hooks pour activer le hook UserPromptSubmit.
+
+_message_after_update: |
+  ♻️  AI context mis à jour depuis le template.
+  Vérifier : bash .ai/scripts/check-shims.sh
+
+# ─────────────────── Questions ───────────────────
+
+project_name:
+  type: str
+  help: Nom du projet (ex my-app)
+  validator: "{% if not project_name %}project_name est requis{% endif %}"
+
+project_description:
+  type: str
+  default: ""
+  help: Description courte (1 ligne)
+
+scope_profile:
+  type: str
+  default: fullstack
+  choices:
+    minimal (core, quality, workflow): minimal
+    backend (+ back, architecture, security, handoff): backend
+    fullstack (backend + front): fullstack
+    custom (scaffold minimal, tu ajoutes à la main): custom
+  help: Profil de scopes à générer
+
+commit_language:
+  type: str
+  default: fr
+  choices: [fr, en]
+  help: Langue des messages de commit imposée par les règles
+
+docs_root:
+  type: str
+  default: .docs
+  help: Dossier racine de la doc métier (.docs ou docs)
+
+agents:
+  type: str
+  multiselect: true
+  default:
+    - claude
+    - codex
+  choices: [claude, codex, cursor, gemini, copilot]
+  help: Agents dont les shims / hooks seront générés
+
+enable_ci_guard:
+  type: bool
+  default: false
+  help: Ajouter un workflow GitHub Actions qui lance check-shims.sh
+
+# ─────────────────── Variables calculées ───────────────────
+# scopes : liste dérivée du profil (non affichée à l'utilisateur)
+
+scopes:
+  type: json
+  when: false
+  default: >-
+    {%- if scope_profile == 'minimal' -%}
+    ["core", "quality", "workflow"]
+    {%- elif scope_profile == 'backend' -%}
+    ["core", "quality", "workflow", "back", "architecture", "security", "handoff"]
+    {%- elif scope_profile == 'fullstack' -%}
+    ["core", "quality", "workflow", "back", "front", "architecture", "security", "handoff"]
+    {%- else -%}
+    ["core", "quality", "workflow"]
+    {%- endif -%}

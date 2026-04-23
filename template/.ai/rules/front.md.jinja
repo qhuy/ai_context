@@ -1,0 +1,17 @@
+# Rules — front
+
+Règles pour le code frontend de {{ project_name }}.
+
+## Bloquants avant DONE
+
+- Build + typecheck verts.
+- États loading / error / empty gérés explicitement.
+- Accessibilité (labels, aria, contraste) respectée.
+- Imports absolus plutôt que chaînes relatives profondes.
+
+## À éviter
+
+- État serveur dupliqué dans l'état client — une source unique de vérité.
+- Styles en ligne / classes magiques hors du design system.
+
+> Enrichir avec la stack concrète (framework, state management, DS).

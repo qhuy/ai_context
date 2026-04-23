@@ -1,0 +1,43 @@
+#!/bin/bash
+# Pre-turn protocol reminder ({{ project_name }}).
+#
+# Lit le contenu de .ai/reminder.md et l'injecte avant chaque prompt utilisateur.
+# Appelé par les hooks agent-spécifiques :
+#   - Claude Code : UserPromptSubmit hook dans .claude/settings.json
+#   - Cursor : statique via .cursor/rules/protocol-reminder.mdc
+#   - Autres : adapter au mécanisme natif
+#
+# Usage :
+#   pre-turn-reminder.sh               # texte brut sur stdout
+#   pre-turn-reminder.sh --format=json # JSON pour Claude Code hookSpecificOutput
+
+set -euo pipefail
+
+format="${1:-text}"
+reminder_file="$(dirname "$0")/../reminder.md"
+
+if [[ ! -f "$reminder_file" ]]; then
+  echo "reminder.md introuvable : $reminder_file" >&2
+  exit 1
+fi
+
+reminder=$(cat "$reminder_file")
+
+case "$format" in
+  --format=json)
+    jq -n --arg ctx "$reminder" '{
+      hookSpecificOutput: {
+        hookEventName: "UserPromptSubmit",
+        additionalContext: $ctx
+      }
+    }'
+    ;;
+  --format=text|text)
+    echo "$reminder"
+    ;;
+  *)
+    echo "Format inconnu : $format" >&2
+    echo "Usage : $0 [--format=text|--format=json]" >&2
+    exit 2
+    ;;
+esac

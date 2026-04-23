@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .ai/scripts/pre-turn-reminder.sh --format=json",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

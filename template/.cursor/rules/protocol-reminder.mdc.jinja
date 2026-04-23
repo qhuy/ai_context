@@ -1,0 +1,24 @@
+---
+description: Mandatory protocol reminder, auto-injected every turn
+alwaysApply: true
+---
+
+<!--
+  Généré par le template copier ai_context. Source du contenu : .ai/reminder.md
+-->
+
+🚨 PROJECT PROTOCOL REMINDER ({{ project_name }})
+
+Avant toute action non triviale, tu DOIS :
+1. Charger `.ai/index.md` (entry point)
+2. Identifier le scope primaire, puis charger `.ai/rules/<scope>.md`
+   Scopes : {{ scopes | join(' | ') }}
+3. Consulter `{{ docs_root }}/` (source of truth) pour la feature touchée
+
+Hard rules (non-négociables) :
+- Un scope primaire par tour ; cross-scope ⇒ HANDOFF + confirmation utilisateur
+- Pas de full diffs par défaut
+- Avant DONE : evidence (build/tests) + Doc Impact Decision sont BLOQUANTS
+- Messages de commit en {{ 'français' if commit_language == 'fr' else 'English' }}
+
+Index complet : `.ai/index.md`.

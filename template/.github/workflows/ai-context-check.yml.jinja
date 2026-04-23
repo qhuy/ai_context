@@ -1,0 +1,27 @@
+name: ai-context-check
+
+on:
+  push:
+    paths:
+      - '.ai/**'
+      - 'AGENTS.md'
+      - 'CLAUDE.md'
+      - 'GEMINI.md'
+      - '.github/copilot-instructions.md'
+  pull_request:
+    paths:
+      - '.ai/**'
+      - 'AGENTS.md'
+      - 'CLAUDE.md'
+      - 'GEMINI.md'
+      - '.github/copilot-instructions.md'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: check-shims
+        run: bash .ai/scripts/check-shims.sh
+      - name: check-ai-references
+        run: bash .ai/scripts/check-ai-references.sh

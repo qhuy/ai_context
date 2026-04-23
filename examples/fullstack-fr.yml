@@ -1,0 +1,10 @@
+project_name: my-fullstack-app
+project_description: App fullstack avec backend + front + sécurité
+scope_profile: fullstack
+commit_language: fr
+docs_root: .docs
+agents:
+  - claude
+  - codex
+  - cursor
+enable_ci_guard: true

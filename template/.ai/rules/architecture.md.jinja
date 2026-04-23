@@ -1,0 +1,16 @@
+# Rules — architecture
+
+Règles de structure, de layering et de décisions.
+
+## Bloquants
+
+- Pas de dépendance circulaire entre modules.
+- Layering respecté (ex : domain ne dépend pas de transport).
+- Toute décision structurelle → ADR dans `{{ docs_root }}/adr/`.
+
+## À éviter
+
+- Nouvelles abstractions sans 3 cas d'usage concrets.
+- Refactors hors scope de la tâche en cours.
+
+> Enrichir avec les diagrammes de référence et les patterns imposés sur {{ project_name }}.

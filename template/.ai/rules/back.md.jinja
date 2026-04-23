@@ -1,0 +1,17 @@
+# Rules — back
+
+Règles pour le code backend de {{ project_name }}.
+
+## Bloquants avant DONE
+
+- Validation des entrées (paramètres, body, query).
+- Requêtes SQL paramétrées (jamais de concaténation).
+- Transactions explicites pour les écritures multi-tables.
+- Tests d'intégration sur le happy path + 1 edge case.
+
+## À éviter
+
+- Logique métier dans les contrôleurs / transports — déporter dans la couche use-case ou service.
+- Exceptions silencieuses. Toujours wrap + log + rethrow ciblé.
+
+> Enrichir avec la stack concrète (framework, ORM, conventions de nommage).

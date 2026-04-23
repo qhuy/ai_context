@@ -1,0 +1,40 @@
+# AI Context — {{ project_name }}
+
+Ce projet a été scaffoldé depuis le template [`ai_context`](https://github.com/qhuy/ai_context). Le setup cross-agent (Claude / Codex / Cursor / Gemini / Copilot) est industrialisé.
+
+## Premier pas
+
+1. **Lire [`AGENTS.md`](AGENTS.md)** puis **[`.ai/index.md`](.ai/index.md)**.
+2. Enrichir les fichiers `.ai/rules/<scope>.md` avec les règles spécifiques à {{ project_name }}.
+3. Vérifier l'intégrité : `bash .ai/scripts/check-shims.sh`.
+
+## Agents activés
+
+{% for a in agents %}- {{ a }}
+{% endfor %}
+
+## Scopes
+
+{% for scope in scopes %}- `{{ scope }}` → `.ai/rules/{{ scope }}.md`
+{% endfor %}
+
+## Mettre à jour depuis le template
+
+Quand le template évolue sur GitHub :
+
+```bash
+copier update
+```
+
+Les réponses déjà données sont relues depuis `.copier-answers.yml`. Tu contrôles le diff appliqué.
+
+## Runtime
+
+- Claude Code : hook `UserPromptSubmit` configuré dans `.claude/settings.json` (active avec `/hooks` au premier démarrage).
+{% if 'cursor' in agents %}- Cursor : rule auto-appliquée via `.cursor/rules/protocol-reminder.mdc`.
+{% endif %}- Contenu du reminder : `.ai/reminder.md` (éditable librement).
+
+## Checks
+
+- `bash .ai/scripts/check-shims.sh` — garde-fou structure shims.
+- `bash .ai/scripts/check-ai-references.sh` — vérifie les liens markdown internes.

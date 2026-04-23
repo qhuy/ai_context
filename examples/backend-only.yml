@@ -1,0 +1,9 @@
+project_name: my-api
+project_description: API backend uniquement (C#/Node/Go/...)
+scope_profile: backend
+commit_language: fr
+docs_root: docs
+agents:
+  - claude
+  - codex
+enable_ci_guard: true
