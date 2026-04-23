@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## v0.7.1 — 2026-04-23
+
+Auto-logging des éditions → worklog sans intervention manuelle.
+
+### Nouveau
+- `auto-worklog-log.sh` (hook **PostToolUse** Write/Edit/MultiEdit) — résout le fichier édité vers les features impactées via l'index, append une ligne JSONL à `.ai/.session-edits.log`. Silencieux, best-effort, ne bloque jamais un Write.
+- `auto-worklog-flush.sh` (hook **Stop**, fin de tour Claude) — groupe le log par feature, append **une** entrée par feature affectée au worklog (`Fichiers modifiés : ...`), bumpe `progress.updated` à la date du jour, rebuild l'index, clear le log.
+- `.ai/.session-edits.log` ajouté au `.gitignore` du template.
+
+### Changé
+- `/aic-feature-update` redéfini : ne sert plus qu'aux **changements d'intent** (phase, blockers, resume_hint, step). Le log routinier "j'ai modifié tel fichier" est désormais automatique.
+- README + skill description mis à jour pour refléter la séparation auto / intent.
+
+### Tests
+- Smoke-test étendu à 19 étapes : +assertion auto-worklog (log PostToolUse, flush Stop, worklog créé, `updated` bumpé à today).
+
+### Philosophie
+v0.7 a ouvert la continuité entre sessions via `progress:` manuel. **v0.7.1 retire la friction** : le log factuel est invisible, l'utilisateur n'intervient que pour les décisions qui requièrent du jugement. Les hooks deviennent le système nerveux autonome du feature mesh.
+
+### Breaking
+- Aucun. Le nouveau hook Stop est no-op si le log est vide. Les features sans bloc `progress:` ne sont pas touchées.
+
 ## v0.7.0 — 2026-04-23
 
 Reprise entre sessions + skills `/aic-*` pour encadrer les travaux récurrents.

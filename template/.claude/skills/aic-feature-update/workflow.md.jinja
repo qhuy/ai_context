@@ -8,12 +8,18 @@
 
 ## QUAND APPELER
 
-- Fin de session / pause > 10 min
-- Avant un switch de branche ou de scope
-- Quand un blocker apparaît (ex : spec API TBD, test qui fail)
-- Quand une étape franchie change l'état mental (ex : "controller done, je passe aux tests")
+**Uniquement pour les changements d'INTENT** (décision humaine) :
+- Changement de `phase` (ex : spec → implement, implement → review)
+- Apparition ou levée d'un `blocker`
+- Nouveau `resume_hint` explicite (où reprendre, quoi attendre)
+- Changement de `step` libre significatif
 
-**Règle** : plutôt trop que pas assez. Le coût est minime (5 lignes de MD), la valeur à la reprise est énorme.
+**PAS besoin d'appeler** pour :
+- Le log des fichiers modifiés (auto, via hook `PostToolUse` + `Stop`)
+- Le bump de `progress.updated` (auto à chaque fin de tour où un fichier d'une feature a été touché)
+- Les entrées de worklog de type "Fichiers modifiés" (auto-générées)
+
+Tant qu'il n'y a rien de neuf côté intent, le hook automatique suffit.
 
 ## INPUT ATTENDU
 

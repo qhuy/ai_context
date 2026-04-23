@@ -169,7 +169,11 @@ Le skill exécute `resume-features.sh`, affiche :
 
 Tu choisis laquelle reprendre. Claude charge la fiche + le worklog + les rules du scope, résume l'état, demande confirmation, puis reprend au bon endroit.
 
-**À chaque pause** pendant le travail, invoque `/aic-feature-update` — append au worklog + maj du `progress:`. C'est ce qui permet à la session suivante de ne rien perdre.
+**Auto-logging** (v0.7.1+) : deux hooks silencieux s'occupent du routine :
+- `PostToolUse` sur Write/Edit/MultiEdit → logue chaque modification dans `.ai/.session-edits.log`
+- `Stop` (fin de tour) → flush le log : une entrée worklog par feature touchée + bump `progress.updated` à today
+
+Tu n'as donc **plus besoin** d'invoquer `/aic-feature-update` pour chaque "j'ai modifié tel fichier". Invoque-le uniquement pour les **changements d'intent** : nouvelle `phase`, apparition/levée de `blocker`, nouveau `resume_hint`.
 
 ### 6. Passer la main à un autre scope (handoff)
 
@@ -309,7 +313,7 @@ Six skills Claude Code, structure `SKILL.md` (frontmatter minimal) + `workflow.m
 |---|---|
 | `/aic-feature-new` | Avant tout `feat:` — crée fiche + worklog init |
 | `/aic-feature-resume` | Début de session — scan des features en cours, choix, chargement contexte |
-| `/aic-feature-update` | À chaque pause / blocker / switch (append worklog + maj `progress`) |
+| `/aic-feature-update` | **Changement d'intent** uniquement (phase, blockers, resume_hint). Le log des fichiers modifiés est auto (hooks `PostToolUse` + `Stop`). |
 | `/aic-feature-handoff` | Bascule de scope ou de session (bloc HANDOFF formalisé) |
 | `/aic-quality-gate` | Avant commit `feat:` ou PR — verdict go/no-go factuel |
 | `/aic-feature-done` | Clôture (evidence + status: done + commit suggéré) |
@@ -330,6 +334,8 @@ Six skills Claude Code, structure `SKILL.md` (frontmatter minimal) + `workflow.m
 | `check-feature-coverage.sh` | Détecte code orphelin (non couvert par `touches:`) |
 | `resume-features.sh` | Buckets EN COURS / BLOQUÉES / STALE / À FAIRE |
 | `measure-context-size.sh` | Mesure chars/tokens injectés par hook |
+| `auto-worklog-log.sh` | Hook `PostToolUse` : logue les éditions dans `.session-edits.log` |
+| `auto-worklog-flush.sh` | Hook `Stop` : flush log → worklog + bump `progress.updated` |
 
 ---
 

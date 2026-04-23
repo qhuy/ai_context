@@ -33,6 +33,29 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .ai/scripts/auto-worklog-log.sh",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .ai/scripts/auto-worklog-flush.sh",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   }
 }
