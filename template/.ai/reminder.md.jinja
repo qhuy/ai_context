@@ -1,16 +1,7 @@
-🚨 PROJECT PROTOCOL REMINDER — {{ project_name }}
+🚨 {{ project_name }} — hard rules
 
-Avant toute action non triviale, tu DOIS :
-1. Charger `.ai/index.md` (entry point — séquence de chargement obligatoire)
-2. Identifier le scope primaire, puis charger `.ai/rules/<scope>.md`
-   Scopes : {{ scopes | join(' | ') }}
-3. **Lister les features du scope** via `ls {{ docs_root }}/features/<scope>/` AVANT de proposer quoi que ce soit. Si la tâche touche une feature existante → charger son fichier (`id.md`) + suivre ses `depends_on`.
-4. Si la tâche crée une nouvelle feature → créer `{{ docs_root }}/features/<scope>/<id>.md` depuis `{{ docs_root }}/FEATURE_TEMPLATE.md` (frontmatter complet) AVANT le premier commit `feat:`.
-
-Hard rules (non-négociables) :
-- Un scope primaire par tour ; cross-scope ⇒ HANDOFF + confirmation utilisateur
-- Pas de full diffs par défaut
-- Avant DONE : evidence (build/tests) + feature doc à jour + Conventional Commits sont BLOQUANTS
-- Messages de commit en {{ 'français' if commit_language == 'fr' else 'English' }}
-
-Index complet : `.ai/index.md`.
+- Lire `.ai/index.md` AVANT toute action (séquence de chargement y est décrite).
+- Un scope par tour ; cross-scope ⇒ HANDOFF + confirmation utilisateur.
+- Toute feature DOIT exister sous `{{ docs_root }}/features/<scope>/<id>.md` avant `feat:`.
+- Avant DONE : evidence (build/tests) + feature à jour + Conventional Commits ({{ 'fr' if commit_language == 'fr' else 'en' }}) — BLOQUANT.
+- Pas de full diffs. Pas de `grep -r`.

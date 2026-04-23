@@ -4,22 +4,31 @@
 # Vérifie pour chaque fichier sous {{ docs_root }}/features/*/*.md :
 #   - présence du frontmatter YAML
 #   - clés obligatoires : id, scope, title, status
+#   - status ∈ {draft, active, done, deprecated, archived} (warn si hors enum)
 #   - scope == nom du dossier parent
 #   - chaque depends_on pointe vers un fichier existant
-#   - chaque touches pointe vers un chemin existant (fichier, dossier, ou glob résolvable)
+#   - chaque touches pointe vers un chemin existant (fichier, dossier, ou glob)
+#
+# Rafraîchit .ai/.feature-index.json si tout passe.
 #
 # Usage : bash .ai/scripts/check-features.sh
 
 set -euo pipefail
 
-cd "$(dirname "$0")/../.."
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=_lib.sh
+. "$script_dir/_lib.sh"
+
+enable_globstar
+
+cd "$script_dir/../.."
 
 FEATURES_DIR="{{ docs_root }}/features"
 
 fail=0
 ok() { printf "  \033[32m✓\033[0m %s\n" "$1"; }
-ko() { printf "  \033[31m✗\033[0m %s\n" "$1"; fail=1; }
-warn() { printf "  \033[33m⚠\033[0m %s\n" "$1"; }
+ko() { printf "  \033[31m✗\033[0m %s\n" "$1" >&2; fail=1; }
+warn() { printf "  \033[33m⚠\033[0m %s\n" "$1" >&2; }
 
 echo "═══ check-features ═══"
 
@@ -28,8 +37,10 @@ if [[ ! -d "$FEATURES_DIR" ]]; then
   exit 0
 fi
 
-shopt -s nullglob
-files=("$FEATURES_DIR"/*/*.md)
+files=()
+while IFS= read -r -d '' f; do
+  files+=("$f")
+done < <(find "$FEATURES_DIR" -mindepth 2 -maxdepth 2 -type f -name '*.md' -print0 2>/dev/null)
 
 if [[ {% raw %}${#files[@]}{% endraw %} -eq 0 ]]; then
   echo "  ⚠️  aucune feature sous $FEATURES_DIR"
@@ -39,14 +50,12 @@ fi
 for f in "${files[@]}"; do
   file_fail=0
 
-  # Extrait le frontmatter (entre --- et ---)
   fm=$(awk '/^---$/{c++;next} c==1' "$f")
   if [[ -z "$fm" ]]; then
     ko "$f : frontmatter manquant"
     continue
   fi
 
-  # Clés obligatoires
   for key in id scope title status; do
     if ! echo "$fm" | grep -qE "^$key:"; then
       ko "$f : clé frontmatter '$key' manquante"
@@ -54,7 +63,6 @@ for f in "${files[@]}"; do
     fi
   done
 
-  # scope == dossier parent
   folder_scope=$(basename "$(dirname "$f")")
   declared_scope=$(echo "$fm" | grep -E '^scope:' | sed -E 's/^scope:[[:space:]]*//; s/["'"'"']//g' | tr -d '[:space:]')
   if [[ -n "$declared_scope" && "$declared_scope" != "$folder_scope" ]]; then
@@ -62,7 +70,12 @@ for f in "${files[@]}"; do
     file_fail=1
   fi
 
-  # depends_on : chaque entrée doit pointer vers un fichier existant
+  # status enum (warn, pas fail)
+  declared_status=$(echo "$fm" | grep -E '^status:' | sed -E 's/^status:[[:space:]]*//; s/["'"'"']//g' | tr -d '[:space:]')
+  if [[ -n "$declared_status" ]] && ! is_valid_status "$declared_status"; then
+    warn "$f : status='$declared_status' hors enum ($STATUS_ENUM)"
+  fi
+
   deps=$(awk '/^depends_on:/{flag=1; next} flag && /^  *-/{print; next} flag && /^[^[:space:]]/{flag=0}' "$f" \
     | sed -E 's/^[[:space:]]*-[[:space:]]*//; s/["'"'"']//g')
   while IFS= read -r dep; do
@@ -75,13 +88,13 @@ for f in "${files[@]}"; do
     fi
   done <<< "$deps"
 
-  # touches : chaque entrée doit matcher au moins un chemin réel (fichier, dossier, ou glob)
   tchs=$(awk '/^touches:/{flag=1; next} flag && /^  *-/{print; next} flag && /^[^[:space:]]/{flag=0}' "$f" \
     | sed -E 's/^[[:space:]]*-[[:space:]]*//; s/["'"'"']//g')
   while IFS= read -r t; do
     [[ -z "$t" ]] && continue
     [[ "$t" == "[]" ]] && continue
-    matches=( $t )  # expansion shell du glob
+    # shellcheck disable=SC2206
+    matches=( $t )
     if [[ {% raw %}${#matches[@]}{% endraw %} -eq 0 ]] || [[ ! -e "${matches[0]}" && ! -d "${matches[0]}" ]]; then
       if [[ -e "$t" || -d "$t" ]]; then
         :
@@ -97,6 +110,7 @@ done
 
 echo
 if [[ "$fail" -eq 0 ]]; then
+  bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
   echo "✅ PASS"
   exit 0
 else

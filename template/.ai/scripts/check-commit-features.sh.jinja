@@ -11,6 +11,12 @@
 
 set -euo pipefail
 
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=_lib.sh
+. "$script_dir/_lib.sh"
+
+# jq n'est requis qu'en mode stdin JSON ; vérif différée plus bas.
+
 cd "$(git rev-parse --show-toplevel)"
 
 FEATURES_DIR="{{ docs_root }}/features"
@@ -24,6 +30,7 @@ elif [[ -n "${CLAUDE_COMMIT_MSG:-}" ]]; then
   msg=$(echo "$CLAUDE_COMMIT_MSG" | head -n1)
 elif [[ ! -t 0 ]]; then
   # JSON Claude sur stdin
+  require_cmd jq
   payload=$(cat)
   tool_name=$(echo "$payload" | jq -r '.tool_name // ""')
   [[ "$tool_name" != "Bash" ]] && exit 0

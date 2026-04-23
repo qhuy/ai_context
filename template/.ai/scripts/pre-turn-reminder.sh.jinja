@@ -3,25 +3,32 @@
 #
 # Injecte :
 #   - le contenu statique de .ai/reminder.md
-#   - la liste dynamique des features actives (par scope)
-#   - un rappel des dépendances croisées (depends_on)
+#   - la liste dynamique des features actives (par scope), filtrée par status
+#   - les dépendances inverses (qui dépend de chaque feature)
 #
-# Appelé par les hooks agent-spécifiques :
-#   - Claude Code : UserPromptSubmit hook dans .claude/settings.json
-#   - Cursor : statique via .cursor/rules/protocol-reminder.mdc
-#   - Autres : adapter au mécanisme natif
+# Source : .ai/.feature-index.json (compilé par build-feature-index.sh)
+#
+# Filtre par défaut : status ∈ {active, draft}. Override via AI_CONTEXT_SHOW_ALL_STATUS=1.
 #
 # Usage :
 #   pre-turn-reminder.sh               # texte brut sur stdout
 #   pre-turn-reminder.sh --format=json # JSON pour Claude Code hookSpecificOutput
+#
+# Debug : AI_CONTEXT_DEBUG=1 bash pre-turn-reminder.sh
 
 set -euo pipefail
 
-format="${1:-text}"
 script_dir="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=_lib.sh
+. "$script_dir/_lib.sh"
+
+require_cmd jq
+
+format="${1:-text}"
 repo_root="$(cd "$script_dir/../.." && pwd)"
 reminder_file="$script_dir/../reminder.md"
 features_dir="$repo_root/{{ docs_root }}/features"
+index_file="$repo_root/.ai/.feature-index.json"
 
 if [[ ! -f "$reminder_file" ]]; then
   echo "reminder.md introuvable : $reminder_file" >&2
@@ -30,37 +37,83 @@ fi
 
 reminder=$(cat "$reminder_file")
 
-# ─── Inventaire dynamique des features ───
+ensure_index() {
+  if [[ ! -f "$index_file" ]]; then
+    bash "$script_dir/build-feature-index.sh" --write 2>/dev/null || return 0
+    return
+  fi
+  if [[ -d "$features_dir" ]]; then
+    if find "$features_dir" -name '*.md' -newer "$index_file" -print -quit 2>/dev/null | grep -q .; then
+      bash "$script_dir/build-feature-index.sh" --write 2>/dev/null || true
+    fi
+  fi
+}
+
+# ─── Inventaire dynamique ───
 feature_section=""
+reverse_section=""
 if [[ -d "$features_dir" ]]; then
-  shopt -s nullglob
-  tmp=""
-  for scope_dir in "$features_dir"/*/; do
-    [[ -d "$scope_dir" ]] || continue
-    scope_name=$(basename "$scope_dir")
-    files=("$scope_dir"/*.md)
-    [[ {% raw %}${#files[@]}{% endraw %} -eq 0 ]] && continue
+  ensure_index
+  if [[ -f "$index_file" ]]; then
+    visible=$(visible_statuses_jq)
 
-    scope_line="  • ${scope_name}/ :"
-    for f in "${files[@]}"; do
-      id=$(basename "$f" .md)
-      status=$(awk '/^---$/{c++;next} c==1 && /^status:/{print; exit}' "$f" \
-        | sed -E 's/^status:[[:space:]]*//; s/["'"'"']//g' | tr -d '[:space:]')
-      status="${status:-?}"
-      scope_line+=" ${id}(${status})"
-    done
-    tmp+="${scope_line}"$'\n'
-  done
+    # Inventaire : group by scope, seulement features dont status est dans $visible
+    feature_lines=$(jq -r --argjson v "$visible" '
+      .features
+      | map(select(.status as $s | $v | index($s)))
+      | group_by(.scope)[]
+      | "  • " + (.[0].scope) + "/ :"
+        + ([.[] | " " + .id + "(" + .status + ")"] | join(""))
+    ' "$index_file")
 
-  if [[ -n "$tmp" ]]; then
-    feature_section=$'\n\n── Features actives (lis le .md du scope primaire AVANT toute écriture) ──\n'
-    feature_section+="$tmp"
-  else
-    feature_section=$'\n\n── Features actives ──\n  (aucune feature documentée — la 1ère tâche DOIT en créer une)\n'
+    total=$(jq '.features | length' "$index_file")
+    visible_count=$(jq --argjson v "$visible" '.features | map(select(.status as $s | $v | index($s))) | length' "$index_file")
+    hidden=$((total - visible_count))
+
+    if [[ -n "$feature_lines" ]]; then
+      feature_section=$'\n\n── Features actives (lis le .md du scope primaire AVANT toute écriture) ──\n'
+      feature_section+="$feature_lines"$'\n'
+      if [[ $hidden -gt 0 ]]; then
+        feature_section+="  ($hidden masquée(s) — status done/deprecated/archived. AI_CONTEXT_SHOW_ALL_STATUS=1 pour voir)"$'\n'
+      fi
+    elif [[ $hidden -gt 0 ]]; then
+      feature_section=$'\n\n── Features actives ──\n'
+      feature_section+="  (aucune feature active — $hidden masquée(s) avec status done/deprecated/archived)"$'\n'
+      feature_section+="  AI_CONTEXT_SHOW_ALL_STATUS=1 pour voir l'historique."$'\n'
+    else
+      feature_section=$'\n\n── Features actives ──\n  (aucune feature documentée — la 1ère tâche DOIT en créer une)\n'
+    fi
+
+    # Reverse deps : filter X ET Y tous deux dans les status visibles
+    reverse_lines=$(jq -r --argjson v "$visible" '
+      (.features | map(select(.status as $s | $v | index($s)))) as $visible_features
+      | ($visible_features | map(.scope + "/" + .id)) as $visible_keys
+      | $visible_features[]
+      | . as $f
+      | ($f.scope + "/" + $f.id) as $key
+      | (
+          $visible_features
+          | map(select(.depends_on[]? == $key))
+          | map(.scope + "/" + .id)
+        ) as $reverse
+      | select($reverse | length > 0)
+      | if ($reverse | length) > 20 then
+          "  ⚠️  " + $key + " a " + ($reverse | length | tostring) + " dépendants actifs — envisager un découpage"
+        else
+          "  • " + $key + " ← " + ($reverse | join(", "))
+        end
+    ' "$index_file")
+
+    if [[ -n "$reverse_lines" ]]; then
+      reverse_section=$'\n── Dépendances inverses (si tu modifies X, les suivants dépendent de lui) ──\n'
+      reverse_section+="$reverse_lines"$'\n'
+    fi
   fi
 fi
 
-full_reminder="${reminder}${feature_section}"
+full_reminder="${reminder}${feature_section}${reverse_section}"
+
+log_debug "reminder length : {% raw %}${#full_reminder}{% endraw %}"
 
 case "$format" in
   --format=json)
