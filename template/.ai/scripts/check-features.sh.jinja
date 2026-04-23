@@ -40,7 +40,7 @@ fi
 files=()
 while IFS= read -r -d '' f; do
   files+=("$f")
-done < <(find "$FEATURES_DIR" -mindepth 2 -maxdepth 2 -type f -name '*.md' -print0 2>/dev/null)
+done < <(find "$FEATURES_DIR" -mindepth 2 -maxdepth 2 -type f -name '*.md' ! -name '*.worklog.md' -print0 2>/dev/null)
 
 if [[ {% raw %}${#files[@]}{% endraw %} -eq 0 ]]; then
   echo "  ⚠️  aucune feature sous $FEATURES_DIR"

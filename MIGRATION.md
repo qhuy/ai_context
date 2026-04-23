@@ -160,3 +160,18 @@ Dans Claude Code : `/hooks` → désactive les entrées ajoutées.
 - `copier update` régulier pour bénéficier des versions futures du template.
 - Surveille `measure-context-size.sh` en CI (ou en dev) pour éviter la dérive tokens.
 - Relis `CHANGELOG.md` à chaque `copier update` — les breaking notes y sont explicites.
+
+## Utiliser les skills `/aic-*` (v0.7+)
+
+Une fois le mesh bootstrappé, utilise les skills Claude pour encadrer les gestes récurrents :
+
+| Skill | Quand |
+|---|---|
+| `/aic-feature-new` | Avant tout `feat:` — crée fiche + worklog init |
+| `/aic-feature-resume` | Début de session — scanne EN COURS / BLOQUÉES / STALE, charge le contexte |
+| `/aic-feature-update` | À chaque pause, blocker, ou switch de contexte (worklog append-only) |
+| `/aic-feature-handoff` | Quand le travail bascule de scope ou de session |
+| `/aic-quality-gate` | Avant commit `feat:` ou PR — verdict go/no-go factuel |
+| `/aic-feature-done` | Clôture : evidence + status done + commit suggéré |
+
+La règle d'or : **toujours** `/aic-feature-update` avant de quitter une session. Le coût est minime, la reprise via `/aic-feature-resume` devient déterministe au lieu de narrative.

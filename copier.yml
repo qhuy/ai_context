@@ -46,7 +46,16 @@ _message_after_copy: |
     5. Vérifier les features   : bash .ai/scripts/check-features.sh
     6. (optionnel) couverture  : bash .ai/scripts/check-feature-coverage.sh
     7. (optionnel) coût tokens : bash .ai/scripts/measure-context-size.sh
-    8. (Claude uniquement) ouvrir /hooks pour activer les hooks.
+    8. (optionnel) reprise     : bash .ai/scripts/resume-features.sh
+    9. (Claude uniquement) ouvrir /hooks pour activer les hooks.
+
+  Skills Claude disponibles (préfixe /aic-) :
+    /aic-feature-new      → créer une feature (fiche + worklog)
+    /aic-feature-resume   → reprendre un travail interrompu
+    /aic-feature-update   → sauver l'avancement (à chaque pause)
+    /aic-feature-handoff  → passation inter-scope ou inter-session
+    /aic-quality-gate     → vérification go/no-go avant commit/PR
+    /aic-feature-done     → clôture (evidence + status done)
 
   Env vars utiles :
     AI_CONTEXT_DEBUG=1            → logs debug des hooks

@@ -1,5 +1,35 @@
 # CHANGELOG
 
+## v0.7.0 — 2026-04-23
+
+Reprise entre sessions + skills `/aic-*` pour encadrer les travaux récurrents.
+
+### Nouveau
+- **Frontmatter feature étendu** avec bloc `progress:` optionnel (`phase`, `step`, `blockers`, `resume_hint`, `updated`). Permet de sauvegarder l'état d'avancement et reprendre sans ambiguïté entre sessions.
+- **Worklog append-only par feature** : `<id>.worklog.md` à côté de la feature, créé par `/aic-feature-new`, enrichi à chaque `/aic-feature-update`. Exclu de l'index et de check-features.
+- `.ai/scripts/resume-features.sh` — scanne l'index, groupe en 4 buckets : **EN COURS** (phase définie, pas de blocker), **BLOQUÉES** (blockers non vide), **STALE** (>14j sans update), **À FAIRE** (progress non initialisé). Mode `--format=json` pour automation, `--scope=<X>` pour filtrage.
+- **6 skills `/aic-*`** dans `template/.claude/skills/` — structure `SKILL.md` (frontmatter minimal) + `workflow.md` (phases détaillées) inspirée des skills bobv3 :
+  - `/aic-feature-new` — crée fiche + worklog init, valide avant de rendre la main
+  - `/aic-feature-resume` — charge le contexte d'une feature interrompue, demande confirmation
+  - `/aic-feature-update` — sauve `progress.*` + append worklog (append-only, jamais destructif)
+  - `/aic-feature-handoff` — bloc HANDOFF inter-scope formalisé (what delivered / next needs / blockers / status)
+  - `/aic-quality-gate` — rapport go/no-go factuel (check-shims + features + coverage + context-size + progress)
+  - `/aic-feature-done` — validations evidence, scellage worklog, commit Conventional suggéré
+
+### Changé
+- `build-feature-index.sh` extrait désormais `progress.*` du frontmatter (yq v4 ou fallback awk pour `blockers`).
+- `build-feature-index.sh` et `check-features.sh` ignorent les fichiers `*.worklog.md` (pattern `find ! -name '*.worklog.md'`).
+- `FEATURE_TEMPLATE.md` documente le bloc `progress:` optionnel et la convention worklog.
+
+### Tests
+- Smoke-test étendu à 18 étapes : +progress parsé dans l'index, +resume-features buckets (text + json), +skills `aic-*` présents avec frontmatter valide.
+
+### Philosophie
+v0.5 = fiabilité, v0.6 = coût maîtrisé, **v0.7 = continuité**. Le travail n'est plus perdu entre sessions. Les skills encadrent les gestes récurrents (create/resume/update/handoff/done) avec une structure identique partout, exécutée dans un ordre stable. Le contexte de reprise est dans l'index (machine-readable) ET dans le worklog (narrative).
+
+### Breaking
+- Aucun. Les features existantes sans bloc `progress:` tombent dans le bucket "À FAIRE" de `resume-features.sh`, comportement non bloquant.
+
 ## v0.6.0 — 2026-04-23
 
 Optimisation du coût tokens : filtrage par status + observabilité + reminder compressé.

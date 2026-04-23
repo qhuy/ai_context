@@ -5,11 +5,19 @@ title: <Titre court de la feature>
 status: draft
 depends_on: []
 touches: []
+# progress : état de reprise entre sessions (optionnel, auto-géré par /aic-feature-update)
+progress:
+  phase: spec         # spec | implement | test | review | done
+  step: ""            # libre, ex : "4/7 controller"
+  blockers: []        # liste courte, ex : "API spec TBD"
+  resume_hint: ""     # où reprendre concrètement
+  updated: ""         # YYYY-MM-DD, mis à jour à chaque /aic-feature-update
 ---
 
 # <Titre>
 
 > Copier ce fichier vers `{{ docs_root }}/features/<scope>/<id>.md` pour chaque nouvelle feature.
+> Journal d'avancement append-only : `{{ docs_root }}/features/<scope>/<id>.worklog.md` (créé par `/aic-feature-new`).
 
 ## Objectif
 
@@ -40,6 +48,16 @@ Choix marquants, ADRs liées, décisions produit.
 - `id` : slug kebab-case unique dans ce scope
 - `scope` : doit matcher le dossier parent (`features/<scope>/`)
 - `title` : résumé humain
-- `status` : `draft` | `active` | `deprecated`
+- `status` : `draft` | `active` | `done` | `deprecated` | `archived`
 - `depends_on` : liste de `<scope>/<id>` (ex : `back/payment-intent`)
 - `touches` : paths (globs OK) du code qui implémente cette feature
+
+**Frontmatter optionnel (reprise entre sessions)** :
+
+- `progress.phase` : étape courante du cycle
+- `progress.step` : détail libre (humain)
+- `progress.blockers` : liste courte ; si non vide, apparaît dans `/aic-feature-resume`
+- `progress.resume_hint` : ce qu'un·e agent doit savoir pour reprendre
+- `progress.updated` : date ISO, auto-renseignée
+
+Le journal complet vit dans `<id>.worklog.md` (append-only, jamais édité ailleurs).
