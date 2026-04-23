@@ -60,6 +60,7 @@ _message_after_copy: |
   Env vars utiles :
     AI_CONTEXT_DEBUG=1            → logs debug des hooks
     AI_CONTEXT_SHOW_ALL_STATUS=1  → afficher features done/deprecated/archived dans le reminder
+    AI_CONTEXT_FOCUS=<scope>      → réduit l'inventaire au scope + voisins 1-hop (utile sur mesh >100 features)
 
 _message_after_update: |
   ♻️  AI context mis à jour depuis le template.

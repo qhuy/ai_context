@@ -116,7 +116,7 @@ Dans Claude Code, `/hooks` → activer `UserPromptSubmit` → `bash .ai/scripts/
 ```bash
 bash .ai/scripts/measure-context-size.sh
 ```
-Si trop gros, active `AI_CONTEXT_SHOW_ALL_STATUS=0` (défaut) et passe les features stables en `status: done`.
+Si trop gros, active `AI_CONTEXT_SHOW_ALL_STATUS=0` (défaut) et passe les features stables en `status: done`. Pour un mesh >100 features, `AI_CONTEXT_FOCUS=<scope>` réduit l'inventaire au scope courant + voisins 1-hop (~5× moins de tokens).
 
 ### 4.3 — Hook Claude `PreToolUse` Write/Edit/MultiEdit
 Même démarche : déjà configuré dans `.claude/settings.json.jinja`. Injecte les features pertinentes avant toute écriture.

@@ -491,6 +491,7 @@ Six skills Claude Code, structure `SKILL.md` (frontmatter minimal) + `workflow.m
 |---|---|
 | `AI_CONTEXT_DEBUG=1` | Logs détaillés des hooks sur stderr |
 | `AI_CONTEXT_SHOW_ALL_STATUS=1` | Inclut `done/deprecated/archived` dans le reminder (sinon filtré) |
+| `AI_CONTEXT_FOCUS=<scope>` | Réduit l'inventaire au scope + ses voisins 1-hop (graph-aware). Équivalent : `pre-turn-reminder.sh --focus=<scope>`. Gain typique ~5× tokens sur mesh >100 features. |
 
 ---
 

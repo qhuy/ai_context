@@ -1,5 +1,32 @@
 # CHANGELOG
 
+## v0.9.0 — 2026-04-24
+
+Graph-aware injection : scale le reminder aux mesh >100 features.
+
+### Nouveau
+- **`AI_CONTEXT_FOCUS=<scope>`** (et `--focus=<scope>` en CLI) : `pre-turn-reminder.sh` restreint l'inventaire au scope demandé + ses voisins **1-hop** (features dont on dépend ou qui dépendent de nous, tous scopes confondus). Les reverse deps sont pareillement filtrées (sources dans le focus uniquement). Gain typique : ~5× moins de tokens sur mesh matures.
+- **Header focus explicite** : `── Features actives (focus=back, +3 voisin(s) 1-hop) ──` pour rendre le filtre visible et éviter la surprise.
+- **Fallback safe** : focus sur un scope inexistant → warn stderr + fallback inventaire complet (jamais de vide silencieux).
+
+### Changé
+- Parsing d'arguments refactoré : `pre-turn-reminder.sh` accepte désormais `--format=X` et `--focus=Y` dans n'importe quel ordre.
+- `tests/smoke-test.sh` utilise `copier copy --vcs-ref=HEAD` pour tester le working tree plutôt que le dernier tag (bug rencontré : copier utilisait v0.8.0 au lieu de HEAD).
+
+### Tests
+- Smoke-test étendu à **24 étapes** : #23 vérifie focus=back inclut back/api + front/ui (1-hop) mais exclut architecture/unrelated ; env var équivalente ; fallback sur focus inconnu.
+
+### Docs
+- README : colonne env var + variable `AI_CONTEXT_FOCUS`.
+- MIGRATION : mention comme optimisation pour projets à grand mesh.
+- copier.yml `_message_after_copy` : `AI_CONTEXT_FOCUS` ajouté à la liste des env vars utiles.
+
+### Philosophie
+v0.6 a réduit le bruit par filtrage status. v0.9 réduit le bruit par **topologie** : un scope ne « voit » que ses voisins immédiats, pas le mesh entier. Le graphe de dépendances devient un outil de sélection, pas juste de validation.
+
+### Breaking
+- Aucun. Sans `AI_CONTEXT_FOCUS`, le comportement est strictement identique à v0.8.
+
 ## v0.8.0 — 2026-04-23
 
 Cohérence du mesh + i18n reminder.

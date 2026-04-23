@@ -10,9 +10,15 @@
 #
 # Filtre par défaut : status ∈ {active, draft}. Override via AI_CONTEXT_SHOW_ALL_STATUS=1.
 #
+# Focus (graph-aware) :
+#   AI_CONTEXT_FOCUS=<scope> ou --focus=<scope> limite l'inventaire au scope
+#   demandé + ses voisins 1-hop (features en relation depends_on dans les deux
+#   sens). Sur un mesh >100 features, gain ~5× en tokens.
+#
 # Usage :
-#   pre-turn-reminder.sh               # texte brut sur stdout
-#   pre-turn-reminder.sh --format=json # JSON pour Claude Code hookSpecificOutput
+#   pre-turn-reminder.sh                      # texte brut sur stdout
+#   pre-turn-reminder.sh --format=json        # JSON pour Claude Code hookSpecificOutput
+#   pre-turn-reminder.sh --focus=back         # focus scope back + 1-hop
 #
 # Debug : AI_CONTEXT_DEBUG=1 bash pre-turn-reminder.sh
 
@@ -24,7 +30,18 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 
 require_cmd jq
 
-format="${1:-text}"
+format="text"
+focus="${AI_CONTEXT_FOCUS:-}"
+for arg in "$@"; do
+  case "$arg" in
+    --format=*) format="${arg#--format=}" ;;
+    --focus=*) focus="${arg#--focus=}" ;;
+    text) format="text" ;;
+    *) echo "Argument inconnu : $arg" >&2
+       echo "Usage : $0 [--format=text|--format=json] [--focus=<scope>]" >&2
+       exit 2 ;;
+  esac
+done
 repo_root="$(cd "$script_dir/../.." && pwd)"
 reminder_file="$script_dir/../reminder.md"
 features_dir="$repo_root/{{ docs_root }}/features"
@@ -57,10 +74,33 @@ if [[ -d "$features_dir" ]]; then
   if [[ -f "$index_file" ]]; then
     visible=$(visible_statuses_jq)
 
-    # Inventaire : group by scope, seulement features dont status est dans $visible
-    feature_lines=$(jq -r --argjson v "$visible" '
-      .features
-      | map(select(.status as $s | $v | index($s)))
+    # Validation focus : si le scope demandé n'a aucune feature, ignorer + warn stderr
+    if [[ -n "$focus" ]]; then
+      has_focus=$(jq --arg f "$focus" '.features | map(select(.scope == $f)) | length' "$index_file")
+      if [[ "$has_focus" -eq 0 ]]; then
+        echo "⚠️  focus=$focus : aucune feature dans ce scope, focus ignoré" >&2
+        focus=""
+      fi
+    fi
+
+    # Inventaire : group by scope, status visible, éventuellement restreint au focus + 1-hop
+    feature_lines=$(jq -r --argjson v "$visible" --arg focus "$focus" '
+      (.features | map(select(.status as $s | $v | index($s)))) as $all
+      | (if $focus == "" then $all
+         else
+           ($all | map(select(.scope == $focus))) as $focused
+           | ($focused | map(.scope + "/" + .id)) as $fkeys
+           | ($focused | map(.depends_on // []) | add // []) as $deps_of_focus
+           | $all | map(
+               . as $f
+               | ($f.scope + "/" + $f.id) as $key
+               | select(
+                   $f.scope == $focus
+                   or (($deps_of_focus | index($key)) != null)
+                   or (($f.depends_on // []) | any(. as $d | $fkeys | index($d)))
+                 )
+             )
+         end)
       | group_by(.scope)[]
       | "  • " + (.[0].scope) + "/ :"
         + ([.[] | " " + .id + "(" + .status + ")"] | join(""))
@@ -70,11 +110,38 @@ if [[ -d "$features_dir" ]]; then
     visible_count=$(jq --argjson v "$visible" '.features | map(select(.status as $s | $v | index($s))) | length' "$index_file")
     hidden=$((total - visible_count))
 
+    # Compter neighbors hors focus (pour hint)
+    if [[ -n "$focus" ]]; then
+      neighbors=$(jq --argjson v "$visible" --arg focus "$focus" '
+        (.features | map(select(.status as $s | $v | index($s)))) as $all
+        | ($all | map(select(.scope == $focus))) as $focused
+        | ($focused | map(.scope + "/" + .id)) as $fkeys
+        | ($focused | map(.depends_on // []) | add // []) as $deps_of_focus
+        | $all | map(
+            . as $f
+            | ($f.scope + "/" + $f.id) as $key
+            | select(
+                $f.scope != $focus
+                and ((($deps_of_focus | index($key)) != null)
+                     or (($f.depends_on // []) | any(. as $d | $fkeys | index($d))))
+              )
+          ) | length
+      ' "$index_file")
+    fi
+
+    header_suffix=""
+    if [[ -n "$focus" ]]; then
+      header_suffix=" (focus=$focus, +$neighbors voisin(s) 1-hop)"
+    fi
+
     if [[ -n "$feature_lines" ]]; then
-      feature_section=$'\n\n── Features actives (lis le .md du scope primaire AVANT toute écriture) ──\n'
+      feature_section=$'\n\n── Features actives'"$header_suffix"' (lis le .md du scope primaire AVANT toute écriture) ──\n'
       feature_section+="$feature_lines"$'\n'
       if [[ $hidden -gt 0 ]]; then
         feature_section+="  ($hidden masquée(s) — status done/deprecated/archived. AI_CONTEXT_SHOW_ALL_STATUS=1 pour voir)"$'\n'
+      fi
+      if [[ -n "$focus" ]]; then
+        feature_section+="  (AI_CONTEXT_FOCUS vide pour voir tout le mesh)"$'\n'
       fi
     elif [[ $hidden -gt 0 ]]; then
       feature_section=$'\n\n── Features actives ──\n'
@@ -84,13 +151,13 @@ if [[ -d "$features_dir" ]]; then
       feature_section=$'\n\n── Features actives ──\n  (aucune feature documentée — la 1ère tâche DOIT en créer une)\n'
     fi
 
-    # Reverse deps : filter X ET Y tous deux dans les status visibles
-    reverse_lines=$(jq -r --argjson v "$visible" '
+    # Reverse deps : filter X ET Y dans status visibles ; si focus, ne garde que les paires où X est dans le focus
+    reverse_lines=$(jq -r --argjson v "$visible" --arg focus "$focus" '
       (.features | map(select(.status as $s | $v | index($s)))) as $visible_features
-      | ($visible_features | map(.scope + "/" + .id)) as $visible_keys
       | $visible_features[]
       | . as $f
       | ($f.scope + "/" + $f.id) as $key
+      | select($focus == "" or $f.scope == $focus)
       | (
           $visible_features
           | map(select(.depends_on[]? == $key))
@@ -116,7 +183,7 @@ full_reminder="${reminder}${feature_section}${reverse_section}"
 log_debug "reminder length : {% raw %}${#full_reminder}{% endraw %}"
 
 case "$format" in
-  --format=json)
+  json)
     jq -n --arg ctx "$full_reminder" '{
       hookSpecificOutput: {
         hookEventName: "UserPromptSubmit",
@@ -124,12 +191,12 @@ case "$format" in
       }
     }'
     ;;
-  --format=text|text)
+  text)
     echo "$full_reminder"
     ;;
   *)
     echo "Format inconnu : $format" >&2
-    echo "Usage : $0 [--format=text|--format=json]" >&2
+    echo "Usage : $0 [--format=text|--format=json] [--focus=<scope>]" >&2
     exit 2
     ;;
 esac
