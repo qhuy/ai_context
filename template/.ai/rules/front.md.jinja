@@ -2,8 +2,15 @@
 
 Règles pour le code frontend de {{ project_name }}.
 
+## Obligation feature (systématique)
+
+Toute feature front **DOIT** avoir son fichier `{{ docs_root }}/features/front/<id>.md` avant DONE.
+Si la feature consomme une API back, lister la dépendance : `depends_on: ["back/<id>"]`.
+Squelette : `{{ docs_root }}/FEATURE_TEMPLATE.md`. Enforcement : `.githooks/commit-msg` sur `feat:`.
+
 ## Bloquants avant DONE
 
+- Feature doc front créée / à jour, avec `depends_on` vers back/security si applicable.
 - Build + typecheck verts.
 - États loading / error / empty gérés explicitement.
 - Accessibilité (labels, aria, contraste) respectée.

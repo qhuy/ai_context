@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## v0.2.0 — 2026-04-23
+
+Feature mesh enforcement — systématique, organisé par scope, cross-refs imposées.
+
+### Nouveau
+- `{{ docs_root }}/FEATURE_TEMPLATE.md` — squelette feature (frontmatter `id/scope/title/status/depends_on/touches`).
+- `{{ docs_root }}/features/<scope>/` — organisation par scope métier (back, front, architecture, security).
+- `.ai/scripts/check-features.sh` — validation du maillage (frontmatter présent, scope == dossier parent, `depends_on` résout).
+- `.ai/scripts/check-commit-features.sh` — validation Conventional Commits + blocage `feat:` sans fichier `features/` touché.
+- `.githooks/commit-msg` — délégation du check commit-msg (active via `git config core.hooksPath .githooks`).
+- Hook Claude `PreToolUse` sur `Bash(git commit*)` — même check sous Claude Code avant l'exécution.
+
+### Changé
+- `.ai/quality/QUALITY_GATE.md` — suppression de l'option "C — Skip" (remplacée par Conventional Commits). Ajout des sections **Feature mesh** et **Commits** bloquantes.
+- `.ai/rules/{back,front,architecture,security}.md` — obligation feature systématique documentée.
+- `.ai/index.md` — table scope avec colonne Features, section Feature mesh, runtime enforcement étendu.
+- `README_AI_CONTEXT.md` — étape d'activation des git hooks.
+
+### Philosophie
+Pas de dérogation par "taille de projet". Un maillage complet = agents plus puissants. Aucune wiggle room laissée à l'Agent.
+
 ## v0.1.0 — 2026-04-23
 
 Initial release. MVP du template copier.

@@ -1,0 +1,5 @@
+#!/bin/bash
+# commit-msg git hook — délègue à check-commit-features.sh
+# Activation : git config core.hooksPath .githooks
+
+exec bash .ai/scripts/check-commit-features.sh "$1"

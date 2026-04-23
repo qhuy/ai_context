@@ -2,8 +2,14 @@
 
 Règles de structure, de layering et de décisions.
 
+## Obligation feature (systématique)
+
+Toute évolution structurelle qui introduit ou modifie un pattern, une couche, un contrat transverse **DOIT** avoir son fichier `{{ docs_root }}/features/architecture/<id>.md` avant DONE.
+Squelette : `{{ docs_root }}/FEATURE_TEMPLATE.md`. Enforcement : `.githooks/commit-msg` sur `feat:`.
+
 ## Bloquants
 
+- Feature doc architecture créée / à jour (contrats + Cross-refs vers les scopes impactés).
 - Pas de dépendance circulaire entre modules.
 - Layering respecté (ex : domain ne dépend pas de transport).
 - Toute décision structurelle → ADR dans `{{ docs_root }}/adr/`.

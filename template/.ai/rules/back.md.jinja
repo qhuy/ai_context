@@ -2,8 +2,14 @@
 
 Règles pour le code backend de {{ project_name }}.
 
+## Obligation feature (systématique)
+
+Toute feature back **DOIT** avoir son fichier `{{ docs_root }}/features/back/<id>.md` avant DONE.
+Squelette : `{{ docs_root }}/FEATURE_TEMPLATE.md`. Enforcement : `.githooks/commit-msg` sur `feat:`.
+
 ## Bloquants avant DONE
 
+- Feature doc back créée / à jour (frontmatter + Contrats + Cross-refs).
 - Validation des entrées (paramètres, body, query).
 - Requêtes SQL paramétrées (jamais de concaténation).
 - Transactions explicites pour les écritures multi-tables.

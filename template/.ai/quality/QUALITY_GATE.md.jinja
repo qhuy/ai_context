@@ -22,32 +22,53 @@ Lister explicitement :
 
 Si une case est cochée → confirmation utilisateur avant merge.
 
-## Doc Impact Decision (BLOQUANTE)
+## Feature mesh (BLOQUANT — aucune dérogation)
 
-Avant DONE, choisir **une** des trois options et l'écrire :
+**Toute** tâche qui ajoute ou modifie du comportement **DOIT** créer / mettre à jour un fichier feature sous `{{ docs_root }}/features/<scope>/<id>.md`.
 
-- **A — Domain hub** : la tâche change un comportement à l'échelle d'un domaine → update du hub dans `{{ docs_root }}/domains/<domain>.md`.
-- **B — Feature spec** : la tâche change le comportement d'une feature identifiée → update de `{{ docs_root }}/features/<feature>.md`.
-- **C — Skip** : aucune doc à maj, avec **justification explicite** (ex : refactor pur sans impact fonctionnel, fix de typo, renommage interne).
+- Un fichier par feature, nommé par `id` stable (ex : `authz-tenant-guard.md`).
+- Rangé dans le dossier du **scope** qui l'implémente (`back/`, `front/`, `architecture/`, `security/`).
+- Frontmatter YAML complet : voir `{{ docs_root }}/FEATURE_TEMPLATE.md`.
+- Cross-refs obligatoires si la feature dépend d'une autre (`depends_on: ["back/foo", "security/bar"]`).
+
+Cette règle est **systématique** — pas de seuil de complexité, pas de "trop petit pour documenter". Le maillage ne devient puissant que s'il est complet.
+
+## Commits — Conventional Commits (BLOQUANT)
+
+Tous les commits respectent le format :
+
+```
+<type>[(scope)][!]: <description>
+```
+
+Types autorisés : `feat`, `fix`, `refactor`, `chore`, `test`, `docs`, `style`, `perf`, `ci`, `build`, `revert`.
+
+Règles :
+
+- **`feat:`** → oblige à toucher un fichier `{{ docs_root }}/features/<scope>/*.md` dans le même commit. Bloqué par `.githooks/commit-msg`.
+- **`fix:` / `refactor:`** sur du code de feature → mettre à jour la section **Historique** du fichier feature concerné.
+- Tout autre type (`chore`, `docs`, `test`, ...) → pas d'obligation feature, mais le type doit refléter la nature réelle du commit.
+
+Pas de "skip doc" implicite : si tu hésites entre `feat` et `refactor`, c'est probablement `feat`.
 
 ## Scope checklist (par scope)
 
 | Scope | Items bloquants |
 |---|---|
 | core | Pack A chargé, HANDOFF clair si cross-scope |
-| quality | Evidence + Doc Impact Decision remplis |
+| quality | Evidence + feature mesh + Conventional Commits |
 | workflow | Commits {{ 'fr' if commit_language == 'fr' else 'en' }}, pas de full diff |
 {%- if 'back' in scopes %}
-| back | Validation paramètres, injection SQL, transactions, tests d'intégration |
+| back | Feature doc sous `{{ docs_root }}/features/back/` à jour, validation paramètres, injection SQL, transactions, tests d'intégration |
 {%- endif %}
 {%- if 'front' in scopes %}
-| front | Build/typecheck OK, états loading/error gérés, a11y respectée |
+| front | Feature doc sous `{{ docs_root }}/features/front/` à jour (avec `depends_on` vers back si applicable), build/typecheck OK, états loading/error gérés, a11y |
 {%- endif %}
 {%- if 'architecture' in scopes %}
-| architecture | Layering respecté, pas de dépendance circulaire, ADR si changement structurel |
+| architecture | Feature doc sous `{{ docs_root }}/features/architecture/` à jour, layering respecté, pas de dépendance circulaire, ADR si changement structurel |
 {%- endif %}
 {%- if 'security' in scopes %}
-| security | Authz vérifiée, secrets non logués, rate limit si exposé, CORS à jour |
+| security | Feature doc sous `{{ docs_root }}/features/security/` à jour, authz vérifiée, secrets non logués, rate limit si exposé, CORS à jour |
 {%- endif %}
 {%- if 'handoff' in scopes %}
 | handoff | Template HANDOFF rempli (scope, status, fichiers, risques, état validation) |

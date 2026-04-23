@@ -1,0 +1,51 @@
+#!/bin/bash
+# check-commit-features.sh — Valide qu'un commit respecte Conventional Commits
+# et que les commits `feat:` touchent au moins un fichier features/.
+#
+# Deux modes d'appel :
+#   - Git commit-msg hook : $1 = chemin vers le fichier de commit message.
+#   - Claude PreToolUse hook : message lu depuis la var env CLAUDE_COMMIT_MSG.
+#
+# Exit 0 = OK, 1 = BLOCK.
+
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+
+FEATURES_DIR="{{ docs_root }}/features"
+
+# Récupère le message
+if [[ -n "${1:-}" && -f "$1" ]]; then
+  msg=$(head -n1 "$1")
+elif [[ -n "${CLAUDE_COMMIT_MSG:-}" ]]; then
+  msg=$(echo "$CLAUDE_COMMIT_MSG" | head -n1)
+else
+  # Impossible de valider sans message ; on laisse passer (le commit-msg hook rattrapera)
+  exit 0
+fi
+
+# Types autorisés (Conventional Commits)
+valid_types='^(feat|fix|refactor|chore|test|docs|style|perf|ci|build|revert)(\([a-z0-9_/-]+\))?!?:'
+
+if ! echo "$msg" | grep -qE "$valid_types"; then
+  echo "❌ Message de commit invalide." >&2
+  echo "   Format attendu : <type>[(scope)]: <description>" >&2
+  echo "   Types autorisés : feat, fix, refactor, chore, test, docs, style, perf, ci, build, revert" >&2
+  echo "   Reçu : $msg" >&2
+  exit 1
+fi
+
+# Si type feat → doit toucher un fichier features/
+type=$(echo "$msg" | sed -E 's/^([a-z]+).*/\1/')
+if [[ "$type" == "feat" ]]; then
+  staged=$(git diff --cached --name-only 2>/dev/null || git diff --name-only)
+  if ! echo "$staged" | grep -qE "^$FEATURES_DIR/"; then
+    echo "❌ Commit 'feat:' sans fichier touché dans $FEATURES_DIR/" >&2
+    echo "   Toute nouvelle feature DOIT avoir son fichier dans $FEATURES_DIR/<scope>/<id>.md" >&2
+    echo "   Utiliser {{ docs_root }}/FEATURE_TEMPLATE.md comme squelette." >&2
+    echo "   Si ce n'est pas une feature, utiliser un autre type : fix/refactor/chore/..." >&2
+    exit 1
+  fi
+fi
+
+exit 0

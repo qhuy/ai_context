@@ -1,0 +1,45 @@
+---
+id: <feature-id-kebab-case>
+scope: <back | front | architecture | security>
+title: <Titre court de la feature>
+status: draft
+depends_on: []
+touches: []
+---
+
+# <Titre>
+
+> Copier ce fichier vers `{{ docs_root }}/features/<scope>/<id>.md` pour chaque nouvelle feature.
+
+## Objectif
+
+Pourquoi cette feature existe. Problème qu'elle résout.
+
+## Comportement attendu
+
+Description fonctionnelle depuis le point de vue utilisateur (ou du client de l'API).
+
+## Contrats
+
+- Endpoints / interfaces / événements exposés
+- Types / schémas
+- Pré / post-conditions
+
+## Cross-refs
+
+Dépendances déclarées dans le frontmatter `depends_on`. Décrire brièvement comment cette feature interagit avec chacune.
+
+## Historique / décisions
+
+Choix marquants, ADRs liées, décisions produit.
+
+---
+
+**Frontmatter obligatoire** :
+
+- `id` : slug kebab-case unique dans ce scope
+- `scope` : doit matcher le dossier parent (`features/<scope>/`)
+- `title` : résumé humain
+- `status` : `draft` | `active` | `deprecated`
+- `depends_on` : liste de `<scope>/<id>` (ex : `back/payment-intent`)
+- `touches` : paths (globs OK) du code qui implémente cette feature
