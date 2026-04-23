@@ -48,7 +48,9 @@ ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 mkdir -p "$(dirname "$log_file")"
 while IFS= read -r key; do
   [[ -z "$key" ]] && continue
-  printf '{"feature":"%s","file":"%s","ts":"%s"}\n' "$key" "$rel" "$ts" >> "$log_file"
+  # JSONL via jq pour échapper correctement quotes/backslashes/unicode dans key et rel
+  jq -nc --arg feature "$key" --arg file "$rel" --arg ts "$ts" \
+    '{feature: $feature, file: $file, ts: $ts}' >> "$log_file"
 done <<< "$matches"
 
 exit 0

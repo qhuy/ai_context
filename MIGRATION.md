@@ -121,7 +121,16 @@ Si trop gros, active `AI_CONTEXT_SHOW_ALL_STATUS=0` (défaut) et passe les featu
 ### 4.3 — Hook Claude `PreToolUse` Write/Edit/MultiEdit
 Même démarche : déjà configuré dans `.claude/settings.json.jinja`. Injecte les features pertinentes avant toute écriture.
 
-### 4.4 — CI guard (en dernier)
+### 4.4 — Hooks Claude `PostToolUse` + `Stop` (v0.7.1 — auto-worklog)
+Activer **les deux ensemble** (l'un sans l'autre ne sert à rien) :
+- `PostToolUse` Write/Edit/MultiEdit → `bash .ai/scripts/auto-worklog-log.sh` (log volatile par tour).
+- `Stop` → `bash .ai/scripts/auto-worklog-flush.sh` (flush du log vers les worklogs + bump `progress.updated`).
+
+Déjà déclarés dans `.claude/settings.json.jinja` du template — vérifier dans `/hooks` qu'ils sont activés côté Claude Code.
+
+Impact : les worklogs se remplissent **sans intervention manuelle** au fil des éditions. `/aic-feature-update` ne sert plus qu'aux changements d'intent (phase, blockers, resume_hint).
+
+### 4.5 — CI guard (en dernier)
 Le workflow `.github/workflows/ai-context-check.yml` lance `check-shims` + `check-features` + `check-ai-references`. **Active-le seulement quand les 3 passent en local.**
 
 Optionnel, plus tard :

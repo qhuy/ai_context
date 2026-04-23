@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## v0.7.2 — 2026-04-23
+
+Durcissement post-audit : corruption silencieuse fermée, docs synchronisées.
+
+### Corrigé
+- **`auto-worklog-log.sh`** — JSON échappé via `jq -nc --arg` au lieu de `printf`. Les chemins contenant quotes/backslashes/unicode ne corrompent plus le JSONL (bug silencieux : le flush ignorait les lignes mal formées sans erreur).
+
+### Nouveau
+- **Détection de cycles `depends_on`** — `check-features.sh` exécute un DFS en jq sur l'index après rebuild. Un cycle `A → B → A` fait échouer le check avec message explicite (`cycle détecté : scope/A → scope/B → scope/A`). Évitait auparavant un crash silencieux de `group_by` au rebuild suivant.
+
+### Tests
+- Smoke-test étendu à **21 étapes** :
+  - #19 `check-feature-coverage.sh --strict` exit 1 quand orphelins présents.
+  - #20 cycle `A→B→A` dans `depends_on` rejeté par `check-features.sh`.
+  - #21 touches morte (renumérotée).
+
+### Docs
+- `PROJECT_STATE.md` rafraîchi (était stale à v0.3.0) — pointe vers CHANGELOG pour l'historique, conserve uniquement l'état courant + roadmap.
+- `MIGRATION.md` — section **4.4** ajoutée pour les hooks Claude `PostToolUse` + `Stop` (auto-worklog v0.7.1). Rappel : les deux doivent être activés ensemble.
+
+### Breaking
+- Aucun. Les projets avec des cycles latents dans `depends_on` verront `check-features.sh` échouer — c'est le comportement souhaité, résoudre en cassant le cycle.
+
 ## v0.7.1 — 2026-04-23
 
 Auto-logging des éditions → worklog sans intervention manuelle.

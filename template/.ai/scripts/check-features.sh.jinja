@@ -111,6 +111,35 @@ done
 echo
 if [[ "$fail" -eq 0 ]]; then
   bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
+
+  # Détection des cycles dans depends_on (via l'index JSON)
+  cycle_idx="$script_dir/../.feature-index.json"
+  if [[ -f "$cycle_idx" ]] && command -v jq >/dev/null 2>&1; then
+    cycle=$(jq -r '
+      (.features | map({key: (.scope + "/" + .id), value: (.depends_on // [])}) | from_entries) as $graph
+      | [$graph | keys[]] as $nodes
+      | def dfs($node; $stack; $visited):
+          if ($stack | index($node)) then
+            ($stack + [$node]) | join(" → ")
+          elif ($visited | index($node)) then
+            empty
+          else
+            ($graph[$node] // [])
+            | map(dfs(.; $stack + [$node]; $visited + [$node]))
+            | add // empty
+          end;
+      $nodes
+      | map(dfs(.; []; []))
+      | map(select(. != null and . != ""))
+      | first // empty
+    ' "$cycle_idx" 2>/dev/null)
+    if [[ -n "$cycle" ]]; then
+      ko "cycle détecté dans depends_on : $cycle"
+      echo "❌ FAIL"
+      exit 1
+    fi
+  fi
+
   echo "✅ PASS"
   exit 0
 else
