@@ -9,6 +9,7 @@ Template [copier](https://copier.readthedocs.io/) pour industrialiser le setup A
 ## Sommaire
 
 - [Pourquoi](#pourquoi)
+- [Architecture](#architecture)
 - [Installation](#installation)
 - [Cas d'usage](#cas-dusage)
   - [1. Scaffolder un nouveau projet](#1-scaffolder-un-nouveau-projet)
@@ -48,6 +49,151 @@ Ce template **industrialise** tout ça :
 | Index stale après switch de branche | Hook git **`post-checkout`** rebuild auto |
 
 ---
+
+## Architecture
+
+Trois plans superposés : (1) **source de vérité** = feature mesh en markdown versionné, (2) **cache** = index JSON reconstruit à la demande, (3) **runtime** = hooks Claude + git qui lisent/écrivent ces deux-là pour guider l'agent sans intervention manuelle.
+
+### Vue d'ensemble
+
+```mermaid
+flowchart LR
+  User([Utilisateur])
+
+  subgraph Claude["Session Claude Code"]
+    direction TB
+    Prompt[Prompt utilisateur]
+    Agent[Agent LLM]
+    Edits[Write / Edit / MultiEdit / Bash]
+    TurnEnd[Fin de tour]
+  end
+
+  subgraph Hooks["Hooks Claude"]
+    direction TB
+    H1[UserPromptSubmit<br/>pre-turn-reminder.sh]
+    H2[PreToolUse Bash git commit<br/>check-commit-features.sh]
+    H3[PreToolUse Write/Edit<br/>features-for-path.sh]
+    H4[PostToolUse Write/Edit<br/>auto-worklog-log.sh]
+    H5[Stop<br/>auto-worklog-flush.sh]
+  end
+
+  subgraph Mesh["Feature mesh — source de vérité (git)"]
+    direction TB
+    Rules[.ai/rules/scope.md]
+    Reminder[.ai/reminder.md]
+    Index_md[.ai/index.md]
+    Feat[(features/scope/id.md<br/>frontmatter + progress)]
+    Wlog[(features/scope/id.worklog.md<br/>append-only)]
+  end
+
+  subgraph Cache["Cache runtime"]
+    direction TB
+    FIndex[(.ai/.feature-index.json)]
+    SLog[(.ai/.session-edits.log<br/>volatile)]
+  end
+
+  subgraph Skills["Skills /aic-* invoqués par l'utilisateur"]
+    direction TB
+    SNew[/aic-feature-new/]
+    SResume[/aic-feature-resume/]
+    SUpdate[/aic-feature-update<br/>intent uniquement/]
+    SHandoff[/aic-feature-handoff/]
+    SGate[/aic-quality-gate/]
+    SDone[/aic-feature-done/]
+  end
+
+  subgraph Scripts["Scripts CLI"]
+    direction TB
+    Build[build-feature-index.sh]
+    Resume[resume-features.sh]
+    Check[check-features.sh<br/>check-feature-coverage.sh<br/>check-shims.sh]
+    Measure[measure-context-size.sh]
+  end
+
+  subgraph Git["Git hooks + CI"]
+    direction TB
+    CM[commit-msg<br/>→ check-commit-features]
+    PC[post-checkout<br/>→ build-feature-index]
+    CI[GitHub Actions<br/>check-shims + check-features]
+  end
+
+  %% Tour Claude
+  User --> Prompt --> H1
+  H1 -->|lit| Reminder & FIndex
+  H1 -->|injecte contexte<br/>actives + reverse deps| Agent
+  Prompt --> Agent
+  Agent --> Edits
+  Edits --> H2 & H3
+  H2 -->|bloque si feat: sans feature| Agent
+  H3 -->|lit| FIndex
+  H3 -->|injecte features concernées| Agent
+  Edits --> H4
+  H4 -->|lit| FIndex
+  H4 -->|append JSONL| SLog
+  Edits --> Feat & Wlog
+  Agent --> TurnEnd --> H5
+  H5 -->|lit| SLog
+  H5 -->|append entrée 'Fichiers modifiés'<br/>bump progress.updated| Wlog & Feat
+  H5 -->|rebuild| FIndex
+  H5 -->|clear| SLog
+
+  %% Skills
+  User -.-> SNew & SResume & SUpdate & SHandoff & SGate & SDone
+  SNew -->|crée| Feat & Wlog
+  SResume -->|scanne| FIndex
+  SResume -->|charge fiche + worklog| Agent
+  SUpdate -->|maj intent| Feat
+  SUpdate -->|append| Wlog
+  SHandoff -->|append bloc HANDOFF| Wlog
+  SGate -->|invoque| Check & Measure
+  SDone -->|valide + scelle| Feat & Wlog
+
+  %% Scripts réutilisés
+  Build -->|compile frontmatter| Feat
+  Build -->|écrit| FIndex
+  Resume -->|lit| FIndex
+  Check -->|valide| Feat
+  Check -->|rebuild à la fin| FIndex
+
+  %% Git hooks
+  Agent -.->|git commit| CM
+  CM -->|valide Conventional + feat: mesh| Feat
+  PC -->|switch de branche| Build
+  CI -->|PR| Check
+
+  classDef truth fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+  classDef cache fill:#fff3e0,stroke:#e65100,color:#bf360c
+  classDef hook fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
+  classDef skill fill:#f3e5f5,stroke:#6a1b9a,color:#4a148c
+  classDef script fill:#fafafa,stroke:#616161,color:#212121
+  classDef git fill:#fce4ec,stroke:#ad1457,color:#880e4f
+  class Rules,Reminder,Index_md,Feat,Wlog truth
+  class FIndex,SLog cache
+  class H1,H2,H3,H4,H5 hook
+  class SNew,SResume,SUpdate,SHandoff,SGate,SDone skill
+  class Build,Resume,Check,Measure script
+  class CM,PC,CI git
+```
+
+### Lecture rapide
+
+- **Vert** = source de vérité (versionnée). Jamais touchée en dehors d'une action explicite.
+- **Orange** = cache (gitignored). Reconstruit déterministiquement à partir du vert ; jetable.
+- **Bleu** = hooks Claude (automatiques, invisibles, silencieux).
+- **Violet** = skills `/aic-*` (invoqués par l'utilisateur, gestes récurrents).
+- **Gris** = scripts CLI (réutilisés par hooks, skills, CI).
+- **Rose** = garde-fous git/CI (bloquants sur intégration).
+
+### Cycle de vie d'un tour Claude
+
+1. **UserPromptSubmit** → `pre-turn-reminder.sh` injecte `reminder.md` + features actives filtrées par `status` + reverse deps.
+2. **Agent** raisonne et décide d'écrire.
+3. **PreToolUse Write/Edit** → `features-for-path.sh` injecte en additional context les features qui couvrent le path modifié (via `touches:`).
+4. **PreToolUse Bash git commit** → `check-commit-features.sh` valide Conventional Commits et bloque `feat:` si aucune feature touchée.
+5. **PostToolUse Write/Edit** → `auto-worklog-log.sh` append au log volatile.
+6. **Stop** (fin de tour) → `auto-worklog-flush.sh` flush le log dans les worklogs des features impactées, bumpe `progress.updated`, rebuild l'index, clear le log.
+
+Aucune de ces étapes ne demande d'action de l'utilisateur. Les skills `/aic-*` servent aux gestes qui requièrent une **décision** : créer, reprendre, changer d'intent, passer la main, clôturer.
 
 ## Installation
 
