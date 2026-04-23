@@ -63,24 +63,30 @@
 - **Warning `fix:`/`refactor:` qui touche un fichier référencé par feature sans update Historique** — étendre `check-commit-features.sh` pour détecter ce cas et warn (non-bloquant d'abord, bloquant plus tard).
 - **Reverse refs dans le reminder** : quand on liste les features, indiquer aussi "si tu touches `back/auth`, les features suivantes dépendent de toi : [...]". Aide à anticiper les impacts cross-scope.
 
-**P1** — robustesse :
+**P1** — robustesse / checks avancés :
 - **`check-workflow-coherence.sh`** : détecte les incohérences entre `.ai/rules/*` et `QUALITY_GATE.md` (règles orphelines, références cassées).
-- **`check-ai-pack-size.sh`** avec tokenizer tiktoken (estimation tokens chargés par le Pack A + scope rules).
+- **`check-feature-coverage.sh`** : vérifie que chaque feature déclarée (`status: active`) a bien du code réel référencé via `touches:` commité — et inversement, que les zones "métier" du code sont couvertes par au moins une feature. Complément à `check-features.sh` (structure) : ici on contrôle la couverture fonctionnelle.
+- **`check-ai-pack-size.sh`** avec tokenizer tiktoken — estimation réelle (en tokens) du Pack A + scope rules chargés. Garde-fou contre la dérive de taille de context.
+- **Hook `PreToolUse` bloquant plus large sur `git commit`** : aujourd'hui on bloque `feat:` sans `features/`. Extension possible : bloquer tout commit qui touche du code sous `touches:` d'une feature sans toucher le fichier feature lui-même (warning v0.4, bloquant v0.5).
 - **Support `status: deprecated`** sur les features : warn si une feature dépend d'une feature deprecated.
 - **Validator YAML frontmatter plus strict** (types, enum sur status : `draft|active|deprecated|archived`).
 
 **P2** — écosystème :
-- **Pipelines CI autres que GitHub Actions** : Azure DevOps, GitLab.
-- **Mode low-context** : exceptions de chargement pour tâches mineures (typo, rename interne).
+- **Pipelines CI autres que GitHub Actions** : Azure DevOps, GitLab (ajouter templates parallèles à `.github/workflows/`).
+- **Mode low-context** : exceptions de chargement explicites pour tâches mineures (typo, rename interne) — configurable via variable copier ou flag runtime.
 - **Stop hook `.ai/state/last-handoff.md`** — Claude écrit son état à la fin du tour pour reprise rapide.
-- **Profil `scope_profile=custom` interactif** (liste de scopes saisie par l'utilisateur).
-- **i18n reminder** (EN, pour projets open-source ou équipes internationales).
-- **Support legacy `.cursorrules`** si besoin pour anciens Cursor.
+- **Profil `scope_profile=custom` interactif** : liste de scopes saisie par l'utilisateur (copier ne gère pas nativement les listes dynamiques, contourner via `_jinja_extensions` ou post-hook).
+- **i18n reminder** : `commit_language: en` génère un reminder en anglais (aujourd'hui FR en dur dans `.ai/reminder.md.jinja` quel que soit le choix).
+- **Support legacy `.cursorrules`** : option pour générer l'ancien format en complément de `.cursor/rules/*.mdc` (Cursor versions < 0.50).
+- **RAG / Memory agentique** (idée inspirée de l'artifact Claude mentionné) :
+  - Un index `features/` parsé en graphe (JSON) → injectable en context de manière sélective selon scope/tâche.
+  - Mémoire locale agent (Claude Code `memory/`) pré-remplie avec scopes actifs + règles projet extraites du template au scaffold.
+  - Stop hook qui auto-met à jour un "learning log" des patterns récurrents par scope (à valider car risque de pollution).
 
 **P3** — méta :
 - **Appliquer le template sur ai_context lui-même** (dog-fooding complet : AGENTS.md, .ai/, features/ pour tracker le dev du template lui-même).
 - **Site docs statique** (mkdocs ou vitepress) généré depuis `docs/`.
-- **`copier` version pinning dans le README** (tester sur copier ≥ 9.x).
+- **`copier` version pinning dans le README** (tester sur copier ≥ 9.x) + tag git `v0.3.0` et les suivants pour reproductibilité `copier update --vcs-ref=v0.3.0`.
 
 ## Points d'attention / dette connue
 
