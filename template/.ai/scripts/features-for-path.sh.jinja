@@ -1,0 +1,85 @@
+#!/bin/bash
+# features-for-path.sh — Trouve les features qui référencent un path donné.
+#
+# Lit le frontmatter `touches:` de chaque {{ docs_root }}/features/*/*.md
+# et retourne les features dont au moins une entrée matche le path.
+#
+# Deux modes :
+#   - CLI : bash features-for-path.sh <path>
+#           Sortie texte, exit 0 si trouvé, exit 1 sinon.
+#   - Claude PreToolUse hook : reçoit un JSON sur stdin {tool_name, tool_input.file_path},
+#           écrit un JSON avec hookSpecificOutput.additionalContext sur stdout.
+#
+# Un `touches:` peut être un chemin exact ou un glob (wildcards shell).
+
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
+features_dir="$repo_root/{{ docs_root }}/features"
+
+# ─── Détection du mode ───
+target_path=""
+mode="cli"
+if [[ $# -ge 1 ]]; then
+  target_path="$1"
+elif [[ ! -t 0 ]]; then
+  # stdin n'est pas un tty → on lit le JSON du hook
+  mode="hook"
+  payload=$(cat)
+  tool_name=$(echo "$payload" | jq -r '.tool_name // ""')
+  case "$tool_name" in
+    Write|Edit|MultiEdit) ;;
+    *) exit 0 ;;  # pas un outil d'écriture → silence
+  esac
+  target_path=$(echo "$payload" | jq -r '.tool_input.file_path // .tool_input.path // ""')
+fi
+
+if [[ -z "$target_path" ]]; then
+  [[ "$mode" == "cli" ]] && { echo "Usage : $0 <path>" >&2; exit 2; }
+  exit 0
+fi
+
+# Path relatif au repo
+rel_path="${target_path#"$repo_root/"}"
+
+# ─── Scan des features ───
+matches=""
+if [[ -d "$features_dir" ]]; then
+  shopt -s nullglob
+  for f in "$features_dir"/*/*.md; do
+    touches=$(awk '/^touches:/{flag=1; next} flag && /^  *-/{print; next} flag && /^[^[:space:]]/{flag=0}' "$f" \
+      | sed -E 's/^[[:space:]]*-[[:space:]]*//; s/["'"'"']//g')
+    while IFS= read -r entry; do
+      [[ -z "$entry" ]] && continue
+      [[ "$entry" == "[]" ]] && continue
+      # Match : glob (shell pattern) ou préfixe de dossier
+      if [[ "$rel_path" == $entry ]] || [[ "$rel_path" == $entry/* ]]; then
+        scope=$(basename "$(dirname "$f")")
+        id=$(basename "$f" .md)
+        matches+="  • ${scope}/${id} (${f#$repo_root/})"$'\n'
+        break
+      fi
+    done <<< "$touches"
+  done
+fi
+
+# ─── Output ───
+if [[ "$mode" == "hook" ]]; then
+  if [[ -z "$matches" ]]; then
+    exit 0
+  fi
+  ctx=$'⚠️  Features concernées par ce fichier — relis-les AVANT d\'écrire, mets à jour leur section Historique APRÈS :\n'"$matches"
+  jq -n --arg c "$ctx" '{
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      additionalContext: $c
+    }
+  }'
+else
+  if [[ -z "$matches" ]]; then
+    echo "Aucune feature ne référence '$rel_path' via touches:."
+    exit 1
+  fi
+  echo "Features concernées par '$rel_path' :"
+  printf '%s' "$matches"
+fi

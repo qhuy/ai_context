@@ -18,8 +18,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.command' | grep -qE '^git[[:space:]]+commit' || exit 0; msg=$(jq -r '.tool_input.command' | grep -oE -- '-m[[:space:]]+\"[^\"]*\"' | head -n1 | sed -E 's/^-m[[:space:]]+\"(.*)\"$/\\1/'); CLAUDE_COMMIT_MSG=\"$msg\" bash .ai/scripts/check-commit-features.sh",
+            "command": "bash .ai/scripts/check-commit-features.sh",
             "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .ai/scripts/features-for-path.sh",
+            "timeout": 3
           }
         ]
       }

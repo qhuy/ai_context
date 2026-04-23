@@ -50,12 +50,52 @@ fi
 echo "  ✓ message invalide rejeté"
 
 echo
-echo "[6/6] check-commit-features : 'fix: ...' passe sans toucher features/"
+echo "[6/8] check-commit-features : 'fix: ...' passe sans toucher features/"
 if ! CLAUDE_COMMIT_MSG="fix: bug quelconque" bash "$OUT/.ai/scripts/check-commit-features.sh"; then
   echo "  ✗ 'fix:' sans features/ a été rejeté"
   exit 1
 fi
 echo "  ✓ fix: accepté"
+
+echo
+echo "[7/8] features-for-path : silent si aucune feature, matche via touches:"
+if ! bash "$OUT/.ai/scripts/features-for-path.sh" src/foo.ts >/dev/null 2>&1; then
+  echo "  ✓ aucune feature → exit 1 (attendu)"
+fi
+mkdir -p "$OUT/.docs/features/back"
+cat > "$OUT/.docs/features/back/sample.md" <<'FEAT'
+---
+id: sample
+scope: back
+title: Sample
+status: active
+depends_on: []
+touches:
+  - src/foo.ts
+---
+FEAT
+mkdir -p "$OUT/src" && echo "// stub" > "$OUT/src/foo.ts"
+( cd "$OUT" && bash .ai/scripts/features-for-path.sh src/foo.ts | grep -q 'back/sample' ) \
+  && echo "  ✓ path→feature résolu"
+
+echo
+echo "[8/8] check-features : 'touches:' morte fait échouer"
+cat > "$OUT/.docs/features/back/dead.md" <<'FEAT'
+---
+id: dead
+scope: back
+title: Dead touches
+status: active
+depends_on: []
+touches:
+  - this/path/does/not/exist
+---
+FEAT
+if ( cd "$OUT" && bash .ai/scripts/check-features.sh ) >/dev/null 2>&1; then
+  echo "  ✗ touches morte acceptée"
+  exit 1
+fi
+echo "  ✓ touches morte rejetée"
 
 echo
 echo "✅ smoke-test PASS"

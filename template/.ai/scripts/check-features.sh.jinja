@@ -6,6 +6,7 @@
 #   - clés obligatoires : id, scope, title, status
 #   - scope == nom du dossier parent
 #   - chaque depends_on pointe vers un fichier existant
+#   - chaque touches pointe vers un chemin existant (fichier, dossier, ou glob résolvable)
 #
 # Usage : bash .ai/scripts/check-features.sh
 
@@ -18,6 +19,7 @@ FEATURES_DIR="{{ docs_root }}/features"
 fail=0
 ok() { printf "  \033[32m✓\033[0m %s\n" "$1"; }
 ko() { printf "  \033[31m✗\033[0m %s\n" "$1"; fail=1; }
+warn() { printf "  \033[33m⚠\033[0m %s\n" "$1"; }
 
 echo "═══ check-features ═══"
 
@@ -35,6 +37,8 @@ if [[ {% raw %}${#files[@]}{% endraw %} -eq 0 ]]; then
 fi
 
 for f in "${files[@]}"; do
+  file_fail=0
+
   # Extrait le frontmatter (entre --- et ---)
   fm=$(awk '/^---$/{c++;next} c==1' "$f")
   if [[ -z "$fm" ]]; then
@@ -46,6 +50,7 @@ for f in "${files[@]}"; do
   for key in id scope title status; do
     if ! echo "$fm" | grep -qE "^$key:"; then
       ko "$f : clé frontmatter '$key' manquante"
+      file_fail=1
     fi
   done
 
@@ -54,6 +59,7 @@ for f in "${files[@]}"; do
   declared_scope=$(echo "$fm" | grep -E '^scope:' | sed -E 's/^scope:[[:space:]]*//; s/["'"'"']//g' | tr -d '[:space:]')
   if [[ -n "$declared_scope" && "$declared_scope" != "$folder_scope" ]]; then
     ko "$f : scope '$declared_scope' ne matche pas le dossier '$folder_scope'"
+    file_fail=1
   fi
 
   # depends_on : chaque entrée doit pointer vers un fichier existant
@@ -65,10 +71,28 @@ for f in "${files[@]}"; do
     target="$FEATURES_DIR/$dep.md"
     if [[ ! -f "$target" ]]; then
       ko "$f : depends_on '$dep' → $target introuvable"
+      file_fail=1
     fi
   done <<< "$deps"
 
-  [[ "$fail" -eq 0 ]] && ok "$f"
+  # touches : chaque entrée doit matcher au moins un chemin réel (fichier, dossier, ou glob)
+  tchs=$(awk '/^touches:/{flag=1; next} flag && /^  *-/{print; next} flag && /^[^[:space:]]/{flag=0}' "$f" \
+    | sed -E 's/^[[:space:]]*-[[:space:]]*//; s/["'"'"']//g')
+  while IFS= read -r t; do
+    [[ -z "$t" ]] && continue
+    [[ "$t" == "[]" ]] && continue
+    matches=( $t )  # expansion shell du glob
+    if [[ {% raw %}${#matches[@]}{% endraw %} -eq 0 ]] || [[ ! -e "${matches[0]}" && ! -d "${matches[0]}" ]]; then
+      if [[ -e "$t" || -d "$t" ]]; then
+        :
+      else
+        ko "$f : touches '$t' ne résout aucun chemin réel"
+        file_fail=1
+      fi
+    fi
+  done <<< "$tchs"
+
+  [[ "$file_fail" -eq 0 ]] && ok "$f"
 done
 
 echo

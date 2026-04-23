@@ -1,7 +1,11 @@
 #!/bin/bash
 # Pre-turn protocol reminder ({{ project_name }}).
 #
-# Lit le contenu de .ai/reminder.md et l'injecte avant chaque prompt utilisateur.
+# Injecte :
+#   - le contenu statique de .ai/reminder.md
+#   - la liste dynamique des features actives (par scope)
+#   - un rappel des dépendances croisées (depends_on)
+#
 # Appelé par les hooks agent-spécifiques :
 #   - Claude Code : UserPromptSubmit hook dans .claude/settings.json
 #   - Cursor : statique via .cursor/rules/protocol-reminder.mdc
@@ -14,7 +18,10 @@
 set -euo pipefail
 
 format="${1:-text}"
-reminder_file="$(dirname "$0")/../reminder.md"
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+repo_root="$(cd "$script_dir/../.." && pwd)"
+reminder_file="$script_dir/../reminder.md"
+features_dir="$repo_root/{{ docs_root }}/features"
 
 if [[ ! -f "$reminder_file" ]]; then
   echo "reminder.md introuvable : $reminder_file" >&2
@@ -23,9 +30,41 @@ fi
 
 reminder=$(cat "$reminder_file")
 
+# ─── Inventaire dynamique des features ───
+feature_section=""
+if [[ -d "$features_dir" ]]; then
+  shopt -s nullglob
+  tmp=""
+  for scope_dir in "$features_dir"/*/; do
+    [[ -d "$scope_dir" ]] || continue
+    scope_name=$(basename "$scope_dir")
+    files=("$scope_dir"/*.md)
+    [[ {% raw %}${#files[@]}{% endraw %} -eq 0 ]] && continue
+
+    scope_line="  • ${scope_name}/ :"
+    for f in "${files[@]}"; do
+      id=$(basename "$f" .md)
+      status=$(awk '/^---$/{c++;next} c==1 && /^status:/{print; exit}' "$f" \
+        | sed -E 's/^status:[[:space:]]*//; s/["'"'"']//g' | tr -d '[:space:]')
+      status="${status:-?}"
+      scope_line+=" ${id}(${status})"
+    done
+    tmp+="${scope_line}"$'\n'
+  done
+
+  if [[ -n "$tmp" ]]; then
+    feature_section=$'\n\n── Features actives (lis le .md du scope primaire AVANT toute écriture) ──\n'
+    feature_section+="$tmp"
+  else
+    feature_section=$'\n\n── Features actives ──\n  (aucune feature documentée — la 1ère tâche DOIT en créer une)\n'
+  fi
+fi
+
+full_reminder="${reminder}${feature_section}"
+
 case "$format" in
   --format=json)
-    jq -n --arg ctx "$reminder" '{
+    jq -n --arg ctx "$full_reminder" '{
       hookSpecificOutput: {
         hookEventName: "UserPromptSubmit",
         additionalContext: $ctx
@@ -33,7 +72,7 @@ case "$format" in
     }'
     ;;
   --format=text|text)
-    echo "$reminder"
+    echo "$full_reminder"
     ;;
   *)
     echo "Format inconnu : $format" >&2

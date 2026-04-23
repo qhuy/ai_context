@@ -11,13 +11,12 @@
 1. Ce fichier (`.ai/index.md`)
 2. `.ai/quality/QUALITY_GATE.md` — critères BLOQUANTS avant DONE
 
-Puis **identifier le scope primaire** et charger uniquement :
+Puis **identifier le scope primaire** et charger :
 
 3. `.ai/rules/<scope>.md` (Pack B, scope-dépendant)
-
-Et enfin, si la tâche touche une feature (quasi toujours) :
-
-4. `{{ docs_root }}/features/<scope>/<id>.md` (source of truth fonctionnelle)
+4. **Lister** `ls {{ docs_root }}/features/<scope>/` — obligatoire à chaque tâche (pas conditionnel).
+5. Si la tâche touche une feature existante → charger `{{ docs_root }}/features/<scope>/<id>.md` **et** suivre récursivement ses `depends_on`.
+6. Si la tâche crée une nouvelle feature → créer le fichier depuis `{{ docs_root }}/FEATURE_TEMPLATE.md` AVANT tout commit.
 
 ## Scopes disponibles
 

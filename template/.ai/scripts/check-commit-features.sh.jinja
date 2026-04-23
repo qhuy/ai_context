@@ -2,9 +2,10 @@
 # check-commit-features.sh — Valide qu'un commit respecte Conventional Commits
 # et que les commits `feat:` touchent au moins un fichier features/.
 #
-# Deux modes d'appel :
-#   - Git commit-msg hook : $1 = chemin vers le fichier de commit message.
-#   - Claude PreToolUse hook : message lu depuis la var env CLAUDE_COMMIT_MSG.
+# Trois modes d'appel :
+#   - Git commit-msg hook    : $1 = chemin vers le fichier de commit message.
+#   - Claude PreToolUse hook : JSON Claude sur stdin (tool_name=Bash, .tool_input.command).
+#   - Explicite              : var env CLAUDE_COMMIT_MSG.
 #
 # Exit 0 = OK, 1 = BLOCK.
 
@@ -14,17 +15,42 @@ cd "$(git rev-parse --show-toplevel)"
 
 FEATURES_DIR="{{ docs_root }}/features"
 
-# Récupère le message
+# ─── Extraction du message ───
+msg=""
+
 if [[ -n "${1:-}" && -f "$1" ]]; then
   msg=$(head -n1 "$1")
 elif [[ -n "${CLAUDE_COMMIT_MSG:-}" ]]; then
   msg=$(echo "$CLAUDE_COMMIT_MSG" | head -n1)
+elif [[ ! -t 0 ]]; then
+  # JSON Claude sur stdin
+  payload=$(cat)
+  tool_name=$(echo "$payload" | jq -r '.tool_name // ""')
+  [[ "$tool_name" != "Bash" ]] && exit 0
+
+  cmd=$(echo "$payload" | jq -r '.tool_input.command // ""')
+  case "$cmd" in *git*commit*) ;; *) exit 0 ;; esac
+
+  # Extraction best-effort du message :
+  #   -m "simple"        → capture interne
+  #   -m 'simple'        → capture interne
+  #   -m "$(cat <<'EOF'  → 1ère ligne entre les marqueurs EOF
+  if [[ "$cmd" =~ -m[[:space:]]+\"([^\"]+)\" ]]; then
+    msg="${BASH_REMATCH[1]}"
+  elif [[ "$cmd" =~ -m[[:space:]]+\'([^\']+)\' ]]; then
+    msg="${BASH_REMATCH[1]}"
+  elif [[ "$cmd" == *"<<'EOF'"* ]]; then
+    msg=$(echo "$cmd" | awk "/<<'EOF'/{f=1; next} f && /^EOF/{exit} f" | head -n1)
+  fi
+
+  # Si on n'a rien pu extraire : laisser passer, le git commit-msg hook rattrapera.
+  [[ -z "$msg" ]] && exit 0
 else
-  # Impossible de valider sans message ; on laisse passer (le commit-msg hook rattrapera)
+  # Pas de source → laisser passer.
   exit 0
 fi
 
-# Types autorisés (Conventional Commits)
+# ─── Validation Conventional Commits ───
 valid_types='^(feat|fix|refactor|chore|test|docs|style|perf|ci|build|revert)(\([a-z0-9_/-]+\))?!?:'
 
 if ! echo "$msg" | grep -qE "$valid_types"; then
@@ -35,7 +61,7 @@ if ! echo "$msg" | grep -qE "$valid_types"; then
   exit 1
 fi
 
-# Si type feat → doit toucher un fichier features/
+# ─── feat: → features/ obligatoire ───
 type=$(echo "$msg" | sed -E 's/^([a-z]+).*/\1/')
 if [[ "$type" == "feat" ]]; then
   staged=$(git diff --cached --name-only 2>/dev/null || git diff --name-only)

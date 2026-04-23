@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## v0.3.0 — 2026-04-23
+
+Garantie d'exploitation du maillage feature (pas seulement de création).
+
+### Nouveau
+- `.ai/scripts/features-for-path.sh` — lit le `touches:` des features et retourne celles qui concernent un path donné. Mode CLI + mode hook Claude (stdin JSON).
+- Hook Claude `PreToolUse` sur `Write|Edit|MultiEdit` → appelle `features-for-path.sh`, injecte en `additionalContext` les features concernées avant toute écriture.
+- `pre-turn-reminder.sh` enrichi — liste dynamique des features actives par scope (avec statut) injectée à chaque tour.
+
+### Changé
+- `check-features.sh` — valide désormais que chaque entrée `touches:` résout un chemin réel (fichier, dossier, ou glob). Une référence morte fait échouer le check.
+- `check-commit-features.sh` — accepte maintenant du JSON Claude sur stdin (extraction robuste du message depuis `-m "..."`, `-m '...'`, ou heredoc `cat <<'EOF'`). Fix d'un bug v0.2.0 où le hook Claude consommait stdin deux fois avec `jq`.
+- `.claude/settings.json` — hook Bash simplifié (délégué à `check-commit-features.sh` au lieu d'un inline `jq`).
+- `.ai/index.md` et `.ai/reminder.md` — suppression de la wiggle room : "lister `features/<scope>/`" devient obligatoire à chaque tour (plus de "si applicable").
+
+### Philosophie
+v0.2 garantissait la **création** du maillage (hooks bloquants). v0.3 garantit son **exploitation** (context dynamique injecté à chaque tour + avant chaque écriture).
+
 ## v0.2.0 — 2026-04-23
 
 Feature mesh enforcement — systématique, organisé par scope, cross-refs imposées.
