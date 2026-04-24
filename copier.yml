@@ -27,6 +27,9 @@ _exclude:
   - "{% if tech_profile not in ['dotnet-clean-cqrs', 'fullstack-dotnet-react'] %}.ai/rules/tech-dotnet.md{% endif %}"
   - "{% if tech_profile not in ['react-next', 'fullstack-dotnet-react'] %}.ai/rules/tech-react.md{% endif %}"
   - "{% if tech_profile != 'fullstack-dotnet-react' %}.ai/rules/stack-fullstack-dotnet-react.md{% endif %}"
+  # Squelettes DS (front uniquement)
+  - "{% if tech_profile not in ['react-next', 'fullstack-dotnet-react'] %}docs/design-system-registry.md{% endif %}"
+  - "{% if tech_profile not in ['react-next', 'fullstack-dotnet-react'] %}docs/atomic-design-map.md{% endif %}"
   # Dossiers features/<scope>/ conditionnels (scopes métier uniquement)
   - "{% if 'back' not in scopes %}{{ docs_root }}/features/back{% endif %}"
   - "{% if 'front' not in scopes %}{{ docs_root }}/features/front{% endif %}"

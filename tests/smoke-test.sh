@@ -707,6 +707,11 @@ if [[ -f "$OUT_DOTNET/.ai/rules/tech-react.md" ]] || [[ -f "$OUT_DOTNET/.ai/rule
   rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK"
   exit 1
 fi
+if [[ -f "$OUT_DOTNET/docs/design-system-registry.md" ]] || [[ -f "$OUT_DOTNET/docs/atomic-design-map.md" ]]; then
+  echo "  ✗ squelettes DS générés pour dotnet-clean-cqrs (front uniquement)"
+  rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK"
+  exit 1
+fi
 if ! grep -q "tech-dotnet.md" "$OUT_DOTNET/.ai/index.md"; then
   echo "  ✗ index ne référence pas tech-dotnet.md"
   rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK"
@@ -727,6 +732,13 @@ if [[ -f "$OUT_REACT/.ai/rules/tech-dotnet.md" ]] || [[ -f "$OUT_REACT/.ai/rules
   rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK"
   exit 1
 fi
+for f in design-system-registry.md atomic-design-map.md; do
+  if [[ ! -f "$OUT_REACT/docs/$f" ]]; then
+    echo "  ✗ squelette docs/$f absent pour react-next"
+    rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK"
+    exit 1
+  fi
+done
 if ! grep -q "tech-react.md" "$OUT_REACT/.ai/index.md"; then
   echo "  ✗ index ne référence pas tech-react.md"
   rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK"
@@ -738,6 +750,13 @@ copier copy --defaults --trust --vcs-ref=HEAD \
   --data scope_profile=fullstack \
   --data tech_profile=fullstack-dotnet-react \
   "$REPO" "$OUT_FULLSTACK" >/dev/null
+for f in design-system-registry.md atomic-design-map.md; do
+  if [[ ! -f "$OUT_FULLSTACK/docs/$f" ]]; then
+    echo "  ✗ squelette docs/$f absent pour fullstack-dotnet-react"
+    rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK"
+    exit 1
+  fi
+done
 for f in tech-dotnet.md tech-react.md stack-fullstack-dotnet-react.md; do
   if [[ ! -f "$OUT_FULLSTACK/.ai/rules/$f" ]]; then
     echo "  ✗ $f absent pour fullstack-dotnet-react"

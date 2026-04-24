@@ -46,3 +46,9 @@
 ## 2026-04-24 18:13 — auto
 - Fichiers modifiés :
   - template/.ai/rules/stack-fullstack-dotnet-react.md.jinja
+
+## 2026-04-24 18:27 — auto
+- Fichiers modifiés :
+  - copier.yml
+  - template/docs/atomic-design-map.md.jinja
+  - template/docs/design-system-registry.md.jinja

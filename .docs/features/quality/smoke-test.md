@@ -47,3 +47,4 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-04-24 : ajout [26/27] — vérifie le helper `_lib.sh path_matches_touch` sur matching exact, dossier, glob `**` et faux positifs proches.
 - 2026-04-24 : ajout [27/27] — scaffold avec `docs_root=docs`, puis vérifie `check-features`, `features-for-path` et l'index JSON sur `docs/features`.
 - 2026-04-24 : ajout [28/28] — vérifie les rendus conditionnels `tech_profile` pour `dotnet-clean-cqrs`, `react-next` et `fullstack-dotnet-react` (fichiers générés/exclus + références dans `.ai/index.md`).
+- 2026-04-24 : extension [28/28] avec 6 assertions sur les squelettes DS (`docs/design-system-registry.md`, `docs/atomic-design-map.md`) — absents en profil `dotnet-clean-cqrs`, présents pour `react-next` et `fullstack-dotnet-react`. Maintenance portée par la fiche `core/preset-ds-skeletons`.
