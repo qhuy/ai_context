@@ -1,0 +1,87 @@
+#!/bin/bash
+# pre-commit git hook — auto-progression universelle (tous agents).
+#
+# Pourquoi : le hook Claude `Stop` (auto-progress.sh) bascule les phases
+# silencieusement pour les utilisateurs Claude. Pour garantir que tout agent
+# ({{ agents | join(', ') }}, humain) bénéficie du même automatisme,
+# on ré-applique la logique au moment du commit — point de convergence universel.
+#
+# Comportement :
+#   1. Dérive les features touchées depuis `git diff --cached --name-only`
+#      (via `.feature-index.json`, même matching que auto-worklog-log.sh).
+#   2. Matérialise `.ai/.session-edits.flushed` au format JSONL attendu par
+#      auto-progress.sh (seulement si le trace est vide/absent — on ne
+#      clobbe pas un trace Claude déjà consommé).
+#   3. Invoque `auto-progress.sh`.
+#   4. Re-stage les fiches/worklogs modifiés pour qu'ils soient dans le commit.
+#
+# Non bloquant : toute erreur → exit 0 (on ne casse jamais un commit humain).
+
+set -uo pipefail
+
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+index_file="$repo_root/.ai/.feature-index.json"
+trace_file="$repo_root/.ai/.session-edits.flushed"
+progress_script="$repo_root/.ai/scripts/auto-progress.sh"
+
+[[ ! -f "$index_file" ]] && exit 0
+[[ ! -x "$progress_script" && ! -f "$progress_script" ]] && exit 0
+command -v jq >/dev/null 2>&1 || exit 0
+
+# Fichiers stagés (ajoutés/modifiés ; pas les suppressions)
+staged=$(git diff --cached --name-only --diff-filter=AM 2>/dev/null)
+[[ -z "$staged" ]] && exit 0
+
+ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+# Si le trace existe déjà et est non-vide (ex: Stop hook Claude n'a pas tourné
+# ou a été interrompu), on le complète ; sinon on le crée.
+mkdir -p "$(dirname "$trace_file")"
+: >> "$trace_file"
+
+# Pour chaque fichier stagé, trouve les features qui le couvrent via touches:
+while IFS= read -r rel; do
+  [[ -z "$rel" ]] && continue
+  matches=$(jq -r --arg p "$rel" '
+    .features[]
+    | . as $f
+    | ($f.touches // [])[] as $t
+    | select(
+        ($p == $t) or
+        ($t | endswith("/**") and ($p | startswith($t[:-3]))) or
+        ($p | startswith($t + "/"))
+      )
+    | $f.scope + "/" + $f.id
+  ' "$index_file" 2>/dev/null | sort -u)
+
+  [[ -z "$matches" ]] && continue
+
+  while IFS= read -r key; do
+    [[ -z "$key" ]] && continue
+    jq -nc --arg feature "$key" --arg file "$rel" --arg ts "$ts" \
+      '{feature: $feature, file: $file, ts: $ts}' >> "$trace_file"
+  done <<< "$matches"
+done <<< "$staged"
+
+# Pas de match → rien à faire, nettoyage trace si on vient de la créer vide
+[[ ! -s "$trace_file" ]] && { rm -f "$trace_file"; exit 0; }
+
+# Mémorise les fiches pouvant être modifiées pour pouvoir les re-stager après
+features_touched=$(jq -rs 'group_by(.feature) | .[] | .[0].feature' "$trace_file" 2>/dev/null | sort -u)
+
+# Invoque le script partagé (snapshot + awk patch frontmatter + append worklog + rebuild index + vide trace)
+bash "$progress_script" >/dev/null 2>&1 || true
+
+# Re-stage les fiches/worklogs modifiés (sinon la bascule arrive dans le commit suivant)
+while IFS= read -r key; do
+  [[ -z "$key" ]] && continue
+  scope="${key%%/*}"
+  id="${key##*/}"
+  fiche_path=$(jq -r --arg k "$key" '.features[] | select(.scope + "/" + .id == $k) | .path' "$index_file" 2>/dev/null)
+  [[ -z "$fiche_path" ]] && continue
+  worklog_path="$(dirname "$fiche_path")/$id.worklog.md"
+  # git add silencieux, ignore les fichiers non existants / non modifiés
+  git add -- "$fiche_path" "$worklog_path" 2>/dev/null || true
+done <<< "$features_touched"
+
+exit 0

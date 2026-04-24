@@ -127,7 +127,25 @@ Les 5 skills `/aic-feature-{new,update,handoff,done,resume}` et `/aic-quality-ga
 
 - **`workflow/claude-skills`** : périmètre **réduit radicalement** (de 6 skills exposés à 0 + 2 optionnels). Sera rouverte au moment de l'implem effective pour acter ce changement.
 - **`workflow/auto-worklog`** : brique fondatrice — l'auto-progression s'appuie sur ses logs PostToolUse + Stop pour détecter les transitions.
+- **`workflow/git-hooks`** : héberge le hook `pre-commit` qui porte l'auto-progression pour tous les agents non-Claude (voir section Compatibilité ci-dessous).
 - **`core/feature-index-cache`** : source pour la résolution fuzzy de cible (mode override `/aic`).
+
+## Compatibilité multi-agents
+
+L'auto-progression doit être **universelle** : le multiselect `agents` de `copier.yml` liste `claude, codex, cursor, gemini, copilot` — promettre un automatisme qui ne marche que pour Claude romprait le contrat.
+
+Double convergence retenue :
+
+| Canal | Déclenché par | Utilisateurs bénéficiaires | Latence |
+|---|---|---|---|
+| Hook Claude `Stop` (`auto-progress.sh`) | fin de tour Claude Code | Claude uniquement | immédiat (avant même le commit) |
+| Hook git `pre-commit` (`.githooks/pre-commit`) | `git commit` | **tous** (Claude, Codex, Cursor, Gemini, Copilot, humain CLI) | au commit |
+
+Les deux canaux partagent le **même script** (`.ai/scripts/auto-progress.sh`) et le même format de trace (`.session-edits.flushed`). Le hook `pre-commit` matérialise la trace à partir des fichiers stagés ; le hook Claude `Stop` la reçoit déjà construite par `auto-worklog-flush.sh`.
+
+Idempotence : si Claude a déjà auto-progressé dans le tour (phase passée de `spec` à `implement`), le `pre-commit` ne refait rien (`current_phase != "spec"` → continue). Aucun double-bump.
+
+Le skill `/aic` (mode override) reste Claude-only — acceptable : c'est un mode exceptionnel. Les autres agents peuvent éditer directement la fiche si besoin d'override (accessible, documenté dans `AGENTS.md`).
 
 ## Cross-scope anticipé (à l'implem)
 
@@ -143,3 +161,4 @@ Les 5 skills `/aic-feature-{new,update,handoff,done,resume}` et `/aic-quality-ga
 - **Préfixe forcé `/aic` sur tous les prompts** : envisagé puis **rejeté** (friction massive sans gain réel ; les hard rules + pre-turn-reminder couvrent déjà la discipline ; cas hors-skills inévitables).
 - **Renommage `→ workflow/auto-progress`** : envisagé puis **rejeté** pour stabilité d'`id` (cohérent avec notre propre heuristique extension/création).
 - Modèle final inspiré de la philosophie déjà présente dans le projet : *« le rituel doit être invisible »* (cf. `auto-worklog`).
+- **2026-04-24** — Ajout section `Compatibilité multi-agents` après prise de conscience du gap Codex : le hook Stop est Claude-only. Option B (git pre-commit comme point de convergence universel) retenue et implémentée dans `workflow/git-hooks` (mini-chantier 1.5, avant le skill `/aic` lui-même).
