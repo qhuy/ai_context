@@ -26,7 +26,7 @@ Vérifier en un script que la chaîne complète tient : `copier copy` → check-
 ## Comportement attendu
 
 - Lancement local : `bash tests/smoke-test.sh`.
-- 24 assertions, exit non-zéro à la première qui casse.
+- 25 assertions, exit non-zéro à la première qui casse.
 - Crée un projet jetable dans `/tmp`, applique le template, exerce les scripts.
 
 ## Contrats
@@ -43,3 +43,4 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 
 - v0.7.2 : ajout assertion sur escaping JSON (régression).
 - v0.9 : ajout assertion sur `AI_CONTEXT_FOCUS` graph + i18n FR/EN.
+- 2026-04-24 : ajout [18/25] — vérifie que le pre-commit `auto-progress.sh` bascule `spec → implement`, écrit le snapshot dans `.progress-history.jsonl`, crée la ligne `auto-progress` dans le worklog, et est idempotent (second commit sans re-bump). HANDOFF reçu depuis `workflow/conversational-skills` (chantier 4). Révélé au passage un bug fixé : `auto-progress.sh` ne créait pas le worklog si absent — correctif appliqué dans `.ai/scripts/` + `template/.ai/scripts/`, cross-ref tracée dans `core/template-engine` Historique.

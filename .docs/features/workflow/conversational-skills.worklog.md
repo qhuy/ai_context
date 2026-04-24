@@ -23,3 +23,8 @@
 - Garde-fous : règle asymétrique invisible / rapporté / demande explicite selon réversibilité de l'action.
 - Snapshot d'état stocké en `.ai/.progress-history.jsonl` pour permettre `/aic undo`.
 - next : implémenter le hook Stop d'auto-progression + SKILL.md /aic + assertion smoke-test ; rouvrir workflow/claude-skills pour acter la réduction de périmètre.
+
+## 2026-04-24 12:23 — auto
+- Fichiers modifiés :
+  - copier.yml
+  - template/AGENTS.md.jinja

@@ -106,14 +106,17 @@ while IFS= read -r key; do
     {print}
   ' "$feature_md" > "$tmp" && mv "$tmp" "$feature_md"
 
-  # Append au worklog une ligne d'auto-progression (séparée des edits factuels)
-  if [[ -f "$worklog_path" ]]; then
-    {
-      printf '\n## %s — auto-progress\n' "$(date +"%Y-%m-%d %H:%M")"
-      printf -- '- Bascule phase : spec → implement (édits réels détectés sur %s fichier(s))\n' "$has_real_edit"
-      printf -- '- Annulable via /aic undo (snapshot dans .ai/.progress-history.jsonl)\n'
-    } >> "$worklog_path"
+  # Append au worklog une ligne d'auto-progression (séparée des edits factuels).
+  # Crée le worklog s'il n'existe pas (cas des agents non-Claude qui passent par
+  # le pre-commit git sans avoir auto-worklog-flush pour créer le fichier).
+  if [[ ! -f "$worklog_path" ]]; then
+    printf '# Worklog — %s\n\n' "$key" > "$worklog_path"
   fi
+  {
+    printf '\n## %s — auto-progress\n' "$(date +"%Y-%m-%d %H:%M")"
+    printf -- '- Bascule phase : spec → implement (édits réels détectés sur %s fichier(s))\n' "$has_real_edit"
+    printf -- '- Annulable via /aic undo (snapshot dans .ai/.progress-history.jsonl)\n'
+  } >> "$worklog_path"
 done <<< "$features_touched"
 
 # Rebuild index pour refléter les nouvelles phases

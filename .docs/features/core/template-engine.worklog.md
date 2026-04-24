@@ -15,3 +15,9 @@
 - Fichiers modifiés :
   - template/.githooks/README.md.jinja
   - template/.githooks/pre-commit.jinja
+
+## 2026-04-24 12:23 — auto
+- Fichiers modifiés :
+  - copier.yml
+  - template/.ai/index.md.jinja
+  - template/AGENTS.md.jinja
