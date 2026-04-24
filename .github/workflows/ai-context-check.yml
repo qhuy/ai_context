@@ -1,0 +1,41 @@
+name: ai-context-check
+
+on:
+  push:
+    paths:
+      - '.ai/**'
+      - '.docs/features/**'
+      - 'AGENTS.md'
+      - 'CLAUDE.md'
+      - 'GEMINI.md'
+      - '.github/copilot-instructions.md'
+  pull_request:
+    paths:
+      - '.ai/**'
+      - '.docs/features/**'
+      - 'AGENTS.md'
+      - 'CLAUDE.md'
+      - 'GEMINI.md'
+      - '.github/copilot-instructions.md'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install dependencies (jq, yq)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y jq
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: check-shims
+        run: bash .ai/scripts/check-shims.sh
+
+      - name: check-ai-references
+        run: bash .ai/scripts/check-ai-references.sh
+
+      - name: check-features
+        run: bash .ai/scripts/check-features.sh

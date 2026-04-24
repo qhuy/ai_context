@@ -1,0 +1,23 @@
+#!/bin/bash
+# post-checkout git hook — rebuild l'index feature après un switch de branche.
+#
+# Évite que .ai/.feature-index.json (gitignoré, donc non versionné) reste stale
+# entre branches avec des features différentes.
+#
+# Activation : git config core.hooksPath .githooks
+#
+# Args (fournis par git) : $1=prev-HEAD $2=new-HEAD $3=checkout-type (1=branch, 0=file)
+
+prev_head="${1:-}"
+new_head="${2:-}"
+checkout_type="${3:-0}"
+
+# On ne régénère que sur un checkout de branche (pas un file checkout).
+[[ "$checkout_type" != "1" ]] && exit 0
+# Pas de changement effectif → skip.
+[[ "$prev_head" == "$new_head" ]] && exit 0
+
+if [[ -x .ai/scripts/build-feature-index.sh ]]; then
+  bash .ai/scripts/build-feature-index.sh --write >/dev/null 2>&1 || true
+fi
+exit 0

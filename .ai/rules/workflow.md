@@ -1,0 +1,31 @@
+# Rules — workflow
+
+Comment une tâche entre dans le système, circule, et sort.
+
+## Entrée
+
+1. Lire `.ai/index.md` (Pack A).
+2. Identifier le scope primaire (voir table de routage ci-dessous si présente).
+3. Charger le `.ai/rules/<scope>.md` correspondant.
+
+## Cross-scope
+
+Si la tâche traverse plusieurs scopes : STOP. Émettre un HANDOFF explicite :
+
+```
+HANDOFF
+  from_scope: <scope_actuel>
+  to_scope: <scope_cible>
+  status: <en cours / bloqué / prêt>
+  files_touched: [...]
+  pending: [...]
+  risks: [...]
+```
+
+Attendre confirmation utilisateur avant de basculer.
+
+## Sortie (DONE)
+
+Voir `.ai/quality/QUALITY_GATE.md` — evidence + Doc Impact Decision sont BLOQUANTS.
+
+> Enrichir avec les routes de scope et les conventions de branch / PR spécifiques à ai_context.

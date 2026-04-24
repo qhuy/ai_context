@@ -1,0 +1,179 @@
+#!/bin/bash
+# build-feature-index.sh — Compile le maillage features en JSON (ai_context).
+#
+# Scanne .docs/features/*/*.md et extrait pour chaque feature :
+#   id, scope, status, touches[], depends_on[], path (relatif au repo).
+#
+# Parsing YAML :
+#   - si `yq` (v4) est disponible → parsing propre du frontmatter
+#   - sinon → fallback awk/sed (même logique que check-features.sh)
+#
+# Usage :
+#   build-feature-index.sh           # écrit le JSON sur stdout
+#   build-feature-index.sh --write   # écrit dans .ai/.feature-index.json (atomique, lock)
+#
+# Debug : AI_CONTEXT_DEBUG=1 bash build-feature-index.sh --write
+
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=_lib.sh
+. "$script_dir/_lib.sh"
+
+require_cmd jq
+
+repo_root="$(cd "$script_dir/../.." && pwd)"
+features_dir="$repo_root/.docs/features"
+index_file="$repo_root/.ai/.feature-index.json"
+
+write=0
+[[ "${1:-}" == "--write" ]] && write=1
+
+# ─── Détection yq v4 ───
+has_yq=0
+if command -v yq >/dev/null 2>&1; then
+  if yq --version 2>&1 | grep -qE 'v?4\.'; then
+    has_yq=1
+  fi
+fi
+log_debug "yq v4 disponible : $has_yq"
+
+# Extrait le frontmatter YAML (entre la 1ère et la 2ème ligne ---)
+extract_frontmatter() {
+  awk '/^---$/{c++; next} c==1' "$1"
+}
+
+extract_list_awk() {
+  local file="$1" key="$2"
+  awk -v k="^${key}:" '
+    $0 ~ k {flag=1; next}
+    flag && /^  *-/ {print; next}
+    flag && /^[^[:space:]]/ {flag=0}
+  ' "$file" \
+    | sed -E 's/^[[:space:]]*-[[:space:]]*//; s/["'"'"']//g; s/[[:space:]]+$//' \
+    | grep -vE '^$|^\[\]$' || true
+}
+
+extract_scalar_awk() {
+  local file="$1" key="$2"
+  awk -v k="^${key}:" '$0 ~ k {sub(k, ""); print; exit}' "$file" \
+    | sed -E 's/^[[:space:]]*//; s/["'"'"']//g; s/[[:space:]]+$//'
+}
+
+feature_to_json() {
+  local file="$1"
+  local rel="${file#"$repo_root/"}"
+  local folder_scope
+  folder_scope=$(basename "$(dirname "$file")")
+
+  local id scope status touches_json deps_json
+  local phase="" step="" blockers_json="[]" resume_hint="" updated=""
+
+  if [[ $has_yq -eq 1 ]]; then
+    local fm
+    fm=$(extract_frontmatter "$file")
+    id=$(echo "$fm" | yq -r '.id // ""')
+    scope=$(echo "$fm" | yq -r '.scope // ""')
+    status=$(echo "$fm" | yq -r '.status // ""')
+    touches_json=$(echo "$fm" | yq -o=json -I=0 '.touches // []')
+    deps_json=$(echo "$fm" | yq -o=json -I=0 '.depends_on // []')
+    phase=$(echo "$fm" | yq -r '.progress.phase // ""')
+    step=$(echo "$fm" | yq -r '.progress.step // ""')
+    blockers_json=$(echo "$fm" | yq -o=json -I=0 '.progress.blockers // []')
+    resume_hint=$(echo "$fm" | yq -r '.progress.resume_hint // ""')
+    updated=$(echo "$fm" | yq -r '.progress.updated // ""')
+  else
+    id=$(extract_scalar_awk "$file" "id")
+    scope=$(extract_scalar_awk "$file" "scope")
+    status=$(extract_scalar_awk "$file" "status")
+    touches_json=$(extract_list_awk "$file" "touches" | jq -R . | jq -s .)
+    deps_json=$(extract_list_awk "$file" "depends_on" | jq -R . | jq -s .)
+    # progress.* : parsing best-effort en fallback awk (yq recommandé pour précision)
+    phase=$(awk '/^progress:/{flag=1; next} flag && /^  phase:/{sub(/^  phase:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/["'"'"']//g; s/[[:space:]]+$//')
+    step=$(awk '/^progress:/{flag=1; next} flag && /^  step:/{sub(/^  step:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    resume_hint=$(awk '/^progress:/{flag=1; next} flag && /^  resume_hint:/{sub(/^  resume_hint:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    updated=$(awk '/^progress:/{flag=1; next} flag && /^  updated:/{sub(/^  updated:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/["'"'"']//g; s/[[:space:]]+$//')
+    # progress.blockers : liste sous progress:, items indentés de 4 espaces
+    blockers_raw=$(awk '
+      /^progress:/{flag=1; next}
+      flag && /^  blockers:/{bf=1; next}
+      bf && /^    -/{print; next}
+      bf && /^  [^ ]/{bf=0}
+      flag && /^[^[:space:]]/{flag=0}
+    ' "$file" | sed -E 's/^[[:space:]]*-[[:space:]]*//; s/^"//; s/"$//; s/[[:space:]]+$//' | awk 'NF')
+    if [[ -n "$blockers_raw" ]]; then
+      blockers_json=$(printf '%s\n' "$blockers_raw" | jq -R . | jq -s .)
+    else
+      blockers_json="[]"
+    fi
+  fi
+
+  [[ -z "$id" ]] && id=$(basename "$file" .md)
+  [[ -z "$scope" ]] && scope="$folder_scope"
+  [[ -z "$status" ]] && status="?"
+
+  if [[ "$status" != "?" ]] && ! is_valid_status "$status"; then
+    echo "⚠️  $rel : status='$status' hors enum ($STATUS_ENUM)" >&2
+  fi
+
+  jq -n \
+    --arg id "$id" \
+    --arg scope "$scope" \
+    --arg status "$status" \
+    --arg path "$rel" \
+    --argjson touches "$touches_json" \
+    --argjson depends_on "$deps_json" \
+    --arg phase "$phase" \
+    --arg step "$step" \
+    --argjson blockers "$blockers_json" \
+    --arg resume_hint "$resume_hint" \
+    --arg updated "$updated" \
+    '{
+      id: $id, scope: $scope, status: $status, path: $path,
+      touches: $touches, depends_on: $depends_on,
+      progress: {
+        phase: $phase, step: $step, blockers: $blockers,
+        resume_hint: $resume_hint, updated: $updated
+      }
+    }'
+}
+
+# ─── Construction de l'index ───
+start_ts=$(date +%s 2>/dev/null || echo 0)
+features_json="[]"
+count=0
+if [[ -d "$features_dir" ]]; then
+  entries=()
+  # find -print0 pour supporter les noms avec espaces/caractères spéciaux
+  while IFS= read -r -d '' f; do
+    entries+=("$(feature_to_json "$f")")
+    count=$((count + 1))
+  done < <(find "$features_dir" -mindepth 2 -maxdepth 2 -type f -name '*.md' ! -name '*.worklog.md' -print0 2>/dev/null)
+
+  if [[ ${#entries[@]} -gt 0 ]]; then
+    features_json=$(printf '%s\n' "${entries[@]}" | jq -s .)
+  fi
+fi
+
+generated_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+output=$(jq -n \
+  --arg generated_at "$generated_at" \
+  --argjson features "$features_json" \
+  '{generated_at: $generated_at, features: $features}')
+
+log_debug "features scannées : $count"
+
+write_index() {
+  mkdir -p "$(dirname "$index_file")"
+  local tmp
+  tmp=$(mktemp "${index_file}.XXXXXX")
+  printf '%s\n' "$output" > "$tmp"
+  mv "$tmp" "$index_file"
+  log_debug "index écrit : $index_file"
+}
+
+if [[ $write -eq 1 ]]; then
+  with_index_lock write_index
+else
+  printf '%s\n' "$output"
+fi

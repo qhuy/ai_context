@@ -1,0 +1,118 @@
+#!/bin/bash
+# measure-context-size.sh — Mesure le contexte injecté par les hooks.
+#
+# Sort les tailles (chars) et une estimation tokens (fourchette chars/4..chars/3)
+# pour chaque source d'injection :
+#   - reminder.md statique
+#   - inventaire features (dynamique)
+#   - reverse deps (dynamique)
+#   - features-for-path (sur un path d'exemple si fourni)
+#
+# Si python3 + tiktoken sont dispos, affiche aussi le compte exact (cl100k_base).
+#
+# Usage :
+#   measure-context-size.sh              # mesure reminder complet
+#   measure-context-size.sh --path PATH  # + features-for-path PATH
+
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=_lib.sh
+. "$script_dir/_lib.sh"
+
+require_cmd jq
+
+repo_root="$(cd "$script_dir/../.." && pwd)"
+reminder_file="$script_dir/../reminder.md"
+
+path_arg=""
+if [[ "${1:-}" == "--path" ]]; then
+  path_arg="${2:-}"
+fi
+
+# Estimation tokens : fourchette empirique cl100k_base (Anthropic utilise proche).
+# chars/4 = borne basse (prose), chars/3 = borne haute (code/markup dense).
+estimate_tokens() {
+  local chars=$1
+  local low=$(( chars / 4 ))
+  local high=$(( chars / 3 ))
+  echo "$low..$high"
+}
+
+# Tente tiktoken si dispo
+exact_tokens() {
+  local text="$1"
+  python3 - <<'PY' 2>/dev/null || echo ""
+import sys
+try:
+    import tiktoken
+except ImportError:
+    sys.exit(1)
+enc = tiktoken.get_encoding("cl100k_base")
+text = sys.stdin.read()
+print(len(enc.encode(text)))
+PY
+}
+
+has_tiktoken=0
+if python3 -c "import tiktoken" 2>/dev/null; then
+  has_tiktoken=1
+fi
+
+fmt_line() {
+  local label="$1" text="$2"
+  local chars=${#text}
+  local range
+  range=$(estimate_tokens "$chars")
+  local exact=""
+  if [[ $has_tiktoken -eq 1 ]]; then
+    exact=" exact=$(printf '%s' "$text" | exact_tokens)"
+  fi
+  printf "  %-14s chars=%-6d tokens~=(%s)%s\n" "$label" "$chars" "$range" "$exact"
+}
+
+echo "═══ measure-context-size ═══"
+if [[ $has_tiktoken -eq 0 ]]; then
+  echo "  (tiktoken non installé → estimation fourchette seulement ; pip install tiktoken pour exact)"
+fi
+echo
+
+# Reminder statique
+static=""
+[[ -f "$reminder_file" ]] && static=$(cat "$reminder_file")
+
+# Reminder complet (dynamique)
+full=$(bash "$script_dir/pre-turn-reminder.sh" --format=text 2>/dev/null || echo "")
+
+# Sections dynamiques : on soustrait
+inventory_and_reverse=""
+if [[ -n "$full" && -n "$static" ]]; then
+  inventory_and_reverse="${full#"$static"}"
+fi
+
+# Split inventaire / reverse
+inventory=""
+reverse=""
+if [[ "$inventory_and_reverse" == *"── Dépendances inverses"* ]]; then
+  inventory="${inventory_and_reverse%%── Dépendances inverses*}"
+  reverse="── Dépendances inverses${inventory_and_reverse##*── Dépendances inverses}"
+else
+  inventory="$inventory_and_reverse"
+fi
+
+echo "[UserPromptSubmit → pre-turn-reminder.sh]"
+fmt_line "total" "$full"
+fmt_line "  static" "$static"
+fmt_line "  inventory" "$inventory"
+fmt_line "  reverse_deps" "$reverse"
+
+if [[ -n "$path_arg" ]]; then
+  echo
+  echo "[PreToolUse Write → features-for-path.sh --path $path_arg]"
+  matches=$(bash "$script_dir/features-for-path.sh" "$path_arg" 2>/dev/null || true)
+  fmt_line "matches" "$matches"
+fi
+
+echo
+echo "Override : AI_CONTEXT_SHOW_ALL_STATUS=1 bash $0   # voir le coût avec tous les status"
+exit 0
