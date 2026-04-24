@@ -11,14 +11,12 @@ touches:
   - template/AGENTS.md.jinja
   - copier.yml
   - tests/smoke-test.sh
-# NB : `template/.claude/skills/aic/**` et `template/.claude/skills/aic-resume/**`
-# seront ajoutés à `touches` dès la phase=implement (validateur refuse les
-# globs ne résolvant aucun chemin existant). Friction tracée.
+  - template/.claude/skills/aic/**
 progress:
-  phase: spec
-  step: "re-spec v3 — auto-progression invisible, /aic en override"
+  phase: implement
+  step: "skill /aic écrit (SKILL.md + workflow.md, modes undo + override) ; reste AGENTS.md/_message_after_copy + assertion smoke-test"
   blockers: []
-  resume_hint: "rédiger SKILL.md /aic + hook Stop d'auto-progression + assertion smoke-test ; rouvrir workflow/claude-skills pour acter sa réduction de périmètre"
+  resume_hint: "écrire assertion smoke-test (auto-progression via pre-commit + /aic undo) puis rouvrir workflow/claude-skills pour acter réduction 6→2 skills exposés"
   updated: 2026-04-24
 ---
 
@@ -162,3 +160,4 @@ Le skill `/aic` (mode override) reste Claude-only — acceptable : c'est un mode
 - **Renommage `→ workflow/auto-progress`** : envisagé puis **rejeté** pour stabilité d'`id` (cohérent avec notre propre heuristique extension/création).
 - Modèle final inspiré de la philosophie déjà présente dans le projet : *« le rituel doit être invisible »* (cf. `auto-worklog`).
 - **2026-04-24** — Ajout section `Compatibilité multi-agents` après prise de conscience du gap Codex : le hook Stop est Claude-only. Option B (git pre-commit comme point de convergence universel) retenue et implémentée dans `workflow/git-hooks` (mini-chantier 1.5, avant le skill `/aic` lui-même).
+- **2026-04-24** — Chantier 2 : skill `/aic` écrit (`template/.claude/skills/aic/` + dog-food `.claude/skills/aic/`). 2 modes : `/aic undo` (consomme `.progress-history.jsonl`) et `/aic <phrase>` (override conversationnel avec résolution fuzzy + plan + confirmation). Zéro script Bash dédié — la procédure est entièrement dans `workflow.md`, exécutée par l'agent Claude via ses tools standards (Read/Edit/Bash). Pas de rupture de compatibilité : `/aic` reste Claude-only, les autres agents éditent directement les fiches pour les overrides exceptionnels (documenté comme acceptable).
