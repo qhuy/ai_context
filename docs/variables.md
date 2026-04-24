@@ -10,7 +10,7 @@ Les questions posées par `copier copy` et leurs effets.
 | `commit_language` | choice | `fr` | Langue des commits imposée par les règles |
 | `docs_root` | str | `.docs` | Dossier racine de la doc métier (`.docs` ou `docs`) |
 | `agents` | multiselect | `[claude, codex]` | Shims / hooks générés |
-| `enable_ci_guard` | bool | `false` | Ajoute `.github/workflows/ai-context-check.yml` |
+| `enable_ci_guard` | bool | `true` | Ajoute `.github/workflows/ai-context-check.yml` |
 
 ## Profils `scope_profile`
 

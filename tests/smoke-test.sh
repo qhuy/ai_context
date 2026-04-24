@@ -22,27 +22,27 @@ if ! command -v copier >/dev/null 2>&1; then
 fi
 
 echo
-echo "[1/25] copier copy (profil par défaut)"
+echo "[1/27] copier copy (profil par défaut)"
 copier copy --defaults --trust --vcs-ref=HEAD \
   --data project_name=smoke-project \
   "$REPO" "$OUT"
 
 echo
-echo "[2/25] check-shims"
+echo "[2/27] check-shims"
 bash "$OUT/.ai/scripts/check-shims.sh"
 
 echo
-echo "[3/25] pre-turn-reminder (text + json)"
+echo "[3/27] pre-turn-reminder (text + json)"
 bash "$OUT/.ai/scripts/pre-turn-reminder.sh" --format=text | head -3
 bash "$OUT/.ai/scripts/pre-turn-reminder.sh" --format=json | jq -e '.hookSpecificOutput.additionalContext' > /dev/null \
   && echo "  ✓ json valide"
 
 echo
-echo "[4/25] check-features (attendu : aucune feature → warn mais PASS)"
+echo "[4/27] check-features (attendu : aucune feature → warn mais PASS)"
 bash "$OUT/.ai/scripts/check-features.sh"
 
 echo
-echo "[5/25] check-commit-features : Conventional Commits refusent un message invalide"
+echo "[5/27] check-commit-features : Conventional Commits refusent un message invalide"
 if CLAUDE_COMMIT_MSG="message invalide sans type" bash "$OUT/.ai/scripts/check-commit-features.sh" 2>/dev/null; then
   echo "  ✗ un message invalide a été accepté"
   exit 1
@@ -50,7 +50,7 @@ fi
 echo "  ✓ message invalide rejeté"
 
 echo
-echo "[6/25] check-commit-features : 'fix: ...' passe sans toucher features/"
+echo "[6/27] check-commit-features : 'fix: ...' passe sans toucher features/"
 if ! CLAUDE_COMMIT_MSG="fix: bug quelconque" bash "$OUT/.ai/scripts/check-commit-features.sh"; then
   echo "  ✗ 'fix:' sans features/ a été rejeté"
   exit 1
@@ -58,7 +58,7 @@ fi
 echo "  ✓ fix: accepté"
 
 echo
-echo "[7/25] features-for-path : silent si aucune feature, matche via touches:"
+echo "[7/27] features-for-path : silent si aucune feature, matche via touches:"
 if ! bash "$OUT/.ai/scripts/features-for-path.sh" src/foo.ts >/dev/null 2>&1; then
   echo "  ✓ aucune feature → exit 1 (attendu)"
 fi
@@ -79,7 +79,7 @@ mkdir -p "$OUT/src" && echo "// stub" > "$OUT/src/foo.ts"
   && echo "  ✓ path→feature résolu"
 
 echo
-echo "[8/25] build-feature-index : index JSON créé par features-for-path"
+echo "[8/27] build-feature-index : index JSON créé par features-for-path"
 idx="$OUT/.ai/.feature-index.json"
 if [[ ! -f "$idx" ]]; then
   echo "  ✗ $idx absent après features-for-path.sh"
@@ -92,7 +92,7 @@ fi
 echo "  ✓ index contient sample/back"
 
 echo
-echo "[9/25] build-feature-index : rebuild sur mtime (frontmatter modifié)"
+echo "[9/27] build-feature-index : rebuild sur mtime (frontmatter modifié)"
 before_marker=$(mktemp)
 touch -r "$idx" "$before_marker"
 sleep 1
@@ -107,7 +107,7 @@ rm -f "$before_marker"
 echo "  ✓ index rebuilt après touch"
 
 echo
-echo "[10/25] pre-turn-reminder : dépendances inverses exposées"
+echo "[10/27] pre-turn-reminder : dépendances inverses exposées"
 cat > "$OUT/.docs/features/back/base.md" <<'FEAT'
 ---
 id: base
@@ -139,7 +139,7 @@ fi
 echo "  ✓ reverse deps présentes"
 
 echo
-echo "[11/25] build-feature-index : status hors enum → warn (stderr, pas fail)"
+echo "[11/27] build-feature-index : status hors enum → warn (stderr, pas fail)"
 cat > "$OUT/.docs/features/back/bogus.md" <<'FEAT'
 ---
 id: bogus
@@ -160,7 +160,7 @@ echo "  ✓ warn enum présent"
 rm "$OUT/.docs/features/back/bogus.md"
 
 echo
-echo "[12/25] check-feature-coverage : script exécute et liste orphelins"
+echo "[12/27] check-feature-coverage : script exécute et liste orphelins"
 mkdir -p "$OUT/src"
 echo "// orphan" > "$OUT/src/orphan.ts"
 cov_out=$( cd "$OUT" && bash .ai/scripts/check-feature-coverage.sh 2>&1 ) || true
@@ -172,7 +172,7 @@ fi
 echo "  ✓ coverage script OK"
 
 echo
-echo "[13/25] pre-turn-reminder : status 'done' filtré par défaut + visible via override"
+echo "[13/27] pre-turn-reminder : status 'done' filtré par défaut + visible via override"
 cat > "$OUT/.docs/features/back/legacy.md" <<'FEAT'
 ---
 id: legacy
@@ -203,7 +203,7 @@ echo "  ✓ filtre par status OK + override OK"
 rm "$OUT/.docs/features/back/legacy.md"
 
 echo
-echo "[14/25] measure-context-size : produit une sortie parseable"
+echo "[14/27] measure-context-size : produit une sortie parseable"
 meas_out=$( cd "$OUT" && bash .ai/scripts/measure-context-size.sh 2>&1 )
 if ! echo "$meas_out" | grep -q "tokens~="; then
   echo "  ✗ pas de tokens~= dans la sortie"
@@ -217,7 +217,7 @@ fi
 echo "  ✓ measure-context-size OK"
 
 echo
-echo "[15/25] progress: build-feature-index extrait progress.phase/step/blockers"
+echo "[15/27] progress: build-feature-index extrait progress.phase/step/blockers"
 cat > "$OUT/.docs/features/back/inprog.md" <<'FEAT'
 ---
 id: inprog
@@ -247,7 +247,7 @@ fi
 echo "  ✓ progress.* extrait dans l'index"
 
 echo
-echo "[16/25] resume-features : feature EN COURS listée, feature BLOQUÉE séparée"
+echo "[16/27] resume-features : feature EN COURS listée, feature BLOQUÉE séparée"
 cat > "$OUT/.docs/features/back/blocked.md" <<'FEAT'
 ---
 id: blocked
@@ -294,7 +294,7 @@ echo "  ✓ resume-features buckets corrects (text + json)"
 rm "$OUT/.docs/features/back/inprog.md" "$OUT/.docs/features/back/blocked.md"
 
 echo
-echo "[17/25] auto-worklog : log + flush appendent au worklog et bumpent updated"
+echo "[17/27] auto-worklog : log + flush appendent au worklog et bumpent updated"
 mkdir -p "$OUT/.docs/features/back" "$OUT/src"
 echo "// foo" > "$OUT/src/foo.ts"
 cat > "$OUT/.docs/features/back/autofeat.md" <<'FEAT'
@@ -350,7 +350,7 @@ echo "  ✓ auto-worklog log+flush OK"
 rm "$OUT/.docs/features/back/autofeat.md" "$OUT/.docs/features/back/autofeat.worklog.md"
 
 echo
-echo "[18/25] auto-progress : pre-commit bascule spec → implement + snapshot history"
+echo "[18/27] auto-progress : pre-commit bascule spec → implement + snapshot history"
 # Crée une feature en phase=spec avec un fichier couvert par touches:
 mkdir -p "$OUT/.docs/features/back" "$OUT/src"
 echo "// bar" > "$OUT/src/bar.ts"
@@ -430,7 +430,7 @@ echo "  ✓ auto-progress spec→implement + snapshot + idempotence OK"
 rm -rf "$OUT/.git" "$OUT/.docs/features/back/specfeat.md" "$OUT/.docs/features/back/specfeat.worklog.md" "$OUT/.ai/.progress-history.jsonl" "$OUT/.ai/.session-edits.flushed" 2>/dev/null || true
 
 echo
-echo "[19/25] skills aic-* présents dans .claude/skills/"
+echo "[19/27] skills aic-* présents dans .claude/skills/"
 for s in aic-feature-new aic-feature-resume aic-feature-update aic-feature-handoff aic-quality-gate aic-feature-done; do
   if [[ ! -f "$OUT/.claude/skills/$s/SKILL.md" ]]; then
     echo "  ✗ $s/SKILL.md absent"
@@ -448,7 +448,7 @@ done
 echo "  ✓ 6 skills aic-* présents avec SKILL.md + workflow.md"
 
 echo
-echo "[20/25] check-feature-coverage --strict : exit 1 si orphelins"
+echo "[20/27] check-feature-coverage --strict : exit 1 si orphelins"
 # /src/orphan.ts (créé étape 12) est toujours orphelin
 if ( cd "$OUT" && bash .ai/scripts/check-feature-coverage.sh --strict ) >/dev/null 2>&1; then
   echo "  ✗ --strict a passé malgré des orphelins"
@@ -458,7 +458,7 @@ echo "  ✓ --strict échoue avec orphelins"
 rm -f "$OUT/src/orphan.ts"
 
 echo
-echo "[21/25] check-features : cycle dans depends_on rejeté"
+echo "[21/27] check-features : cycle dans depends_on rejeté"
 cat > "$OUT/.docs/features/back/cycle_a.md" <<'FEAT'
 ---
 id: cycle_a
@@ -491,7 +491,7 @@ echo "  ✓ cycle rejeté"
 rm "$OUT/.docs/features/back/cycle_a.md" "$OUT/.docs/features/back/cycle_b.md"
 
 echo
-echo "[22/25] check-features : warn si active dépend d'une feature deprecated"
+echo "[22/27] check-features : warn si active dépend d'une feature deprecated"
 cat > "$OUT/.docs/features/back/old_api.md" <<'FEAT'
 ---
 id: old_api
@@ -525,7 +525,7 @@ echo "  ✓ deprecated warn OK"
 rm "$OUT/.docs/features/back/old_api.md" "$OUT/.docs/features/back/new_api.md"
 
 echo
-echo "[23/25] reminder i18n : commit_language=en génère un reminder EN"
+echo "[23/27] reminder i18n : commit_language=en génère un reminder EN"
 OUT_EN="/tmp/ai-context-smoke-en-$$"
 copier copy --defaults --trust --vcs-ref=HEAD \
   --data project_name=smoke-en \
@@ -546,7 +546,7 @@ rm -rf "$OUT_EN"
 echo "  ✓ reminder EN OK"
 
 echo
-echo "[24/25] pre-turn-reminder --focus : scope + 1-hop, exclut le reste"
+echo "[24/27] pre-turn-reminder --focus : scope + 1-hop, exclut le reste"
 mkdir -p "$OUT/.docs/features/back" "$OUT/.docs/features/front" "$OUT/.docs/features/architecture"
 cat > "$OUT/.docs/features/back/api.md" <<'FEAT'
 ---
@@ -617,7 +617,7 @@ echo "  ✓ focus filter OK (scope + 1-hop + env + fallback)"
 rm "$OUT/.docs/features/back/api.md" "$OUT/.docs/features/front/ui.md" "$OUT/.docs/features/architecture/unrelated.md"
 
 echo
-echo "[25/25] check-features : 'touches:' morte fait échouer"
+echo "[25/27] check-features : 'touches:' morte fait échouer"
 cat > "$OUT/.docs/features/back/dead.md" <<'FEAT'
 ---
 id: dead
@@ -634,6 +634,58 @@ if ( cd "$OUT" && bash .ai/scripts/check-features.sh ) >/dev/null 2>&1; then
   exit 1
 fi
 echo "  ✓ touches morte rejetée"
+rm "$OUT/.docs/features/back/dead.md"
+
+echo
+echo "[26/27] _lib.sh : matching touches centralisé"
+if ! (
+  cd "$OUT"
+  . .ai/scripts/_lib.sh
+  path_matches_touch "src/foo.ts" "src/foo.ts"
+  path_matches_touch "src/auth/service.ts" "src/auth"
+  path_matches_touch "src/auth/service.ts" "src/auth/**"
+  path_matches_touch "src/auth/service.ts" "src/**/*.ts"
+  ! path_matches_touch "src/auth/service.ts" "src/other"
+  ! path_matches_touch "src/auth/service.ts" "src/auth-other"
+); then
+  echo "  ✗ matching touches incohérent"
+  exit 1
+fi
+echo "  ✓ matching exact/dossier/glob/** OK"
+
+echo
+echo "[27/27] docs_root=docs : scripts runtime suivent le dossier configuré"
+OUT_DOCS="/tmp/ai-context-smoke-docs-root-$$"
+copier copy --defaults --trust --vcs-ref=HEAD \
+  --data project_name=smoke-docs-root \
+  --data docs_root=docs \
+  "$REPO" "$OUT_DOCS" >/dev/null
+mkdir -p "$OUT_DOCS/docs/features/back" "$OUT_DOCS/src"
+cat > "$OUT_DOCS/docs/features/back/sample.md" <<'FEAT'
+---
+id: sample
+scope: back
+title: Docs root sample
+status: active
+depends_on: []
+touches:
+  - src/foo.ts
+---
+FEAT
+echo "// docs-root" > "$OUT_DOCS/src/foo.ts"
+( cd "$OUT_DOCS" && bash .ai/scripts/check-features.sh >/dev/null )
+if ! ( cd "$OUT_DOCS" && bash .ai/scripts/features-for-path.sh src/foo.ts ) | grep -q "back/sample"; then
+  echo "  ✗ features-for-path ne lit pas docs/features"
+  rm -rf "$OUT_DOCS"
+  exit 1
+fi
+if ! grep -q "docs/features/back/sample.md" "$OUT_DOCS/.ai/.feature-index.json"; then
+  echo "  ✗ index ne référence pas docs/features"
+  rm -rf "$OUT_DOCS"
+  exit 1
+fi
+rm -rf "$OUT_DOCS"
+echo "  ✓ docs_root=docs OK"
 
 echo
 echo "✅ smoke-test PASS"

@@ -1,7 +1,7 @@
 #!/bin/bash
 # build-feature-index.sh — Compile le maillage features en JSON (ai_context).
 #
-# Scanne .docs/features/*/*.md et extrait pour chaque feature :
+# Scanne <docs_root>/features/*/*.md et extrait pour chaque feature :
 #   id, scope, status, touches[], depends_on[], path (relatif au repo).
 #
 # Parsing YAML :
@@ -23,7 +23,7 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 require_cmd jq
 
 repo_root="$(cd "$script_dir/../.." && pwd)"
-features_dir="$repo_root/.docs/features"
+features_dir="$repo_root/$AI_CONTEXT_FEATURES_DIR"
 index_file="$repo_root/.ai/.feature-index.json"
 
 write=0

@@ -258,10 +258,10 @@ Les réponses précédentes sont relues depuis `.copier-answers.yml`. Un diff es
 
 ### 4. Créer une nouvelle feature
 
-Dans Claude Code, invoque `/aic-feature-new` (le skill fait le reste). Ou manuellement :
+Dans Claude Code, invoque `/aic-feature-new` (le skill fait le reste). Ou manuellement, dans le dossier choisi via `docs_root` (`.docs` par défaut, `docs` possible) :
 
 ```bash
-cp .docs/FEATURE_TEMPLATE.md .docs/features/back/auth-session.md
+cp {{ docs_root }}/FEATURE_TEMPLATE.md {{ docs_root }}/features/back/auth-session.md
 # Éditer id, scope, title, status, depends_on, touches
 bash .ai/scripts/build-feature-index.sh --write
 bash .ai/scripts/check-features.sh
@@ -427,6 +427,9 @@ mon-projet/
 │   │   ├── build-feature-index.sh # compile l'index JSON
 │   │   ├── pre-turn-reminder.sh   # UserPromptSubmit hook
 │   │   ├── features-for-path.sh   # PreToolUse Write/Edit hook
+│   │   ├── auto-worklog-log.sh    # PostToolUse Write/Edit hook
+│   │   ├── auto-worklog-flush.sh  # Stop hook : worklog + updated
+│   │   ├── auto-progress.sh       # Stop/pre-commit : spec → implement
 │   │   ├── check-shims.sh
 │   │   ├── check-ai-references.sh
 │   │   ├── check-features.sh
@@ -440,6 +443,7 @@ mon-projet/
 │   └── skills/aic-*/              # 6 skills /aic-* (v0.7)
 ├── .githooks/
 │   ├── commit-msg                 # Conventional Commits + feat: mesh
+│   ├── pre-commit                 # auto-progression agent-agnostic
 │   └── post-checkout              # rebuild index après switch branche
 ├── .github/workflows/             # CI opt-in
 └── {{ docs_root }}/
@@ -470,6 +474,7 @@ Six skills Claude Code, structure `SKILL.md` (frontmatter minimal) + `workflow.m
 
 | Script | Rôle |
 |---|---|
+| `_lib.sh` | Helpers partagés : dépendances, status visibles, matching canonique `touches:`, `docs_root` runtime |
 | `build-feature-index.sh` | Compile `{{ docs_root }}/features/**/*.md` → `.ai/.feature-index.json` |
 | `pre-turn-reminder.sh` | Hook `UserPromptSubmit` : reminder + inventory filtré + reverse deps |
 | `features-for-path.sh` | Hook `PreToolUse Write` : features qui couvrent un path |
@@ -483,6 +488,8 @@ Six skills Claude Code, structure `SKILL.md` (frontmatter minimal) + `workflow.m
 | `auto-worklog-log.sh` | Hook `PostToolUse` : logue les éditions dans `.session-edits.log` |
 | `auto-worklog-flush.sh` | Hook `Stop` : flush log → worklog + bump `progress.updated` |
 
+Tous les scripts runtime lisent le dossier métier via `AI_CONTEXT_DOCS_ROOT` rendu depuis `docs_root` (`.docs` par défaut). Les entrées `touches:` sont matchées par un helper unique (`path_matches_touch`) pour garder la même sémantique entre `features-for-path`, auto-worklog, coverage et `pre-commit`.
+
 ---
 
 ## Variables d'environnement
@@ -492,6 +499,7 @@ Six skills Claude Code, structure `SKILL.md` (frontmatter minimal) + `workflow.m
 | `AI_CONTEXT_DEBUG=1` | Logs détaillés des hooks sur stderr |
 | `AI_CONTEXT_SHOW_ALL_STATUS=1` | Inclut `done/deprecated/archived` dans le reminder (sinon filtré) |
 | `AI_CONTEXT_FOCUS=<scope>` | Réduit l'inventaire au scope + ses voisins 1-hop (graph-aware). Équivalent : `pre-turn-reminder.sh --focus=<scope>`. Gain typique ~5× tokens sur mesh >100 features. |
+| `AI_CONTEXT_DOCS_ROOT=<dir>` | Override runtime du dossier métier généré par `docs_root` (utile pour diagnostic/migration). |
 
 ---
 
@@ -512,7 +520,7 @@ Rien de bloquant côté template (pas de lock). Le worklog étant append-only, l
 - Ajoute un check : script sous `.ai/scripts/` + appel dans `.github/workflows/`.
 
 **Q — Le template supporte-t-il les monorepos ?**
-Oui, via `docs_root: docs` et une convention de scopes par sous-projet (`back-api`, `back-worker`, `front-web`, etc.). Le mesh est indépendant de la structure du code.
+Oui, via `docs_root: docs` et une convention de scopes par sous-projet (`back-api`, `back-worker`, `front-web`, etc.). Le mesh est indépendant de la structure du code, et les scripts runtime suivent ce `docs_root` généré.
 
 **Q — Comment débugger un hook Claude qui semble muet ?**
 `AI_CONTEXT_DEBUG=1 bash .ai/scripts/pre-turn-reminder.sh` pour voir les traces. Vérifie aussi `.claude/settings.json` via `/hooks` dans Claude Code.
@@ -529,7 +537,7 @@ Template versionné. Non-cassant → bump minor. Refonte → bump major (les con
 - [docs/getting-started.md](docs/getting-started.md) — tour complet
 - [docs/upgrading.md](docs/upgrading.md) — updates
 
-Tests : `bash tests/smoke-test.sh` (18 étapes, exige `copier` dans le PATH).
+Tests : `bash tests/smoke-test.sh` (27 étapes, exige `copier` dans le PATH).
 
 ---
 

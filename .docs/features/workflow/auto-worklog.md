@@ -9,6 +9,8 @@ depends_on:
 touches:
   - template/.ai/scripts/auto-worklog-log.sh.jinja
   - template/.ai/scripts/auto-worklog-flush.sh.jinja
+  - .ai/scripts/auto-worklog-log.sh
+  - .ai/scripts/auto-worklog-flush.sh
 progress:
   phase: review
   step: "bootstrap dog-fooding (v0.9 historique)"
@@ -45,3 +47,4 @@ Trigger amont : `claude-skills` (les skills déclenchent des éditions). Source 
 - v0.6 : introduction.
 - v0.7.2 : escaping JSON corrigé.
 - 2026-04-24 : `auto-worklog-flush.sh` ne **vide** plus `.session-edits.log`, il le **déplace** vers `.session-edits.flushed`. Permet à `auto-progress.sh` (nouveau script Stop chaîné) de consommer la trace post-flush sans race condition. Comportement vis-à-vis du worklog inchangé (toujours auto-update factuel uniquement : `progress.updated` + ligne `Fichiers modifiés`).
+- 2026-04-24 : `auto-worklog-log.sh` délègue le matching `touches:` à `_lib.sh` pour rester aligné avec `features-for-path.sh` et le hook git `pre-commit`.

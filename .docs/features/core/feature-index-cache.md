@@ -8,6 +8,7 @@ depends_on:
 touches:
   - template/.ai/scripts/build-feature-index.sh.jinja
   - template/.ai/scripts/_lib.sh.jinja
+  - .ai/scripts/_lib.sh
 progress:
   phase: review
   step: "bootstrap dog-fooding (v0.9 historique)"
@@ -43,3 +44,5 @@ progress:
 ## Historique / décisions
 
 - v0.7.2 : fix bug silencieux d'escaping JSON (paths avec quotes corrompaient le JSONL).
+- 2026-04-24 : centralisation du matching `touches:` dans `_lib.sh` (`path_matches_touch` + `features_matching_path`). Les hooks/scripts consommateurs partagent désormais la même sémantique exact/dossier/glob/`/**`.
+- 2026-04-24 : `AI_CONTEXT_DOCS_ROOT` et `AI_CONTEXT_FEATURES_DIR` ajoutés dans `_lib.sh` pour que les scripts runtime suivent le `docs_root` rendu par Copier au lieu de réencoder `.docs/features`.

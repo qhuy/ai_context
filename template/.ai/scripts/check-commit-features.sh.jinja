@@ -19,7 +19,8 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 
 cd "$(git rev-parse --show-toplevel)"
 
-FEATURES_DIR="{{ docs_root }}/features"
+FEATURES_DIR="$AI_CONTEXT_FEATURES_DIR"
+FEATURE_TEMPLATE="$AI_CONTEXT_DOCS_ROOT/FEATURE_TEMPLATE.md"
 
 # ─── Extraction du message ───
 msg=""
@@ -75,7 +76,7 @@ if [[ "$type" == "feat" ]]; then
   if ! echo "$staged" | grep -qE "^$FEATURES_DIR/"; then
     echo "❌ Commit 'feat:' sans fichier touché dans $FEATURES_DIR/" >&2
     echo "   Toute nouvelle feature DOIT avoir son fichier dans $FEATURES_DIR/<scope>/<id>.md" >&2
-    echo "   Utiliser {{ docs_root }}/FEATURE_TEMPLATE.md comme squelette." >&2
+    echo "   Utiliser $FEATURE_TEMPLATE comme squelette." >&2
     echo "   Si ce n'est pas une feature, utiliser un autre type : fix/refactor/chore/..." >&2
     exit 1
   fi

@@ -23,7 +23,7 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 require_cmd jq
 
 repo_root="$(cd "$script_dir/../.." && pwd)"
-features_dir="$repo_root/{{ docs_root }}/features"
+features_dir="$repo_root/$AI_CONTEXT_FEATURES_DIR"
 index_file="$repo_root/.ai/.feature-index.json"
 
 write=0

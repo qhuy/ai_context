@@ -44,7 +44,7 @@ for arg in "$@"; do
 done
 repo_root="$(cd "$script_dir/../.." && pwd)"
 reminder_file="$script_dir/../reminder.md"
-features_dir="$repo_root/.docs/features"
+features_dir="$repo_root/$AI_CONTEXT_FEATURES_DIR"
 index_file="$repo_root/.ai/.feature-index.json"
 
 if [[ ! -f "$reminder_file" ]]; then

@@ -82,8 +82,7 @@ for root in "${COVERAGE_ROOTS[@]}"; do
     total=$((total + 1))
     covered=0
     for entry in "${touches[@]}"; do
-      # shellcheck disable=SC2053
-      if [[ "$file" == $entry ]] || [[ "$file" == $entry/* ]]; then
+      if path_matches_touch "$file" "$entry"; then
         covered=1
         break
       fi

@@ -11,6 +11,9 @@
 set -uo pipefail
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=_lib.sh
+. "$script_dir/_lib.sh"
+
 repo_root="$(cd "$script_dir/../.." && pwd)"
 index_file="$repo_root/.ai/.feature-index.json"
 log_file="$repo_root/.ai/.session-edits.log"
@@ -30,17 +33,7 @@ esac
 [[ ! -f "$index_file" ]] && exit 0
 
 # Matche les features dont un glob touches: couvre ce path
-matches=$(jq -r --arg p "$rel" '
-  .features[]
-  | . as $f
-  | ($f.touches // [])[] as $t
-  | select(
-      ($p == $t) or
-      ($t | endswith("/**") and ($p | startswith($t[:-3]))) or
-      ($p | startswith($t + "/"))
-    )
-  | $f.scope + "/" + $f.id
-' "$index_file" 2>/dev/null | sort -u)
+matches=$(features_matching_path "$index_file" "$rel" | awk -F '\t' '{print $1 "/" $2}' | sort -u)
 
 [[ -z "$matches" ]] && exit 0
 

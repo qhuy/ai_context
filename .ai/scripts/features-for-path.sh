@@ -24,7 +24,7 @@ require_cmd jq
 enable_globstar
 
 repo_root="$(cd "$script_dir/../.." && pwd)"
-features_dir="$repo_root/.docs/features"
+features_dir="$repo_root/$AI_CONTEXT_FEATURES_DIR"
 index_file="$repo_root/.ai/.feature-index.json"
 
 ensure_index() {
@@ -70,17 +70,11 @@ ensure_index
 
 # ─── Lookup dans l'index ───
 matches=""
-count=0
 if [[ -f "$index_file" ]]; then
-  while IFS='|' read -r scope id path entry; do
-    [[ -z "$entry" ]] && continue
-    [[ "$entry" == "[]" ]] && continue
-    count=$((count + 1))
-    # shellcheck disable=SC2053
-    if [[ "$rel_path" == $entry ]] || [[ "$rel_path" == $entry/* ]]; then
-      matches+="  • ${scope}/${id} (${path})"$'\n'
-    fi
-  done < <(jq -r '.features[] | . as $f | ($f.touches // [])[] | [$f.scope, $f.id, $f.path, .] | join("|")' "$index_file")
+  while IFS=$'\t' read -r scope id path; do
+    [[ -z "$scope" ]] && continue
+    matches+="  • ${scope}/${id} (${path})"$'\n'
+  done < <(features_matching_path "$index_file" "$rel_path")
 
   if [[ -n "$matches" ]]; then
     matches=$(printf '%s' "$matches" | awk '!seen[$0]++')
@@ -89,7 +83,7 @@ if [[ -f "$index_file" ]]; then
 fi
 
 end_ts=$(date +%s 2>/dev/null || echo 0)
-log_debug "touches testés : $count, durée : $((end_ts - start_ts))s"
+log_debug "durée lookup touches : $((end_ts - start_ts))s"
 
 # ─── Output ───
 if [[ "$mode" == "hook" ]]; then

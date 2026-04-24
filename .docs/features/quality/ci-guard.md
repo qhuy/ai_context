@@ -7,6 +7,7 @@ depends_on:
   - quality/smoke-test
   - quality/cycle-detection
 touches:
+  - .github/workflows/template-smoke-test.yml
   - template/.github/workflows/ai-context-check.yml.jinja
 progress:
   phase: review
@@ -25,13 +26,14 @@ Rejouer en CI les validations critiques pour rattraper les contournements locaux
 ## Comportement attendu
 
 - Trigger : `push` + `pull_request`.
-- Étapes : install jq/yq → `check-shims.sh` → `check-features.sh`.
+- Workflow léger généré : install jq/yq → `check-shims.sh` → `check-features.sh`.
+- Workflow template repo : install jq/yq/copier → `tests/smoke-test.sh`.
 - Opt-in via `enable_ci_guard: true` (default) du copier.yml.
 
 ## Contrats
 
 - Échec bloque le merge si protection de branche activée côté repo cible.
-- N'exécute pas le smoke-test complet (trop lent en CI sur petit projet) — gardé en local.
+- Le smoke-test complet tourne dans le repo template uniquement, pas dans les projets scaffoldés.
 
 ## Cross-refs
 
@@ -39,4 +41,5 @@ Filet de sécurité au-dessus de `git-hooks` (qui peuvent être contournés loca
 
 ## Historique / décisions
 
-- Volontairement minimal : pas d'install de Python, pas de cache, pas de matrix. Vise < 30s d'exécution.
+- Workflow généré volontairement minimal : pas d'install de Python, pas de cache, pas de matrix. Vise < 30s d'exécution.
+- 2026-04-24 : ajout de `.github/workflows/template-smoke-test.yml` pour valider le rendu Copier complet du template dans le repo source.

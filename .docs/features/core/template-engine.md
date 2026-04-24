@@ -6,6 +6,7 @@ status: active
 depends_on: []
 touches:
   - copier.yml
+  - README.md
   - template/**
 progress:
   phase: review
@@ -46,4 +47,7 @@ Ce moteur produit le squelette consommé par `feature-mesh`, `feature-index-cach
 - 2026-04-24 : ajout du script `template/.ai/scripts/auto-progress.sh.jinja` + entrée Stop dans `template/.claude/settings.json.jinja` + entrées `.session-edits.flushed` / `.progress-history.jsonl` dans `template/.ai/.gitignore`. Édité dans le cadre du HANDOFF workflow → core émis pendant l'implémentation de `workflow/conversational-skills` (v3, auto-progression invisible). Aucune dérive de profil ni de variable copier ; uniquement enrichissement de la moisson de fichiers rendus.
 - 2026-04-24 : ajout de `template/.githooks/pre-commit.jinja` (hook universel d'auto-progression) + update `template/.githooks/README.md.jinja` pour le documenter. Édition cross-scope mineure depuis `workflow/git-hooks` (mini-chantier 1.5, parité agent-agnostic pour Codex/Cursor/Gemini/Copilot). Le template utilise la variable `{{ agents }}` pour lister les bénéficiaires dans le commentaire. Pas d'impact sur `copier.yml` ni sur la dérivation des scopes — simple fichier supplémentaire moissonné systématiquement (pas de condition jinja).
 - 2026-04-24 : update `_message_after_copy` dans `copier.yml` + réécriture de `template/AGENTS.md.jinja` pour acter l'UX « 0 skill par défaut » (auto-progression invisible via hooks Stop + pre-commit, skills `/aic` et `/aic-feature-resume` en override/lecture seulement). HANDOFF reçu depuis `workflow/conversational-skills` (chantier 3). Aucune variable copier nouvelle, aucune dérive de profil — modification éditoriale des messages/docs.
-- 2026-04-24 : patch `template/.ai/scripts/auto-progress.sh.jinja` — le script crée désormais le worklog s'il n'existe pas (au lieu de skipper). Bug révélé par le smoke-test [18/25] : pour les agents non-Claude (pre-commit sans hook Stop préalable), le worklog n'avait jamais été créé par `auto-worklog-flush.sh`, donc l'auto-progression ne laissait aucune trace lisible. Correctif miroir sur `.ai/scripts/auto-progress.sh`. Ajout section `## Auto-progression` dans `template/.ai/index.md.jinja`.
+- 2026-04-24 : patch `template/.ai/scripts/auto-progress.sh.jinja` — le script crée désormais le worklog s'il n'existe pas (au lieu de skipper). Bug révélé par le smoke-test [18/27] : pour les agents non-Claude (pre-commit sans hook Stop préalable), le worklog n'avait jamais été créé par `auto-worklog-flush.sh`, donc l'auto-progression ne laissait aucune trace lisible. Correctif miroir sur `.ai/scripts/auto-progress.sh`. Ajout section `## Auto-progression` dans `template/.ai/index.md.jinja`.
+- 2026-04-24 : ajout des helpers de matching `touches:` dans `template/.ai/scripts/_lib.sh.jinja`. Objectif : éviter les divergences entre hook `PreToolUse`, auto-worklog, pre-commit et coverage.
+- 2026-04-24 : les scripts template consomment désormais `AI_CONTEXT_DOCS_ROOT={{ docs_root }}` depuis `_lib.sh.jinja` pour supporter `docs_root=docs` sur les chemins runtime (`check-features`, index, reminder, commit guard).
+- 2026-04-24 : README racine synchronisé avec le runtime actuel (`docs_root` configurable, matching `touches:` centralisé, pre-commit/auto-progress dans l'arbre généré).

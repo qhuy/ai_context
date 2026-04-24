@@ -44,8 +44,10 @@ Faire respecter le mesh au moment du commit et tenir l'index à jour entre branc
 
 - Côté CI : `ci-guard` rejoue `check-features.sh` même si le hook local a été contourné (`--no-verify`).
 - `pre-commit` est le **point de convergence universel** de l'auto-progression : garantit parité Claude / Codex / Cursor / Gemini / Copilot / humain CLI. Le hook Claude `Stop` (`auto-progress.sh` décrit dans `workflow/conversational-skills`) reste comme bonus de latence pour les utilisateurs Claude (bascule visible avant commit).
+- Le matching des fichiers stagés contre `touches:` passe par `_lib.sh` pour partager exactement la même sémantique que les hooks Claude.
 
 ## Historique / décisions
 
 - Heuristique d'extraction du message commit (`-m "..."`, heredoc) : si format atypique, validation passe silencieusement. Limitation tracée dans PROJECT_STATE.md.
 - **2026-04-24** — Réouverture (phase=implement) : ajout du hook `pre-commit` pour parité agent-agnostic. Décision prise dans le cadre de `workflow/conversational-skills` v3 (auto-progression invisible) : le hook Claude `Stop` seul ne couvrait que Claude Code, rupture de garantie pour les autres agents du multiselect `agents` copier. Option B retenue (git pre-commit = point de convergence universel) après comparaison avec option A (acter Claude-first — rejetée, rupture de promesse multi-agent) et option C (wrapper script — rejetée, friction d'invocation).
+- **2026-04-24** — Refactor : `pre-commit` source `_lib.sh` et utilise `features_matching_path`, au lieu de dupliquer une logique `jq startswith/endswith`.

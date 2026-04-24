@@ -9,10 +9,16 @@
 #   log_debug "msg"             — stderr si $AI_CONTEXT_DEBUG=1, sinon silencieux
 #   enable_globstar             — active ** (bash ≥4) ou no-op (bash 3.2 macOS)
 #   with_index_lock <cmd...>    — acquiert un lock exclusif via mkdir (portable)
+#   path_matches_touch <path> <touch>
+#                               — 0 si un chemin repo matche une entrée touches:
+#   features_matching_path <index> <path>
+#                               — liste scope/id/path des features couvrant un path
 #   STATUS_ENUM                 — liste des status valides (space-separated)
 #   is_valid_status "s"         — 0 si valide, 1 sinon
 
 STATUS_ENUM="draft active done deprecated archived"
+AI_CONTEXT_DOCS_ROOT="${AI_CONTEXT_DOCS_ROOT:-{{ docs_root }}}"
+AI_CONTEXT_FEATURES_DIR="$AI_CONTEXT_DOCS_ROOT/features"
 
 # Retourne la liste JSON des status visibles dans le reminder.
 # Par défaut : active + draft (les features en cours / à venir).
@@ -54,6 +60,49 @@ is_valid_status() {
     [[ "$s" == "$valid" ]] && return 0
   done
   return 1
+}
+
+# Matching canonique pour les entrées `touches:`.
+# Supporte :
+#   - fichier exact : src/foo.ts
+#   - dossier      : src/auth couvre src/auth/service.ts
+#   - glob bash    : src/**/*.ts, app/*/page.tsx, lib/[ab].js
+#   - suffixe /**  : src/auth/** couvre src/auth et ses descendants
+path_matches_touch() {
+  local path="$1"
+  local touch="$2"
+  local normalized="${touch%/}"
+
+  [[ -z "$path" || -z "$touch" ]] && return 1
+  [[ "$path" == "$touch" ]] && return 0
+  # shellcheck disable=SC2053
+  [[ "$path" == $touch ]] && return 0
+
+  if [[ "${touch: -3}" == "/**" ]]; then
+    local prefix="${touch%/**}"
+    [[ "$path" == "$prefix" || "$path" == "$prefix"/* ]] && return 0
+  fi
+
+  if [[ "$touch" != *[\*\?\[]* ]]; then
+    [[ "$path" == "$normalized"/* ]] && return 0
+  fi
+
+  return 1
+}
+
+features_matching_path() {
+  local index_file="$1"
+  local rel_path="$2"
+
+  [[ -f "$index_file" ]] || return 0
+
+  while IFS=$'\t' read -r scope id feature_path touch; do
+    [[ -z "$scope" || -z "$touch" ]] && continue
+    if path_matches_touch "$rel_path" "$touch"; then
+      printf '%s\t%s\t%s\n' "$scope" "$id" "$feature_path"
+    fi
+  done < <(jq -r '.features[] | . as $f | ($f.touches // [])[] | [$f.scope, $f.id, $f.path, .] | @tsv' "$index_file" 2>/dev/null) \
+    | awk '!seen[$0]++'
 }
 
 # Lock basé sur mkdir (atomique, portable — pas de flock sur macOS par défaut).
