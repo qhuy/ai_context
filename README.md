@@ -240,21 +240,123 @@ Dans Claude Code : `/hooks` → activer les entrées listées dans `.claude/sett
 
 ### 2. Migrer un projet existant
 
-Projet mature avec code + doc déjà en place. Voir [MIGRATION.md](MIGRATION.md) pour le guide complet. Résumé :
+Projet mature avec code + doc déjà en place. Voir [MIGRATION.md](MIGRATION.md) pour le guide complet.
+
+Ne lance pas `copier copy ... .` à l'aveugle si le projet contient déjà `AGENTS.md`, `.ai/`, `.docs/`, `.claude/`, `.github/` ou des hooks. Le bon réflexe est une migration en preview puis copie sélective.
 
 ```bash
-# 1. Preview dans un dossier jetable
-copier copy --trust gh:qhuy/ai_context /tmp/preview
-diff -r /tmp/preview . | less
-
-# 2. Scaffold en place (copier demande skip/overwrite par fichier)
+# 1. Vérifier que le repo cible est propre
 cd mon-projet-existant
-copier copy --trust gh:qhuy/ai_context .
+git status
 
-# 3. Bootstrap du feature mesh (big bang OU rolling — voir MIGRATION.md)
+# 2. Créer une branche de migration
+git checkout -b codex/install-ai-context-template
 
-# 4. Activation progressive des hooks (git → Claude → CI)
+# 3. Générer le template hors projet
+rm -rf /tmp/ai-context-preview
+copier copy --trust gh:qhuy/ai_context /tmp/ai-context-preview \
+  --data project_name=mon-projet \
+  --data scope_profile=backend \
+  --data tech_profile=dotnet-clean-cqrs \
+  --data docs_root=.docs
+
+# 4. Comparer avant toute copie
+diff -qr /tmp/ai-context-preview . | less
 ```
+
+#### Cas fréquent : projet déjà équipé d'un contexte AI
+
+Si le projet a déjà `.ai/index.md`, `.ai/rules/*.md`, `.docs/features/*.md`, des shims racine ou une config Claude, ne remplace pas ces fichiers en bloc. Ils contiennent probablement des règles métier et de la mémoire projet à conserver.
+
+À copier depuis la preview en priorité :
+
+```text
+.ai/quality/QUALITY_GATE.md
+.ai/scripts/_lib.sh
+.ai/scripts/build-feature-index.sh
+.ai/scripts/check-ai-references.sh
+.ai/scripts/check-commit-features.sh
+.ai/scripts/check-feature-coverage.sh
+.ai/scripts/features-for-path.sh
+.ai/scripts/resume-features.sh
+.ai/scripts/measure-context-size.sh
+.ai/scripts/auto-worklog-log.sh
+.ai/scripts/auto-worklog-flush.sh
+.ai/scripts/auto-progress.sh
+.ai/rules/tech-dotnet.md              # si tech_profile=dotnet-clean-cqrs
+.ai/rules/tech-react.md               # si tech_profile=react-next
+.ai/rules/stack-fullstack-dotnet-react.md
+.githooks/
+.docs/FEATURE_TEMPLATE.md
+README_AI_CONTEXT.md
+```
+
+À fusionner manuellement, pas écraser :
+
+```text
+.ai/index.md
+.ai/rules/back.md
+.ai/rules/front.md
+.ai/rules/architecture.md
+.ai/rules/security.md
+.ai/rules/workflow.md
+.ai/rules/quality.md
+.claude/settings.json
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+.github/copilot-instructions.md
+.github/workflows/*
+.docs/features/*
+```
+
+#### Migration progressive du feature mesh
+
+Beaucoup de projets existants ont déjà une documentation feature à plat :
+
+```text
+.docs/features/tenant_lifecycle.md
+.docs/features/ticket_dispatch.md
+```
+
+Le template attend un mesh scopé :
+
+```text
+.docs/features/back/tenant_lifecycle.md
+.docs/features/back/ticket_dispatch.md
+```
+
+Tu peux migrer progressivement. Commence par quelques features pilotes avec un frontmatter minimal :
+
+```yaml
+---
+id: tenant_lifecycle
+scope: back
+title: Tenant Lifecycle
+status: active
+depends_on: []
+touches:
+  - src/MonProjet.Tenants/**
+---
+```
+
+Puis active les checks en douceur :
+
+```bash
+git config core.hooksPath .githooks
+chmod +x .githooks/*
+
+bash .ai/scripts/check-shims.sh
+bash .ai/scripts/check-ai-references.sh
+bash .ai/scripts/check-features.sh
+```
+
+Stratégie recommandée en deux commits :
+
+1. `chore(ai): installer le runtime ai_context` — scripts, hooks, quality gate, presets techniques, README AI.
+2. `docs(ai): migrer les premières features vers le mesh` — quelques fiches `.docs/features/<scope>/*.md` avec `touches:`.
+
+Quand le mesh couvre suffisamment le projet, tu peux rendre `check-features.sh` et `check-feature-coverage.sh --strict` bloquants en CI.
 
 ### 3. Mettre à jour vers une nouvelle version du template
 

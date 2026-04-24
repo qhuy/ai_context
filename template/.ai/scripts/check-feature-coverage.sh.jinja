@@ -36,8 +36,21 @@ COVERAGE_ROOTS=(
   "lib"
 )
 
+# Dossiers générés / dépendances à ignorer même s'ils vivent sous COVERAGE_ROOTS.
+COVERAGE_EXCLUDE_DIRS=(
+  "bin"
+  "obj"
+  "node_modules"
+  "dist"
+  "build"
+  ".next"
+  "wwwroot"
+  "coverage"
+  "TestResults"
+)
+
 # Extensions prises en compte
-COVERAGE_EXTS="ts tsx js jsx py rb go rs java kt swift php"
+COVERAGE_EXTS="cs cshtml ts tsx js jsx py rb go rs java kt swift php"
 
 # Rebuild index si besoin
 if [[ ! -f "$index_file" ]]; then
@@ -78,6 +91,13 @@ total=0
 orphans=()
 for root in "${COVERAGE_ROOTS[@]}"; do
   [[ -d "$root" ]] || continue
+  prune_args=()
+  for excluded in "${COVERAGE_EXCLUDE_DIRS[@]}"; do
+    if [[ {% raw %}${#prune_args[@]}{% endraw %} -gt 0 ]]; then
+      prune_args+=( -o )
+    fi
+    prune_args+=( -name "$excluded" )
+  done
   while IFS= read -r -d '' file; do
     total=$((total + 1))
     covered=0
@@ -88,7 +108,7 @@ for root in "${COVERAGE_ROOTS[@]}"; do
       fi
     done
     [[ $covered -eq 0 ]] && orphans+=("$file")
-  done < <(find "$root" -type f \( "${ext_args[@]}" \) -print0 2>/dev/null)
+  done < <(find "$root" \( "${prune_args[@]}" \) -type d -prune -o -type f \( "${ext_args[@]}" \) -print0 2>/dev/null)
 done
 
 covered_count=$((total - {% raw %}${#orphans[@]}{% endraw %}))

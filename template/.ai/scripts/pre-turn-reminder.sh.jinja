@@ -135,7 +135,7 @@ if [[ -d "$features_dir" ]]; then
     fi
 
     if [[ -n "$feature_lines" ]]; then
-      feature_section=$'\n\n── Features actives'"$header_suffix"' (lis le .md du scope primaire AVANT toute écriture) ──\n'
+      feature_section=$'\n\n── Features actives'"$header_suffix"$' (lis le .md du scope primaire AVANT toute écriture) ──\n'
       feature_section+="$feature_lines"$'\n'
       if [[ $hidden -gt 0 ]]; then
         feature_section+="  ($hidden masquée(s) — status done/deprecated/archived. AI_CONTEXT_SHOW_ALL_STATUS=1 pour voir)"$'\n'
