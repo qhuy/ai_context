@@ -46,6 +46,39 @@ Toute feature DOIT avoir son fichier sous `{{ docs_root }}/features/<scope>/<id>
 - **Conventional Commits BLOQUANTS** — voir `.ai/quality/QUALITY_GATE.md` section Commits.
 - **Commits en {{ 'français' if commit_language == 'fr' else 'English' }}** (imposé par règles projet).
 
+## Auto-progression
+
+**Par défaut : zéro skill à invoquer.** L'utilisateur prompte en langage naturel, l'agent code/teste/commit, les transitions de phase feature sont appliquées automatiquement par deux canaux convergents :
+
+| Canal | Déclenché par | Agents bénéficiaires | Latence |
+|---|---|---|---|
+| Hook Claude `Stop` (`auto-progress.sh`) | fin de tour Claude Code | Claude | immédiat (avant commit) |
+| Hook git `pre-commit` (`.githooks/pre-commit`) | `git commit` | tous ({{ agents | join(', ') }}, humain CLI) | au commit |
+
+Les deux partagent le même script et snapshotent chaque transition dans `.ai/.progress-history.jsonl` (append-only, 50 dernières, gitignored) pour permettre `/aic undo`.
+
+Règles inférées automatiquement (V1, conservatrice) :
+- Édits couverts par `touches:` d'une feature en `phase: spec` → bascule en `phase: implement`.
+- `progress.updated` bumpée à chaque édition.
+- Worklog appendé avec la liste des fichiers modifiés.
+
+Les transitions `implement → review` et `review → done` restent manuelles (override explicite ou `aic-feature-done`) pour éviter les faux positifs.
+
+### Skill `/aic` (override, rare)
+
+À n'utiliser que quand l'auto-progression se trompe :
+- `/aic repasse en spec` — rollback d'une bascule mal inférée
+- `/aic marque ça blocked, j'attends X` — bloqueur explicite
+- `/aic rouvre feature-X pour Y` — réouverture d'une fiche `done`
+- `/aic force done` — clôture sans attendre inférence evidence
+- `/aic undo` — annule la dernière transition auto
+
+Skills accessibles directement (lecture/CI) :
+- `/aic-feature-resume` — buckets EN COURS / BLOQUÉES / STALE / À FAIRE
+- `/aic-quality-gate` — check go/no-go complet
+
+Les autres skills `/aic-feature-{new,update,handoff,done}` sont **internes** (invoqués par les hooks et par `/aic`). Pas besoin de les taper à la main.
+
 ## Runtime enforcement
 
 - Hook `UserPromptSubmit` (Claude Code) → `.ai/scripts/pre-turn-reminder.sh` injecte ce rappel à chaque tour.

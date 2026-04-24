@@ -43,6 +43,35 @@ Toute feature DOIT avoir son fichier sous `.docs/features/<scope>/<id>.md`.
 - **Conventional Commits BLOQUANTS** — voir `.ai/quality/QUALITY_GATE.md` section Commits.
 - **Commits en français** (imposé par règles projet).
 
+## Auto-progression
+
+**Par défaut : zéro skill à invoquer.** L'utilisateur prompte en langage naturel, l'agent code/teste/commit, les transitions de phase feature sont appliquées automatiquement par deux canaux convergents :
+
+| Canal | Déclenché par | Agents bénéficiaires | Latence |
+|---|---|---|---|
+| Hook Claude `Stop` (`auto-progress.sh`) | fin de tour Claude Code | Claude | immédiat (avant commit) |
+| Hook git `pre-commit` (`.githooks/pre-commit`) | `git commit` | tous (claude, codex, cursor, gemini, copilot, humain CLI) | au commit |
+
+Les deux partagent le même script et snapshotent chaque transition dans `.ai/.progress-history.jsonl` (append-only, 50 dernières, gitignored) pour permettre `/aic undo`.
+
+Règles inférées automatiquement (V1, conservatrice) :
+- Édits couverts par `touches:` d'une feature en `phase: spec` → bascule en `phase: implement`.
+- `progress.updated` bumpée à chaque édition.
+- Worklog appendé avec la liste des fichiers modifiés.
+
+Les transitions `implement → review` et `review → done` restent manuelles pour éviter les faux positifs.
+
+### Skill `/aic` (override, rare)
+
+À n'utiliser que quand l'auto-progression se trompe :
+- `/aic repasse en spec`, `/aic marque blocked`, `/aic rouvre feature-X`, `/aic force done`, `/aic undo`.
+
+Skills accessibles directement (lecture/CI) :
+- `/aic-feature-resume` — buckets EN COURS / BLOQUÉES / STALE / À FAIRE
+- `/aic-quality-gate` — check go/no-go complet
+
+Les autres `/aic-feature-{new,update,handoff,done}` sont **internes** (invoqués par les hooks et par `/aic`).
+
 ## Runtime enforcement
 
 - Hook `UserPromptSubmit` (Claude Code) → `.ai/scripts/pre-turn-reminder.sh` injecte ce rappel à chaque tour.
