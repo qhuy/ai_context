@@ -1,0 +1,87 @@
+# Workflow — aic-feature-audit
+
+**Goal** : détecter les dérives entre le code et le mesh feature, proposer des corrections, ne jamais écrire sans confirmation.
+
+**Role** : Auditeur. Lit git + mesh, propose, délègue l'écriture aux skills internes (`/aic-feature-new`, `/aic-feature-update`).
+
+**Skill chain** : `/aic-feature-audit discover <scope>` → `/aic-feature-new` (par ligne validée) ; `/aic-feature-audit refresh <scope>/<id>` → `/aic-feature-update` (après confirmation).
+
+## PRECONDITION
+
+- Un mode explicite : `discover <scope>` OU `refresh <scope>/<id>`. Si absent → demander à l'utilisateur, ne rien inférer.
+- En `discover` : le scope existe sous `{{ docs_root }}/features/<scope>/`.
+- En `refresh` : la fiche `{{ docs_root }}/features/<scope>/<id>.md` existe.
+- Dry-run par défaut. `--apply` doit être passé explicitement pour écrire.
+
+## MANDATORY READS
+
+- `.ai/index.md` (séquence canonique)
+- `{{ docs_root }}/features/<scope>/` (listage obligatoire)
+- En `refresh` : la fiche et son worklog
+- `.ai/.cache/feature-index.json` si présent (sinon régénérer via `build-feature-index.sh`)
+
+## PHASES
+
+### Mode `discover <scope>`
+
+#### Phase 1 — Collecte
+1. Lister les `touches:` de toutes les features du scope (status `active` et `draft`).
+2. Collecter les fichiers modifiés récemment via `git log --name-only --since="90 days ago" -- <scope-relevant-paths>` (fenêtre configurable, 90j par défaut).
+3. Calculer les orphelins = fichiers modifiés qui ne matchent aucun `touches:` (support globs).
+
+#### Phase 2 — Proposition
+1. Grouper les orphelins par proximité (même dossier, commits liés).
+2. Pour chaque groupe, proposer : `id` kebab-case candidat (depuis le nom de dossier ou le premier commit message), `title` inféré, `touches` suggéré.
+3. Afficher un tableau markdown :
+
+```
+| Fichiers orphelins | id proposé | title inféré |
+|---|---|---|
+| src/foo/*.ts | foo-handler | Foo handler |
+```
+
+4. Si `--apply` absent → STOP (dry-run), rendre la main.
+
+#### Phase 3 — Application (si `--apply`)
+1. Pour chaque ligne, demander confirmation (`y/n/skip/edit`).
+2. Sur `y` ou `edit` (après édition) → invoquer `/aic-feature-new` avec les valeurs validées.
+3. Sur `skip` → passer à la ligne suivante.
+4. Jamais de batch silencieux : toujours une confirmation par ligne.
+
+### Mode `refresh <scope>/<id>`
+
+#### Phase 1 — Lecture
+1. Charger `{{ docs_root }}/features/<scope>/<id>.md` + worklog.
+2. Collecter les fichiers réellement modifiés via `git log --name-only -- {{ docs_root }}/features/<scope>/<id>.md` (commits qui ont touché la fiche) et via les `touches:` actuels.
+3. Comparer :
+   - `touches:` déclarés vs fichiers réellement touchés récemment
+   - `depends_on:` vs IDs mentionnés dans le worklog
+   - `progress.updated` vs date du dernier commit touchant la fiche
+   - `status` vs signaux (worklog récent ? phase `done` cohérente ?)
+
+#### Phase 2 — Diff proposé
+1. Afficher le diff frontmatter proposé (avant/après).
+2. Afficher les motifs (ex : « touches: ajoute `src/bar.ts` — modifié 12 fois sur 90j sans entrée dans touches »).
+3. Si `--apply` absent → STOP (dry-run).
+
+#### Phase 3 — Application (si `--apply`)
+1. Demander confirmation globale (`y/n`).
+2. Sur `y` → invoquer `/aic-feature-update` avec le patch frontmatter.
+3. Laisser `/aic-feature-update` gérer le bump `progress.updated` et le worklog.
+
+### Phase finale — Validation (les deux modes)
+
+Si `--apply` a provoqué au moins une écriture :
+```bash
+bash .ai/scripts/build-feature-index.sh --write
+bash .ai/scripts/check-features.sh
+```
+Si rouge → signaler à l'utilisateur, ne pas corriger silencieusement.
+
+## NON-NEGOTIABLE RULES
+
+- **Dry-run par défaut** : absence de `--apply` ⇒ aucune écriture, jamais.
+- **Délégation obligatoire** : ne jamais écrire directement dans `{{ docs_root }}/features/` — toujours via `/aic-feature-new` ou `/aic-feature-update`.
+- **Confirmation fiche par fiche** en `discover` ; **confirmation globale** en `refresh`. Pas de bypass.
+- Si `check-features.sh` échoue après application → remonter l'erreur, ne pas masquer.
+- Ne jamais utiliser `grep -r` : s'appuyer sur `git log --name-only` et le feature-index.

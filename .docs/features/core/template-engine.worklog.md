@@ -25,3 +25,8 @@
 ## 2026-04-24 14:10 — auto
 - Fichiers modifiés :
   - template/.ai/scripts/auto-progress.sh.jinja
+
+## 2026-04-24 16:37 — auto
+- Fichiers modifiés :
+  - template/.claude/skills/aic-feature-audit/SKILL.md.jinja
+  - template/.claude/skills/aic-feature-audit/workflow.md.jinja

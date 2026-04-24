@@ -507,6 +507,8 @@ bash .ai/scripts/check-feature-coverage.sh --strict  # exit 1 si orphelins (CI)
 
 Scanne `src/`, `app/`, `lib/` et liste les fichiers non couverts par un `touches:` de feature. À passer en `--strict` en CI quand la couverture est raisonnable (>80%).
 
+Côté Claude, `/aic-feature-audit discover <scope>` va plus loin : propose un `id`/`title` pour chaque groupe d'orphelins et délègue la création à `/aic-feature-new` après confirmation ligne par ligne. Le pendant `/aic-feature-audit refresh <scope>/<id>` re-synchronise le frontmatter (`touches`, `depends_on`, `status`) avec la réalité du code.
+
 ---
 
 ## Profils de scope
@@ -565,7 +567,7 @@ mon-projet/
 │   └── .feature-index.json        # cache (gitignored)
 ├── .claude/
 │   ├── settings.json              # hooks Claude Code
-│   └── skills/aic-*/              # 6 skills /aic-* (v0.7)
+│   └── skills/aic-*/              # 7 skills /aic-* (v0.7)
 ├── .githooks/
 │   ├── commit-msg                 # Conventional Commits + feat: mesh
 │   ├── pre-commit                 # auto-progression agent-agnostic
@@ -582,7 +584,7 @@ mon-projet/
 
 ## Skills `/aic-*`
 
-Six skills Claude Code, structure `SKILL.md` (frontmatter minimal) + `workflow.md` (phases détaillées) :
+Sept skills Claude Code, structure `SKILL.md` (frontmatter minimal) + `workflow.md` (phases détaillées) :
 
 | Skill | Quand l'utiliser |
 |---|---|
@@ -590,6 +592,7 @@ Six skills Claude Code, structure `SKILL.md` (frontmatter minimal) + `workflow.m
 | `/aic-feature-resume` | Début de session — scan des features en cours, choix, chargement contexte |
 | `/aic-feature-update` | **Changement d'intent** uniquement (phase, blockers, resume_hint). Le log des fichiers modifiés est auto (hooks `PostToolUse` + `Stop`). |
 | `/aic-feature-handoff` | Bascule de scope ou de session (bloc HANDOFF formalisé) |
+| `/aic-feature-audit` | Rétro-doc (`discover <scope>`) ou re-sync (`refresh <scope>/<id>`) d'une fiche vs code réel. Dry-run par défaut. |
 | `/aic-quality-gate` | Avant commit `feat:` ou PR — verdict go/no-go factuel |
 | `/aic-feature-done` | Clôture (evidence + status: done + commit suggéré) |
 
