@@ -21,3 +21,7 @@
   - copier.yml
   - template/.ai/index.md.jinja
   - template/AGENTS.md.jinja
+
+## 2026-04-24 14:10 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/auto-progress.sh.jinja
