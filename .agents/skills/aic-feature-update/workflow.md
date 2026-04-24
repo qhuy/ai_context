@@ -1,0 +1,79 @@
+# Workflow — aic-feature-update
+
+**Goal** : persister l'état d'avancement d'une feature pour qu'une session ultérieure puisse reprendre sans ambiguïté.
+
+**Role** : Scribe de journal. Pas de code applicatif.
+
+**Skill chain** : `/aic-feature-new` → **`/aic-feature-update`** (répété) → `/aic-feature-handoff` ou `/aic-feature-done`.
+
+## QUAND APPELER
+
+**Uniquement pour les changements d'INTENT** (décision humaine) :
+- Changement de `phase` (ex : spec → implement, implement → review)
+- Apparition ou levée d'un `blocker`
+- Nouveau `resume_hint` explicite (où reprendre, quoi attendre)
+- Changement de `step` libre significatif
+
+**PAS besoin d'appeler** pour :
+- Le log des fichiers modifiés (auto, via hook `PostToolUse` + `Stop`)
+- Le bump de `progress.updated` (auto à chaque fin de tour où un fichier d'une feature a été touché)
+- Les entrées de worklog de type "Fichiers modifiés" (auto-générées)
+
+Tant qu'il n'y a rien de neuf côté intent, le hook automatique suffit.
+
+## INPUT ATTENDU
+
+L'utilisateur (ou le skill appelant) fournit :
+- `scope/id` de la feature concernée
+- Résumé court de ce qui vient d'être fait (1-3 lignes)
+- Nouveau `progress.phase` si changé (`spec | implement | test | review | done`)
+- Nouveau `progress.step` libre (ex : `4/7 controller`)
+- Blockers éventuels (ajouts ou levées)
+- `resume_hint` : où reprendre concrètement
+
+## PHASES
+
+### Phase 1 — Lire l'état courant
+1. Lire `.docs/features/<scope>/<id>.md` (frontmatter).
+2. Lire la dernière entrée de `.docs/features/<scope>/<id>.worklog.md`.
+
+### Phase 2 — Mise à jour frontmatter
+Éditer **uniquement** le bloc `progress:` du frontmatter :
+```yaml
+progress:
+  phase: <new|unchanged>
+  step: "<new|unchanged>"
+  blockers: [<liste à jour>]
+  resume_hint: "<mis à jour>"
+  updated: <YYYY-MM-DD d'aujourd'hui>
+```
+
+Le reste du frontmatter (`id, scope, title, status, depends_on, touches`) ne change pas ici.
+
+### Phase 3 — Append worklog
+Ajouter une entrée **au bas** de `<id>.worklog.md` :
+```
+## <YYYY-MM-DD HH:MM> — <phase> / <step court>
+- <ce qui vient d'être fait, 1-3 bullets>
+- <décision prise, si relevant>
+- blockers : <si présents>
+- next : <resume_hint>
+```
+
+**Append-only** : ne jamais réécrire l'historique, ne jamais supprimer une entrée.
+
+### Phase 4 — Rebuild index
+```bash
+bash .ai/scripts/build-feature-index.sh --write
+```
+(Pour que `/aic-feature-resume` voie l'update.)
+
+### Phase 5 — Confirmation
+1 ligne : "✅ progress sauvé : <scope>/<id> phase=<X> step=<Y>".
+
+## NON-NEGOTIABLE RULES
+
+- **Append-only** sur le worklog. Jamais de `Edit` destructif sur une entrée passée.
+- `progress.updated` DOIT être la date du jour (pas copiée de l'ancienne valeur).
+- Si `progress.phase` passe à `done` dans ce skill → **STOP** et rediriger vers `/aic-feature-done` (validations supplémentaires).
+- Si `blockers` reste non vide > 3 updates → signaler qu'il faut peut-être splitter la feature.
