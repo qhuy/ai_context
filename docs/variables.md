@@ -7,6 +7,7 @@ Les questions posées par `copier copy` et leurs effets.
 | `project_name` | str | — (requis) | Nom injecté dans les shims et `.ai/index.md` |
 | `project_description` | str | "" | Description 1 ligne dans l'index |
 | `scope_profile` | choice | `fullstack` | Détermine la liste `scopes` (voir profils) |
+| `tech_profile` | choice | `generic` | Ajoute des règles stack optionnelles (`dotnet-clean-cqrs`, `react-next`, `fullstack-dotnet-react`) |
 | `commit_language` | choice | `fr` | Langue des commits imposée par les règles |
 | `docs_root` | str | `.docs` | Dossier racine de la doc métier (`.docs` ou `docs`) |
 | `agents` | multiselect | `[claude, codex]` | Shims / hooks générés |
@@ -20,6 +21,15 @@ Les questions posées par `copier copy` et leurs effets.
 | `backend` | core, quality, workflow, back, architecture, security, handoff |
 | `fullstack` | backend + front |
 | `custom` | minimal (tu ajoutes tes scopes à la main après scaffold) |
+
+## Profils `tech_profile`
+
+| Profil | Règles générées |
+|---|---|
+| `generic` | aucune règle stack spécifique |
+| `dotnet-clean-cqrs` | `.ai/rules/tech-dotnet.md` |
+| `react-next` | `.ai/rules/tech-react.md` |
+| `fullstack-dotnet-react` | `.ai/rules/tech-dotnet.md`, `.ai/rules/tech-react.md`, `.ai/rules/stack-fullstack-dotnet-react.md` |
 
 ## Agents disponibles
 

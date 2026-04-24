@@ -17,6 +17,18 @@ Puis **identifier le scope primaire** et charger :
 4. **Lister** `ls {{ docs_root }}/features/<scope>/` — obligatoire à chaque tâche (pas conditionnel).
 5. Si la tâche touche une feature existante → charger `{{ docs_root }}/features/<scope>/<id>.md` **et** suivre récursivement ses `depends_on`.
 6. Si la tâche crée une nouvelle feature → créer le fichier depuis `{{ docs_root }}/FEATURE_TEMPLATE.md` AVANT tout commit.
+{% if tech_profile != 'generic' %}
+7. Charger les règles tech du preset :
+{% if tech_profile in ['dotnet-clean-cqrs', 'fullstack-dotnet-react'] %}
+   - `.ai/rules/tech-dotnet.md` si la tâche touche C#/.NET
+{% endif %}
+{% if tech_profile in ['react-next', 'fullstack-dotnet-react'] %}
+   - `.ai/rules/tech-react.md` si la tâche touche React/Next
+{% endif %}
+{% if tech_profile == 'fullstack-dotnet-react' %}
+   - `.ai/rules/stack-fullstack-dotnet-react.md` si le travail traverse back/front/API contracts
+{% endif %}
+{% endif %}
 
 ## Scopes disponibles
 
@@ -29,6 +41,23 @@ Puis **identifier le scope primaire** et charger :
 | `{{ scope }}` | [.ai/rules/{{ scope }}.md](rules/{{ scope }}.md) | — |
 {% endif -%}
 {% endfor %}
+
+{% if tech_profile != 'generic' %}
+## Preset technique
+
+| Preset | Rules |
+|---|---|
+{% if tech_profile in ['dotnet-clean-cqrs', 'fullstack-dotnet-react'] -%}
+| `dotnet-clean-cqrs` | [.ai/rules/tech-dotnet.md](rules/tech-dotnet.md) |
+{% endif -%}
+{% if tech_profile in ['react-next', 'fullstack-dotnet-react'] -%}
+| `react-next` | [.ai/rules/tech-react.md](rules/tech-react.md) |
+{% endif -%}
+{% if tech_profile == 'fullstack-dotnet-react' -%}
+| `fullstack-dotnet-react` | [.ai/rules/stack-fullstack-dotnet-react.md](rules/stack-fullstack-dotnet-react.md) |
+{% endif %}
+
+{% endif %}
 
 ## Feature mesh (règle transverse, systématique)
 

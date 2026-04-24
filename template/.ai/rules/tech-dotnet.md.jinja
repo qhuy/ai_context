@@ -1,0 +1,39 @@
+# Règles tech — .NET Clean Architecture + CQRS
+
+À charger uniquement pour les tâches C#/.NET quand `tech_profile={{ tech_profile }}`.
+
+## Architecture
+
+- Respecter la séparation `Domains/`, `Applications/`, `Infrastructures/` et couche d'exposition (`Controllers/`, endpoints, workers).
+- Les handlers/use cases restent centrés métier : orchestration, validation applicative, appels ports/repositories/services.
+- Les contrôleurs/endpoints restent fins : binding, auth/route, appel use case, mapping réponse.
+- Les dépendances pointent vers l'intérieur : `Domains` ne connaît pas `Applications`, `Infrastructures`, HTTP, EF/Dapper, ni le conteneur DI.
+
+## CQRS / Use cases
+
+- Placer les commandes/requêtes dans `Applications/UseCases/` ou l'équivalent existant.
+- Définir les ports dans `Applications/Ports/` avant d'ajouter une dépendance infrastructurelle.
+- Les règles de décision réutilisables vont dans `Applications/Policies/` ou dans le domaine, pas dans les contrôleurs.
+- Les erreurs métier attendues utilisent `Result<T>` ou l'équivalent projet ; réserver les exceptions aux cas réellement exceptionnels.
+
+## Données et sécurité
+
+- Pas de SQL, EF query complexe ou accès DB direct dans les contrôleurs/endpoints.
+- Paramétrer les valeurs SQL ; tout identifiant dynamique (colonne, tri, table) doit passer par une allowlist.
+- Les changements d'endpoint, auth, tenancy, droits ou DTO sont des changements de contrat : documenter l'impact et les consommateurs.
+- Ne pas exposer les exceptions brutes dans les réponses API.
+
+## DI et configuration
+
+- Enregistrer les services dans la racine de composition existante (`Program.cs`, `Startup.cs`, `StartUp.cs` ou module DI local).
+- Préférer les options typées validées au démarrage pour la configuration non triviale.
+- Garder les adapters infrastructure remplaçables par tests.
+
+## Validation
+
+- Pour un handler/use case nouveau ou modifié : tester au minimum happy path + erreur métier principale.
+- Pour une requête DB ou repository : couvrir les filtres, pagination/tri et cas vide si applicables.
+- Commandes usuelles à privilégier si présentes :
+  - `dotnet build`
+  - `dotnet test`
+  - `dotnet test <projet-tests-ciblé>`

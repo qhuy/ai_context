@@ -22,6 +22,7 @@ Template [copier](https://copier.readthedocs.io/) pour industrialiser le setup A
   - [8. Mesurer et optimiser le coût tokens](#8-mesurer-et-optimiser-le-coût-tokens)
   - [9. Détecter le code orphelin](#9-détecter-le-code-orphelin)
 - [Profils de scope](#profils-de-scope)
+- [Profils techniques](#profils-techniques)
 - [Ce qui est généré](#ce-qui-est-généré)
 - [Skills `/aic-*`](#skills-aic-)
 - [Scripts runtime](#scripts-runtime)
@@ -216,7 +217,7 @@ brew install jq yq             # jq obligatoire ; yq v4 recommandé
 copier copy gh:qhuy/ai_context ./mon-nouveau-projet
 ```
 
-Copier pose 6 questions (nom, profil de scopes, langue commits, docs root, agents activés, CI). Puis :
+Copier pose les questions de base (nom, profil de scopes, preset technique optionnel, langue commits, docs root, agents activés, CI). Puis :
 
 ```bash
 cd mon-nouveau-projet
@@ -225,6 +226,14 @@ git config core.hooksPath .githooks && chmod +x .githooks/*
 
 bash .ai/scripts/check-shims.sh        # ✅ shims OK
 bash .ai/scripts/check-features.sh     # ⚠️ aucune feature (normal au début)
+```
+
+Exemple pour un projet C# backend + React/Next :
+
+```bash
+copier copy gh:qhuy/ai_context ./mon-projet \
+  --data scope_profile=fullstack \
+  --data tech_profile=fullstack-dotnet-react
 ```
 
 Dans Claude Code : `/hooks` → activer les entrées listées dans `.claude/settings.json`.
@@ -407,6 +416,19 @@ Scanne `src/`, `app/`, `lib/` et liste les fichiers non couverts par un `touches
 | `fullstack` | backend + front |
 | `custom` | minimal (tu ajoutes tes scopes à la main) |
 
+## Profils techniques
+
+`tech_profile` ajoute des règles de stack sans changer le feature mesh. Le profil `generic` reste le défaut.
+
+| Profil | Règles générées |
+|---|---|
+| `generic` | aucune règle stack spécifique |
+| `dotnet-clean-cqrs` | `.ai/rules/tech-dotnet.md` |
+| `react-next` | `.ai/rules/tech-react.md` |
+| `fullstack-dotnet-react` | règles .NET + React + contrat back/front |
+
+Ces presets sont volontairement courts : ils orientent l'agent sur architecture, contrats, validation et garde-fous sécurité, puis laissent le projet cible préciser ses conventions locales.
+
 ---
 
 ## Ce qui est généré
@@ -422,6 +444,7 @@ mon-projet/
 │   ├── reminder.md                # hard rules (compressé v0.6)
 │   ├── quality/QUALITY_GATE.md    # DoD bloquant
 │   ├── rules/<scope>.md           # règles par scope
+│   ├── rules/tech-*.md            # règles stack optionnelles
 │   ├── scripts/
 │   │   ├── _lib.sh                # helpers partagés
 │   │   ├── build-feature-index.sh # compile l'index JSON
@@ -537,7 +560,7 @@ Template versionné. Non-cassant → bump minor. Refonte → bump major (les con
 - [docs/getting-started.md](docs/getting-started.md) — tour complet
 - [docs/upgrading.md](docs/upgrading.md) — updates
 
-Tests : `bash tests/smoke-test.sh` (27 étapes, exige `copier` dans le PATH).
+Tests : `bash tests/smoke-test.sh` (28 étapes, exige `copier` dans le PATH).
 
 ---
 

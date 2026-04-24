@@ -34,6 +34,7 @@ Industrialiser la génération du contexte AI dans n'importe quel projet via `co
 - `scope_profile` ∈ {minimal, backend, fullstack, custom} → dérive `scopes` (variable calculée).
 - `agents` multiselect ∈ {claude, codex, cursor, gemini, copilot} → conditionne shims.
 - `docs_root` (default `.docs`) configure le dossier feature mesh.
+- `tech_profile` ∈ {generic, dotnet-clean-cqrs, react-next, fullstack-dotnet-react} → génère des règles stack optionnelles sans modifier les scopes métier.
 
 ## Cross-refs
 
@@ -51,3 +52,4 @@ Ce moteur produit le squelette consommé par `feature-mesh`, `feature-index-cach
 - 2026-04-24 : ajout des helpers de matching `touches:` dans `template/.ai/scripts/_lib.sh.jinja`. Objectif : éviter les divergences entre hook `PreToolUse`, auto-worklog, pre-commit et coverage.
 - 2026-04-24 : les scripts template consomment désormais `AI_CONTEXT_DOCS_ROOT={{ docs_root }}` depuis `_lib.sh.jinja` pour supporter `docs_root=docs` sur les chemins runtime (`check-features`, index, reminder, commit guard).
 - 2026-04-24 : README racine synchronisé avec le runtime actuel (`docs_root` configurable, matching `touches:` centralisé, pre-commit/auto-progress dans l'arbre généré).
+- 2026-04-24 : ajout du preset `tech_profile` dans `copier.yml` + règles conditionnelles `tech-dotnet`, `tech-react`, `stack-fullstack-dotnet-react`. Les règles reprennent des patterns génériques observés sur `ticketing.apps` (Clean Architecture/CQRS, feature-sliced React, contrat back/front), sans copier les conventions métier/projet.

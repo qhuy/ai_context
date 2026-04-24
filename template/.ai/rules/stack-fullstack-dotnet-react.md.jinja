@@ -1,0 +1,23 @@
+# Règles stack — Fullstack .NET + React
+
+À charger uniquement quand `tech_profile=fullstack-dotnet-react`.
+
+## Contrat back/front
+
+- Toute modification d'endpoint, DTO, pagination, tri, filtre, auth, droit ou erreur API doit être traitée comme un changement de contrat.
+- Le backend documente le contrat consommable : route, méthode, payload, réponse, erreurs attendues, droits/auth, cas vide.
+- Le frontend consomme le contrat documenté ; ne pas deviner les shapes ni coder autour d'un comportement non confirmé.
+- Les noms de champs doivent rester cohérents entre DTO backend, client API frontend, validation et UI.
+
+## Séquencement
+
+- Si le travail traverse backend et frontend, garder un scope primaire et produire un HANDOFF explicite vers l'autre scope.
+- Backend d'abord quand le contrat n'existe pas ; frontend d'abord seulement pour exploration UI/mock volontaire.
+- Les migrations DB, droits, flags ou rollout doivent être visibles dans la fiche feature ou le handoff.
+
+## Validation croisée
+
+- Backend : build + tests ciblés du use case, endpoint ou repository touché.
+- Frontend : typecheck/lint/build/tests ciblés selon scripts disponibles.
+- Vérifier au moins un flux nominal et un flux erreur côté UI quand le contrat API change.
+- Signaler explicitement ce qui n'a pas pu être exécuté localement.

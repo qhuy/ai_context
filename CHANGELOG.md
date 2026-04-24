@@ -5,10 +5,11 @@
 ### Changé
 - Centralisation du matching `touches:` dans `_lib.sh` (`path_matches_touch` + `features_matching_path`) et adoption par `features-for-path`, `auto-worklog-log`, `check-feature-coverage` et le hook git `pre-commit`.
 - Les scripts runtime utilisent maintenant `AI_CONTEXT_DOCS_ROOT` / `AI_CONTEXT_FEATURES_DIR` depuis `_lib.sh`, ce qui rend `docs_root=docs` fonctionnel au-delà des fichiers scaffoldés.
+- Ajout de `tech_profile` pour générer des règles stack optionnelles : `.NET Clean Architecture + CQRS`, `React/Next`, ou contrat fullstack `.NET + React`.
 - Documentation synchronisée : nombre d'étapes du smoke-test, défaut `enable_ci_guard`, description des hooks runtime.
 
 ### Tests
-- Smoke-test étendu à **27 étapes** avec assertions ciblées sur le matching exact/dossier/glob/`/**` et `docs_root=docs`.
+- Smoke-test étendu à **28 étapes** avec assertions ciblées sur le matching exact/dossier/glob/`/**`, `docs_root=docs` et les rendus conditionnels `tech_profile`.
 
 ## v0.9.0 — 2026-04-24
 

@@ -23,6 +23,10 @@ _exclude:
   - "{% if 'architecture' not in scopes %}.ai/rules/architecture.md{% endif %}"
   - "{% if 'security' not in scopes %}.ai/rules/security.md{% endif %}"
   - "{% if 'handoff' not in scopes %}.ai/rules/handoff.md{% endif %}"
+  # Règles tech conditionnelles
+  - "{% if tech_profile not in ['dotnet-clean-cqrs', 'fullstack-dotnet-react'] %}.ai/rules/tech-dotnet.md{% endif %}"
+  - "{% if tech_profile not in ['react-next', 'fullstack-dotnet-react'] %}.ai/rules/tech-react.md{% endif %}"
+  - "{% if tech_profile != 'fullstack-dotnet-react' %}.ai/rules/stack-fullstack-dotnet-react.md{% endif %}"
   # Dossiers features/<scope>/ conditionnels (scopes métier uniquement)
   - "{% if 'back' not in scopes %}{{ docs_root }}/features/back{% endif %}"
   - "{% if 'front' not in scopes %}{{ docs_root }}/features/front{% endif %}"
@@ -98,6 +102,16 @@ scope_profile:
     fullstack (backend + front): fullstack
     custom (scaffold minimal, tu ajoutes à la main): custom
   help: Profil de scopes à générer
+
+tech_profile:
+  type: str
+  default: generic
+  choices:
+    generic (aucune règle stack spécifique): generic
+    dotnet-clean-cqrs (C#/.NET Clean Architecture + CQRS): dotnet-clean-cqrs
+    react-next (React/Next feature-sliced): react-next
+    fullstack-dotnet-react (C# backend + React/Next frontend): fullstack-dotnet-react
+  help: Preset technique optionnel à ajouter aux règles AI
 
 commit_language:
   type: str

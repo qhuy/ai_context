@@ -1,0 +1,40 @@
+# Règles tech — React / Next
+
+À charger uniquement pour les tâches React/Next quand `tech_profile={{ tech_profile }}`.
+
+## Architecture front
+
+- Garder `app/` ou les routes centrées sur le routing, le layout et la composition.
+- Mettre la logique métier dans `features/<feature>/` quand le projet suit une organisation feature-first.
+- Réserver `ui/` ou `components/` aux composants de présentation réutilisables.
+- Réserver `lib/` aux adapters, clients, helpers purs et intégrations transverses.
+- Réutiliser les composants partagés existants avant d'en créer de nouveaux.
+
+## Imports et dépendances
+
+- Utiliser les imports absolus si le projet les configure ; éviter les chemins relatifs profonds.
+- Éviter les dépendances directes entre features quand un contrat partagé ou un hook dédié suffit.
+- Ne pas placer d'effet réseau dans un composant purement présentationnel.
+
+## Données, formulaires, état
+
+- Regrouper les appels API dans des hooks/services dédiés.
+- Si TanStack Query est présent : query keys stables, invalidation via query client, pas de refresh global implicite.
+- Si React Hook Form/Zod sont présents : garder validation schema + messages d'erreur cohérents avec l'i18n du projet.
+- Chaque flux utilisateur visible doit gérer loading, error, empty et success.
+
+## UX et accessibilité
+
+- Préserver le design system local : composants, tokens, spacing, états focus/disabled.
+- Les actions destructives ou irréversibles demandent confirmation si le produit le fait déjà ailleurs.
+- Les formulaires ont labels accessibles, erreurs lisibles et navigation clavier correcte.
+- Vérifier les états responsive avant de considérer une UI terminée.
+
+## Validation
+
+- Commandes usuelles à privilégier si présentes :
+  - `npm run typecheck`
+  - `npm run lint`
+  - `npm run test`
+  - `npm run build`
+- Pour une feature UI importante : ajouter ou mettre à jour un test composant, hook ou e2e selon le niveau de risque.

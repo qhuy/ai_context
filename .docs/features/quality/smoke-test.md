@@ -1,7 +1,7 @@
 ---
 id: smoke-test
 scope: quality
-title: Smoke-test end-to-end (27 assertions)
+title: Smoke-test end-to-end (28 assertions)
 status: active
 depends_on:
   - core/template-engine
@@ -26,7 +26,7 @@ Vérifier en un script que la chaîne complète tient : `copier copy` → check-
 ## Comportement attendu
 
 - Lancement local : `bash tests/smoke-test.sh`.
-- 27 assertions, exit non-zéro à la première qui casse.
+- 28 assertions, exit non-zéro à la première qui casse.
 - Crée un projet jetable dans `/tmp`, applique le template, exerce les scripts.
 
 ## Contrats
@@ -46,3 +46,4 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-04-24 : ajout [18/27] — vérifie que le pre-commit `auto-progress.sh` bascule `spec → implement`, écrit le snapshot dans `.progress-history.jsonl`, crée la ligne `auto-progress` dans le worklog, et est idempotent (second commit sans re-bump). HANDOFF reçu depuis `workflow/conversational-skills` (chantier 4). Révélé au passage un bug fixé : `auto-progress.sh` ne créait pas le worklog si absent — correctif appliqué dans `.ai/scripts/` + `template/.ai/scripts/`, cross-ref tracée dans `core/template-engine` Historique.
 - 2026-04-24 : ajout [26/27] — vérifie le helper `_lib.sh path_matches_touch` sur matching exact, dossier, glob `**` et faux positifs proches.
 - 2026-04-24 : ajout [27/27] — scaffold avec `docs_root=docs`, puis vérifie `check-features`, `features-for-path` et l'index JSON sur `docs/features`.
+- 2026-04-24 : ajout [28/28] — vérifie les rendus conditionnels `tech_profile` pour `dotnet-clean-cqrs`, `react-next` et `fullstack-dotnet-react` (fichiers générés/exclus + références dans `.ai/index.md`).

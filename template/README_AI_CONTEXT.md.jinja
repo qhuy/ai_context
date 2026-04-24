@@ -27,6 +27,17 @@ Ce projet a été scaffoldé depuis le template [`ai_context`](https://github.co
 {% for scope in scopes %}- `{{ scope }}` → `.ai/rules/{{ scope }}.md`{% if scope in ['back', 'front', 'architecture', 'security'] %} + features `{{ docs_root }}/features/{{ scope }}/`{% endif %}
 {% endfor %}
 
+{% if tech_profile != 'generic' %}
+## Preset technique
+
+`{{ tech_profile }}` ajoute les règles suivantes :
+
+{% if tech_profile in ['dotnet-clean-cqrs', 'fullstack-dotnet-react'] %}- `.ai/rules/tech-dotnet.md`
+{% endif %}{% if tech_profile in ['react-next', 'fullstack-dotnet-react'] %}- `.ai/rules/tech-react.md`
+{% endif %}{% if tech_profile == 'fullstack-dotnet-react' %}- `.ai/rules/stack-fullstack-dotnet-react.md`
+{% endif %}
+{% endif %}
+
 ## Feature mesh (systématique)
 
 Toute feature ajoute ou met à jour un fichier `{{ docs_root }}/features/<scope>/<id>.md` basé sur `{{ docs_root }}/FEATURE_TEMPLATE.md`.
