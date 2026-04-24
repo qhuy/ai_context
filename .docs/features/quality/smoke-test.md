@@ -9,6 +9,12 @@ depends_on:
   - workflow/git-hooks
 touches:
   - tests/**
+progress:
+  phase: review
+  step: "bootstrap dog-fooding (v0.9 historique)"
+  blockers: []
+  resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
+  updated: 2026-04-24
 ---
 
 # Smoke-test
