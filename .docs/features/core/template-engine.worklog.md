@@ -30,3 +30,19 @@
 - Fichiers modifiés :
   - template/.claude/skills/aic-feature-audit/SKILL.md.jinja
   - template/.claude/skills/aic-feature-audit/workflow.md.jinja
+
+## 2026-04-24 16:40 — auto
+- Fichiers modifiés :
+  - README.md
+
+## 2026-04-24 17:26 — auto
+- Fichiers modifiés :
+  - template/.ai/rules/tech-dotnet.md.jinja
+
+## 2026-04-24 18:02 — auto
+- Fichiers modifiés :
+  - template/.ai/rules/tech-react.md.jinja
+
+## 2026-04-24 18:13 — auto
+- Fichiers modifiés :
+  - template/.ai/rules/stack-fullstack-dotnet-react.md.jinja

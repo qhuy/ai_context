@@ -2,38 +2,99 @@
 
 À charger uniquement pour les tâches C#/.NET quand `tech_profile={{ tech_profile }}`.
 
-## Architecture
+## Stack déclarée
 
-- Respecter la séparation `Domains/`, `Applications/`, `Infrastructures/` et couche d'exposition (`Controllers/`, endpoints, workers).
-- Les handlers/use cases restent centrés métier : orchestration, validation applicative, appels ports/repositories/services.
-- Les contrôleurs/endpoints restent fins : binding, auth/route, appel use case, mapping réponse.
-- Les dépendances pointent vers l'intérieur : `Domains` ne connaît pas `Applications`, `Infrastructures`, HTTP, EF/Dapper, ni le conteneur DI.
+- Runtime : .NET 8+ (ajuster si le projet cible une autre LTS).
+- Architecture : Clean Architecture + CQRS, use cases centrés métier.
+- Accès données par défaut : Dapper avec `CommandDefinition` paramétré ; EF Core toléré si déjà en place.
+- Retour handlers : `Result<T>` (pas d'exceptions pour les erreurs attendues).
+- Tests : xUnit + FluentAssertions (ajuster si NUnit/MSTest déjà en place).
+- Le projet DOIT déclarer explicitement tout écart à cette stack dans `.ai/rules/back.md` ou la fiche feature.
 
-## CQRS / Use cases
+## Architecture & nommage
 
-- Placer les commandes/requêtes dans `Applications/UseCases/` ou l'équivalent existant.
-- Définir les ports dans `Applications/Ports/` avant d'ajouter une dépendance infrastructurelle.
-- Les règles de décision réutilisables vont dans `Applications/Policies/` ou dans le domaine, pas dans les contrôleurs.
-- Les erreurs métier attendues utilisent `Result<T>` ou l'équivalent projet ; réserver les exceptions aux cas réellement exceptionnels.
+### Layout module
+- `Domains/` — agrégats, value objects, invariants métier.
+- `Applications/UseCases/` — commandes et requêtes internes.
+- `Applications/Ports/` — interfaces sortantes (DB, HTTP, messaging).
+- `Applications/Policies/` — règles de décision réutilisables.
+- `Applications/Exceptions/` — exceptions applicatives typées.
+- `Infrastructures/` — regroupé par capacité métier, pas par couche technique.
+- Optionnels : `Applications/AdminApi/`, `Applications/Partner/`, `Applications/Shared/` (contrats publics transverses), `Applications/Workers/`, `Applications/MessageHandlers/`.
 
-## Données et sécurité
+### Flux de dépendances
 
-- Pas de SQL, EF query complexe ou accès DB direct dans les contrôleurs/endpoints.
-- Paramétrer les valeurs SQL ; tout identifiant dynamique (colonne, tri, table) doit passer par une allowlist.
-- Les changements d'endpoint, auth, tenancy, droits ou DTO sont des changements de contrat : documenter l'impact et les consommateurs.
+Trois points d'entrée selon le contexte d'exécution :
+
+- **HTTP (API / contrôleur)**
+  `Controller/API → Applications/Presentation → Applications/UseCases → Applications/Ports → Infrastructures`
+
+- **Worker / tâche de fond (scheduling, polling, cron)**
+  `Applications/Workers → Applications/UseCases → Applications/Ports → Infrastructures`
+
+- **Handler de message bus (RabbitMQ, MassTransit, Azure Service Bus…)**
+  `Applications/MessageHandlers → Applications/UseCases → Applications/Ports → Infrastructures`
+
+Règles communes :
+- `Domains/` ne dépend de rien d'autre que lui-même.
+- `UseCases/*` sont des détails internes ; ne pas les consommer depuis un autre module.
+- Un `Worker` ou un `MessageHandler` orchestre (scheduling, consumer, dispatch) mais ne contient pas de logique métier — il appelle un use case comme le ferait un contrôleur.
+- Contrats cross-modules publics : passer par un Shared Kernel dédié.
+
+### Nommage obligatoire
+- Interne (orchestration) : `XxxUseCaseCommand`, `XxxUseCaseQuery`, `XxxUseCaseResult`, `XxxUseCaseHandler`.
+- Présentation (HTTP) : `XxxRequest`, `XxxResponse`, `XxxHandler`.
+- Ne JAMAIS exposer `public XxxCommand`/`public XxxQuery` depuis la présentation — indistinguable des messages internes.
+
+### Visibilité par défaut
+- `UseCases/*`, `Ports/*`, `Policies/*`, `Domains/*`, `Infrastructures/*` = `internal`.
+- Présentation : `Request`/`Response` peuvent être `public` si le pipeline l'exige ; `Handler` reste `internal`.
+
+## Erreurs, données & sécurité
+
+### Error handling
+- `Result<T>` est le contrat de retour standard des handlers.
+- `throw` réservé aux pannes infra imprévues (DB indisponible, sérialisation cassée).
+- Les erreurs infra attendues → failures typés au niveau du port (ex : `CustomerProfilePortResult<T>`), remappés en `Result<T>` par le handler.
+- Pas d'exception métier/applicative jetée depuis `Infrastructures/*` pour des cas prévus.
+
+### Domain model
+- Pas d'agrégat « pur data » sans comportement.
+- Chaque agrégat expose une factory ou un constructeur qui impose ses invariants de création.
+- Value objects pour les concepts auto-validants (Email, Password, Money…).
+- Invariants métier = méthodes sur l'agrégat, pas dans le handler.
+
+### SQL safety
+- Valeurs passées via Dapper `CommandDefinition` paramétré.
+- Jamais d'interpolation de nom de colonne/table/identifiant dans une chaîne SQL.
+- Identifiants dynamiques inévitables : `QUOTENAME()` en T-SQL, ou allowlist stricte côté C#.
+
+### Sécurité API
+- Pas de SQL, requête EF complexe ou accès DB direct dans un contrôleur/endpoint.
+- Auth/tenancy/droits vérifiés côté serveur, pas côté client.
+- Changement d'endpoint, DTO, auth, tenancy, droits = changement de contrat : documenter l'impact et les consommateurs.
 - Ne pas exposer les exceptions brutes dans les réponses API.
 
-## DI et configuration
+## Interdits explicites
 
-- Enregistrer les services dans la racine de composition existante (`Program.cs`, `Startup.cs`, `StartUp.cs` ou module DI local).
-- Préférer les options typées validées au démarrage pour la configuration non triviale.
-- Garder les adapters infrastructure remplaçables par tests.
+- **Handler qui `throw` pour une erreur métier attendue** — renvoyer un `Result<T>.Failure(...)`.
+- **`public XxxCommand` / `public XxxQuery` exposé depuis la présentation** — utiliser `Request`/`Response`.
+- **Logique métier dans `Infrastructures/*`** — remonter dans `UseCases` ou `Domains`.
+- **Worker ou MessageHandler qui contient du SQL, un appel HTTP direct, ou de la logique métier** — doit appeler un use case. Sinon il devient un fourre-tout intestable.
+- **Nouveau port/adapter non enregistré dans `StartUp.cs`/`Startup.cs`** — toujours vérifier le composition root, la présence de fichier ne suffit pas.
+- **Interpolation d'identifiant SQL (`$"SELECT * FROM {table}"`)** — `QUOTENAME()` ou allowlist, sinon rien.
 
 ## Validation
 
-- Pour un handler/use case nouveau ou modifié : tester au minimum happy path + erreur métier principale.
-- Pour une requête DB ou repository : couvrir les filtres, pagination/tri et cas vide si applicables.
-- Commandes usuelles à privilégier si présentes :
-  - `dotnet build`
-  - `dotnet test`
-  - `dotnet test <projet-tests-ciblé>`
+### Commandes privilégiées
+- `dotnet build` sur les projets impactés (obligatoire).
+- `dotnet test <projet-tests-ciblé>` (préférer ciblé au global).
+- Build avec analyzers + warnings-as-errors activés.
+- Guards d'architecture (ArchUnitNET ou équivalent) si définis, lorsque les frontières bougent.
+
+### Seuil de tests minimum
+- Tout handler nouveau/modifié : **1 happy path + 1 error path** (validation, policy, not-found).
+- Toute policy nouvelle : **1 cas positif + 1 cas négatif**.
+- Tests de bornes : privilégier `[Theory]` + `[InlineData]`.
+- Repository/requête DB : couvrir filtres, pagination/tri, cas vide si applicables.
+- Skip accepté uniquement avec raison explicite + commande à rejouer.

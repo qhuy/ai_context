@@ -2,39 +2,159 @@
 
 À charger uniquement pour les tâches React/Next quand `tech_profile={{ tech_profile }}`.
 
-## Architecture front
+## Stack déclarée
 
-- Garder `app/` ou les routes centrées sur le routing, le layout et la composition.
-- Mettre la logique métier dans `features/<feature>/` quand le projet suit une organisation feature-first.
-- Réserver `ui/` ou `components/` aux composants de présentation réutilisables.
-- Réserver `lib/` aux adapters, clients, helpers purs et intégrations transverses.
-- Réutiliser les composants partagés existants avant d'en créer de nouveaux.
+- Runtime : Next.js App Router (14+) **ou** Vite + React 18+. Le projet DOIT trancher explicitement dans `.ai/rules/front.md`, avec le mode de rendu (CSR / SSR / SSG / ISR / static export) et l'URL de production.
+- Auth : cookie HTTP-only (JWT ou session), TTL documenté. Pas de token en `localStorage`.
+- Data fetching : TanStack Query v5.
+- Forms : React Hook Form + Zod (schéma → `z.infer` → type).
+- Style : Tailwind 4 (CSS-first, tokens via `@theme`) **ou** design system maison avec tokens DTCG. Jamais de CSS en-dur en dehors d'une allowlist restreinte.
+- Primitives bas niveau : shadcn/ui ou Radix ; pas d'import direct sans passer par `ui/primitives/` ou `ui/common/`.
+- Tests : Vitest + Testing Library. E2E : Playwright recommandé.
+- i18n : bibliothèque dédiée (`react-intl`, `next-intl`, `i18next`) ; pas de texte codé en dur en composant visible.
+- Le projet DOIT déclarer tout écart à cette stack dans `.ai/rules/front.md` ou la fiche feature.
 
-## Imports et dépendances
+## Architecture & nommage
 
-- Utiliser les imports absolus si le projet les configure ; éviter les chemins relatifs profonds.
-- Éviter les dépendances directes entre features quand un contrat partagé ou un hook dédié suffit.
-- Ne pas placer d'effet réseau dans un composant purement présentationnel.
+### Layout projet
 
-## Données, formulaires, état
+- `app/` (Next) ou `src/routes/` — routing, layout, composition **uniquement**. Pas de logique métier.
+- `features/<feature>/` — logique métier par feature, organisation feature-first.
+  - `features/<feature>/components/` — composants spécifiques, non réutilisables.
+  - `features/<feature>/hooks/` — hooks métier (queries, mutations, state).
+  - `features/<feature>/<name>Schema.ts` — schémas Zod, type dérivé obligatoire : `export type XxxForm = z.infer<typeof xxxSchema>`.
+  - `features/<feature>/api.ts` ou `features/<feature>/services/` — appels API.
+- `ui/primitives/` — wrappers shadcn/Radix/primitives bas niveau.
+- `ui/common/` — composants génériques réutilisables (atoms/molecules).
+- `ui/partials/` — composants composites métier-agnostiques réutilisés (molecules/organisms).
+- `ui/adapters/<lib>/` — seule porte d'entrée autorisée pour une lib UI tierce lourde (Kendo, MUI, AntD, Mantine…).
+- `lib/` — adapters, clients HTTP, helpers purs, intégrations transverses.
 
-- Regrouper les appels API dans des hooks/services dédiés.
-- Si TanStack Query est présent : query keys stables, invalidation via query client, pas de refresh global implicite.
-- Si React Hook Form/Zod sont présents : garder validation schema + messages d'erreur cohérents avec l'i18n du projet.
-- Chaque flux utilisateur visible doit gérer loading, error, empty et success.
+### Règles inter-couches
 
-## UX et accessibilité
+- `features/*` ne dépend JAMAIS d'un autre `features/*`. Partage via `ui/common`, `ui/partials`, `lib/`, ou un hook dédié.
+- `app/` peut consommer `features/*`, `ui/*`, `lib/*`. L'inverse est interdit.
+- Imports absolus (`@/`) obligatoires ; pas de chemins relatifs profonds (`../../`).
+- Pas d'effet réseau dans un composant purement présentationnel : tout `fetch`/`useQuery`/`useMutation` passe par un hook ou un service dédié.
 
-- Préserver le design system local : composants, tokens, spacing, états focus/disabled.
-- Les actions destructives ou irréversibles demandent confirmation si le produit le fait déjà ailleurs.
-- Les formulaires ont labels accessibles, erreurs lisibles et navigation clavier correcte.
-- Vérifier les états responsive avant de considérer une UI terminée.
+## Design System & composants partagés
+
+### Arborescence hiérarchisée (stricte)
+
+Ordre de priorité de réutilisation : **`ui/partials/` > `ui/common/` > `ui/primitives/` > créer**.
+
+Avant de créer un composant, l'agent DOIT scanner `ui/partials/` puis `ui/common/` pour un équivalent. Dupliquer un composant existant est interdit.
+
+### Registry obligatoire
+
+Fichier canonique : `docs/design-system-registry.md` (ou équivalent déclaré dans `.ai/rules/front.md`).
+
+- Liste **tous** les composants de `ui/common/` et `ui/partials/` avec leur rôle fonctionnel + règles de comportement (1-3 lignes chacun).
+- Organisé par catégorie : Layout & Shell / Forms & Inputs / Lists & Tables / Navigation / Feedback / Partials métier.
+- Tout nouveau composant générique DOIT être ajouté au registry **dans le même commit** que sa création.
+- Toute règle de comportement (ex : « `DtSelect` avec `requiredField=true` → auto-sélection premier item ») DOIT être documentée au registry, pas déduite du code.
+- Le registry est la source de vérité consultée par l'agent avant toute création de composant.
+
+### Atomic map obligatoire dès 30 composants
+
+Fichier : `docs/atomic-design-map.md`.
+
+- Classe chaque composant UI en `atom` / `molecule` / `organism` / `template` / `page`.
+- Ajoute des tags (`form`, `grid`, `list`, `nav`, `layout`, `overlay`, `<lib-name>`…).
+- Inclut compteurs agrégés (UI components, features, app routes, adapters, imports interdits).
+- Sert aux audits de duplication et aux guards d'imports.
+
+### Isolation des libs UI tierces lourdes
+
+- Kendo, MUI, AntD, Mantine, Material, Chakra : imports autorisés **uniquement** depuis `ui/adapters/<lib>/*`.
+- Aucun import direct depuis `features/*`, `ui/common/*`, `ui/partials/*`, ou `app/*`.
+- Le projet DOIT ajouter un lint guard (`lint:<lib>`) en CI si la lib est présente.
+
+### Storybook (recommandé dès 10 composants)
+
+- Tout nouveau `ui/common/<comp>/index.tsx` DOIT avoir un `<comp>.stories.tsx` voisin.
+- Guard `lint:stories-required` recommandé en CI.
+- Les stories consomment les vrais tokens (pas de thème mock).
+
+## Data, formulaires, état
+
+### Data fetching (TanStack Query)
+
+- `QueryProvider` monté une seule fois au niveau `app/layout.tsx` (ou équivalent) — pas d'instanciation locale.
+- `queryKey = [endpoint, params?]` — `endpoint` = chemin HTTP absolu. `params` JSON-sérialisables uniquement (pas de `Date`, `URL`, cycle).
+- `queryFn` passe par un client HTTP centralisé (`lib/api/httpClient` ou équivalent) qui applique headers, auth, transform.
+- Mutations : `mutationFn` explicite, `onSuccess` → `queryClient.invalidateQueries({ queryKey })`.
+- Optimistic updates : rollback obligatoire + feedback visible en cas d'échec.
+
+### Formulaires (React Hook Form + Zod)
+
+- Schéma Zod dans `features/<feature>/<name>Schema.ts`, type dérivé `z.infer<typeof xxxSchema>`.
+- Mount : `useForm({ resolver: zodResolver(xxxSchema) })`.
+- Messages d'erreur Zod = **clés i18n**, résolues via `t(errors.field.message)` au rendu. Pas de texte en dur dans le schéma.
+- Validation centralisée dans le schéma ; pas de regex ou fonction `getXxxErrors()` dispersée.
+
+### État global
+
+- Par défaut : pas d'état global. Les queries TanStack + URL params couvrent la majorité des besoins.
+- Si nécessaire : Zustand, Jotai, ou Context local. À déclarer dans `.ai/rules/front.md`.
+- Éviter Redux sur un projet neuf sauf contrainte explicite.
+
+## UX, accessibilité, i18n
+
+### États UI minimum (obligatoires sur tout flux visible)
+
+Chaque écran/composant consommant une query ou une mutation DOIT gérer explicitement : **loading / empty / error / success**. Pas de spinner implicite ou d'état manquant.
+
+### Accessibilité
+
+- Labels accessibles sur tous les inputs (`label` lié, `aria-label` si pas de texte visible).
+- Navigation clavier fonctionnelle : focus visible, `Tab` logique, `Enter`/`Esc` sur dialogues.
+- Messages d'erreur lisibles et associés au champ (`aria-describedby`).
+- Composants interactifs non-natifs (dropdown custom, dialog, tabs…) : respecter WAI-ARIA Authoring Practices ou consommer une primitive accessible (Radix).
+
+### Responsive
+
+- Chaque nouveau composant vérifie au moins les breakpoints mobile / tablet / desktop du design system.
+- Pas de layout figé en pixels quand une approche fluide est possible.
+
+### i18n
+
+- Pas de texte en dur dans un composant visible. Utiliser `t('key')` ou équivalent.
+- Clés i18n structurées par feature : `features.<feature>.<surface>.<key>`.
+- Pas de concaténation de clés (`t('prefix.' + variable)`) — utiliser des clés complètes.
+
+## Interdits explicites
+
+- **Créer un composant sans avoir scanné `ui/partials/` et `ui/common/`** — duplication garantie.
+- **Ajouter un composant à `ui/common/` ou `ui/partials/` sans l'inscrire au registry dans le même commit** — le registry devient obsolète au premier oubli.
+- **Import direct d'une lib UI tierce (Kendo, MUI, AntD, Mantine…) depuis `features/*`, `ui/common/*`, `ui/partials/*`, ou `app/*`** — passer par `ui/adapters/<lib>/`.
+- **`window.dispatchEvent('xxxInvalidated')` ou bus d'événements custom pour invalider des queries** — utiliser `queryClient.invalidateQueries`, le cache Query est la source unique.
+- **Callbacks `refreshXxx` remontés via props ou context** — remplacer par `invalidateQueries`.
+- **Effet réseau (`fetch`, `useQuery`, `useMutation`) dans un composant purement présentationnel** — déplacer dans un hook ou service de la feature.
+- **Imports relatifs profonds (`../../` et au-delà)** — utiliser les alias absolus (`@/`).
+- **Validation regex ou `getXxxFormErrors(input)` dispersée hors du schéma Zod** — tout centraliser dans le schéma.
+- **Texte en dur dans un composant visible** — passer par i18n.
+- **Token CSS (`--xxx:`) déclaré hors des fichiers d'allowlist (`tokens.css`, `global.css`)** — passer par le pipeline de tokens.
 
 ## Validation
 
-- Commandes usuelles à privilégier si présentes :
-  - `npm run typecheck`
-  - `npm run lint`
-  - `npm run test`
-  - `npm run build`
-- Pour une feature UI importante : ajouter ou mettre à jour un test composant, hook ou e2e selon le niveau de risque.
+### Commandes privilégiées
+
+- `npm run typecheck` (ou `tsc --noEmit`) — bloquant.
+- `npm run lint` / `npm run lint:all` — incluant les guards projet (`lint:tokens`, `lint:kendo`, `lint:stories-required`, `lint:docs` s'ils existent).
+- `npm run test` — Vitest + Testing Library.
+- `npm run build` — bloquant avant delivery.
+- Skip accepté uniquement avec raison explicite + commande à rejouer.
+
+### Seuil de tests minimum
+
+- Composant UI réutilisable (`ui/common`, `ui/partials`) : test des variantes principales + comportement documenté au registry.
+- Hook métier (`features/<f>/hooks/`) : test du happy path + 1 cas d'erreur.
+- Formulaire avec schéma Zod : test validation succès + au moins une validation erreur par règle critique.
+- Flow critique (auth, paiement, soumission) : test E2E Playwright recommandé.
+
+### Documentation à mettre à jour
+
+- Composant ajouté/modifié dans `ui/common` ou `ui/partials` → `docs/design-system-registry.md`.
+- Composant atteignant le seuil de 30 UI components → `docs/atomic-design-map.md` à créer.
+- Pattern de data fetching / formulaire / state modifié → doc cookbook du projet (ex : `docs/PATTERNS_DATA_FETCHING.md`).

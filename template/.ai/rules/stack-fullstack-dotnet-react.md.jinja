@@ -2,22 +2,92 @@
 
 À charger uniquement quand `tech_profile=fullstack-dotnet-react`.
 
-## Contrat back/front
+Complète `tech-dotnet.md` (back) et `tech-react.md` (front). Ce fichier ne couvre que ce qui traverse la frontière back/front.
 
-- Toute modification d'endpoint, DTO, pagination, tri, filtre, auth, droit ou erreur API doit être traitée comme un changement de contrat.
-- Le backend documente le contrat consommable : route, méthode, payload, réponse, erreurs attendues, droits/auth, cas vide.
-- Le frontend consomme le contrat documenté ; ne pas deviner les shapes ni coder autour d'un comportement non confirmé.
-- Les noms de champs doivent rester cohérents entre DTO backend, client API frontend, validation et UI.
+## Stack déclarée
 
-## Séquencement
+- Back : cf. `tech-dotnet.md` (Clean Architecture + CQRS, `Result<T>`, Dapper/EF, xUnit).
+- Front : cf. `tech-react.md` (Next/Vite + React 18, TanStack Query v5, RHF + Zod).
+- Contrat API : JSON sur HTTPS. Source de vérité à trancher explicitement dans `.ai/rules/architecture.md` :
+  - **Option A (recommandée)** : OpenAPI généré côté back → client TypeScript généré côté front (`openapi-typescript`, `orval`, `NSwag`…). Diff OpenAPI en CI.
+  - **Option B** : DTO/types partagés manuellement, synchronisés par convention de nommage stricte.
+- Auth : cookie HTTP-only (JWT ou session), TTL documenté. Jamais en `localStorage`.
+- Le projet DOIT déclarer A ou B, la lib de génération ou la convention, et les headers obligatoires (ex : `X-Tenant-Id`, `Accept-Language`).
 
-- Si le travail traverse backend et frontend, garder un scope primaire et produire un HANDOFF explicite vers l'autre scope.
-- Backend d'abord quand le contrat n'existe pas ; frontend d'abord seulement pour exploration UI/mock volontaire.
-- Les migrations DB, droits, flags ou rollout doivent être visibles dans la fiche feature ou le handoff.
+## Contrat API (source de vérité)
+
+### Changement de contrat = acte gouverné
+
+Toute modification de l'un de ces éléments est un **changement de contrat**, pas un détail d'implémentation :
+- Endpoint (route, méthode HTTP, statut de réponse).
+- DTO (champs, types, nullabilité, casing).
+- Pagination, tri, filtrage (forme des query params).
+- Auth, tenancy, droits requis.
+- Erreurs attendues (code HTTP, shape du body d'erreur).
+- Cas vide / cas limite documentés.
+
+Procédure :
+- Le backend documente le contrat consommable : route, méthode, payload, réponse, erreurs, droits, cas vide.
+- Le frontend consomme **le contrat documenté**, jamais un comportement deviné ni observé en runtime.
+- Rupture de compatibilité : migration/versioning explicite, impact consommateurs listé.
+
+### Nommage cohérent back → front
+
+Les noms de champs DOIVENT rester identiques (modulo casing) sur toute la chaîne :
+`DTO backend` ↔ `client API frontend` ↔ `schéma Zod` ↔ `composant UI`.
+
+- Casing : le projet tranche une convention unique (camelCase JSON côté wire, adapté par sérialiseur). Documenter dans `.ai/rules/architecture.md`.
+- Renommer un champ côté back sans répercussion front est une dette, pas une optimisation.
+
+### Hiérarchie d'URL
+
+L'URL reflète la hiérarchie fonctionnelle (UI/menu), du large au spécifique : `space → area → section → feature`.
+
+- Le préfixe d'URL exprime l'ownership fonctionnel (ex : un domaine réservé à l'administration vs un domaine partagé vs un domaine côté consommateur final).
+- La hiérarchie des contrôleurs côté back et la hiérarchie des routes côté front DOIVENT rester alignées.
+- Règles permanentes et forward-only : pas d'encodage de migration temporaire dans les URLs.
+
+### Client HTTP centralisé (front)
+
+- Un seul client HTTP (`lib/api/httpClient` ou équivalent) applique : base URL, auth, headers obligatoires, transform de réponse, mapping d'erreur.
+- `queryFn`/`mutationFn` TanStack Query consomment ce client uniquement — pas de `fetch` brut dispersé.
+- Les erreurs back normalisées (shape stable : `code`, `message`, `details`) sont mappées en exceptions ou `Error` typés côté front pour être affichables.
+
+### Droits & authentification
+
+- Le mapping entre endpoint et droit requis DOIT être documenté (fichier de référence type `docs/endpoint-rights.md`, ou annotation dans l'OpenAPI).
+- Tout changement de droit sur un endpoint existant = changement de contrat (impact front : menus, boutons, guards).
+- Coexistence entre droits legacy et nouveaux droits : documenter la stratégie de rollout dans la fiche feature.
+
+## Séquencement & handoff
+
+- Un scope primaire par tour. Si le travail traverse back ET front, produire un HANDOFF explicite vers l'autre scope avant de poursuivre.
+- **Back d'abord** quand le contrat n'existe pas ou change : sans contrat stable, le front code à l'aveugle.
+- **Front d'abord** uniquement pour exploration UI / mock volontaire, en l'assumant dans la fiche feature.
+- Migrations DB, changements de droits, feature flags, stratégie de rollout : visibles dans la fiche feature ou le handoff — pas en implicite.
+
+## Interdits explicites
+
+- **Front qui devine le shape d'un DTO ou d'une erreur non documentée** — si le contrat n'est pas écrit, demander au back avant d'implémenter.
+- **`fetch` brut dans un composant ou un hook de feature** — passer par le client HTTP centralisé.
+- **Renommer un champ côté back sans mettre à jour le client front dans le même changement** — la dérive se paie cher.
+- **Ajouter un endpoint qui ne suit pas la hiérarchie fonctionnelle de l'UI** — refléter la hiérarchie ou demander une exception documentée.
+- **Changer un droit ou la nullabilité d'un champ sans l'annoncer comme changement de contrat** — impact menus, validation, UI.
+- **Utiliser des noms de champs différents entre DTO back et modèle front pour « adapter »** — adapter = dette. Corriger à la source.
 
 ## Validation croisée
 
-- Backend : build + tests ciblés du use case, endpoint ou repository touché.
-- Frontend : typecheck/lint/build/tests ciblés selon scripts disponibles.
-- Vérifier au moins un flux nominal et un flux erreur côté UI quand le contrat API change.
-- Signaler explicitement ce qui n'a pas pu être exécuté localement.
+### Backend
+- `dotnet build` sur les projets impactés.
+- `dotnet test` ciblé sur le use case, l'endpoint ou le repository touché.
+- Diff OpenAPI si le contrat change (snapshot versionné).
+
+### Frontend
+- `npm run typecheck` + `npm run lint` + `npm run build`.
+- Tests ciblés du hook ou composant consommant l'endpoint modifié.
+- Vérifier au moins **un flux nominal + un flux erreur** côté UI quand le contrat API change.
+
+### Cross-cutting
+- Si OpenAPI généré : régénérer le client front, lancer `typecheck`, vérifier qu'aucun composant consommateur ne casse.
+- Si droits modifiés : vérifier les guards de menu, de page, et d'action côté front.
+- Signaler explicitement ce qui n'a pas pu être exécuté localement + commande à rejouer.
