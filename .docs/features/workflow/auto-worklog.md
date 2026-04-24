@@ -44,3 +44,4 @@ Trigger amont : `claude-skills` (les skills déclenchent des éditions). Source 
 
 - v0.6 : introduction.
 - v0.7.2 : escaping JSON corrigé.
+- 2026-04-24 : `auto-worklog-flush.sh` ne **vide** plus `.session-edits.log`, il le **déplace** vers `.session-edits.flushed`. Permet à `auto-progress.sh` (nouveau script Stop chaîné) de consommer la trace post-flush sans race condition. Comportement vis-à-vis du worklog inchangé (toujours auto-update factuel uniquement : `progress.updated` + ligne `Fichiers modifiés`).

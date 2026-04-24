@@ -53,6 +53,11 @@
             "type": "command",
             "command": "bash .ai/scripts/auto-worklog-flush.sh",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "bash .ai/scripts/auto-progress.sh",
+            "timeout": 5
           }
         ]
       }

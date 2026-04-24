@@ -43,3 +43,4 @@ Ce moteur produit le squelette consommé par `feature-mesh`, `feature-index-cach
 - v0.1 : profil unique fullstack.
 - v0.4 : introduction des 4 profils + agents multiselect.
 - v0.7.2 : `_envops.keep_trailing_newline` pour préserver les `\n` finaux après rendu jinja.
+- 2026-04-24 : ajout du script `template/.ai/scripts/auto-progress.sh.jinja` + entrée Stop dans `template/.claude/settings.json.jinja` + entrées `.session-edits.flushed` / `.progress-history.jsonl` dans `template/.ai/.gitignore`. Édité dans le cadre du HANDOFF workflow → core émis pendant l'implémentation de `workflow/conversational-skills` (v3, auto-progression invisible). Aucune dérive de profil ni de variable copier ; uniquement enrichissement de la moisson de fichiers rendus.

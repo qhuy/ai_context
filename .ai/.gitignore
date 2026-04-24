@@ -3,3 +3,9 @@
 
 # Log volatile des éditions de la session Claude — flushé à chaque Stop hook
 .session-edits.log
+
+# Trace consommée par auto-progress.sh entre flush et progression (volatile)
+.session-edits.flushed
+
+# Historique append-only des transitions auto-progress (pour /aic undo)
+.progress-history.jsonl

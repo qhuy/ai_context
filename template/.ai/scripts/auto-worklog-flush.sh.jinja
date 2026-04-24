@@ -81,7 +81,10 @@ done <<< "$features"
 # Rebuild index pour que /aic-feature-resume reflète les nouveaux updated
 bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
 
-# Clear log
-: > "$log_file"
+# Préserve la trace pour auto-progress.sh (chaîné après dans le hook Stop).
+# auto-progress.sh la consomme puis la vide. Si ce script n'est pas activé,
+# .session-edits.flushed ne grossit pas car PostToolUse n'écrit que dans
+# .session-edits.log (recréé propre au prochain edit).
+mv "$log_file" "$repo_root/.ai/.session-edits.flushed" 2>/dev/null || : > "$log_file"
 
 exit 0
