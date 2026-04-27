@@ -102,7 +102,7 @@ echo "═══ audit-features discover <$scope> ═══"
 echo "dry-run: $([[ "$apply" -eq 1 ]] && echo "no (--apply)" || echo "yes")"
 echo
 
-if [[ "${#orphans[@]}" -eq 0 ]]; then
+if [[ "{% raw %}${#orphans[@]}{% endraw %}" -eq 0 ]]; then
   echo "✓ Aucun orphelin détecté."
   exit 0
 fi

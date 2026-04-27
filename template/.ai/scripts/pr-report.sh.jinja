@@ -56,10 +56,10 @@ echo "## AI Context Report"
 echo
 echo "- Base: \`$base_ref\`"
 echo "- Head: \`$head_ref\`"
-echo "- Fichiers modifiés: ${#changed_files[@]}"
+echo "- Fichiers modifiés: {% raw %}${#changed_files[@]}{% endraw %}"
 echo
 
-if [[ "${#changed_files[@]}" -eq 0 ]]; then
+if [[ "{% raw %}${#changed_files[@]}{% endraw %}" -eq 0 ]]; then
   echo "_Aucun fichier modifié sur ce diff._"
   exit 0
 fi
@@ -82,7 +82,7 @@ for f in "${changed_files[@]}"; do
 done
 
 echo "### Features impactées"
-if [[ "${#impacted_keys[@]}" -eq 0 ]]; then
+if [[ "{% raw %}${#impacted_keys[@]}{% endraw %}" -eq 0 ]]; then
   echo "- _(aucune feature trouvée)_"
 else
   for key in "${impacted_keys[@]}"; do
@@ -92,7 +92,7 @@ fi
 
 echo
 echo "### Warnings"
-if [[ "${#warnings[@]}" -eq 0 ]]; then
+if [[ "{% raw %}${#warnings[@]}{% endraw %}" -eq 0 ]]; then
   echo "- _(aucun)_"
 else
   for w in "${warnings[@]}"; do

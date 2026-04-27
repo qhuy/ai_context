@@ -119,7 +119,7 @@ else
 fi
 
 echo
-if [[ ${#actions[@]} -gt 0 ]]; then
+if [[ {% raw %}${#actions[@]}{% endraw %} -gt 0 ]]; then
   echo "Next actions:"
   i=1
   for a in "${actions[@]}"; do
