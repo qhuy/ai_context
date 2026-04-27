@@ -1,0 +1,47 @@
+docs_root: "{{ docs_root }}"
+
+coverage:
+  roots:
+    - src
+    - app
+    - lib
+  extensions:
+    - cs
+    - cshtml
+    - ts
+    - tsx
+    - js
+    - jsx
+    - py
+    - rb
+    - go
+    - rs
+    - java
+    - kt
+    - swift
+    - php
+  exclude_dirs:
+    - bin
+    - obj
+    - node_modules
+    - dist
+    - build
+    - .next
+    - wwwroot
+    - coverage
+    - TestResults
+
+progress:
+  stale_after_days: 14
+  auto_transitions:
+    spec_to_implement: true
+    implement_to_review: false
+    review_to_done: false
+
+context:
+  show_statuses:
+    - active
+    - draft
+    - "?"
+  default_focus: null
+  max_tokens_warn: 6000

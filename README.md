@@ -93,13 +93,19 @@ flowchart LR
     SLog[(.ai/.session-edits.log<br/>volatile)]
   end
 
-  subgraph Skills["Skills /aic-* invoqués par l'utilisateur"]
+  subgraph Skills["Commandes /aic-* exposées utilisateur"]
+    direction TB
+    SAic[/aic (incl. undo)/]
+    SResume[/aic-feature-resume/]
+    SAudit[/aic-feature-audit/]
+    SGate[/aic-quality-gate/]
+  end
+
+  subgraph SkillsInternal["Skills internes (hooks + /aic)"]
     direction TB
     SNew[/aic-feature-new/]
-    SResume[/aic-feature-resume/]
-    SUpdate[/aic-feature-update<br/>intent uniquement/]
+    SUpdate[/aic-feature-update/]
     SHandoff[/aic-feature-handoff/]
-    SGate[/aic-quality-gate/]
     SDone[/aic-feature-done/]
   end
 
@@ -139,10 +145,13 @@ flowchart LR
   H5 -->|clear| SLog
 
   %% Skills
-  User -.-> SNew & SResume & SUpdate & SHandoff & SGate & SDone
+  User -.-> SAic & SResume & SAudit & SGate
+  SAic -->|orchestration| SNew & SUpdate & SHandoff & SDone
   SNew -->|crée| Feat & Wlog
   SResume -->|scanne| FIndex
   SResume -->|charge fiche + worklog| Agent
+  SAudit -->|propose (dry-run)| Agent
+  SAudit -->|apply confirmé| SNew & SUpdate
   SUpdate -->|maj intent| Feat
   SUpdate -->|append| Wlog
   SHandoff -->|append bloc HANDOFF| Wlog
@@ -171,7 +180,7 @@ flowchart LR
   class Rules,Reminder,Index_md,Feat,Wlog truth
   class FIndex,SLog cache
   class H1,H2,H3,H4,H5 hook
-  class SNew,SResume,SUpdate,SHandoff,SGate,SDone skill
+  class SAic,SResume,SAudit,SGate,SNew,SUpdate,SHandoff,SDone skill
   class Build,Resume,Check,Measure script
   class CM,PC,CI git
 ```
@@ -181,7 +190,7 @@ flowchart LR
 - **Vert** = source de vérité (versionnée). Jamais touchée en dehors d'une action explicite.
 - **Orange** = cache (gitignored). Reconstruit déterministiquement à partir du vert ; jetable.
 - **Bleu** = hooks Claude (automatiques, invisibles, silencieux).
-- **Violet** = skills `/aic-*` (invoqués par l'utilisateur, gestes récurrents).
+- **Violet** = commandes/skills `/aic-*` (surface utilisateur + internes orchestrés par `/aic`).
 - **Gris** = scripts CLI (réutilisés par hooks, skills, CI).
 - **Rose** = garde-fous git/CI (bloquants sur intégration).
 
@@ -194,7 +203,7 @@ flowchart LR
 5. **PostToolUse Write/Edit** → `auto-worklog-log.sh` append au log volatile.
 6. **Stop** (fin de tour) → `auto-worklog-flush.sh` flush le log dans les worklogs des features impactées, bumpe `progress.updated`, rebuild l'index, clear le log.
 
-Aucune de ces étapes ne demande d'action de l'utilisateur. Les skills `/aic-*` servent aux gestes qui requièrent une **décision** : créer, reprendre, changer d'intent, passer la main, clôturer.
+Aucune de ces étapes ne demande d'action de l'utilisateur. Les commandes exposées `/aic-*` servent aux gestes qui requièrent une **décision** ; les skills internes (`new/update/handoff/done`) restent orchestrés par `/aic` sauf fallback explicite.
 
 ## Installation
 
@@ -533,6 +542,18 @@ Côté Claude, `/aic-feature-audit discover <scope>` va plus loin : propose un `
 
 Ces presets sont volontairement courts : ils orientent l'agent sur architecture, contrats, validation et garde-fous sécurité, puis laissent le projet cible préciser ses conventions locales.
 
+## Modes d'adoption
+
+`adoption_mode` ajuste le niveau d'enforcement sans changer le cœur des scripts.
+
+| Mode | Effet |
+|---|---|
+| `lite` | retire `.githooks` et workflows CI ; base légère pour adoption progressive |
+| `standard` | mode par défaut (comportement actuel complet) |
+| `strict` | conserve les workflows CI même si `enable_ci_guard=false` (garde-fous renforcés) |
+
+> Note : en `lite`, les étapes d'activation des hooks locaux (dont `/hooks` côté Claude) sont sans effet tant que `.githooks` n'est pas scaffoldé.
+
 ---
 
 ## Ce qui est généré
@@ -546,6 +567,9 @@ mon-projet/
 ├── .ai/
 │   ├── index.md                   # point d'entrée canonique
 │   ├── reminder.md                # hard rules (compressé v0.6)
+│   ├── config.yml                 # config runtime optionnelle (coverage/progress/context)
+│   ├── schema/
+│   │   └── feature.schema.json    # contrat frontmatter (status, progress.phase, etc.)
 │   ├── quality/QUALITY_GATE.md    # DoD bloquant
 │   ├── rules/<scope>.md           # règles par scope
 │   ├── rules/tech-*.md            # règles stack optionnelles
@@ -563,11 +587,15 @@ mon-projet/
 │   │   ├── check-commit-features.sh
 │   │   ├── check-feature-coverage.sh
 │   │   ├── resume-features.sh     # v0.7 — reprise entre sessions
+│   │   ├── audit-features.sh      # audit agent-agnostique (discover, dry-run)
+│   │   ├── migrate-features.sh    # migration frontmatter (dry-run/apply)
+│   │   ├── pr-report.sh           # rapport markdown depuis un diff git
+│   │   ├── doctor.sh              # diagnostic installation (non destructif)
 │   │   └── measure-context-size.sh
 │   └── .feature-index.json        # cache (gitignored)
 ├── .claude/
 │   ├── settings.json              # hooks Claude Code
-│   └── skills/aic-*/              # 7 skills /aic-* (v0.7)
+│   └── skills/aic-*/              # 8 skills /aic-* (dont /aic + /aic-feature-audit)
 ├── .githooks/
 │   ├── commit-msg                 # Conventional Commits + feat: mesh
 │   ├── pre-commit                 # auto-progression agent-agnostic
@@ -584,17 +612,25 @@ mon-projet/
 
 ## Skills `/aic-*`
 
-Sept skills Claude Code, structure `SKILL.md` (frontmatter minimal) + `workflow.md` (phases détaillées) :
+Le template embarque 8 skills Claude Code (`SKILL.md` + `workflow.md`) et distingue clairement surface utilisateur vs mécanismes internes.
 
-| Skill | Quand l'utiliser |
+### Exposés utilisateur (usage direct)
+
+| Commande | Quand l'utiliser |
 |---|---|
-| `/aic-feature-new` | Avant tout `feat:` — crée fiche + worklog init |
+| `/aic` | Override conversationnel (inclut `/aic undo`) si l'auto-progression se trompe |
 | `/aic-feature-resume` | Début de session — scan des features en cours, choix, chargement contexte |
-| `/aic-feature-update` | **Changement d'intent** uniquement (phase, blockers, resume_hint). Le log des fichiers modifiés est auto (hooks `PostToolUse` + `Stop`). |
-| `/aic-feature-handoff` | Bascule de scope ou de session (bloc HANDOFF formalisé) |
-| `/aic-feature-audit` | Rétro-doc (`discover <scope>`) ou re-sync (`refresh <scope>/<id>`) d'une fiche vs code réel. Dry-run par défaut. |
-| `/aic-quality-gate` | Avant commit `feat:` ou PR — verdict go/no-go factuel |
-| `/aic-feature-done` | Clôture (evidence + status: done + commit suggéré) |
+| `/aic-feature-audit` | Rétro-doc (`discover <scope>`) ou re-sync (`refresh <scope>/<id>`) d'une fiche vs code réel |
+| `/aic-quality-gate` | Avant commit/PR — verdict go/no-go factuel |
+
+### Internes (normalement non invoqués à la main)
+
+| Skill | Rôle |
+|---|---|
+| `/aic-feature-new` | Créer fiche + worklog initial |
+| `/aic-feature-update` | Mettre à jour `progress.*` sur changement d'intent |
+| `/aic-feature-handoff` | Formaliser une passation inter-scope/session |
+| `/aic-feature-done` | Clôturer la feature (evidence + status `done`) |
 
 ---
 
@@ -612,11 +648,22 @@ Sept skills Claude Code, structure `SKILL.md` (frontmatter minimal) + `workflow.
 | `check-commit-features.sh` | Conventional Commits + `feat:` exige feature touchée |
 | `check-feature-coverage.sh` | Détecte code orphelin (non couvert par `touches:`) |
 | `resume-features.sh` | Buckets EN COURS / BLOQUÉES / STALE / À FAIRE |
+| `audit-features.sh` | Audit agent-agnostique (`discover <scope>`, dry-run par défaut) |
+| `migrate-features.sh` | Migration frontmatter (dry-run par défaut, `--apply` explicite) |
+| `pr-report.sh` | Génère un rapport PR markdown (features impactées + warnings) |
+| `doctor.sh` | Diagnostic installation (dépendances, hooks, checks) |
 | `measure-context-size.sh` | Mesure chars/tokens injectés par hook |
 | `auto-worklog-log.sh` | Hook `PostToolUse` : logue les éditions dans `.session-edits.log` |
 | `auto-worklog-flush.sh` | Hook `Stop` : flush log → worklog + bump `progress.updated` |
 
 Tous les scripts runtime lisent le dossier métier via `AI_CONTEXT_DOCS_ROOT` rendu depuis `docs_root` (`.docs` par défaut). Les entrées `touches:` sont matchées par un helper unique (`path_matches_touch`) pour garder la même sémantique entre `features-for-path`, auto-worklog, coverage et `pre-commit`.
+
+`check-feature-coverage.sh` lit aussi `.ai/config.yml` (si présent) pour surcharger `coverage.roots`, `coverage.extensions`, `coverage.exclude_dirs`. Si le fichier est absent ou incomplet, les defaults intégrés restent appliqués.
+`resume-features.sh` lit `progress.stale_after_days` dans `.ai/config.yml` pour piloter le seuil STALE (défaut 14 jours).
+
+## Schéma feature
+
+Le template fournit `.ai/schema/feature.schema.json` comme contrat de référence du frontmatter feature (`id`, `scope`, `title`, `status`, `depends_on`, `touches`, `progress.*`). `check-features.sh` reste en Bash mais aligne ses enums `status`/`progress.phase` sur ce schéma.
 
 ---
 
@@ -666,6 +713,7 @@ Template versionné. Non-cassant → bump minor. Refonte → bump major (les con
 - [docs/upgrading.md](docs/upgrading.md) — updates
 
 Tests : `bash tests/smoke-test.sh` (28 étapes, exige `copier` dans le PATH).
+CI : workflows GitHub pin `yq` (`v4.44.3`), exécutent `shellcheck .ai/scripts/*.sh`, et le check principal tourne en matrix `ubuntu-latest` + `macos-latest`.
 
 ---
 

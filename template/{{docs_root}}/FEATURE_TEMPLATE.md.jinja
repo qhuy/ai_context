@@ -61,3 +61,5 @@ Choix marquants, ADRs liées, décisions produit.
 - `progress.updated` : date ISO, auto-renseignée
 
 Le journal complet vit dans `<id>.worklog.md` (append-only, jamais édité ailleurs).
+
+Référence formelle du contrat : `.ai/schema/feature.schema.json`.

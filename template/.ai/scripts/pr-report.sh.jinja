@@ -1,0 +1,98 @@
+#!/bin/bash
+# pr-report.sh — Génère un rapport markdown depuis un diff git.
+#
+# Usage :
+#   bash .ai/scripts/pr-report.sh [--base=<ref>] [--head=<ref>]
+#
+# Ex:
+#   bash .ai/scripts/pr-report.sh --base=origin/main --head=HEAD
+
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=_lib.sh
+. "$script_dir/_lib.sh"
+
+require_cmd jq git
+enable_globstar
+
+repo_root="$(cd "$script_dir/../.." && pwd)"
+cd "$repo_root"
+
+base_ref="HEAD~1"
+head_ref="HEAD"
+
+for arg in "$@"; do
+  case "$arg" in
+    --base=*) base_ref="${arg#--base=}" ;;
+    --head=*) head_ref="${arg#--head=}" ;;
+    -h|--help)
+      echo "Usage: bash .ai/scripts/pr-report.sh [--base=<ref>] [--head=<ref>]"
+      exit 0
+      ;;
+  esac
+done
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "❌ ce script doit être lancé dans un repo git" >&2
+  exit 1
+fi
+
+index_file=".ai/.feature-index.json"
+if [[ ! -f "$index_file" ]]; then
+  bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
+fi
+if [[ ! -f "$index_file" ]]; then
+  echo "❌ index feature introuvable: $index_file" >&2
+  exit 1
+fi
+
+mapfile -t changed_files < <(git diff --name-only "$base_ref...$head_ref")
+
+echo "## AI Context Report"
+echo
+echo "- Base: \`$base_ref\`"
+echo "- Head: \`$head_ref\`"
+echo "- Fichiers modifiés: ${#changed_files[@]}"
+echo
+
+if [[ "${#changed_files[@]}" -eq 0 ]]; then
+  echo "_Aucun fichier modifié sur ce diff._"
+  exit 0
+fi
+
+declare -A impacted
+warnings=()
+
+for f in "${changed_files[@]}"; do
+  [[ -n "$f" ]] || continue
+  matched="$(features_matching_path "$index_file" "$f" || true)"
+  if [[ -z "$matched" ]]; then
+    warnings+=("fichier non couvert par touches: \`$f\`")
+    continue
+  fi
+
+  while IFS=$'\t' read -r scope id _path; do
+    [[ -n "$scope" && -n "$id" ]] || continue
+    impacted["$scope/$id"]=1
+  done <<< "$matched"
+done
+
+echo "### Features impactées"
+if [[ "${#impacted[@]}" -eq 0 ]]; then
+  echo "- _(aucune feature trouvée)_"
+else
+  for key in "${!impacted[@]}"; do
+    echo "- $key"
+  done | sort
+fi
+
+echo
+echo "### Warnings"
+if [[ "${#warnings[@]}" -eq 0 ]]; then
+  echo "- _(aucun)_"
+else
+  for w in "${warnings[@]}"; do
+    echo "- $w"
+  done
+fi

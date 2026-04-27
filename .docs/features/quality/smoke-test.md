@@ -48,3 +48,11 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-04-24 : ajout [27/27] — scaffold avec `docs_root=docs`, puis vérifie `check-features`, `features-for-path` et l'index JSON sur `docs/features`.
 - 2026-04-24 : ajout [28/28] — vérifie les rendus conditionnels `tech_profile` pour `dotnet-clean-cqrs`, `react-next` et `fullstack-dotnet-react` (fichiers générés/exclus + références dans `.ai/index.md`).
 - 2026-04-24 : extension [28/28] avec 6 assertions sur les squelettes DS (`docs/design-system-registry.md`, `docs/atomic-design-map.md`) — absents en profil `dotnet-clean-cqrs`, présents pour `react-next` et `fullstack-dotnet-react`. Maintenance portée par la fiche `core/preset-ds-skeletons`.
+- 2026-04-25 : assertion [19/28] alignée sur 8 skills (`aic` + `aic-feature-audit` inclus). Assertion [20/28] étendue : vérifie un override simple `coverage.*` via `.ai/config.yml` pour confirmer que `check-feature-coverage.sh` lit la config runtime avec fallback defaults.
+- 2026-04-27 : assertions renforcées pour la fondation schema : présence de `.ai/schema/feature.schema.json` dans le scaffold et warning `progress.phase` hors enum dans `check-features.sh` (alignement avec le schema).
+- 2026-04-27 : étape [2/28] enrichie avec exécution de `doctor.sh` sur scaffold sain (doit passer).
+- 2026-04-27 : étape [12/28] enrichie avec `audit-features.sh discover back` (en-tête, dry-run par défaut, détection `src/orphan.ts`).
+- 2026-04-27 : étape [11/28] enrichie avec `migrate-features.sh` (dry-run détecte migration legacy, `--apply` applique `schema_version` + normalisation status).
+- 2026-04-27 : étape [2/28] enrichie avec check `pr-report.sh --help` (présence/usage script).
+- 2026-04-27 : étape [28/28] enrichie pour valider `adoption_mode=lite` (pas de `.githooks`/workflows) et `adoption_mode=strict` (workflows conservés même avec `enable_ci_guard=false`).
+- 2026-04-27 : libellé [28/28] clarifié dans `tests/smoke-test.sh` pour refléter le périmètre réel (`tech_profile` + `adoption_mode`) et améliorer le diagnostic CI.
