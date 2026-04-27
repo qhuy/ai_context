@@ -1,0 +1,151 @@
+#!/bin/bash
+# doctor.sh — Diagnostic non destructif de l'installation ai-context.
+#
+# Usage :
+#   bash .ai/scripts/doctor.sh
+#   bash .ai/scripts/doctor.sh --strict
+#
+# Exit code :
+#   0 = mode défaut (diagnostic informatif) ou aucun problème bloquant en --strict
+#   1 = mode --strict + au moins un problème bloquant
+
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+repo_root="$(cd "$script_dir/../.." && pwd)"
+cd "$repo_root"
+
+fails=0
+actions=()
+strict=0
+
+for arg in "$@"; do
+  [[ "$arg" == "--strict" ]] && strict=1
+done
+
+ok() { echo "✓ $1"; }
+warn() { echo "⚠ $1"; }
+ko() {
+  if [[ "$strict" -eq 1 ]]; then
+    echo "✗ $1"
+    fails=1
+  else
+    warn "$1"
+  fi
+}
+add_action() { actions+=("$1"); }
+
+echo "AI Context Doctor"
+echo
+
+if command -v jq >/dev/null 2>&1; then
+  ok "jq found"
+else
+  ko "jq missing"
+  add_action "installer jq (ex: brew install jq)"
+fi
+
+if command -v yq >/dev/null 2>&1; then
+  yq_v="$(yq --version 2>/dev/null || true)"
+  if echo "$yq_v" | grep -Eiq 'version 4|v4\.'; then
+    ok "yq v4 found"
+  else
+    warn "yq trouvé, mais pas v4 ($yq_v)"
+    add_action "installer yq v4"
+  fi
+else
+  warn "yq missing (recommandé)"
+  add_action "installer yq v4 (optionnel mais recommandé)"
+fi
+
+if command -v copier >/dev/null 2>&1; then
+  ok "copier found"
+else
+  warn "copier missing (utile pour copier copy/update)"
+  add_action "installer copier (pipx/pip/brew)"
+fi
+
+inside_git=0
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  inside_git=1
+  ok "git repo detected"
+else
+  warn "not inside a git repository"
+  add_action "initialiser git (git init) pour activer hooks/flows de commit"
+fi
+
+if [[ -f ".ai/index.md" ]]; then
+  ok ".ai/index.md found"
+else
+  ko ".ai/index.md missing"
+fi
+
+if [[ -f ".ai/reminder.md" ]]; then
+  ok ".ai/reminder.md found"
+else
+  ko ".ai/reminder.md missing"
+fi
+
+if [[ -f ".ai/.feature-index.json" ]]; then
+  ok "feature index present"
+else
+  warn "feature index missing (.ai/.feature-index.json)"
+  add_action "lancer bash .ai/scripts/build-feature-index.sh --write"
+fi
+
+if [[ "$inside_git" -eq 1 ]]; then
+  hooks_path="$(git config --get core.hooksPath || true)"
+  if [[ "$hooks_path" == ".githooks" ]]; then
+    ok "git hooks path configured (.githooks)"
+  else
+    warn "git hooks path not set to .githooks"
+    add_action "git config core.hooksPath .githooks"
+  fi
+else
+  warn "git hooks check skipped (not a git repository)"
+fi
+
+if [[ -x ".ai/scripts/check-shims.sh" ]]; then
+  if bash .ai/scripts/check-shims.sh >/dev/null 2>&1; then
+    ok "check-shims OK"
+  else
+    ko "check-shims failed"
+    add_action "corriger les shims puis relancer bash .ai/scripts/check-shims.sh"
+  fi
+else
+  ko ".ai/scripts/check-shims.sh missing"
+fi
+
+if [[ -x ".ai/scripts/check-features.sh" ]]; then
+  if bash .ai/scripts/check-features.sh >/dev/null 2>&1; then
+    ok "check-features OK"
+  else
+    ko "check-features failed"
+    add_action "corriger le mesh puis relancer bash .ai/scripts/check-features.sh"
+  fi
+else
+  ko ".ai/scripts/check-features.sh missing"
+fi
+
+if [[ -x ".ai/scripts/measure-context-size.sh" ]]; then
+  if bash .ai/scripts/measure-context-size.sh >/dev/null 2>&1; then
+    ok "measure-context-size readable"
+  else
+    warn "measure-context-size failed"
+    add_action "inspecter bash .ai/scripts/measure-context-size.sh"
+  fi
+else
+  warn ".ai/scripts/measure-context-size.sh missing"
+fi
+
+echo
+if [[ {% raw %}${#actions[@]}{% endraw %} -gt 0 ]]; then
+  echo "Next actions:"
+  i=1
+  for a in "${actions[@]}"; do
+    echo "$i. $a"
+    i=$((i + 1))
+  done
+fi
+
+exit "$fails"

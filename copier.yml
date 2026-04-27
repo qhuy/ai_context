@@ -36,7 +36,9 @@ _exclude:
   - "{% if 'architecture' not in scopes %}{{ docs_root }}/features/architecture{% endif %}"
   - "{% if 'security' not in scopes %}{{ docs_root }}/features/security{% endif %}"
   # CI opt-in
-  - "{% if not enable_ci_guard %}.github/workflows{% endif %}"
+  - "{% if adoption_mode == 'lite' or (not enable_ci_guard and adoption_mode != 'strict') %}.github/workflows{% endif %}"
+  # Mode d'adoption
+  - "{% if adoption_mode == 'lite' %}.githooks{% endif %}"
 
 _message_after_copy: |
   ✅ AI context scaffoldé.
@@ -47,29 +49,31 @@ _message_after_copy: |
 
   Prochaines étapes :
     1. Lire README_AI_CONTEXT.md à la racine du projet.
-    2. Activer les git hooks   : git config core.hooksPath .githooks && chmod +x .githooks/*
-       (inclut le pre-commit d'auto-progression universelle — tous agents)
+    2. {{ "Activer les git hooks   : git config core.hooksPath .githooks && chmod +x .githooks/*" if adoption_mode != 'lite' else "Mode `lite` actif       : hooks locaux non scaffoldés (.githooks absent)." }}
+       {{ "(inclut le pre-commit d'auto-progression universelle — tous agents)" if adoption_mode != 'lite' else "Pour activer l'enforcement local plus tard, repasser en mode `standard`/`strict` ou copier `.githooks`." }}
     3. Éditer .ai/rules/<scope>.md pour enrichir les règles métier.
     4. Vérifier les shims      : bash .ai/scripts/check-shims.sh
     5. Vérifier les features   : bash .ai/scripts/check-features.sh
     6. (optionnel) couverture  : bash .ai/scripts/check-feature-coverage.sh
     7. (optionnel) coût tokens : bash .ai/scripts/measure-context-size.sh
     8. (optionnel) reprise     : bash .ai/scripts/resume-features.sh
-    9. (Claude uniquement) ouvrir /hooks pour activer les hooks (Stop = bonus de latence).
+    9. {{ "(Claude uniquement) ouvrir /hooks pour activer les hooks (Stop = bonus de latence)." if adoption_mode != 'lite' else "(Claude) /hooks inutile en mode `lite` (pas de hooks locaux scaffoldés)." }}
 
   UX par défaut : ZÉRO skill à invoquer.
     Prompte en langage naturel. L'agent code, teste, commit ; les transitions
-    de phase (spec → implement → review → done) sont appliquées automatiquement
-    par deux canaux convergents :
+    automatiques couvrent aujourd'hui **uniquement** `spec → implement` via deux
+    canaux convergents :
       • hook Claude `Stop`  → immédiat (avant commit, Claude Code uniquement)
       • git `pre-commit`    → universel (Claude, Codex, Cursor, Gemini, Copilot, humain)
     Les deux partagent auto-progress.sh et snapshotent dans .ai/.progress-history.jsonl.
+    Les transitions `implement → review` et `review → done` restent manuelles via `/aic`.
 
-  Skills exposés (rares, à utiliser seulement quand l'auto-progression ne suffit pas) :
+  Commandes exposées (rares, à utiliser seulement quand l'auto-progression ne suffit pas) :
     /aic                 → override conversationnel (ex: `/aic repasse en spec`,
                            `/aic rouvre feature-mesh pour ajouter status stable`)
     /aic undo            → annule la dernière bascule auto (consomme .progress-history.jsonl)
     /aic-feature-resume  → dump EN COURS / BLOQUÉES / STALE / À FAIRE (lecture seule)
+    /aic-feature-audit   → rétro-doc (`discover`) / re-sync (`refresh`) d'une feature
     /aic-quality-gate    → check go/no-go complet (utile en CI/scripts)
 
   Les skills /aic-feature-{new,update,handoff,done} restent internes (invoqués par
@@ -105,6 +109,15 @@ scope_profile:
     fullstack (backend + front): fullstack
     custom (scaffold minimal, tu ajoutes à la main): custom
   help: Profil de scopes à générer
+
+adoption_mode:
+  type: str
+  default: standard
+  choices:
+    lite (shims + index/reminder, sans hooks/CI): lite
+    standard (expérience complète actuelle): standard
+    strict (garde-fous renforcés, CI forcée): strict
+  help: Niveau d'adoption du framework ai-context
 
 tech_profile:
   type: str

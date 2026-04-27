@@ -10,6 +10,8 @@ depends_on:
 touches:
   - .claude/skills/aic-feature-audit/**
   - template/.claude/skills/aic-feature-audit/**
+  - template/.ai/scripts/audit-features.sh.jinja
+  - tests/smoke-test.sh
 progress:
   phase: implement
   step: "cadrage initial — modes discover/refresh, dry-run par défaut"
@@ -69,3 +71,6 @@ Deux modes explicites (argument obligatoire, pas d'auto-détection) :
 ## Historique / décisions
 
 - **2026-04-24** — Création. Origine : lacune identifiée en conversation — aucun skill ne permettait de rattraper du code pré-mesh ou des fiches stale. Choix d'un skill unique à deux modes plutôt que deux skills séparés pour garder la famille `/aic-feature-*` lisible. Dry-run par défaut pour éviter la pollution du mesh par des fiches auto-générées sans contrôle.
+- **2026-04-27** — Ajout du script agent-agnostique `audit-features.sh` (MVP `discover <scope>`), dry-run par défaut + `--apply` explicite. Objectif : rendre l'audit utilisable hors Claude skills.
+- **2026-04-27** — Correctif discover : l'audit inclut maintenant aussi les fichiers non trackés (`git ls-files --cached --others --exclude-standard`) pour détecter `src/orphan.ts` dans le smoke-test ; retrait de `mapfile`/`declare -A` pour meilleure compatibilité Bash 3.2.
+- **2026-04-27** — Correctif discover (smoke-test CI rouge) : fallback `find` quand `audit-features.sh` tourne hors repo git (cas scaffold neuf), et garde `${arr[@]+...}` pour tolérer `tracked`/`touches` vides sous `set -u` en Bash 3.2.

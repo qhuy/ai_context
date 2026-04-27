@@ -30,6 +30,26 @@ copier copy --defaults --trust --vcs-ref=HEAD \
 echo
 echo "[2/28] check-shims"
 bash "$OUT/.ai/scripts/check-shims.sh"
+if [[ ! -f "$OUT/.ai/schema/feature.schema.json" ]]; then
+  echo "  ✗ .ai/schema/feature.schema.json absent"
+  exit 1
+fi
+echo "  ✓ schema feature présent"
+if ! ( cd "$OUT" && bash .ai/scripts/doctor.sh ) >/dev/null 2>&1; then
+  echo "  ✗ doctor.sh échoue sur un scaffold sain"
+  exit 1
+fi
+echo "  ✓ doctor.sh OK"
+if ! ( cd "$OUT" && bash .ai/scripts/pr-report.sh --help ) | grep -q "Usage:"; then
+  echo "  ✗ pr-report.sh --help invalide"
+  exit 1
+fi
+echo "  ✓ pr-report.sh --help OK"
+if grep -q "mapfile" "$OUT/.ai/scripts/pr-report.sh"; then
+  echo "  ✗ pr-report.sh utilise mapfile (incompatible Bash 3.2)"
+  exit 1
+fi
+echo "  ✓ pr-report.sh compatible Bash 3.2 (sans mapfile)"
 
 echo
 echo "[3/28] pre-turn-reminder (text + json)"
@@ -159,6 +179,56 @@ fi
 echo "  ✓ warn enum présent"
 rm "$OUT/.docs/features/back/bogus.md"
 
+cat > "$OUT/.docs/features/back/phase-typo.md" <<'FEAT'
+---
+id: phase-typo
+scope: back
+title: Bogus phase
+status: active
+depends_on: []
+touches:
+  - src/foo.ts
+progress:
+  phase: typo
+---
+FEAT
+phase_warn_out=$( cd "$OUT" && bash .ai/scripts/check-features.sh 2>&1 >/dev/null || true )
+if ! echo "$phase_warn_out" | grep -q "progress.phase='typo'"; then
+  echo "  ✗ warn progress.phase absent"
+  exit 1
+fi
+echo "  ✓ warn progress.phase présent"
+rm "$OUT/.docs/features/back/phase-typo.md"
+
+cat > "$OUT/.docs/features/back/legacy-migrate.md" <<'FEAT'
+---
+id: legacy-migrate
+scope: back
+title: Legacy migration target
+status: in_progress
+---
+FEAT
+mig_out=$( cd "$OUT" && bash .ai/scripts/migrate-features.sh 2>&1 )
+if ! echo "$mig_out" | grep -q "legacy-migrate.md"; then
+  echo "  ✗ migrate-features dry-run ne détecte pas le fichier legacy"
+  exit 1
+fi
+if ! echo "$mig_out" | grep -q "normalize status: in_progress -> active"; then
+  echo "  ✗ migrate-features dry-run ne propose pas la normalisation attendue"
+  exit 1
+fi
+( cd "$OUT" && bash .ai/scripts/migrate-features.sh --apply >/dev/null )
+if ! grep -q "^schema_version: 1$" "$OUT/.docs/features/back/legacy-migrate.md"; then
+  echo "  ✗ migrate-features --apply n'ajoute pas schema_version"
+  exit 1
+fi
+if ! grep -q "^status: active$" "$OUT/.docs/features/back/legacy-migrate.md"; then
+  echo "  ✗ migrate-features --apply n'applique pas status normalisé"
+  exit 1
+fi
+echo "  ✓ migrate-features dry-run/apply OK"
+rm "$OUT/.docs/features/back/legacy-migrate.md"
+
 echo
 echo "[12/28] check-feature-coverage : script exécute et liste orphelins"
 mkdir -p "$OUT/src"
@@ -170,6 +240,20 @@ if ! echo "$cov_out" | grep -q "orphelins"; then
   exit 1
 fi
 echo "  ✓ coverage script OK"
+audit_out=$( cd "$OUT" && bash .ai/scripts/audit-features.sh discover back 2>&1 ) || true
+if ! echo "$audit_out" | grep -q "audit-features discover <back>"; then
+  echo "  ✗ audit-features discover ne produit pas d'en-tête attendu"
+  exit 1
+fi
+if ! echo "$audit_out" | grep -q "dry-run: yes"; then
+  echo "  ✗ audit-features devrait être en dry-run par défaut"
+  exit 1
+fi
+if ! echo "$audit_out" | grep -q "src/orphan.ts"; then
+  echo "  ✗ audit-features discover n'identifie pas orphan.ts"
+  exit 1
+fi
+echo "  ✓ audit-features discover (dry-run) OK"
 
 echo
 echo "[13/28] pre-turn-reminder : status 'done' filtré par défaut + visible via override"
@@ -290,6 +374,21 @@ if ! echo "$json_out" | jq -e '.en_cours | length >= 1' >/dev/null; then
   echo "  ✗ json en_cours vide"
   exit 1
 fi
+# Override config : forcer stale_after_days=0, inprog doit apparaître en STALE
+cat > "$OUT/.ai/config.yml" <<'YAML'
+progress:
+  stale_after_days: 0
+YAML
+resume_cfg_out=$( cd "$OUT" && bash .ai/scripts/resume-features.sh )
+if ! echo "$resume_cfg_out" | grep -q "STALE (>0j sans update)"; then
+  echo "  ✗ libellé STALE n'utilise pas stale_after_days depuis .ai/config.yml"
+  exit 1
+fi
+if ! echo "$resume_cfg_out" | grep -q "back/inprog"; then
+  echo "  ✗ inprog absent du bucket STALE avec stale_after_days=0"
+  exit 1
+fi
+git -C "$OUT" checkout -- .ai/config.yml >/dev/null 2>&1 || true
 echo "  ✓ resume-features buckets corrects (text + json)"
 rm "$OUT/.docs/features/back/inprog.md" "$OUT/.docs/features/back/blocked.md"
 
@@ -431,7 +530,7 @@ rm -rf "$OUT/.git" "$OUT/.docs/features/back/specfeat.md" "$OUT/.docs/features/b
 
 echo
 echo "[19/28] skills aic-* présents dans .claude/skills/"
-for s in aic-feature-new aic-feature-resume aic-feature-update aic-feature-handoff aic-quality-gate aic-feature-done; do
+for s in aic aic-feature-new aic-feature-resume aic-feature-update aic-feature-handoff aic-feature-audit aic-quality-gate aic-feature-done; do
   if [[ ! -f "$OUT/.claude/skills/$s/SKILL.md" ]]; then
     echo "  ✗ $s/SKILL.md absent"
     exit 1
@@ -445,7 +544,7 @@ for s in aic-feature-new aic-feature-resume aic-feature-update aic-feature-hando
     exit 1
   fi
 done
-echo "  ✓ 6 skills aic-* présents avec SKILL.md + workflow.md"
+echo "  ✓ 8 skills aic-* présents avec SKILL.md + workflow.md"
 
 echo
 echo "[20/28] check-feature-coverage --strict : exit 1 si orphelins"
@@ -456,6 +555,23 @@ if ( cd "$OUT" && bash .ai/scripts/check-feature-coverage.sh --strict ) >/dev/nu
 fi
 echo "  ✓ --strict échoue avec orphelins"
 rm -f "$OUT/src/orphan.ts"
+
+# Override simple via .ai/config.yml : ne scanner que app/**/*.ts
+cat > "$OUT/.ai/config.yml" <<'YAML'
+coverage:
+  roots:
+    - app
+  extensions:
+    - ts
+  exclude_dirs:
+    - node_modules
+YAML
+if ! ( cd "$OUT" && bash .ai/scripts/check-feature-coverage.sh --strict ) >/dev/null 2>&1; then
+  echo "  ✗ override .ai/config.yml non pris en charge par check-feature-coverage"
+  exit 1
+fi
+echo "  ✓ override .ai/config.yml pris en charge"
+git -C "$OUT" checkout -- .ai/config.yml >/dev/null 2>&1 || true
 
 echo
 echo "[21/28] check-features : cycle dans depends_on rejeté"
@@ -688,10 +804,12 @@ rm -rf "$OUT_DOCS"
 echo "  ✓ docs_root=docs OK"
 
 echo
-echo "[28/28] tech_profile : règles stack rendues conditionnellement"
+echo "[28/28] tech_profile + adoption_mode : rendus conditionnels"
 OUT_DOTNET="/tmp/ai-context-smoke-dotnet-$$"
 OUT_REACT="/tmp/ai-context-smoke-react-$$"
 OUT_FULLSTACK="/tmp/ai-context-smoke-fullstack-$$"
+OUT_LITE="/tmp/ai-context-smoke-lite-$$"
+OUT_STRICT="/tmp/ai-context-smoke-strict-$$"
 
 copier copy --defaults --trust --vcs-ref=HEAD \
   --data project_name=smoke-dotnet \
@@ -769,8 +887,35 @@ for f in tech-dotnet.md tech-react.md stack-fullstack-dotnet-react.md; do
     exit 1
   fi
 done
-rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK"
-echo "  ✓ profils dotnet/react/fullstack OK"
+
+copier copy --defaults --trust --vcs-ref=HEAD \
+  --data project_name=smoke-lite \
+  --data adoption_mode=lite \
+  "$REPO" "$OUT_LITE" >/dev/null
+if [[ -d "$OUT_LITE/.githooks" ]]; then
+  echo "  ✗ mode lite ne doit pas générer .githooks"
+  rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK" "$OUT_LITE" "$OUT_STRICT"
+  exit 1
+fi
+if [[ -d "$OUT_LITE/.github/workflows" ]]; then
+  echo "  ✗ mode lite ne doit pas générer les workflows CI"
+  rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK" "$OUT_LITE" "$OUT_STRICT"
+  exit 1
+fi
+
+copier copy --defaults --trust --vcs-ref=HEAD \
+  --data project_name=smoke-strict \
+  --data adoption_mode=strict \
+  --data enable_ci_guard=false \
+  "$REPO" "$OUT_STRICT" >/dev/null
+if [[ ! -d "$OUT_STRICT/.github/workflows" ]]; then
+  echo "  ✗ mode strict doit conserver les workflows CI même avec enable_ci_guard=false"
+  rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK" "$OUT_LITE" "$OUT_STRICT"
+  exit 1
+fi
+
+rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK" "$OUT_LITE" "$OUT_STRICT"
+echo "  ✓ profils dotnet/react/fullstack + modes adoption lite/strict OK"
 
 echo
 echo "✅ smoke-test PASS"

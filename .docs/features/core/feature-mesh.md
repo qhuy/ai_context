@@ -7,6 +7,9 @@ depends_on: []
 touches:
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
   - template/{{docs_root}}/features/**
+  - template/.ai/schema/feature.schema.json
+  - template/.ai/scripts/check-features.sh.jinja
+  - template/.ai/scripts/migrate-features.sh.jinja
 progress:
   phase: review
   step: "bootstrap dog-fooding (v0.9 historique)"
@@ -46,3 +49,5 @@ Source unique de vérité pour les features d'un projet : un fichier markdown pa
 - v0.1 : structure initiale.
 - v0.6 : `progress.{phase,step,blockers,resume_hint,updated}` pour la reprise inter-session.
 - v0.8 : warn sur `depends_on` pointant vers `deprecated` / `archived`.
+- 2026-04-27 : ajout du schéma `.ai/schema/feature.schema.json` comme contrat de référence ; `check-features.sh` aligné (warn enum `progress.phase`).
+- 2026-04-27 : ajout de `migrate-features.sh` pour migration dry-run/apply des frontmatters legacy (schema_version, champs requis, status normalisé).

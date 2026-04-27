@@ -4,7 +4,7 @@
 # Scanne l'index .feature-index.json et regroupe par bucket :
 #   EN COURS     : status active/draft avec progress.phase ∈ {spec, implement, test, review}
 #   BLOQUÉES     : progress.blockers non vide (peu importe status actif)
-#   STALE        : progress.updated > 14 jours (et status active)
+#   STALE        : progress.updated > N jours (N configurable, défaut 14)
 #   À FAIRE      : status active/draft sans progress.phase défini
 #
 # Usage :
@@ -24,6 +24,7 @@ require_cmd jq
 
 repo_root="$(cd "$script_dir/../.." && pwd)"
 index_file="$repo_root/.ai/.feature-index.json"
+config_file="$repo_root/.ai/config.yml"
 
 format="text"
 scope_filter=""
@@ -55,9 +56,29 @@ if [[ -n "$scope_filter" ]]; then
   filter_arg=".features |= map(select(.scope == \"$scope_filter\"))"
 fi
 
-# Calcul staleness : updated plus vieux que 14 jours
+# Config runtime optionnelle : .ai/config.yml
+# progress.stale_after_days (int) ; fallback = 14
+stale_after_days=14
+if [[ -f "$config_file" ]]; then
+  cfg_days=$(awk '
+    /^progress:[[:space:]]*$/ { in_progress=1; next }
+    in_progress && /^[^[:space:]]/ { in_progress=0 }
+    in_progress && /^[[:space:]]*stale_after_days:[[:space:]]*[0-9]+[[:space:]]*$/ {
+      line=$0
+      sub(/.*stale_after_days:[[:space:]]*/, "", line)
+      sub(/[[:space:]]*$/, "", line)
+      print line
+      exit
+    }
+  ' "$config_file")
+  if [[ "$cfg_days" =~ ^[0-9]+$ ]]; then
+    stale_after_days="$cfg_days"
+  fi
+fi
+
+# Calcul staleness : updated plus vieux que N jours
 today_epoch=$(date +%s)
-stale_cutoff=$((today_epoch - 14 * 86400))
+stale_cutoff=$((today_epoch - stale_after_days * 86400))
 
 buckets=$(jq -r --argjson cutoff "$stale_cutoff" "$filter_arg"' |
   .features
@@ -111,7 +132,7 @@ echo
 
 print_bucket "EN COURS"  "en_cours" "▶"
 print_bucket "BLOQUÉES"  "bloquees" "⛔"
-print_bucket "STALE (>14j sans update)" "stale" "⏳"
+print_bucket "STALE (>${stale_after_days}j sans update)" "stale" "⏳"
 print_bucket "À FAIRE (progress non initialisé)" "a_faire" "◦"
 
 total=$(echo "$buckets" | jq '[.en_cours, .bloquees, .stale, .a_faire] | map(length) | add')

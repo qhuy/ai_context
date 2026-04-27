@@ -7,9 +7,34 @@
 - Les scripts runtime utilisent maintenant `AI_CONTEXT_DOCS_ROOT` / `AI_CONTEXT_FEATURES_DIR` depuis `_lib.sh`, ce qui rend `docs_root=docs` fonctionnel au-delà des fichiers scaffoldés.
 - Ajout de `tech_profile` pour générer des règles stack optionnelles : `.NET Clean Architecture + CQRS`, `React/Next`, ou contrat fullstack `.NET + React`.
 - Documentation synchronisée : nombre d'étapes du smoke-test, défaut `enable_ci_guard`, description des hooks runtime.
+- Synchronisation docs/runtime sur l'UX skills et l'auto-progression : distinction commandes exposées (`/aic`, `/aic undo`, `/aic-feature-resume`, `/aic-feature-audit`, `/aic-quality-gate`) vs skills internes (`new/update/handoff/done`) ; clarification explicite que l'auto-progression couvre uniquement `spec → implement`.
+- Correction du chemin d'index dans le workflow `aic-feature-audit` (`.ai/.feature-index.json`).
+- `PROJECT_STATE.md` nettoyé (plus de chemin personnel) et aligné sur l'état `v0.9.0 + Unreleased`.
+- Smoke-test ajusté pour vérifier les 8 skills présents (`aic`, `aic-feature-audit` inclus).
+- Ajout d'une config runtime scaffoldée `.ai/config.yml` (coverage/progress/context) et première intégration dans `check-feature-coverage.sh` avec fallback defaults si absent/incomplet.
+- `resume-features.sh` lit désormais `progress.stale_after_days` depuis `.ai/config.yml` (fallback 14 jours) pour calculer le bucket STALE.
+- Ajout de `.ai/schema/feature.schema.json` (contrat frontmatter) ; `check-features.sh` reste Bash mais aligne maintenant les enums `status` et `progress.phase` sur cette source.
+- Ajout de `.ai/scripts/doctor.sh` (diagnostic non destructif : dépendances, hooks, index, checks) avec code de sortie non-zéro en cas de blocage.
+- Ajout de `.ai/scripts/audit-features.sh` (mode `discover <scope>`) pour un audit agent-agnostique des orphelins, dry-run par défaut, `--apply` explicite pour créer des fiches draft minimales.
+- Workflows CI durcis : pin `yq` en `v4.44.3` (plus de `latest`) et ajout `shellcheck .ai/scripts/*.sh`.
+- Workflow check étendu en matrix `ubuntu-latest` + `macos-latest` avec install cross-platform de `jq`/`shellcheck` et `yq` pin.
+- Ajout de `.ai/scripts/migrate-features.sh` (dry-run par défaut, `--apply`) pour normaliser les frontmatters legacy (`schema_version`, `status`, `depends_on`, `touches`).
+- Ajout de `.ai/scripts/pr-report.sh` pour générer un rapport markdown d'impact feature depuis un diff git (`--base`, `--head`).
+- Ajout de `adoption_mode` dans `copier.yml` (`lite`, `standard`, `strict`) pour moduler l'enforcement (hooks/CI) à l'installation.
+- Compatibilité Bash 3.2 améliorée dans les scripts générés : `pr-report.sh` n'utilise plus `mapfile` ni `declare -A`, et `check-feature-coverage.sh` charge la config sans `mapfile`.
+- CI : `shellcheck` passe en mode `-S error` dans les workflows check/smoke pour échouer sur les erreurs critiques sans bloquer sur warnings non bloquants.
+- Fix Copier : `_message_after_copy` dans `copier.yml` n'utilise plus de blocs Jinja `{% if %}` non quotés (YAML invalide), remplacés par des expressions inline compatibles parsing.
+- Fix Copier/CI template : échappement des expressions GitHub Actions `${{ matrix.os }}` / `${{ runner.os }}` dans `template/.github/workflows/ai-context-check.yml.jinja` pour éviter l'erreur Jinja `matrix is undefined` au rendu.
+- Fix Copier/template scripts : échappement des expansions Bash `${#...}` dans les templates `.jinja` pour éviter l'erreur Jinja `Missing end of comment tag` pendant `copier copy`.
+- Doctor : l'absence de repo git dans un scaffold frais devient un warning non bloquant (au lieu d'une erreur), avec skip explicite du check hooks hors repo.
+- Doctor : ajout d'un mode `--strict` ; en mode par défaut, le diagnostic reste informatif (exit 0), ce qui évite l'échec du smoke-test sur scaffold sain.
+- Audit discover : prise en compte des fichiers non trackés (`git ls-files --cached --others --exclude-standard`) et suppression de dépendances Bash 4 (`mapfile`, `declare -A`) dans le template script.
 
 ### Tests
 - Smoke-test étendu à **28 étapes** avec assertions ciblées sur le matching exact/dossier/glob/`/**`, `docs_root=docs` et les rendus conditionnels `tech_profile`.
+- `tests/smoke-test.sh` valide désormais un override simple de `coverage.*` via `.ai/config.yml` (sans casser le comportement par défaut).
+- `tests/smoke-test.sh` valide aussi l'override `progress.stale_after_days` via `.ai/config.yml` dans `resume-features.sh`.
+- `tests/smoke-test.sh` vérifie que `pr-report.sh` généré reste compatible Bash 3.2 (absence de `mapfile`).
 
 ## v0.9.0 — 2026-04-24
 

@@ -2,14 +2,14 @@
 
 **But** : template `copier` qui industrialise le setup AI context (multi-agent : Claude / Codex / Cursor / Gemini / Copilot) d'un nouveau projet.
 **Remote** : [github.com/qhuy/ai_context](https://github.com/qhuy/ai_context) (public)
-**Local** : `/Users/huy/Documents/Perso/ai_context`
-**Dernière version publiée** : v0.9.0 (voir [CHANGELOG.md](CHANGELOG.md))
+**Local** : chemin de développement local, non versionné.
+**Dernière version publiée** : v0.9.0 + changements `Unreleased` (voir [CHANGELOG.md](CHANGELOG.md))
 
 > Ce fichier est un **point d'entrée rapide**. Pour l'historique détaillé des versions, consulter [CHANGELOG.md](CHANGELOG.md). Pour adopter le template sur un projet existant, [MIGRATION.md](MIGRATION.md). Pour l'architecture visuelle, diagramme mermaid dans [README.md](README.md).
 
 ## Comment reprendre le dev
 
-1. Ouvrir Claude Code dans `/Users/huy/Documents/Perso/ai_context`.
+1. Ouvrir Claude Code dans le dossier local du dépôt `ai_context`.
 2. Lire [CHANGELOG.md](CHANGELOG.md) — les dernières breaking/nouveautés.
 3. Lancer le smoke-test : `export PATH="$HOME/Library/Python/3.9/bin:$PATH" && bash tests/smoke-test.sh` (28 étapes, attendu `✅ PASS`).
 4. Consommer le template : `copier copy gh:qhuy/ai_context ./mon-projet`. Mettre à jour : `cd mon-projet && copier update`.
@@ -20,13 +20,23 @@
 - `template/` — racine du template (`_subdirectory: template`, `_templates_suffix: .jinja`).
 - `template/AGENTS.md.jinja` = entrée canonique cross-agent ; `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`, `.cursor/rules/*.mdc` = shims vers `.ai/index.md`.
 - `template/.ai/` = source unique de vérité (rules, QUALITY_GATE, scripts, reminder, skills).
+- `template/.ai/config.yml` — configuration runtime scaffoldée (coverage/progress/context), avec fallback defaults côté scripts.
+- `resume-features.sh` consomme `progress.stale_after_days` depuis cette config (si présent) ; défaut conservé à 14 jours.
+- `template/.ai/schema/feature.schema.json` — contrat frontmatter de référence (alignement progressif des checks Bash).
+- `template/.ai/scripts/doctor.sh` — diagnostic non destructif (dépendances, hooks, checks).
+- `template/.ai/scripts/audit-features.sh` — audit agent-agnostique (`discover`, dry-run par défaut, `--apply` explicite).
+- `template/.ai/scripts/migrate-features.sh` — migration frontmatter (`schema_version`, status legacy, champs manquants) en dry-run/apply.
+- `template/.ai/scripts/pr-report.sh` — rapport markdown d'impact features depuis un diff git.
+- CI : `yq` versionnée et `shellcheck` sur `.ai/scripts/*.sh` dans les workflows de garde.
+- CI check : matrix `ubuntu-latest` + `macos-latest` sur le workflow principal.
+- `copier.yml` expose `adoption_mode` (`lite`, `standard`, `strict`) pour calibrer hooks/CI dès le scaffold.
 - `template/{{docs_root}}/features/<scope>/` = maillage feature par scope (back, front, architecture, security).
 - `template/.githooks/commit-msg` + `post-checkout` — enforcement Conventional Commits et rebuild index au switch de branche.
 - `template/.claude/settings.json.jinja` — hooks UserPromptSubmit / PreToolUse / PostToolUse / Stop.
-- `template/.claude/skills/aic-*/` — 6 skills (`feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `quality-gate`, `feature-done`).
+- `template/.claude/skills/aic-*/` — 8 skills (`aic`, `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `quality-gate`, `feature-done`) avec distinction exposés/internes.
 - `tests/smoke-test.sh` — 28 assertions end-to-end.
 
-## État actuel (v0.9.0)
+## État actuel (v0.9.0 + Unreleased)
 
 - **Feature mesh** — frontmatter validé, détection cycles, warn si active dépend de deprecated, scope enum, touches morte bloquante.
 - **Continuité inter-session** — frontmatter `progress:` + worklog append-only par feature + `resume-features.sh` 4 buckets.
