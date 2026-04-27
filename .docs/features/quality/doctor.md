@@ -50,3 +50,4 @@ Réduire la friction d'adoption en fournissant un point d'entrée unique de diag
 ## Historique / décisions
 
 - 2026-04-27 : MVP Bash introduit dans le template avant extraction CLI.
+- 2026-04-27 : assouplissement pour scaffold frais : `doctor.sh` ne considère plus l'absence de repo git comme bloquante (warning + action suggérée), et skip le contrôle hooks quand `git init` n'a pas encore été fait.

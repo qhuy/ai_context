@@ -52,10 +52,13 @@ else
   add_action "installer copier (pipx/pip/brew)"
 fi
 
+inside_git=0
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  inside_git=1
   ok "git repo detected"
 else
-  ko "not inside a git repository"
+  warn "not inside a git repository"
+  add_action "initialiser git (git init) pour activer hooks/flows de commit"
 fi
 
 if [[ -f ".ai/index.md" ]]; then
@@ -77,12 +80,16 @@ else
   add_action "lancer bash .ai/scripts/build-feature-index.sh --write"
 fi
 
-hooks_path="$(git config --get core.hooksPath || true)"
-if [[ "$hooks_path" == ".githooks" ]]; then
-  ok "git hooks path configured (.githooks)"
+if [[ "$inside_git" -eq 1 ]]; then
+  hooks_path="$(git config --get core.hooksPath || true)"
+  if [[ "$hooks_path" == ".githooks" ]]; then
+    ok "git hooks path configured (.githooks)"
+  else
+    warn "git hooks path not set to .githooks"
+    add_action "git config core.hooksPath .githooks"
+  fi
 else
-  warn "git hooks path not set to .githooks"
-  add_action "git config core.hooksPath .githooks"
+  warn "git hooks check skipped (not a git repository)"
 fi
 
 if [[ -x ".ai/scripts/check-shims.sh" ]]; then
