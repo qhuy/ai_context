@@ -21,11 +21,13 @@
 - Ajout de `.ai/scripts/migrate-features.sh` (dry-run par défaut, `--apply`) pour normaliser les frontmatters legacy (`schema_version`, `status`, `depends_on`, `touches`).
 - Ajout de `.ai/scripts/pr-report.sh` pour générer un rapport markdown d'impact feature depuis un diff git (`--base`, `--head`).
 - Ajout de `adoption_mode` dans `copier.yml` (`lite`, `standard`, `strict`) pour moduler l'enforcement (hooks/CI) à l'installation.
+- Compatibilité Bash 3.2 améliorée dans les scripts générés : `pr-report.sh` n'utilise plus `mapfile` ni `declare -A`, et `check-feature-coverage.sh` charge la config sans `mapfile`.
 
 ### Tests
 - Smoke-test étendu à **28 étapes** avec assertions ciblées sur le matching exact/dossier/glob/`/**`, `docs_root=docs` et les rendus conditionnels `tech_profile`.
 - `tests/smoke-test.sh` valide désormais un override simple de `coverage.*` via `.ai/config.yml` (sans casser le comportement par défaut).
 - `tests/smoke-test.sh` valide aussi l'override `progress.stale_after_days` via `.ai/config.yml` dans `resume-features.sh`.
+- `tests/smoke-test.sh` vérifie que `pr-report.sh` généré reste compatible Bash 3.2 (absence de `mapfile`).
 
 ## v0.9.0 — 2026-04-24
 

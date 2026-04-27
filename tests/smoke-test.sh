@@ -45,6 +45,11 @@ if ! ( cd "$OUT" && bash .ai/scripts/pr-report.sh --help ) | grep -q "Usage:"; t
   exit 1
 fi
 echo "  ✓ pr-report.sh --help OK"
+if grep -q "mapfile" "$OUT/.ai/scripts/pr-report.sh"; then
+  echo "  ✗ pr-report.sh utilise mapfile (incompatible Bash 3.2)"
+  exit 1
+fi
+echo "  ✓ pr-report.sh compatible Bash 3.2 (sans mapfile)"
 
 echo
 echo "[3/28] pre-turn-reminder (text + json)"

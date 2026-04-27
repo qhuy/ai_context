@@ -48,3 +48,4 @@ Rendre visible la valeur du mesh dans les PRs via un rapport markdown simple: fe
 ## Historique / décisions
 
 - 2026-04-27 : MVP initial introduit (features + warnings orphelins).
+- 2026-04-27 : compatibilité Bash 3.2 renforcée : suppression de `mapfile` et des tableaux associatifs (`declare -A`) pour éviter les erreurs runtime sur macOS par défaut.

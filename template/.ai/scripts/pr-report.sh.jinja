@@ -47,7 +47,10 @@ if [[ ! -f "$index_file" ]]; then
   exit 1
 fi
 
-mapfile -t changed_files < <(git diff --name-only "$base_ref...$head_ref")
+changed_files=()
+while IFS= read -r f; do
+  [[ -n "$f" ]] && changed_files+=("$f")
+done < <(git diff --name-only "$base_ref...$head_ref")
 
 echo "## AI Context Report"
 echo
@@ -61,8 +64,8 @@ if [[ "${#changed_files[@]}" -eq 0 ]]; then
   exit 0
 fi
 
-declare -A impacted
 warnings=()
+impacted_keys=()
 
 for f in "${changed_files[@]}"; do
   [[ -n "$f" ]] || continue
@@ -74,17 +77,17 @@ for f in "${changed_files[@]}"; do
 
   while IFS=$'\t' read -r scope id _path; do
     [[ -n "$scope" && -n "$id" ]] || continue
-    impacted["$scope/$id"]=1
+    impacted_keys+=("$scope/$id")
   done <<< "$matched"
 done
 
 echo "### Features impactées"
-if [[ "${#impacted[@]}" -eq 0 ]]; then
+if [[ "${#impacted_keys[@]}" -eq 0 ]]; then
   echo "- _(aucune feature trouvée)_"
 else
-  for key in "${!impacted[@]}"; do
+  for key in "${impacted_keys[@]}"; do
     echo "- $key"
-  done | sort
+  done | sort -u
 fi
 
 echo

@@ -54,5 +54,6 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-04-27 : étape [12/28] enrichie avec `audit-features.sh discover back` (en-tête, dry-run par défaut, détection `src/orphan.ts`).
 - 2026-04-27 : étape [11/28] enrichie avec `migrate-features.sh` (dry-run détecte migration legacy, `--apply` applique `schema_version` + normalisation status).
 - 2026-04-27 : étape [2/28] enrichie avec check `pr-report.sh --help` (présence/usage script).
+- 2026-04-27 : étape [2/28] renforcée avec garde de compatibilité Bash 3.2 : `pr-report.sh` généré ne doit pas utiliser `mapfile`.
 - 2026-04-27 : étape [28/28] enrichie pour valider `adoption_mode=lite` (pas de `.githooks`/workflows) et `adoption_mode=strict` (workflows conservés même avec `enable_ci_guard=false`).
 - 2026-04-27 : libellé [28/28] clarifié dans `tests/smoke-test.sh` pour refléter le périmètre réel (`tech_profile` + `adoption_mode`) et améliorer le diagnostic CI.
