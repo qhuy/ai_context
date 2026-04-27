@@ -77,15 +77,34 @@ exclude_path() {
 }
 
 tracked=()
-while IFS= read -r f; do
-  [[ -n "$f" ]] && tracked+=("$f")
-done < <(git ls-files --cached --others --exclude-standard)
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  while IFS= read -r f; do
+    [[ -n "$f" ]] && tracked+=("$f")
+  done < <(git ls-files --cached --others --exclude-standard)
+else
+  # Fallback hors repo git (scaffold neuf, smoke-test) : find filtré.
+  while IFS= read -r f; do
+    [[ -n "$f" ]] && tracked+=("$f")
+  done < <(find . -type f \
+    -not -path './.git/*' \
+    -not -path './.ai/*' \
+    -not -path './.docs/*' \
+    -not -path './docs/*' \
+    -not -path './.githooks/*' \
+    -not -path './.github/*' \
+    -not -path './.claude/*' \
+    -not -path './node_modules/*' \
+    -not -path './dist/*' \
+    -not -path './build/*' \
+    -not -path './coverage/*' \
+    | sed 's|^\./||')
+fi
 orphans=()
-for f in "${tracked[@]}"; do
+for f in ${tracked[@]+"${tracked[@]}"}; do
   exclude_path "$f" && continue
   [[ -f "$f" ]] || continue
   covered=0
-  for t in "${touches[@]}"; do
+  for t in ${touches[@]+"${touches[@]}"}; do
     if path_matches_touch "$f" "$t"; then
       covered=1
       break
