@@ -87,6 +87,14 @@ is_valid_status() {
   return 1
 }
 
+is_valid_phase() {
+  local p="$1"
+  for valid in $PHASE_ENUM; do
+    [[ "$p" == "$valid" ]] && return 0
+  done
+  return 1
+}
+
 # Matching canonique pour les entrées `touches:`.
 # Supporte :
 #   - fichier exact : src/foo.ts
