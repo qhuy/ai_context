@@ -22,6 +22,7 @@
 - Ajout de `.ai/scripts/pr-report.sh` pour générer un rapport markdown d'impact feature depuis un diff git (`--base`, `--head`).
 - Ajout de `adoption_mode` dans `copier.yml` (`lite`, `standard`, `strict`) pour moduler l'enforcement (hooks/CI) à l'installation.
 - Compatibilité Bash 3.2 améliorée dans les scripts générés : `pr-report.sh` n'utilise plus `mapfile` ni `declare -A`, et `check-feature-coverage.sh` charge la config sans `mapfile`.
+- CI : `shellcheck` passe en mode `-S error` dans les workflows check/smoke pour échouer sur les erreurs critiques sans bloquer sur warnings non bloquants.
 
 ### Tests
 - Smoke-test étendu à **28 étapes** avec assertions ciblées sur le matching exact/dossier/glob/`/**`, `docs_root=docs` et les rendus conditionnels `tech_profile`.

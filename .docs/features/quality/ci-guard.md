@@ -46,3 +46,4 @@ Filet de sécurité au-dessus de `git-hooks` (qui peuvent être contournés loca
 - 2026-04-24 : ajout de `.github/workflows/template-smoke-test.yml` pour valider le rendu Copier complet du template dans le repo source.
 - 2026-04-27 : durcissement CI : `yq` pin en `v4.44.3` + étape `shellcheck .ai/scripts/*.sh` dans les workflows check et smoke.
 - 2026-04-27 : extension matrix du workflow check sur `ubuntu-latest` et `macos-latest` (install cross-platform jq/yq/shellcheck).
+- 2026-04-27 : `shellcheck` exécuté en mode `-S error` pour bloquer uniquement les erreurs critiques et éviter les faux négatifs CI sur warnings non bloquants.

@@ -30,7 +30,7 @@ jobs:
           python3 -m pip install --user 'copier>=9'
 
       - name: shellcheck runtime scripts
-        run: shellcheck .ai/scripts/*.sh
+        run: shellcheck -S error .ai/scripts/*.sh
 
       - name: smoke-test template
         run: |

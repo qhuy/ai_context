@@ -49,7 +49,7 @@ jobs:
           fi
 
       - name: shellcheck
-        run: shellcheck .ai/scripts/*.sh
+        run: shellcheck -S error .ai/scripts/*.sh
 
       - name: check-shims
         run: bash .ai/scripts/check-shims.sh
