@@ -27,6 +27,7 @@
 - Fix Copier/CI template : échappement des expressions GitHub Actions `${{ matrix.os }}` / `${{ runner.os }}` dans `template/.github/workflows/ai-context-check.yml.jinja` pour éviter l'erreur Jinja `matrix is undefined` au rendu.
 - Fix Copier/template scripts : échappement des expansions Bash `${#...}` dans les templates `.jinja` pour éviter l'erreur Jinja `Missing end of comment tag` pendant `copier copy`.
 - Doctor : l'absence de repo git dans un scaffold frais devient un warning non bloquant (au lieu d'une erreur), avec skip explicite du check hooks hors repo.
+- Doctor : ajout d'un mode `--strict` ; en mode par défaut, le diagnostic reste informatif (exit 0), ce qui évite l'échec du smoke-test sur scaffold sain.
 
 ### Tests
 - Smoke-test étendu à **28 étapes** avec assertions ciblées sur le matching exact/dossier/glob/`/**`, `docs_root=docs` et les rendus conditionnels `tech_profile`.

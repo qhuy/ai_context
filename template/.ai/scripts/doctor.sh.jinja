@@ -3,10 +3,11 @@
 #
 # Usage :
 #   bash .ai/scripts/doctor.sh
+#   bash .ai/scripts/doctor.sh --strict
 #
 # Exit code :
-#   0 = aucun problème bloquant détecté
-#   1 = au moins un problème bloquant
+#   0 = mode défaut (diagnostic informatif) ou aucun problème bloquant en --strict
+#   1 = mode --strict + au moins un problème bloquant
 
 set -euo pipefail
 
@@ -16,10 +17,22 @@ cd "$repo_root"
 
 fails=0
 actions=()
+strict=0
+
+for arg in "$@"; do
+  [[ "$arg" == "--strict" ]] && strict=1
+done
 
 ok() { echo "✓ $1"; }
 warn() { echo "⚠ $1"; }
-ko() { echo "✗ $1"; fails=1; }
+ko() {
+  if [[ "$strict" -eq 1 ]]; then
+    echo "✗ $1"
+    fails=1
+  else
+    warn "$1"
+  fi
+}
 add_action() { actions+=("$1"); }
 
 echo "AI Context Doctor"

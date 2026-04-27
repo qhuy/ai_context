@@ -34,7 +34,8 @@ Réduire la friction d'adoption en fournissant un point d'entrée unique de diag
   - fichiers `.ai` critiques ;
   - exécution de `check-shims` / `check-features` ;
   - lisibilité `measure-context-size`.
-- Retourne `0` si aucun blocage ; non-zéro si blocage.
+- Mode par défaut (`doctor.sh`) : diagnostic informatif, retourne `0`.
+- Mode strict (`doctor.sh --strict`) : retourne non-zéro si blocage.
 - Affiche un bloc `Next actions` si des corrections sont suggérées.
 
 ## Contrats
@@ -51,3 +52,4 @@ Réduire la friction d'adoption en fournissant un point d'entrée unique de diag
 
 - 2026-04-27 : MVP Bash introduit dans le template avant extraction CLI.
 - 2026-04-27 : assouplissement pour scaffold frais : `doctor.sh` ne considère plus l'absence de repo git comme bloquante (warning + action suggérée), et skip le contrôle hooks quand `git init` n'a pas encore été fait.
+- 2026-04-27 : ajout du mode `--strict` ; le mode par défaut devient informatif (exit 0) pour éviter les faux négatifs sur scaffold sain en CI smoke-test.
