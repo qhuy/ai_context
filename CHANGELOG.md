@@ -24,6 +24,7 @@
 - Compatibilité Bash 3.2 améliorée dans les scripts générés : `pr-report.sh` n'utilise plus `mapfile` ni `declare -A`, et `check-feature-coverage.sh` charge la config sans `mapfile`.
 - CI : `shellcheck` passe en mode `-S error` dans les workflows check/smoke pour échouer sur les erreurs critiques sans bloquer sur warnings non bloquants.
 - Fix Copier : `_message_after_copy` dans `copier.yml` n'utilise plus de blocs Jinja `{% if %}` non quotés (YAML invalide), remplacés par des expressions inline compatibles parsing.
+- Fix Copier/CI template : échappement des expressions GitHub Actions `${{ matrix.os }}` / `${{ runner.os }}` dans `template/.github/workflows/ai-context-check.yml.jinja` pour éviter l'erreur Jinja `matrix is undefined` au rendu.
 
 ### Tests
 - Smoke-test étendu à **28 étapes** avec assertions ciblées sur le matching exact/dossier/glob/`/**`, `docs_root=docs` et les rendus conditionnels `tech_profile`.

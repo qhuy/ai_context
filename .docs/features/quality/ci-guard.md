@@ -47,3 +47,4 @@ Filet de sécurité au-dessus de `git-hooks` (qui peuvent être contournés loca
 - 2026-04-27 : durcissement CI : `yq` pin en `v4.44.3` + étape `shellcheck .ai/scripts/*.sh` dans les workflows check et smoke.
 - 2026-04-27 : extension matrix du workflow check sur `ubuntu-latest` et `macos-latest` (install cross-platform jq/yq/shellcheck).
 - 2026-04-27 : `shellcheck` exécuté en mode `-S error` pour bloquer uniquement les erreurs critiques et éviter les faux négatifs CI sur warnings non bloquants.
+- 2026-04-27 : correctif template workflow : expressions GitHub Actions `${{ ... }}` échappées avec `{% raw %}` dans `template/.github/workflows/ai-context-check.yml.jinja` pour éviter `jinja2.exceptions.UndefinedError: 'matrix' is undefined` pendant `copier copy`.

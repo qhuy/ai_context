@@ -23,14 +23,14 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: {% raw %}${{ matrix.os }}{% endraw %}
     steps:
       - uses: actions/checkout@v4
 
       - name: install dependencies (jq, yq, shellcheck)
         run: |
           YQ_VERSION=v4.44.3
-          if [[ "${{ runner.os }}" == "Linux" ]]; then
+          if [[ "{% raw %}${{ runner.os }}{% endraw %}" == "Linux" ]]; then
             sudo apt-get update -qq
             sudo apt-get install -y jq shellcheck
             sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64
