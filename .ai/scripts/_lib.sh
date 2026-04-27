@@ -14,11 +14,32 @@
 #   features_matching_path <index> <path>
 #                               — liste scope/id/path des features couvrant un path
 #   STATUS_ENUM                 — liste des status valides (space-separated)
+#   PHASE_ENUM                  — liste des progress.phase valides (space-separated)
 #   is_valid_status "s"         — 0 si valide, 1 sinon
+#
+# Source de vérité unique : .ai/schema/feature.schema.json
+# Les énums sont dérivés à l'init via jq (fallback hardcodé si schema absent).
 
-STATUS_ENUM="draft active done deprecated archived"
 AI_CONTEXT_DOCS_ROOT="${AI_CONTEXT_DOCS_ROOT:-.docs}"
 AI_CONTEXT_FEATURES_DIR="$AI_CONTEXT_DOCS_ROOT/features"
+AI_CONTEXT_SCHEMA_FILE="${AI_CONTEXT_SCHEMA_FILE:-.ai/schema/feature.schema.json}"
+
+read_schema_enum() {
+  local jq_path="$1"
+  local fallback="$2"
+  if [[ -f "$AI_CONTEXT_SCHEMA_FILE" ]] && command -v jq >/dev/null 2>&1; then
+    local out
+    out=$(jq -r "$jq_path | join(\" \")" "$AI_CONTEXT_SCHEMA_FILE" 2>/dev/null || true)
+    if [[ -n "$out" && "$out" != "null" ]]; then
+      echo "$out"
+      return 0
+    fi
+  fi
+  echo "$fallback"
+}
+
+STATUS_ENUM="$(read_schema_enum '.properties.status.enum' 'draft active done deprecated archived')"
+PHASE_ENUM="$(read_schema_enum '.properties.progress.properties.phase.enum' 'spec implement test review done blocked')"
 
 # Retourne la liste JSON des status visibles dans le reminder.
 # Par défaut : active + draft (les features en cours / à venir).
