@@ -229,6 +229,30 @@ fi
 echo "  ✓ migrate-features dry-run/apply OK"
 rm "$OUT/.docs/features/back/legacy-migrate.md"
 
+# enum source-of-truth : ajouter un status au schema → check-features ne warn plus
+schema_bak="$OUT/.ai/schema/feature.schema.json.bak"
+cp "$OUT/.ai/schema/feature.schema.json" "$schema_bak"
+jq '.properties.status.enum += ["paused"]' "$schema_bak" > "$OUT/.ai/schema/feature.schema.json"
+cat > "$OUT/.docs/features/back/paused-feat.md" <<'FEAT'
+---
+id: paused-feat
+scope: back
+title: Feature paused via schema-derived enum
+status: paused
+depends_on: []
+touches:
+  - src/foo.ts
+---
+FEAT
+schema_warn_out=$( cd "$OUT" && bash .ai/scripts/build-feature-index.sh 2>&1 >/dev/null )
+if echo "$schema_warn_out" | grep -q "status='paused'"; then
+  echo "  ✗ status 'paused' ajouté au schema mais toujours considéré hors enum"
+  exit 1
+fi
+echo "  ✓ enum dérivé du schema (status 'paused' reconnu)"
+mv "$schema_bak" "$OUT/.ai/schema/feature.schema.json"
+rm "$OUT/.docs/features/back/paused-feat.md"
+
 echo
 echo "[12/28] check-feature-coverage : script exécute et liste orphelins"
 mkdir -p "$OUT/src"
