@@ -76,7 +76,10 @@ exclude_path() {
   return 1
 }
 
-mapfile -t tracked < <(git ls-files)
+tracked=()
+while IFS= read -r f; do
+  [[ -n "$f" ]] && tracked+=("$f")
+done < <(git ls-files --cached --others --exclude-standard)
 orphans=()
 for f in "${tracked[@]}"; do
   exclude_path "$f" && continue
@@ -91,11 +94,15 @@ for f in "${tracked[@]}"; do
   [[ "$covered" -eq 0 ]] && orphans+=("$f")
 done
 
-declare -A group_files
+groups=()
+group_keys=""
 for f in "${orphans[@]}"; do
   d="$(dirname "$f")"
   [[ "$d" == "." ]] && d="$scope"
-  group_files["$d"]+="$f"$'\n'
+  if ! printf '%s\n' "$group_keys" | grep -Fxq "$d"; then
+    groups+=("$d")
+    group_keys+="$d"$'\n'
+  fi
 done
 
 echo "═══ audit-features discover <$scope> ═══"
@@ -109,11 +116,19 @@ fi
 
 echo "| Fichiers orphelins | id proposé | title inféré |"
 echo "|---|---|---|"
-for g in "${!group_files[@]}"; do
+for g in "${groups[@]}"; do
   id_guess="$(basename "$g" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')"
   [[ -z "$id_guess" ]] && id_guess="todo-feature"
   title_guess="$(echo "$id_guess" | sed -E 's/-+/ /g; s/\b(.)/\U\1/g')"
-  first_file="$(echo "${group_files[$g]}" | head -n1)"
+  first_file=""
+  for f in "${orphans[@]}"; do
+    d="$(dirname "$f")"
+    [[ "$d" == "." ]] && d="$scope"
+    if [[ "$d" == "$g" ]]; then
+      first_file="$f"
+      break
+    fi
+  done
   echo "| $first_file | $id_guess | $title_guess |"
 done
 
@@ -125,7 +140,7 @@ fi
 
 echo
 echo "⚠️ --apply actif : création de fiches draft minimales."
-for g in "${!group_files[@]}"; do
+for g in "${groups[@]}"; do
   id_guess="$(basename "$g" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')"
   [[ -z "$id_guess" ]] && id_guess="todo-feature"
   feature_file="$AI_CONTEXT_FEATURES_DIR/$scope/$id_guess.md"
@@ -133,7 +148,15 @@ for g in "${!group_files[@]}"; do
   [[ -f "$feature_file" ]] && continue
 
   title_guess="$(echo "$id_guess" | sed -E 's/-+/ /g; s/\b(.)/\U\1/g')"
-  first_file="$(echo "${group_files[$g]}" | head -n1)"
+  first_file=""
+  for f in "${orphans[@]}"; do
+    d="$(dirname "$f")"
+    [[ "$d" == "." ]] && d="$scope"
+    if [[ "$d" == "$g" ]]; then
+      first_file="$f"
+      break
+    fi
+  done
   cat > "$feature_file" <<EOF
 ---
 id: $id_guess

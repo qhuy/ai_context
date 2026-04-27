@@ -28,6 +28,7 @@
 - Fix Copier/template scripts : échappement des expansions Bash `${#...}` dans les templates `.jinja` pour éviter l'erreur Jinja `Missing end of comment tag` pendant `copier copy`.
 - Doctor : l'absence de repo git dans un scaffold frais devient un warning non bloquant (au lieu d'une erreur), avec skip explicite du check hooks hors repo.
 - Doctor : ajout d'un mode `--strict` ; en mode par défaut, le diagnostic reste informatif (exit 0), ce qui évite l'échec du smoke-test sur scaffold sain.
+- Audit discover : prise en compte des fichiers non trackés (`git ls-files --cached --others --exclude-standard`) et suppression de dépendances Bash 4 (`mapfile`, `declare -A`) dans le template script.
 
 ### Tests
 - Smoke-test étendu à **28 étapes** avec assertions ciblées sur le matching exact/dossier/glob/`/**`, `docs_root=docs` et les rendus conditionnels `tech_profile`.

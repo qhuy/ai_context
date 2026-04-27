@@ -72,3 +72,4 @@ Deux modes explicites (argument obligatoire, pas d'auto-détection) :
 
 - **2026-04-24** — Création. Origine : lacune identifiée en conversation — aucun skill ne permettait de rattraper du code pré-mesh ou des fiches stale. Choix d'un skill unique à deux modes plutôt que deux skills séparés pour garder la famille `/aic-feature-*` lisible. Dry-run par défaut pour éviter la pollution du mesh par des fiches auto-générées sans contrôle.
 - **2026-04-27** — Ajout du script agent-agnostique `audit-features.sh` (MVP `discover <scope>`), dry-run par défaut + `--apply` explicite. Objectif : rendre l'audit utilisable hors Claude skills.
+- **2026-04-27** — Correctif discover : l'audit inclut maintenant aussi les fichiers non trackés (`git ls-files --cached --others --exclude-standard`) pour détecter `src/orphan.ts` dans le smoke-test ; retrait de `mapfile`/`declare -A` pour meilleure compatibilité Bash 3.2.
