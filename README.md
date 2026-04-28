@@ -546,13 +546,13 @@ Ces presets sont volontairement courts : ils orientent l'agent sur architecture,
 
 `adoption_mode` ajuste le niveau d'enforcement sans changer le cœur des scripts.
 
-| Mode | Effet |
+| Mode | Effet exact |
 |---|---|
-| `lite` | retire `.githooks` et workflows CI ; base légère pour adoption progressive |
-| `standard` | mode par défaut (comportement actuel complet) |
-| `strict` | conserve les workflows CI même si `enable_ci_guard=false` (garde-fous renforcés) |
+| `lite` | retire `.githooks` (git hooks) **et** `.github/workflows/` (CI). Les hooks Claude (`.claude/settings.json`) restent générés si `claude` est dans `agents` — ils sont **disponibles mais optionnels** : à activer via `/hooks` si tu veux l'injection runtime côté Claude. |
+| `standard` | expérience complète : git hooks + CI (si `enable_ci_guard=true`) + hooks Claude (si `claude` actif). |
+| `strict` | comme `standard`, mais conserve `.github/workflows/` même si `enable_ci_guard=false`. La portée actuelle de `strict` se limite à cette garantie CI. Les options renforcées (doctor `--strict` en CI, coverage strict par défaut) sont en réflexion (voir roadmap P1). |
 
-> Note : en `lite`, les étapes d'activation des hooks locaux (dont `/hooks` côté Claude) sont sans effet tant que `.githooks` n'est pas scaffoldé.
+> En `lite + claude`, les hooks Claude sont scaffoldés mais aucun n'est imposé : tu décides dans `/hooks` ce que tu actives. Pour les git hooks, `lite` ne les scaffolde pas du tout — passe en `standard`/`strict` ou copie `.githooks/` à la main si tu changes d'avis plus tard.
 
 ---
 
@@ -655,11 +655,31 @@ Le template embarque 8 skills Claude Code (`SKILL.md` + `workflow.md`) et distin
 | `measure-context-size.sh` | Mesure chars/tokens injectés par hook |
 | `auto-worklog-log.sh` | Hook `PostToolUse` : logue les éditions dans `.session-edits.log` |
 | `auto-worklog-flush.sh` | Hook `Stop` : flush log → worklog + bump `progress.updated` |
+| `ai-context.sh` | Wrapper CLI MVP — route `doctor` / `resume` / `audit` / `migrate` / `pr-report` / `measure` / `check` / `coverage` / `shims` / `index` / `reminder` vers les scripts dédiés. Aucune logique propre. |
 
 Tous les scripts runtime lisent le dossier métier via `AI_CONTEXT_DOCS_ROOT` rendu depuis `docs_root` (`.docs` par défaut). Les entrées `touches:` sont matchées par un helper unique (`path_matches_touch`) pour garder la même sémantique entre `features-for-path`, auto-worklog, coverage et `pre-commit`.
 
-`check-feature-coverage.sh` lit aussi `.ai/config.yml` (si présent) pour surcharger `coverage.roots`, `coverage.extensions`, `coverage.exclude_dirs`. Si le fichier est absent ou incomplet, les defaults intégrés restent appliqués.
-`resume-features.sh` lit `progress.stale_after_days` dans `.ai/config.yml` pour piloter le seuil STALE (défaut 14 jours).
+## Champs actifs de `.ai/config.yml`
+
+`.ai/config.yml` est scaffoldé par défaut. Tous les champs sont prévus, mais tous ne sont pas encore consommés par les scripts. Référence à jour :
+
+| Champ | Statut runtime | Lu par |
+|---|---|---|
+| `coverage.roots` | ✅ actif | `check-feature-coverage.sh` |
+| `coverage.extensions` | ✅ actif | `check-feature-coverage.sh` |
+| `coverage.exclude_dirs` | ✅ actif | `check-feature-coverage.sh` |
+| `progress.stale_after_days` | ✅ actif | `resume-features.sh` |
+| `progress.auto_transitions.spec_to_implement` | ⚠️ informatif (toujours `true` côté script) | non lu — pour info / futur opt-out |
+| `progress.auto_transitions.implement_to_review` | ⚠️ informatif (manuel uniquement) | non lu — placeholder |
+| `progress.auto_transitions.review_to_done` | ⚠️ informatif (manuel uniquement) | non lu — placeholder |
+| `context.show_statuses` | 🚧 prévu (v0.10+) | non lu aujourd'hui — `pre-turn-reminder.sh` filtre via `AI_CONTEXT_SHOW_ALL_STATUS` |
+| `context.default_focus` | 🚧 prévu (v0.10+) | non lu aujourd'hui — `pre-turn-reminder.sh` lit `AI_CONTEXT_FOCUS` |
+| `context.max_tokens_warn` | 🚧 prévu (v0.10+) | non lu aujourd'hui |
+| `docs_root` | ⚠️ informatif | les scripts privilégient l'ENV `AI_CONTEXT_DOCS_ROOT` puis le défaut rendu par Copier ; ce champ sert de mémo (et de point d'extension futur) |
+
+Légende : ✅ pleinement actif · ⚠️ champ écrit mais non lu (placeholder / informatif) · 🚧 prévu sur une version future.
+
+> Si tu modifies un champ 🚧 aujourd'hui, attends-toi à ce que le script ne le respecte pas. Utilise les variables d'environnement listées plus bas.
 
 ## Schéma feature
 
@@ -706,6 +726,9 @@ Oui, via `docs_root: docs` et une convention de scopes par sous-projet (`back-ap
 
 Template versionné. Non-cassant → bump minor. Refonte → bump major (les consommateurs résoudront le diff via `copier update`).
 
+- [CONTRIBUTING.md](CONTRIBUTING.md) — installation dev, sync template/runtime, conventions de commit, anti-doc-drift
+- [SECURITY.md](SECURITY.md) — politique de logging des hooks, signalement de vulnérabilité
+- [RELEASE.md](RELEASE.md) — checklist release (smoke-test, rendus Copier critiques, tag)
 - [CHANGELOG.md](CHANGELOG.md) — toutes les versions
 - [MIGRATION.md](MIGRATION.md) — adopter le template sur projet existant
 - [docs/variables.md](docs/variables.md) — référence des questions copier

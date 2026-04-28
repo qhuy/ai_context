@@ -17,7 +17,7 @@ progress:
   step: "MVP script doctor (checks dépendances/hooks/index + next actions)"
   blockers: []
   resume_hint: "évaluer extraction future vers ai-context doctor (CLI) avec flags --json/--strict"
-  updated: 2026-04-27
+  updated: 2026-04-28
 ---
 
 # Doctor (diagnostic)
@@ -53,3 +53,5 @@ Réduire la friction d'adoption en fournissant un point d'entrée unique de diag
 - 2026-04-27 : MVP Bash introduit dans le template avant extraction CLI.
 - 2026-04-27 : assouplissement pour scaffold frais : `doctor.sh` ne considère plus l'absence de repo git comme bloquante (warning + action suggérée), et skip le contrôle hooks quand `git init` n'a pas encore été fait.
 - 2026-04-27 : ajout du mode `--strict` ; le mode par défaut devient informatif (exit 0) pour éviter les faux négatifs sur scaffold sain en CI smoke-test.
+- 2026-04-28 : édition cross-feature (PR1 v0.10) — README, PROJECT_STATE et CHANGELOG synchronisés avec la portée actuelle de `doctor.sh` (mode par défaut informatif, `--strict` opt-in). Aucun changement de comportement runtime ; entrée d'historique pour conformité anti-doc-drift (touches inclut README/PROJECT_STATE/CHANGELOG).
+- 2026-04-28 : `tests/smoke-test.sh` étendu (assertions `pr-report --format=json` + `--include-docs`, wrapper `ai-context.sh`, `audit-features` paths-with-spaces, `check-features` exige depends_on/touches). Aucun impact sur le comportement de `doctor.sh` lui-même mais le smoke-test reste la garantie de non-régression.

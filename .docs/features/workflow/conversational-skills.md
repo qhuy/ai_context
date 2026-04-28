@@ -17,7 +17,7 @@ progress:
   step: "skill /aic écrit (SKILL.md + workflow.md, modes undo + override) ; reste AGENTS.md/_message_after_copy + assertion smoke-test"
   blockers: []
   resume_hint: "écrire assertion smoke-test (auto-progression via pre-commit + /aic undo) puis rouvrir workflow/claude-skills pour acter réduction 6→2 skills exposés"
-  updated: 2026-04-24
+  updated: 2026-04-28
 ---
 
 # Auto-progression invisible (+ skill `/aic` en override)

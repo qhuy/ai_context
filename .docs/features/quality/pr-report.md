@@ -14,10 +14,10 @@ touches:
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "MVP script pr-report basé sur git diff + features_matching_path"
+  step: "v0.10 — exclusions par défaut + format JSON + warnings enrichis"
   blockers: []
-  resume_hint: "ajouter enrichissements warnings deps deprecated + ownership optionnel quand le frontmatter sera étendu"
-  updated: 2026-04-27
+  resume_hint: "ajouter une intégration CI (commentaire PR automatique) — passer en review une fois le wrapper ai-context-bot stabilisé"
+  updated: 2026-04-28
 ---
 
 # PR report
@@ -49,3 +49,5 @@ Rendre visible la valeur du mesh dans les PRs via un rapport markdown simple: fe
 
 - 2026-04-27 : MVP initial introduit (features + warnings orphelins).
 - 2026-04-27 : compatibilité Bash 3.2 renforcée : suppression de `mapfile` et des tableaux associatifs (`declare -A`) pour éviter les erreurs runtime sur macOS par défaut.
+- 2026-04-28 : enrichissement v0.10 du script `template/.ai/scripts/pr-report.sh.jinja`. Ajouts : `--format=json` (markdown reste défaut), `--include-docs` pour lever les exclusions, exclusions par défaut sur fichiers documentaires (README/CHANGELOG/MIGRATION/PROJECT_STATE/LICENSE/.github/.ai/docs/.docs/features), warnings nouveaux : `feature done modifiée`, fichier `multi-couvert`, `depends_on deprecated/archived`, feature `stale` (>14j sans update). Fallback shallow-clone : si `--base` n'est pas atteignable, retombe sur HEAD~1 et l'annonce dans la note. Aucune logique modifiée pour `--format=markdown` sans options : le rapport reste lisible avec ces deux nouveautés ajoutées en pied (compteur `Fichiers analysés`, ligne `Exclus par défaut`).
+- 2026-04-28 : `tests/smoke-test.sh` enrichi avec assertions `--format=json` (jq parse), `--include-docs` (`docs_excluded=0`) et exclusion par défaut (`docs_excluded ≥ 1` quand un README est modifié).

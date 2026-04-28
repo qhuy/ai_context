@@ -50,16 +50,38 @@
 
 ## Roadmap — pistes ouvertes
 
-**P1**
+**P1 — stabilisation v0.10**
+- Stabilisation runtime `.ai/config.yml` : faire consommer `context.show_statuses`, `context.default_focus`, `context.max_tokens_warn`, `docs_root` par les scripts (aujourd'hui placeholders). Voir [README — Champs actifs de .ai/config.yml](README.md#champs-actifs-de-aiconfigyml).
+- Cohérence `adoption_mode` : `lite` clarifié (Claude hooks dispo en option), `strict` documenté (CI forcée seulement, autres garde-fous opt-in).
+- CI source repo : workflow GitHub Actions sur `qhuy/ai_context` lui-même qui exécute `tests/smoke-test.sh` (matrix Ubuntu/macOS).
+- Wrapper CLI `ai-context` (MVP) : `doctor`, `resume`, `audit`, `migrate`, `pr-report`, `measure` — délégué aux scripts existants.
+- Dog-fooding : appliquer pleinement le mesh sur `ai_context` lui-même (déjà partiellement fait sous `.docs/features/`).
+
+**P2 — confort UX**
 - Pipelines CI hors GitHub Actions (Azure DevOps, GitLab).
 - Profil `scope_profile=custom` interactif (liste CSV `custom_scopes` + jinja loop).
-
-**P2**
+- `pr-report.sh` enrichi : exclusions par défaut (`README.md`, `.github/**`, `.ai/**`, `docs/**`), warnings `feature done modifiée`, formats `markdown`/`json`, options `--base`/`--head` pour CI.
+- Graphe Mermaid auto-généré du mesh (depuis l'index JSON).
 - Site docs statique (mkdocs-material) sourcé depuis README/CHANGELOG/MIGRATION/skills.
-- Dog-fooding : appliquer le template sur `ai_context` lui-même.
 
-**P3**
+**P3 — extensions**
+- MCP (Model Context Protocol) côté agents pour pousser le contexte au lieu d'injecter par hook.
 - Learning log automatique : Stop hook append patterns récurrents à `.ai/memory/<scope>.md` avec gate de validation manuelle (évite pollution).
+- Benchmarks publics (gain tokens / temps de hook) sur projets de référence.
+- Repo démo externe consommant `ai_context` à jour.
+
+## Règle anti-doc-drift
+
+Quand une fonctionnalité change, les fichiers suivants **doivent** être revus dans le même chantier (la règle est rappelée dans `CONTRIBUTING.md` et bloquée par `tests/smoke-test.sh` quand applicable) :
+
+- `README.md` (référence utilisateur)
+- `CHANGELOG.md` (`Unreleased` regroupé par release future)
+- `PROJECT_STATE.md` (état + roadmap)
+- `MIGRATION.md` (si la migration utilisateur change)
+- `copier.yml` (questions + `_message_after_copy`)
+- `template/.claude/skills/**/SKILL.md.jinja` + `workflow.md.jinja` (workflows skill alignés)
+- `tests/smoke-test.sh` (au moins une assertion)
+- Les deux versions des scripts si applicable : `.ai/scripts/<name>` (dogfooding) **et** `template/.ai/scripts/<name>.jinja` (template). Une divergence accidentelle est un bug.
 
 ## Points d'attention
 

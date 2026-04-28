@@ -13,7 +13,7 @@ progress:
   step: "enrichir les presets techno (V1 tech-dotnet + tech-react + stack-fullstack)"
   blockers: []
   resume_hint: "3 presets enrichis ; smoke-test OK ; prêt pour commit + DONE"
-  updated: 2026-04-24
+  updated: 2026-04-28
 ---
 
 # Moteur de template copier
@@ -64,3 +64,9 @@ Ce moteur produit le squelette consommé par `feature-mesh`, `feature-index-cach
 - 2026-04-27 : correction UX complémentaire du message post-scaffold en `adoption_mode=lite` : l'étape `/hooks` est désormais explicitement marquée inutile en mode lite (évite une action sans effet).
 - 2026-04-27 : README aligné sur ce comportement `lite` avec une note explicite : activation hooks locaux et `/hooks` côté Claude sans effet tant que `.githooks` n'est pas scaffoldé.
 - 2026-04-27 : correction de la syntaxe `_message_after_copy` dans `copier.yml` : suppression des blocs Jinja `{% if %}` bruts dans le YAML (source de `yaml.scanner.ScannerError` au parsing Copier), remplacés par des expressions inline `{{ ... if ... else ... }}`.
+- 2026-04-28 : réécriture du `_message_after_copy` (PR1 v0.10) — ajout d'un bloc « Mode d'adoption choisi » qui distingue **explicitement** : git hooks (`.githooks/*`, présents en `standard`/`strict`, absents en `lite`) ↔ hooks Claude (`.claude/settings.json`, présents si `claude in agents` quel que soit le mode mais **optionnels**, à activer dans `/hooks`). Le message ne dit plus « `/hooks` inutile en lite » (faux quand Claude est sélectionné). Étape 9 réécrite avec un bloc `{% if 'claude' in agents %}` qui adapte la consigne au choix d'agents.
+- 2026-04-28 : ajout du wrapper CLI `template/.ai/scripts/ai-context.sh.jinja` qui route 11 sous-commandes (`doctor`, `resume`, `audit`, `migrate`, `pr-report`, `measure`, `check`, `coverage`, `shims`, `index`, `reminder`) vers les scripts dédiés via `exec`. Aucune logique propre — sécurité de surface stable sans dupliquer. Smoke-test enrichi avec assertions `--help`, alias `shims`, rejet d'une commande inconnue.
+- 2026-04-28 : enrichissement v0.10 de `template/.ai/scripts/pr-report.sh.jinja` (voir `quality/pr-report` pour le détail) — exclusions par défaut, `--format=json`, warnings stale/done/multi/deprecated, fallback shallow-clone. Aucune nouvelle variable copier ; le rendu reste un script Bash unique, sans dépendance nouvelle.
+- 2026-04-28 : ajout `is_valid_phase()` dans `template/.ai/scripts/_lib.sh.jinja` (le commentaire d'en-tête le promettait déjà) ; suppression du doublon local dans `template/.ai/scripts/check-features.sh.jinja`. Synchronisation côté dogfooding (`.ai/scripts/_lib.sh`). Aucune dérive runtime — `PHASE_ENUM` était déjà dérivé du schema, c'est juste l'API publique qui devient cohérente avec la doc.
+- 2026-04-28 : `check-features.sh` (template + dogfooding) exige maintenant `depends_on` et `touches` comme clés frontmatter obligatoires (Option A). `[]` reste accepté ; alignement avec `feature.schema.json` qui les a toujours dans `required`.
+- 2026-04-28 : ajout de fichiers OSS `CONTRIBUTING.md`, `SECURITY.md`, `RELEASE.md` à la racine du repo source (non scaffoldés par Copier vers le projet cible — ils restent spécifiques au mainteneur du template). README pointé vers ces 3 fichiers.

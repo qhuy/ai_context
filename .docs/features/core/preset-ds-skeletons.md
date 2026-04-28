@@ -13,7 +13,7 @@ progress:
   step: "V1 livrée — 2 squelettes + exclusion + smoke-test étendu"
   blockers: []
   resume_hint: "créer 2 fichiers .jinja dans template/docs/ rendus uniquement si tech_profile ∈ {react-next, fullstack-dotnet-react} ; structure par catégorie + 1 composant commenté d'exemple"
-  updated: 2026-04-24
+  updated: 2026-04-28
 ---
 
 # Squelettes bootstrap pour DS registry et atomic map

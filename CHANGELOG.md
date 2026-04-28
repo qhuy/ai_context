@@ -1,33 +1,46 @@
 # CHANGELOG
 
-## Unreleased
+## Unreleased — préparation v0.10.0 « Runtime config, diagnostics & agent-agnostic tooling »
+
+> Cette version regroupe les changements accumulés depuis v0.9.0. Le tag sera posé une fois la PR de release validée (voir `CONTRIBUTING.md` / `RELEASE.md` pour la checklist complète quand ils seront ajoutés).
+
+### Nouveau
+- `.ai/config.yml` scaffoldé avec sections `coverage` / `progress` / `context` / `docs_root`. Tableau « Champs actifs » dans `README.md` : `coverage.*` et `progress.stale_after_days` actifs ; `progress.auto_transitions.*`, `context.*` et `docs_root` placeholders pour v0.10+.
+- `.ai/schema/feature.schema.json` — contrat frontmatter (status, progress.phase, etc.). Source de vérité des enums lus par `_lib.sh` (`STATUS_ENUM`, `PHASE_ENUM`).
+- `.ai/scripts/doctor.sh` — diagnostic non destructif (dépendances, hooks, index, checks). Mode `--strict` opt-in ; en mode par défaut reste informatif (exit 0) pour ne pas casser le smoke-test sur scaffold sain.
+- `.ai/scripts/audit-features.sh` — audit agent-agnostique (`discover <scope>`, dry-run par défaut, `--apply` explicite pour créer des fiches draft minimales). MVP : `discover` only, pas de `refresh` ni de mode interactif (voir feature `workflow/feature-audit`). `--help` annonce explicitement le périmètre MVP.
+- `.ai/scripts/migrate-features.sh` — normalise les frontmatters legacy (`schema_version`, `status` legacy → enum, `depends_on`/`touches` manquants). Dry-run par défaut, `--apply` explicite.
+- `.ai/scripts/pr-report.sh` — rapport d'impact feature depuis un diff git. Options : `--base`, `--head`, `--format=markdown|json`, `--include-docs`. Exclusions par défaut (README/CHANGELOG/.github/.ai/docs/.docs/features) ; warnings enrichis (feature `done` modifiée, fichier multi-couvert, `depends_on` deprecated/archived, feature stale >14j) ; fallback shallow-clone explicite quand `--base` n'est pas atteignable.
+- `.ai/scripts/ai-context.sh` — wrapper CLI MVP routant `doctor` / `resume` / `audit` / `migrate` / `pr-report` / `measure` / `check` / `coverage` / `shims` / `index` / `reminder` vers les scripts dédiés. Aucune logique propre, surface stable.
+- `_lib.sh` : ajout `is_valid_phase()` (le commentaire d'en-tête le promettait déjà). Suppression du doublon local dans `check-features.sh`.
+- `adoption_mode` dans `copier.yml` (`lite`, `standard`, `strict`) pour moduler l'enforcement (hooks/CI) à l'installation. Voir le tableau « Modes d'adoption » dans `README.md` pour la portée exacte de chaque mode.
+- Documentation OSS racine du repo source : `CONTRIBUTING.md` (installation dev, sync template/runtime, anti-doc-drift), `SECURITY.md` (politique de logging des hooks, signalement), `RELEASE.md` (checklist tag).
 
 ### Changé
+- `check-features.sh` exige maintenant `depends_on` et `touches` comme clés frontmatter obligatoires (`[]` accepté, omission rejetée). Aligne la validation Bash sur `feature.schema.json` (Option A). Concerne le template **et** le runtime dogfoodé.
+- `audit-features.sh` : refactor des boucles `for f in ${arr[@]+"${arr[@]}"}` (sujettes à word-splitting) vers `if [[ ${#arr[@]} -gt 0 ]]; then for f in "${arr[@]}"; fi`. Préserve la sécurité `set -u` Bash 3.2 ET la fidélité aux chemins avec espaces.
+- Workflow `.github/workflows/template-smoke-test.yml` étendu en matrix `ubuntu-latest` + `macos-latest` (au lieu d'Ubuntu seul). Install copier cross-platform (PEP 668 / `--break-system-packages` côté macOS). Déclencheurs étendus à `.ai/scripts/**` et `.ai/schema/**` pour rattraper les changements dogfoodés. Ajout `workflow_dispatch`.
 - Centralisation du matching `touches:` dans `_lib.sh` (`path_matches_touch` + `features_matching_path`) et adoption par `features-for-path`, `auto-worklog-log`, `check-feature-coverage` et le hook git `pre-commit`.
 - Les scripts runtime utilisent maintenant `AI_CONTEXT_DOCS_ROOT` / `AI_CONTEXT_FEATURES_DIR` depuis `_lib.sh`, ce qui rend `docs_root=docs` fonctionnel au-delà des fichiers scaffoldés.
 - Ajout de `tech_profile` pour générer des règles stack optionnelles : `.NET Clean Architecture + CQRS`, `React/Next`, ou contrat fullstack `.NET + React`.
 - Documentation synchronisée : nombre d'étapes du smoke-test, défaut `enable_ci_guard`, description des hooks runtime.
 - Synchronisation docs/runtime sur l'UX skills et l'auto-progression : distinction commandes exposées (`/aic`, `/aic undo`, `/aic-feature-resume`, `/aic-feature-audit`, `/aic-quality-gate`) vs skills internes (`new/update/handoff/done`) ; clarification explicite que l'auto-progression couvre uniquement `spec → implement`.
 - Correction du chemin d'index dans le workflow `aic-feature-audit` (`.ai/.feature-index.json`).
-- `PROJECT_STATE.md` nettoyé (plus de chemin personnel) et aligné sur l'état `v0.9.0 + Unreleased`.
+- `PROJECT_STATE.md` mis à jour : roadmap restructurée (P1 stabilisation v0.10, P2 confort UX, P3 extensions) ; ajout d'une règle anti-doc-drift listant les fichiers à revoir à chaque changement.
 - Smoke-test ajusté pour vérifier les 8 skills présents (`aic`, `aic-feature-audit` inclus).
-- Ajout d'une config runtime scaffoldée `.ai/config.yml` (coverage/progress/context) et première intégration dans `check-feature-coverage.sh` avec fallback defaults si absent/incomplet.
 - `resume-features.sh` lit désormais `progress.stale_after_days` depuis `.ai/config.yml` (fallback 14 jours) pour calculer le bucket STALE.
-- Ajout de `.ai/schema/feature.schema.json` (contrat frontmatter) ; `check-features.sh` reste Bash mais aligne maintenant les enums `status` et `progress.phase` sur cette source.
-- Ajout de `.ai/scripts/doctor.sh` (diagnostic non destructif : dépendances, hooks, index, checks) avec code de sortie non-zéro en cas de blocage.
-- Ajout de `.ai/scripts/audit-features.sh` (mode `discover <scope>`) pour un audit agent-agnostique des orphelins, dry-run par défaut, `--apply` explicite pour créer des fiches draft minimales.
+- `check-feature-coverage.sh` lit `coverage.roots` / `coverage.extensions` / `coverage.exclude_dirs` depuis `.ai/config.yml` (fallback defaults intégrés).
 - Workflows CI durcis : pin `yq` en `v4.44.3` (plus de `latest`) et ajout `shellcheck .ai/scripts/*.sh`.
 - Workflow check étendu en matrix `ubuntu-latest` + `macos-latest` avec install cross-platform de `jq`/`shellcheck` et `yq` pin.
-- Ajout de `.ai/scripts/migrate-features.sh` (dry-run par défaut, `--apply`) pour normaliser les frontmatters legacy (`schema_version`, `status`, `depends_on`, `touches`).
-- Ajout de `.ai/scripts/pr-report.sh` pour générer un rapport markdown d'impact feature depuis un diff git (`--base`, `--head`).
-- Ajout de `adoption_mode` dans `copier.yml` (`lite`, `standard`, `strict`) pour moduler l'enforcement (hooks/CI) à l'installation.
 - Compatibilité Bash 3.2 améliorée dans les scripts générés : `pr-report.sh` n'utilise plus `mapfile` ni `declare -A`, et `check-feature-coverage.sh` charge la config sans `mapfile`.
 - CI : `shellcheck` passe en mode `-S error` dans les workflows check/smoke pour échouer sur les erreurs critiques sans bloquer sur warnings non bloquants.
+- Modes d'adoption clarifiés : la documentation `README.md` + `_message_after_copy` du `copier.yml` distinguent maintenant explicitement les git hooks (`.githooks/`) des hooks Claude (`.claude/settings.json`). En `lite + claude`, les hooks Claude restent disponibles mais optionnels (à activer dans `/hooks`) ; le message ne suggère plus que `/hooks` est inutile.
+
+### Corrigé
 - Fix Copier : `_message_after_copy` dans `copier.yml` n'utilise plus de blocs Jinja `{% if %}` non quotés (YAML invalide), remplacés par des expressions inline compatibles parsing.
 - Fix Copier/CI template : échappement des expressions GitHub Actions `${{ matrix.os }}` / `${{ runner.os }}` dans `template/.github/workflows/ai-context-check.yml.jinja` pour éviter l'erreur Jinja `matrix is undefined` au rendu.
 - Fix Copier/template scripts : échappement des expansions Bash `${#...}` dans les templates `.jinja` pour éviter l'erreur Jinja `Missing end of comment tag` pendant `copier copy`.
 - Doctor : l'absence de repo git dans un scaffold frais devient un warning non bloquant (au lieu d'une erreur), avec skip explicite du check hooks hors repo.
-- Doctor : ajout d'un mode `--strict` ; en mode par défaut, le diagnostic reste informatif (exit 0), ce qui évite l'échec du smoke-test sur scaffold sain.
 - Audit discover : prise en compte des fichiers non trackés (`git ls-files --cached --others --exclude-standard`) et suppression de dépendances Bash 4 (`mapfile`, `declare -A`) dans le template script.
 
 ### Tests
@@ -35,6 +48,15 @@
 - `tests/smoke-test.sh` valide désormais un override simple de `coverage.*` via `.ai/config.yml` (sans casser le comportement par défaut).
 - `tests/smoke-test.sh` valide aussi l'override `progress.stale_after_days` via `.ai/config.yml` dans `resume-features.sh`.
 - `tests/smoke-test.sh` vérifie que `pr-report.sh` généré reste compatible Bash 3.2 (absence de `mapfile`).
+- `tests/smoke-test.sh` valide les rendus `adoption_mode=lite` (`.githooks` et `.github/workflows/` exclus) et `adoption_mode=strict + enable_ci_guard=false` (workflows conservés).
+- `tests/smoke-test.sh` valide que `check-features.sh` exige `depends_on` et `touches` (acceptent `[]`).
+- `tests/smoke-test.sh` valide `audit-features.sh --help` (annonce périmètre MVP) et la robustesse aux chemins avec espaces (`src/with space/file.ts` orphelin détecté).
+- `tests/smoke-test.sh` valide `pr-report.sh --format=json` (sortie JSON parseable via `jq`), exclusion par défaut d'un README modifié, et `--include-docs` qui lève l'exclusion.
+- `tests/smoke-test.sh` valide le wrapper `ai-context.sh` (`--help` liste les commandes, alias `shims` route vers `check-shims`, commande inconnue rejetée).
+
+### Migration
+- Aucun breaking depuis v0.9.0. `copier update` re-applique les nouveaux fichiers (`.ai/config.yml`, `.ai/schema/feature.schema.json`, `.ai/scripts/{doctor,audit-features,migrate-features,pr-report}.sh`) sans toucher au mesh feature existant.
+- Si tu utilisais `AI_CONTEXT_DOCS_ROOT` à la main, rien à changer : ce comportement est conservé. Le champ `docs_root` dans `.ai/config.yml` est aujourd'hui informatif (placeholder), pas une nouvelle source de vérité.
 
 ## v0.9.0 — 2026-04-24
 

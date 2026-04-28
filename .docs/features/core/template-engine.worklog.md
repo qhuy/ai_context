@@ -52,3 +52,13 @@
   - copier.yml
   - template/docs/atomic-design-map.md.jinja
   - template/docs/design-system-registry.md.jinja
+
+## 2026-04-28 11:23 — auto
+- Fichiers modifiés :
+  - README.md
+  - copier.yml
+  - template/.ai/scripts/_lib.sh.jinja
+  - template/.ai/scripts/ai-context.sh.jinja
+  - template/.ai/scripts/audit-features.sh.jinja
+  - template/.ai/scripts/check-features.sh.jinja
+  - template/.ai/scripts/pr-report.sh.jinja
