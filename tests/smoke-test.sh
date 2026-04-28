@@ -50,6 +50,58 @@ if grep -q "mapfile" "$OUT/.ai/scripts/pr-report.sh"; then
   exit 1
 fi
 echo "  ✓ pr-report.sh compatible Bash 3.2 (sans mapfile)"
+# pr-report.sh : format JSON valide + exclusions par défaut + --include-docs
+(
+  cd "$OUT"
+  git init -q 2>/dev/null || true
+  git config user.email "smoke@test"
+  git config user.name "smoke"
+  mkdir -p src
+  echo "// initial" > src/sample.ts
+  git add -A >/dev/null 2>&1
+  git -c core.hooksPath=/dev/null commit -q -m "chore: init"  >/dev/null 2>&1 || true
+  # Modifie un README (doc) + un fichier code
+  echo "// changed" > src/sample.ts
+  echo "doc change" >> README.md 2>/dev/null || echo "doc change" > README.md
+  git add -A >/dev/null 2>&1
+  git -c core.hooksPath=/dev/null commit -q -m "chore: changes" >/dev/null 2>&1 || true
+)
+report_json=$( cd "$OUT" && bash .ai/scripts/pr-report.sh --format=json --base=HEAD~1 --head=HEAD 2>&1 ) || true
+if ! echo "$report_json" | jq -e '.base' >/dev/null 2>&1; then
+  echo "  ✗ pr-report.sh --format=json ne produit pas de JSON valide"
+  echo "$report_json"
+  exit 1
+fi
+# README.md doit être exclu par défaut (docs_excluded > 0)
+docs_count=$(echo "$report_json" | jq '.docs_excluded')
+if [[ "$docs_count" -lt 1 ]]; then
+  echo "  ✗ pr-report.sh n'exclut pas README.md par défaut"
+  echo "$report_json"
+  exit 1
+fi
+# --include-docs doit lever l'exclusion
+report_inc=$( cd "$OUT" && bash .ai/scripts/pr-report.sh --format=json --include-docs --base=HEAD~1 --head=HEAD 2>&1 ) || true
+inc_count=$(echo "$report_inc" | jq '.docs_excluded')
+if [[ "$inc_count" -ne 0 ]]; then
+  echo "  ✗ --include-docs n'inclut pas les docs (docs_excluded=$inc_count)"
+  exit 1
+fi
+echo "  ✓ pr-report.sh format=json + exclusions par défaut + --include-docs OK"
+rm -rf "$OUT/.git" "$OUT/README.md" "$OUT/src/sample.ts"
+# Wrapper ai-context.sh : --help liste les sous-commandes ; routage vers shims.
+if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "Commandes :"; then
+  echo "  ✗ ai-context.sh --help ne liste pas les commandes"
+  exit 1
+fi
+if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh shims ) >/dev/null 2>&1; then
+  echo "  ✗ ai-context.sh shims (alias check-shims) échoue"
+  exit 1
+fi
+if ( cd "$OUT" && bash .ai/scripts/ai-context.sh inexistant ) >/dev/null 2>&1; then
+  echo "  ✗ ai-context.sh accepte une commande inconnue"
+  exit 1
+fi
+echo "  ✓ ai-context.sh wrapper OK"
 
 echo
 echo "[3/28] pre-turn-reminder (text + json)"
@@ -200,6 +252,51 @@ fi
 echo "  ✓ warn progress.phase présent"
 rm "$OUT/.docs/features/back/phase-typo.md"
 
+# depends_on / touches sont obligatoires (peuvent valoir [] mais doivent être déclarées)
+cat > "$OUT/.docs/features/back/missing-deps.md" <<'FEAT'
+---
+id: missing-deps
+scope: back
+title: Missing depends_on / touches
+status: active
+---
+FEAT
+miss_out=$( cd "$OUT" && bash .ai/scripts/check-features.sh 2>&1 || true )
+if ! echo "$miss_out" | grep -q "clé frontmatter 'depends_on' manquante"; then
+  echo "  ✗ check-features n'exige pas depends_on"
+  echo "$miss_out"
+  exit 1
+fi
+if ! echo "$miss_out" | grep -q "clé frontmatter 'touches' manquante"; then
+  echo "  ✗ check-features n'exige pas touches"
+  echo "$miss_out"
+  exit 1
+fi
+if ( cd "$OUT" && bash .ai/scripts/check-features.sh ) >/dev/null 2>&1; then
+  echo "  ✗ check-features passe alors que depends_on/touches sont manquants"
+  exit 1
+fi
+echo "  ✓ check-features exige depends_on et touches"
+rm "$OUT/.docs/features/back/missing-deps.md"
+
+# Mais [] doit rester accepté
+cat > "$OUT/.docs/features/back/empty-arrays.md" <<'FEAT'
+---
+id: empty-arrays
+scope: back
+title: Empty depends_on/touches arrays
+status: draft
+depends_on: []
+touches: []
+---
+FEAT
+if ! ( cd "$OUT" && bash .ai/scripts/check-features.sh ) >/dev/null 2>&1; then
+  echo "  ✗ check-features refuse depends_on: [] / touches: []"
+  exit 1
+fi
+echo "  ✓ depends_on: [] et touches: [] acceptés"
+rm "$OUT/.docs/features/back/empty-arrays.md"
+
 cat > "$OUT/.docs/features/back/legacy-migrate.md" <<'FEAT'
 ---
 id: legacy-migrate
@@ -277,7 +374,25 @@ if ! echo "$audit_out" | grep -q "src/orphan.ts"; then
   echo "  ✗ audit-features discover n'identifie pas orphan.ts"
   exit 1
 fi
-echo "  ✓ audit-features discover (dry-run) OK"
+# --help doit lister 'MVP discover only'
+help_out=$( cd "$OUT" && bash .ai/scripts/audit-features.sh --help 2>&1 ) || true
+if ! echo "$help_out" | grep -q "MVP discover only"; then
+  echo "  ✗ audit-features --help n'annonce pas son périmètre MVP"
+  exit 1
+fi
+# Robustesse aux chemins avec espaces : un fichier dans un dossier 'src/with space/'
+# doit être listé (le script groupe par dossier ; on utilise un dossier unique
+# pour qu'il devienne visible dans la sortie).
+mkdir -p "$OUT/src/with space"
+echo "// space orphan" > "$OUT/src/with space/file.ts"
+audit_space_out=$( cd "$OUT" && bash .ai/scripts/audit-features.sh discover back 2>&1 ) || true
+if ! echo "$audit_space_out" | grep -q "src/with space/file.ts"; then
+  echo "  ✗ audit-features ne gère pas les chemins avec espaces"
+  echo "$audit_space_out"
+  exit 1
+fi
+rm -rf "$OUT/src/with space"
+echo "  ✓ audit-features discover (dry-run + --help + paths-with-spaces) OK"
 
 echo
 echo "[13/28] pre-turn-reminder : status 'done' filtré par défaut + visible via override"

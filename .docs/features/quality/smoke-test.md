@@ -14,7 +14,7 @@ progress:
   step: "bootstrap dog-fooding (v0.9 historique)"
   blockers: []
   resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-04-24
+  updated: 2026-04-28
 ---
 
 # Smoke-test
@@ -57,3 +57,4 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-04-27 : étape [2/28] renforcée avec garde de compatibilité Bash 3.2 : `pr-report.sh` généré ne doit pas utiliser `mapfile`.
 - 2026-04-27 : étape [28/28] enrichie pour valider `adoption_mode=lite` (pas de `.githooks`/workflows) et `adoption_mode=strict` (workflows conservés même avec `enable_ci_guard=false`).
 - 2026-04-27 : libellé [28/28] clarifié dans `tests/smoke-test.sh` pour refléter le périmètre réel (`tech_profile` + `adoption_mode`) et améliorer le diagnostic CI.
+- 2026-04-28 : étape [11/28] enrichie pour exiger `depends_on` et `touches` comme clés frontmatter obligatoires (acceptent `[]`), aligné sur `feature.schema.json`. Étape [12/28] enrichie avec `audit-features.sh --help` (annonce du périmètre MVP) et un cas `src/with space/file.ts` pour valider la robustesse aux chemins avec espaces. Étape [2/28] enrichie avec `pr-report.sh --format=json` (sortie JSON valide), `--include-docs` (lève les exclusions par défaut), assertion `docs_excluded ≥ 1` quand un README est touché. Étape [2/28] enrichie avec wrapper `ai-context.sh` (`--help` liste les commandes ; routage vers `shims` ; rejet d'une commande inconnue).
