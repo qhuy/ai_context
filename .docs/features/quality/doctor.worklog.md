@@ -11,3 +11,16 @@
 ## 2026-04-28 11:38 — auto
 - Fichiers modifiés :
   - CHANGELOG.md
+
+## 2026-04-28 11:57 — auto
+- Fichiers modifiés :
+  - CHANGELOG.md
+  - PROJECT_STATE.md
+
+## 2026-04-28 12:04 — auto
+- Fichiers modifiés :
+  - CHANGELOG.md
+  - PROJECT_STATE.md
+  - README.md
+  - template/.ai/scripts/doctor.sh.jinja
+  - tests/smoke-test.sh

@@ -105,7 +105,7 @@ else
   warn "git hooks check skipped (not a git repository)"
 fi
 
-if [[ -x ".ai/scripts/check-shims.sh" ]]; then
+if [[ -f ".ai/scripts/check-shims.sh" ]]; then
   if bash .ai/scripts/check-shims.sh >/dev/null 2>&1; then
     ok "check-shims OK"
   else
@@ -116,7 +116,7 @@ else
   ko ".ai/scripts/check-shims.sh missing"
 fi
 
-if [[ -x ".ai/scripts/check-features.sh" ]]; then
+if [[ -f ".ai/scripts/check-features.sh" ]]; then
   if bash .ai/scripts/check-features.sh >/dev/null 2>&1; then
     ok "check-features OK"
   else
@@ -127,7 +127,7 @@ else
   ko ".ai/scripts/check-features.sh missing"
 fi
 
-if [[ -x ".ai/scripts/measure-context-size.sh" ]]; then
+if [[ -f ".ai/scripts/measure-context-size.sh" ]]; then
   if bash .ai/scripts/measure-context-size.sh >/dev/null 2>&1; then
     ok "measure-context-size readable"
   else

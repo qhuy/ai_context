@@ -20,3 +20,15 @@
   - template/.ai/scripts/audit-features.sh.jinja
   - template/.ai/scripts/check-features.sh.jinja
   - template/.ai/scripts/pr-report.sh.jinja
+
+## 2026-04-28 11:57 — auto
+- Fichiers modifiés :
+  - template/.ai/index.md.jinja
+  - template/.claude/skills/aic-project-guardrails/SKILL.md.jinja
+  - template/.claude/skills/aic-project-guardrails/workflow.md.jinja
+  - template/README_AI_CONTEXT.md.jinja
+
+## 2026-04-28 12:04 — auto
+- Fichiers modifiés :
+  - copier.yml
+  - template/.ai/scripts/doctor.sh.jinja
