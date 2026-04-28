@@ -24,3 +24,8 @@
   - README.md
   - template/.ai/scripts/doctor.sh.jinja
   - tests/smoke-test.sh
+
+## 2026-04-28 12:16 — auto
+- Fichiers modifiés :
+  - CHANGELOG.md
+  - PROJECT_STATE.md
