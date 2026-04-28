@@ -4,6 +4,23 @@
 
 _(rien pour l'instant)_
 
+## v0.11.0 — 2026-04-28 « Project guardrails & doctor hotfix »
+
+### Nouveau
+- Skill `/aic-project-guardrails` (scope `workflow`) — dialogue conversationnel pour cadrer les **non-goals** (hors-scope explicite, ≥1 item obligatoire) et le **glossaire métier** (optionnel) du projet, produit `.ai/guardrails.md`. Idempotent (ré-invocation = mode update). Catalogue passe de 8 à 9 skills, surface utilisateur de 4 à 5 (`/aic`, `/aic-feature-resume`, `/aic-feature-audit`, `/aic-quality-gate`, `/aic-project-guardrails`).
+- `.ai/guardrails.md` ajouté à la séquence Pack A dans `template/.ai/index.md.jinja` (chargé en début de session si présent — coût tokens nul à chaque tour, pas d'injection runtime).
+- `_message_after_copy` (copier.yml) et `template/README_AI_CONTEXT.md.jinja` mentionnent `/aic-project-guardrails` comme étape recommandée post-scaffold (avant le 1er `feat:`).
+- Smoke-test étendu (assertion 9 skills présents + référence `guardrails.md` dans `.ai/index.md`).
+
+### Corrigé
+- `doctor.sh` (template) testait la présence des scripts critiques avec `[[ -x ]]` (executable bit) au lieu de `[[ -f ]]` (fichier existant). Faux positifs « missing » sur `check-shims.sh` et `measure-context-size.sh` quand Copier ne préservait pas le bit +x au rendu. Cosmétique (doctor exit 0 par défaut), mais trompeur. Bug pré-existant depuis v0.9, détecté à la sanity check post-tag v0.10.0.
+
+### Pourquoi (project-guardrails)
+Les rules (`<scope>.md`) cadrent le « comment travailler » et le feature mesh cadre le « quoi est en cours ». Aucun mécanisme ne capturait *ce que l'agent ne doit PAS proposer* (non-goals) ni le vocabulaire métier précis. Sans non-goals explicites, un agent peut dériver vers des features non souhaitées. Vision/utilisateurs cibles restent intentionnellement délégués au README pour éviter la duplication — ce skill se concentre sur ce qui n'est *jamais* écrit ailleurs.
+
+### Migration
+- Aucun breaking depuis v0.10.0. `copier update` ajoute le nouveau skill et rappelle son existence dans le post-copy. Tu peux invoquer `/aic-project-guardrails` quand tu veux pour matérialiser `.ai/guardrails.md` ; sans cette étape, le comportement reste identique à v0.10.0.
+
 ## v0.10.0 — 2026-04-28 « Runtime config, diagnostics & agent-agnostic tooling »
 
 > Cette version regroupe les changements accumulés depuis v0.9.0. Voir [`RELEASE.md`](RELEASE.md) pour la checklist appliquée et [`CONTRIBUTING.md`](CONTRIBUTING.md) pour la règle anti-doc-drift désormais documentée.

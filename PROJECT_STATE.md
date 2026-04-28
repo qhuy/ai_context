@@ -3,7 +3,7 @@
 **But** : template `copier` qui industrialise le setup AI context (multi-agent : Claude / Codex / Cursor / Gemini / Copilot) d'un nouveau projet.
 **Remote** : [github.com/qhuy/ai_context](https://github.com/qhuy/ai_context) (public)
 **Local** : chemin de développement local, non versionné.
-**Dernière version publiée** : v0.10.0 — « Runtime config, diagnostics & agent-agnostic tooling » (voir [CHANGELOG.md](CHANGELOG.md))
+**Dernière version publiée** : v0.11.0 — « Project guardrails & doctor hotfix » (voir [CHANGELOG.md](CHANGELOG.md))
 
 > Ce fichier est un **point d'entrée rapide**. Pour l'historique détaillé des versions, consulter [CHANGELOG.md](CHANGELOG.md). Pour adopter le template sur un projet existant, [MIGRATION.md](MIGRATION.md). Pour l'architecture visuelle, diagramme mermaid dans [README.md](README.md).
 
@@ -36,7 +36,7 @@
 - `template/.claude/skills/aic-*/` — 9 skills (`aic`, `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `quality-gate`, `feature-done`, `project-guardrails`) avec distinction exposés/internes.
 - `tests/smoke-test.sh` — 28 assertions end-to-end.
 
-## État actuel (v0.10.0)
+## État actuel (v0.11.0)
 
 - **Feature mesh** — frontmatter validé, détection cycles, warn si active dépend de deprecated, scope enum, touches morte bloquante.
 - **Continuité inter-session** — frontmatter `progress:` + worklog append-only par feature + `resume-features.sh` 4 buckets.
@@ -45,7 +45,7 @@
 - **i18n** — reminder FR/EN selon `commit_language`.
 - **Presets techniques** — règles stack optionnelles via `tech_profile` (`dotnet-clean-cqrs`, `react-next`, `fullstack-dotnet-react`).
 - **Fiabilité** — `_lib.sh` helpers, matching `touches:` centralisé, lock atomique sur index, globstar, dépendances vérifiées, JSON escaping via jq.
-- **Tags versionnés** — `v0.7.2`, `v0.8.0`, `v0.9.0`, `v0.10.0` — `copier update --vcs-ref=v0.10.0` possible.
+- **Tags versionnés** — `v0.7.2`, `v0.8.0`, `v0.9.0`, `v0.10.0`, `v0.11.0` — `copier update --vcs-ref=v0.11.0` possible.
 - **Documentation** — README avec mermaid + FAQ + use cases, MIGRATION.md progressif, skills self-contained.
 - **Guardrails projet** — `/aic-project-guardrails` cadre les non-goals + glossaire métier dans `.ai/guardrails.md` (référencé via Pack A, coût tokens nul à chaque tour). Comble le trou « contexte général projet » que ne couvraient ni les rules ni le feature mesh.
 
