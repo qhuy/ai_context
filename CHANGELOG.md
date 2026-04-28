@@ -1,8 +1,12 @@
 # CHANGELOG
 
-## Unreleased — préparation v0.10.0 « Runtime config, diagnostics & agent-agnostic tooling »
+## Unreleased
 
-> Cette version regroupe les changements accumulés depuis v0.9.0. Le tag sera posé une fois la PR de release validée (voir `CONTRIBUTING.md` / `RELEASE.md` pour la checklist complète quand ils seront ajoutés).
+_(rien pour l'instant)_
+
+## v0.10.0 — 2026-04-28 « Runtime config, diagnostics & agent-agnostic tooling »
+
+> Cette version regroupe les changements accumulés depuis v0.9.0. Voir [`RELEASE.md`](RELEASE.md) pour la checklist appliquée et [`CONTRIBUTING.md`](CONTRIBUTING.md) pour la règle anti-doc-drift désormais documentée.
 
 ### Nouveau
 - `.ai/config.yml` scaffoldé avec sections `coverage` / `progress` / `context` / `docs_root`. Tableau « Champs actifs » dans `README.md` : `coverage.*` et `progress.stale_after_days` actifs ; `progress.auto_transitions.*`, `context.*` et `docs_root` placeholders pour v0.10+.
