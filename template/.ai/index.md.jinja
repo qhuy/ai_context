@@ -10,15 +10,16 @@
 
 1. Ce fichier (`.ai/index.md`)
 2. `.ai/quality/QUALITY_GATE.md` — critères BLOQUANTS avant DONE
+3. `.ai/guardrails.md` — non-goals + glossaire métier (si présent ; créé via `/aic-project-guardrails`)
 
 Puis **identifier le scope primaire** et charger :
 
-3. `.ai/rules/<scope>.md` (Pack B, scope-dépendant)
-4. **Lister** `ls {{ docs_root }}/features/<scope>/` — obligatoire à chaque tâche (pas conditionnel).
-5. Si la tâche touche une feature existante → charger `{{ docs_root }}/features/<scope>/<id>.md` **et** suivre récursivement ses `depends_on`.
-6. Si la tâche crée une nouvelle feature → créer le fichier depuis `{{ docs_root }}/FEATURE_TEMPLATE.md` AVANT tout commit.
+4. `.ai/rules/<scope>.md` (Pack B, scope-dépendant)
+5. **Lister** `ls {{ docs_root }}/features/<scope>/` — obligatoire à chaque tâche (pas conditionnel).
+6. Si la tâche touche une feature existante → charger `{{ docs_root }}/features/<scope>/<id>.md` **et** suivre récursivement ses `depends_on`.
+7. Si la tâche crée une nouvelle feature → créer le fichier depuis `{{ docs_root }}/FEATURE_TEMPLATE.md` AVANT tout commit.
 {% if tech_profile != 'generic' %}
-7. Charger les règles tech du preset :
+8. Charger les règles tech du preset :
 {% if tech_profile in ['dotnet-clean-cqrs', 'fullstack-dotnet-react'] %}
    - `.ai/rules/tech-dotnet.md` si la tâche touche C#/.NET
 {% endif %}
@@ -105,6 +106,7 @@ Les transitions `implement → review` et `review → done` restent manuelles (o
 Skills accessibles directement (lecture/CI) :
 - `/aic-feature-resume` — buckets EN COURS / BLOQUÉES / STALE / À FAIRE
 - `/aic-quality-gate` — check go/no-go complet
+- `/aic-project-guardrails` — cadre non-goals + glossaire métier (1-2 fois par projet ; produit `.ai/guardrails.md`)
 
 Les autres skills `/aic-feature-{new,update,handoff,done}` sont **internes** (invoqués par les hooks et par `/aic`). Pas besoin de les taper à la main.
 

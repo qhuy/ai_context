@@ -33,7 +33,7 @@
 - `template/{{docs_root}}/features/<scope>/` = maillage feature par scope (back, front, architecture, security).
 - `template/.githooks/commit-msg` + `post-checkout` — enforcement Conventional Commits et rebuild index au switch de branche.
 - `template/.claude/settings.json.jinja` — hooks UserPromptSubmit / PreToolUse / PostToolUse / Stop.
-- `template/.claude/skills/aic-*/` — 8 skills (`aic`, `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `quality-gate`, `feature-done`) avec distinction exposés/internes.
+- `template/.claude/skills/aic-*/` — 9 skills (`aic`, `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `quality-gate`, `feature-done`, `project-guardrails`) avec distinction exposés/internes.
 - `tests/smoke-test.sh` — 28 assertions end-to-end.
 
 ## État actuel (v0.10.0)
@@ -47,6 +47,7 @@
 - **Fiabilité** — `_lib.sh` helpers, matching `touches:` centralisé, lock atomique sur index, globstar, dépendances vérifiées, JSON escaping via jq.
 - **Tags versionnés** — `v0.7.2`, `v0.8.0`, `v0.9.0`, `v0.10.0` — `copier update --vcs-ref=v0.10.0` possible.
 - **Documentation** — README avec mermaid + FAQ + use cases, MIGRATION.md progressif, skills self-contained.
+- **Guardrails projet** — `/aic-project-guardrails` cadre les non-goals + glossaire métier dans `.ai/guardrails.md` (référencé via Pack A, coût tokens nul à chaque tour). Comble le trou « contexte général projet » que ne couvraient ni les rules ni le feature mesh.
 
 ## Roadmap — pistes ouvertes
 

@@ -237,6 +237,15 @@ bash .ai/scripts/check-shims.sh        # ✅ shims OK
 bash .ai/scripts/check-features.sh     # ⚠️ aucune feature (normal au début)
 ```
 
+Puis (recommandé) cadrer les guardrails projet — non-goals + glossaire métier qui orientent l'agent au-delà du README :
+
+```
+# Dans Claude Code :
+/aic-project-guardrails
+```
+
+Crée `.ai/guardrails.md` (chargé via Pack A à chaque session, coût tokens nul à chaque tour).
+
 Exemple pour un projet C# backend + React/Next :
 
 ```bash
@@ -622,6 +631,7 @@ Le template embarque 8 skills Claude Code (`SKILL.md` + `workflow.md`) et distin
 | `/aic-feature-resume` | Début de session — scan des features en cours, choix, chargement contexte |
 | `/aic-feature-audit` | Rétro-doc (`discover <scope>`) ou re-sync (`refresh <scope>/<id>`) d'une fiche vs code réel |
 | `/aic-quality-gate` | Avant commit/PR — verdict go/no-go factuel |
+| `/aic-project-guardrails` | 1-2 fois par projet — cadre non-goals + glossaire métier dans `.ai/guardrails.md` (oriente l'agent sur ce qui est hors-scope) |
 
 ### Internes (normalement non invoqués à la main)
 

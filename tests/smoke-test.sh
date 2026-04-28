@@ -669,7 +669,7 @@ rm -rf "$OUT/.git" "$OUT/.docs/features/back/specfeat.md" "$OUT/.docs/features/b
 
 echo
 echo "[19/28] skills aic-* présents dans .claude/skills/"
-for s in aic aic-feature-new aic-feature-resume aic-feature-update aic-feature-handoff aic-feature-audit aic-quality-gate aic-feature-done; do
+for s in aic aic-feature-new aic-feature-resume aic-feature-update aic-feature-handoff aic-feature-audit aic-quality-gate aic-feature-done aic-project-guardrails; do
   if [[ ! -f "$OUT/.claude/skills/$s/SKILL.md" ]]; then
     echo "  ✗ $s/SKILL.md absent"
     exit 1
@@ -683,7 +683,13 @@ for s in aic aic-feature-new aic-feature-resume aic-feature-update aic-feature-h
     exit 1
   fi
 done
-echo "  ✓ 8 skills aic-* présents avec SKILL.md + workflow.md"
+echo "  ✓ 9 skills aic-* présents avec SKILL.md + workflow.md"
+# .ai/index.md référence .ai/guardrails.md dans Pack A
+if ! grep -q "guardrails.md" "$OUT/.ai/index.md"; then
+  echo "  ✗ .ai/index.md ne référence pas .ai/guardrails.md (Pack A)"
+  exit 1
+fi
+echo "  ✓ .ai/index.md référence guardrails.md (Pack A)"
 
 echo
 echo "[20/28] check-feature-coverage --strict : exit 1 si orphelins"
