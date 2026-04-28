@@ -1,12 +1,18 @@
 #!/bin/bash
-# audit-features.sh — Audit agent-agnostique du mesh (MVP discover).
+# audit-features.sh — Audit agent-agnostique du mesh (MVP discover only).
 #
 # Usage :
 #   bash .ai/scripts/audit-features.sh discover <scope> [--apply]
+#   bash .ai/scripts/audit-features.sh --help
 #
-# Notes :
-# - Dry-run par défaut (aucune écriture).
-# - --apply crée des fiches draft minimales pour les groupes orphelins.
+# Périmètre actuel (MVP) :
+#   - mode `discover <scope>` uniquement
+#   - dry-run par défaut, --apply crée des fiches draft minimales (un par groupe orphelin)
+#   - aucune confirmation interactive ; aucun mode `refresh` ; pas de filtrage `--since`
+#
+# Pour une UX plus riche (refresh, --interactive, déléguer à /aic-feature-new),
+# utiliser le skill Claude `/aic-feature-audit` (workflow.md). Voir aussi la
+# feature `workflow/feature-audit`.
 
 set -euo pipefail
 
@@ -24,15 +30,32 @@ mode="${1:-}"
 target="${2:-}"
 apply=0
 for arg in "$@"; do
-  [[ "$arg" == "--apply" ]] && apply=1
+  case "$arg" in
+    --apply) apply=1 ;;
+    -h|--help) mode="help" ;;
+  esac
 done
 
 usage() {
-  echo "Usage: bash .ai/scripts/audit-features.sh discover <scope> [--apply]" >&2
+  cat <<'USAGE'
+Usage: bash .ai/scripts/audit-features.sh discover <scope> [--apply]
+
+MVP discover only — pas de mode `refresh`, pas de mode interactif.
+Dry-run par défaut. --apply crée des fiches draft minimales.
+
+Options :
+  --apply       écrit les fiches draft (sinon dry-run)
+  -h, --help    affiche cette aide
+USAGE
 }
 
-if [[ "$mode" != "discover" || -z "$target" ]]; then
+if [[ "$mode" == "help" ]]; then
   usage
+  exit 0
+fi
+
+if [[ "$mode" != "discover" || -z "$target" ]]; then
+  usage >&2
   exit 1
 fi
 
@@ -100,18 +123,22 @@ else
     | sed 's|^\./||')
 fi
 orphans=()
-for f in ${tracked[@]+"${tracked[@]}"}; do
-  exclude_path "$f" && continue
-  [[ -f "$f" ]] || continue
-  covered=0
-  for t in ${touches[@]+"${touches[@]}"}; do
-    if path_matches_touch "$f" "$t"; then
-      covered=1
-      break
+if [[ "{% raw %}${#tracked[@]}{% endraw %}" -gt 0 ]]; then
+  for f in "${tracked[@]}"; do
+    exclude_path "$f" && continue
+    [[ -f "$f" ]] || continue
+    covered=0
+    if [[ "{% raw %}${#touches[@]}{% endraw %}" -gt 0 ]]; then
+      for t in "${touches[@]}"; do
+        if path_matches_touch "$f" "$t"; then
+          covered=1
+          break
+        fi
+      done
     fi
+    [[ "$covered" -eq 0 ]] && orphans+=("$f")
   done
-  [[ "$covered" -eq 0 ]] && orphans+=("$f")
-done
+fi
 
 groups=()
 group_keys=""

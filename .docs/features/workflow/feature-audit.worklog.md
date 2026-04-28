@@ -16,3 +16,8 @@
 ## 2026-04-24 16:40 — auto-progress
 - Bascule phase : spec → implement (édits réels détectés sur 4 fichier(s))
 - Annulable via /aic undo (snapshot dans .ai/.progress-history.jsonl)
+
+## 2026-04-28 11:23 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/audit-features.sh.jinja
+  - tests/smoke-test.sh

@@ -3,8 +3,10 @@
 #
 # Vérifie pour chaque fichier sous .docs/features/*/*.md :
 #   - présence du frontmatter YAML
-#   - clés obligatoires : id, scope, title, status
+#   - clés obligatoires : id, scope, title, status, depends_on, touches
+#     (depends_on / touches peuvent valoir [] mais doivent être déclarées)
 #   - status ∈ {draft, active, done, deprecated, archived} (warn si hors enum)
+#   - progress.phase ∈ {spec, implement, test, review, done, blocked} (warn si hors enum)
 #   - scope == nom du dossier parent
 #   - chaque depends_on pointe vers un fichier existant
 #   - chaque touches pointe vers un chemin existant (fichier, dossier, ou glob)
@@ -56,7 +58,7 @@ for f in "${files[@]}"; do
     continue
   fi
 
-  for key in id scope title status; do
+  for key in id scope title status depends_on touches; do
     if ! echo "$fm" | grep -qE "^$key:"; then
       ko "$f : clé frontmatter '$key' manquante"
       file_fail=1
@@ -74,6 +76,22 @@ for f in "${files[@]}"; do
   declared_status=$(echo "$fm" | grep -E '^status:' | sed -E 's/^status:[[:space:]]*//; s/["'"'"']//g' | tr -d '[:space:]')
   if [[ -n "$declared_status" ]] && ! is_valid_status "$declared_status"; then
     warn "$f : status='$declared_status' hors enum ($STATUS_ENUM)"
+  fi
+
+  # progress.phase enum (warn, pas fail) — aligné avec .ai/schema/feature.schema.json
+  declared_phase=$(awk '
+    /^progress:[[:space:]]*$/ { in_progress=1; next }
+    in_progress && /^[^[:space:]]/ { in_progress=0 }
+    in_progress && /^[[:space:]]*phase:[[:space:]]*/ {
+      line=$0
+      sub(/^[[:space:]]*phase:[[:space:]]*/, "", line)
+      gsub(/["'\''[:space:]]/, "", line)
+      print line
+      exit
+    }
+  ' "$f")
+  if [[ -n "$declared_phase" ]] && ! is_valid_phase "$declared_phase"; then
+    warn "$f : progress.phase='$declared_phase' hors enum ($PHASE_ENUM)"
   fi
 
   deps=$(awk '/^depends_on:/{flag=1; next} flag && /^  *-/{print; next} flag && /^[^[:space:]]/{flag=0}' "$f" \

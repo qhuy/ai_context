@@ -3,7 +3,8 @@
 #
 # Vérifie pour chaque fichier sous {{ docs_root }}/features/*/*.md :
 #   - présence du frontmatter YAML
-#   - clés obligatoires : id, scope, title, status
+#   - clés obligatoires : id, scope, title, status, depends_on, touches
+#     (depends_on / touches peuvent valoir [] mais doivent être déclarées)
 #   - status ∈ {draft, active, done, deprecated, archived} (warn si hors enum)
 #   - progress.phase ∈ {spec, implement, test, review, done, blocked} (warn si hors enum)
 #   - scope == nom du dossier parent
@@ -30,13 +31,6 @@ fail=0
 ok() { printf "  \033[32m✓\033[0m %s\n" "$1"; }
 ko() { printf "  \033[31m✗\033[0m %s\n" "$1" >&2; fail=1; }
 warn() { printf "  \033[33m⚠\033[0m %s\n" "$1" >&2; }
-is_valid_phase() {
-  local p="$1"
-  for valid in $PHASE_ENUM; do
-    [[ "$p" == "$valid" ]] && return 0
-  done
-  return 1
-}
 
 echo "═══ check-features ═══"
 
@@ -64,7 +58,7 @@ for f in "${files[@]}"; do
     continue
   fi
 
-  for key in id scope title status; do
+  for key in id scope title status depends_on touches; do
     if ! echo "$fm" | grep -qE "^$key:"; then
       ko "$f : clé frontmatter '$key' manquante"
       file_fail=1

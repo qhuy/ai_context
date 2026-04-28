@@ -14,7 +14,7 @@ progress:
   step: "bootstrap dog-fooding (v0.9 historique)"
   blockers: []
   resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-04-24
+  updated: 2026-04-28
 ---
 
 # Cache JSON du feature mesh
@@ -46,3 +46,4 @@ progress:
 - v0.7.2 : fix bug silencieux d'escaping JSON (paths avec quotes corrompaient le JSONL).
 - 2026-04-24 : centralisation du matching `touches:` dans `_lib.sh` (`path_matches_touch` + `features_matching_path`). Les hooks/scripts consommateurs partagent désormais la même sémantique exact/dossier/glob/`/**`.
 - 2026-04-24 : `AI_CONTEXT_DOCS_ROOT` et `AI_CONTEXT_FEATURES_DIR` ajoutés dans `_lib.sh` pour que les scripts runtime suivent le `docs_root` rendu par Copier au lieu de réencoder `.docs/features`.
+- 2026-04-28 : ajout `is_valid_phase()` dans `.ai/scripts/_lib.sh` (dogfoodé) **et** `template/.ai/scripts/_lib.sh.jinja` (la doc d'en-tête le promettait déjà via `PHASE_ENUM`). Suppression de la définition locale dupliquée dans `template/.ai/scripts/check-features.sh.jinja`. Aucun changement de comportement runtime — la fonction délègue à `PHASE_ENUM` (lui-même dérivé du schema). Smoke-test [11/28] couvre toujours le warning `progress.phase='typo'`.

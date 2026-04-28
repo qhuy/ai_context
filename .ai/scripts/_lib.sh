@@ -16,6 +16,7 @@
 #   STATUS_ENUM                 — liste des status valides (space-separated)
 #   PHASE_ENUM                  — liste des progress.phase valides (space-separated)
 #   is_valid_status "s"         — 0 si valide, 1 sinon
+#   is_valid_phase "p"          — 0 si valide, 1 sinon
 #
 # Source de vérité unique : .ai/schema/feature.schema.json
 # Les énums sont dérivés à l'init via jq (fallback hardcodé si schema absent).
@@ -79,6 +80,14 @@ is_valid_status() {
   local s="$1"
   for valid in $STATUS_ENUM; do
     [[ "$s" == "$valid" ]] && return 0
+  done
+  return 1
+}
+
+is_valid_phase() {
+  local p="$1"
+  for valid in $PHASE_ENUM; do
+    [[ "$p" == "$valid" ]] && return 0
   done
   return 1
 }
