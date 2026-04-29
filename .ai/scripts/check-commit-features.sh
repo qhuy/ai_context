@@ -82,4 +82,6 @@ if [[ "$type" == "feat" ]]; then
   fi
 fi
 
+bash "$script_dir/check-feature-freshness.sh" --staged --strict
+
 exit 0

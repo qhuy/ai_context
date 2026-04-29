@@ -1,0 +1,51 @@
+---
+id: doc-freshness
+scope: quality
+title: Fraicheur documentaire des features
+status: active
+depends_on: []
+touches:
+  - .ai/scripts/check-feature-freshness.sh
+  - .ai/scripts/check-commit-features.sh
+  - .ai/quality/QUALITY_GATE.md
+  - .github/workflows/ai-context-check.yml
+  - template/.ai/scripts/check-feature-freshness.sh.jinja
+  - template/.ai/scripts/check-commit-features.sh.jinja
+  - template/.ai/quality/QUALITY_GATE.md.jinja
+  - template/.github/workflows/ai-context-check.yml.jinja
+progress:
+  phase: implement
+  step: "check freshness + enforcement commit"
+  blockers: []
+  resume_hint: "verifier shellcheck et checks quality apres branchement CI"
+  updated: 2026-04-29
+---
+
+# Fraicheur documentaire des features
+
+## Objectif
+
+Garantir qu'une evolution de comportement couverte par une feature ne puisse pas etre committee sans trace documentaire explicite.
+
+## Comportement attendu
+
+- En commit local, les changements stages sur des fichiers couverts par `touches:` doivent etre accompagnes d'une modification de la fiche feature ou de son worklog.
+- En CI / quality gate, un rapport signale les features dont le code couvert est plus recent que la fiche ou le worklog.
+- Le controle reste base sur le maillage existant `touches:` pour eviter une seconde source de verite.
+
+## Contrats
+
+- Script expose : `.ai/scripts/check-feature-freshness.sh`.
+- Modes :
+  - `--staged --strict` bloque si un fichier stage matche une feature sans doc/worklog stage.
+  - `--warn` rapporte les features potentiellement stale sans bloquer.
+  - `--strict` bloque sur les features stale detectees dans l'historique Git.
+- Le hook `commit-msg` appelle le mode staged strict apres validation Conventional Commits.
+
+## Cross-refs
+
+Aucune dependance de feature declaree.
+
+## Historique / decisions
+
+- 2026-04-29 : creation du filet de securite doc/code freshness pour completer `check-features.sh`, qui valide la structure mais pas la maintenance semantique.

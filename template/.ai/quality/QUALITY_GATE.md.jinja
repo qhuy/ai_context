@@ -22,6 +22,16 @@ Lister explicitement :
 
 Si une case est cochée → confirmation utilisateur avant merge.
 
+## Doc Impact Decision (obligatoire)
+
+Avant DONE, déclarer l'une des décisions suivantes :
+
+- **A — Aucun impact doc** : changement interne sans effet comportemental, justifié en une ligne.
+- **B — Worklog seulement** : avancement, fix mineur ou décision locale sans changement de contrat.
+- **C — Fiche feature mise à jour** : comportement, contrat, dépendance, scope, permission, API, UX ou règle métier modifiée.
+
+Si la décision est **C**, la fiche feature concernée doit être modifiée dans le même changement. Si un fichier couvert par `touches:` est modifié, le hook `commit-msg` bloque le commit tant que la fiche feature ou son worklog associé n'est pas staged.
+
 ## Feature mesh (BLOQUANT — aucune dérogation)
 
 **Toute** tâche qui ajoute ou modifie du comportement **DOIT** créer / mettre à jour un fichier feature sous `{{ docs_root }}/features/<scope>/<id>.md`.
@@ -32,6 +42,12 @@ Si une case est cochée → confirmation utilisateur avant merge.
 - Cross-refs obligatoires si la feature dépend d'une autre (`depends_on: ["back/foo", "security/bar"]`).
 
 Cette règle est **systématique** — pas de seuil de complexité, pas de "trop petit pour documenter". Le maillage ne devient puissant que s'il est complet.
+
+## Fraîcheur documentaire (BLOQUANT au commit)
+
+- `bash .ai/scripts/check-feature-freshness.sh --staged --strict` vérifie qu'un changement staged sur du code couvert par `touches:` inclut aussi la fiche feature ou son worklog.
+- `bash .ai/scripts/check-feature-freshness.sh --warn` signale les features dont le code couvert est plus récent que la documentation.
+- En CI, le mode `--warn` reste informatif pour éviter les faux positifs sur l'historique importé ; le blocage strict se fait au commit.
 
 ## Commits — Conventional Commits (BLOQUANT)
 
