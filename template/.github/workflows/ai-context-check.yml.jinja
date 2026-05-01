@@ -62,3 +62,12 @@ jobs:
 
       - name: check-feature-freshness
         run: bash .ai/scripts/check-feature-freshness.sh --warn
+{%- if adoption_mode == 'strict' %}
+
+      # ─── Renforcements adoption_mode=strict ───
+      - name: doctor (strict)
+        run: bash .ai/scripts/doctor.sh --strict
+
+      - name: check-feature-coverage (strict)
+        run: bash .ai/scripts/check-feature-coverage.sh --strict
+{%- endif %}

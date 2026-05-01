@@ -135,6 +135,43 @@ features_matching_path() {
     | awk '!seen[$0]++'
 }
 
+# Vérifie qu'un motif `touches:` reste à l'intérieur du repo.
+# Rejette : chemins absolus Unix (/etc/...), Windows (C:\...), traversées
+# (.., ../foo, foo/../bar, foo/..), expansion home (~/...).
+# Ne fait pas d'expansion glob — vérifie le motif lui-même.
+# Retourne 0 si le motif est sûr, 1 sinon.
+is_path_within_repo() {
+  local p="$1"
+  [[ -z "$p" ]] && return 1
+  [[ "$p" == /* ]] && return 1
+  [[ "$p" =~ ^[A-Za-z]: ]] && return 1
+  [[ "$p" == "~"* ]] && return 1
+  case "$p" in
+    ..|../*|*/..|*/../*) return 1 ;;
+  esac
+  return 0
+}
+
+# Lit une valeur depuis .ai/config.yml via yq v4.
+# Usage : read_config <yaml_path_dotted> <fallback> [config_file]
+# Ex.   : read_config 'progress.auto_transitions.spec_to_implement' 'true'
+#         read_config 'context.max_tokens_warn' '0'
+# Si yq absent ou champ manquant/null, retourne le fallback (pas de bruit stderr).
+read_config() {
+  local key="$1"
+  local fallback="$2"
+  local config_file="${3:-${AI_CONTEXT_CONFIG_FILE:-.ai/config.yml}}"
+  [[ ! -f "$config_file" ]] && { printf '%s' "$fallback"; return 0; }
+  command -v yq >/dev/null 2>&1 || { printf '%s' "$fallback"; return 0; }
+  local out
+  out=$(yq -r ".${key}" "$config_file" 2>/dev/null || true)
+  if [[ -z "$out" || "$out" == "null" ]]; then
+    printf '%s' "$fallback"
+  else
+    printf '%s' "$out"
+  fi
+}
+
 # Lock basé sur mkdir (atomique, portable — pas de flock sur macOS par défaut).
 # Usage : with_index_lock bash build-feature-index.sh --write
 with_index_lock() {

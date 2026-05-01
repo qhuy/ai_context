@@ -51,11 +51,13 @@
 
 ## Roadmap — pistes ouvertes
 
-**P1 — stabilisation v0.10**
-- Stabilisation runtime `.ai/config.yml` : faire consommer `context.show_statuses`, `context.default_focus`, `context.max_tokens_warn`, `docs_root` par les scripts (aujourd'hui placeholders). Voir [README — Champs actifs de .ai/config.yml](README.md#champs-actifs-de-aiconfigyml).
-- Cohérence `adoption_mode` : `lite` clarifié (Claude hooks dispo en option), `strict` documenté (CI forcée seulement, autres garde-fous opt-in).
+**P1 — stabilisation v0.10** *(largement traité dans Unreleased)*
+- ✅ `progress.auto_transitions.spec_to_implement` consommé par `auto-progress.sh` (vrai opt-out).
+- ✅ `context.max_tokens_warn` consommé par `pre-turn-reminder.sh` (warning stderr).
+- ✅ `adoption_mode=strict` renforcé : CI ajoute `doctor --strict` + `coverage --strict`.
+- ✅ `feature-index.json` expose `schema_version` + `project_id`.
+- 🚧 Reste à faire : consommer `context.show_statuses` et `context.default_focus` (aujourd'hui via env vars `AI_CONTEXT_*`).
 - CI source repo : workflow GitHub Actions sur `qhuy/ai_context` lui-même qui exécute `tests/smoke-test.sh` (matrix Ubuntu/macOS).
-- Wrapper CLI `ai-context` (MVP) : `doctor`, `resume`, `audit`, `migrate`, `pr-report`, `measure` — délégué aux scripts existants.
 - Dog-fooding : appliquer pleinement le mesh sur `ai_context` lui-même (déjà partiellement fait sous `.docs/features/`).
 
 **P2 — confort UX**
@@ -91,8 +93,9 @@ Quand une fonctionnalité change, les fichiers suivants **doivent** être revus 
 
 ## Tests
 
-- `bash tests/smoke-test.sh` — 28 étapes, requiert `copier` dans le PATH (`pip install --user copier`).
-- CI GitHub Actions (`enable_ci_guard: true` par défaut) — `check-shims` + `check-features` + `check-ai-references`.
+- `bash tests/unit/test-path-matches-touch.sh` — 18 cas unitaires sur le helper de matching `touches:`.
+- `bash tests/smoke-test.sh` — 28 étapes principales (+ étape unit + étape bonus big-mesh), requiert `copier` dans le PATH (`pip install --user copier`).
+- CI GitHub Actions (`enable_ci_guard: true` par défaut) — `check-shims` + `check-features` (avec validation `touches:` dure) + `check-ai-references`. Matrix `template-smoke-test.yml` étendue à `windows-latest` (best-effort, non-bloquant).
 
 ## Quick refs
 

@@ -24,8 +24,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    # windows-latest = best-effort. Le shell bash de Git for Windows fonctionne
+    # mais certains comportements (chemins, dépendances) restent à observer.
+    # Une régression Windows ne doit pas bloquer un merge tant que la couverture
+    # reste informative.
+    continue-on-error: ${{ matrix.os == 'windows-latest' }}
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
 
@@ -38,7 +46,7 @@ jobs:
             sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64
             sudo chmod +x /usr/local/bin/yq
             python3 -m pip install --user 'copier>=9'
-          else
+          elif [[ "${{ runner.os }}" == "macOS" ]]; then
             brew update
             brew install jq shellcheck python@3.12
             arch="$(uname -m)"
@@ -50,12 +58,19 @@ jobs:
             sudo curl -sSL -o /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/${yq_asset}"
             sudo chmod +x /usr/local/bin/yq
             python3 -m pip install --user --break-system-packages 'copier>=9' || python3 -m pip install --user 'copier>=9'
+          else
+            # Windows : jq + yq préinstallés sur les runners GitHub. shellcheck via choco.
+            choco install --no-progress -y shellcheck || true
+            python -m pip install --user 'copier>=9'
+            jq --version
+            yq --version
           fi
 
       - name: shellcheck runtime scripts
+        if: runner.os != 'Windows'
         run: shellcheck -S error .ai/scripts/*.sh
 
       - name: smoke-test template
         run: |
-          export PATH="$HOME/.local/bin:$HOME/Library/Python/3.12/bin:$HOME/Library/Python/3.9/bin:$PATH"
+          export PATH="$HOME/.local/bin:$HOME/Library/Python/3.12/bin:$HOME/Library/Python/3.9/bin:$APPDATA/Python/Python311/Scripts:$APPDATA/Python/Python312/Scripts:$PATH"
           bash tests/smoke-test.sh

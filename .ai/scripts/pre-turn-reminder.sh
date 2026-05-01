@@ -182,6 +182,17 @@ full_reminder="${reminder}${feature_section}${reverse_section}"
 
 log_debug "reminder length : ${#full_reminder}"
 
+# Warn si le contexte injecté dépasse le seuil configuré.
+# .ai/config.yml → context.max_tokens_warn (int, 0 = désactivé). Défaut 0.
+config_file="$repo_root/.ai/config.yml"
+max_tokens_warn="$(read_config 'context.max_tokens_warn' '0' "$config_file")"
+if [[ "$max_tokens_warn" =~ ^[0-9]+$ ]] && [[ "$max_tokens_warn" -gt 0 ]]; then
+  approx_tokens=$(( ${#full_reminder} / 4 ))
+  if [[ "$approx_tokens" -gt "$max_tokens_warn" ]]; then
+    echo "⚠️  pre-turn-reminder : ~${approx_tokens} tokens (seuil ${max_tokens_warn} via context.max_tokens_warn). Considère AI_CONTEXT_FOCUS=<scope> ou passer des features en status: done." >&2
+  fi
+fi
+
 case "$format" in
   json)
     jq -n --arg ctx "$full_reminder" '{

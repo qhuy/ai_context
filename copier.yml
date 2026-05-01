@@ -125,7 +125,7 @@ adoption_mode:
   choices:
     lite (shims + index/reminder, sans hooks/CI): lite
     standard (expérience complète actuelle): standard
-    strict (garde-fous renforcés, CI forcée): strict
+    strict (CI forcée même si enable_ci_guard=false ; renforcements en cours, voir README): strict
   help: Niveau d'adoption du framework ai-context
 
 tech_profile:

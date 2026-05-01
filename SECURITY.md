@@ -37,6 +37,29 @@ Si un secret se retrouve par accident dans un worklog versionné, traite-le comm
 
 Aucun hook ne lit/loggue le contenu des fichiers édités.
 
+## Trust model du feature mesh
+
+Le feature mesh (`{{ docs_root }}/features/<scope>/<id>.md`) est versionné dans le repo. Toute personne qui peut commit (ou ouvrir une PR mergée) peut donc écrire un frontmatter arbitraire. Le runtime traite ce contenu comme **semi-trusted** :
+
+**Ce qui est validé** (`check-features.sh`, `_lib.sh:path_matches_touch`) :
+- Frontmatter présent et parsable (YAML).
+- `id`, `scope`, `title`, `status` présents et conformes à l'enum.
+- `depends_on:` résolu strictement contre `{{ docs_root }}/features/<dep>.md` (pas de fetch externe).
+- `touches:` matché en glob bash sans `eval`, sans interpolation dans une commande.
+- Cycles `depends_on` détectés (DFS sur l'index JSON).
+
+**Ce qui n'est pas validé aujourd'hui** :
+- Globs très larges (`**`, `src/**`) sont acceptés et augmentent le bruit dans l'inventaire injecté à l'agent ; pas de cap.
+- Aucune signature ni provenance — un mesh importé via copier-paste hérite de la confiance du repo qui l'accueille.
+
+**Validations ajoutées (Unreleased)** :
+- `check-features.sh` refuse les motifs `touches:` hors repo : chemins absolus Unix (`/etc/...`), Windows (`C:\...`), traversées (`..`, `foo/../bar`, `../escape.ts`), expansion home (`~/secret.ts`). Helper centralisé : `_lib.sh:is_path_within_repo`. Bloquant en CI.
+
+**Recommandations opérationnelles** :
+- Considérer toute PR qui modifie `{{ docs_root }}/features/**` au même titre qu'une PR qui modifie `.githooks/` ou `.ai/scripts/` : revue humaine obligatoire.
+- Ne jamais importer un mesh d'un projet tiers sans relecture frontmatter ligne par ligne.
+- Si tu fédères plusieurs projets via MCP ou autre (roadmap P3), considérer le `feature-index.json` consommé comme une donnée non-fiable jusqu'à introduction d'un `schema_version` + signature.
+
 ## Hooks tiers et trust
 
 `copier copy` rend des fichiers Jinja. **Ne charge jamais un template dont tu ne connais pas l'auteur** sans relecture, et préfère `--vcs-ref=<tag>` à `HEAD` pour figer la version. Le flag `--trust` est requis car le template scaffolde des hooks exécutables — vérifie la source avant de l'utiliser.

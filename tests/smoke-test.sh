@@ -22,6 +22,10 @@ if ! command -v copier >/dev/null 2>&1; then
 fi
 
 echo
+echo "[0/28] tests unitaires (path_matches_touch)"
+bash tests/unit/test-path-matches-touch.sh
+echo
+
 echo "[1/28] copier copy (profil par défaut)"
 copier copy --defaults --trust --vcs-ref=HEAD \
   --data project_name=smoke-project \
@@ -162,6 +166,16 @@ if ! jq -e '.features[] | select(.id == "sample" and .scope == "back")' "$idx" >
   exit 1
 fi
 echo "  ✓ index contient sample/back"
+if ! jq -e '.schema_version == "1"' "$idx" >/dev/null; then
+  echo "  ✗ index manque schema_version: \"1\""
+  exit 1
+fi
+echo "  ✓ index expose schema_version"
+if ! jq -e '.project_id == "smoke-project"' "$idx" >/dev/null; then
+  echo "  ✗ index manque project_id (attendu: smoke-project)"
+  exit 1
+fi
+echo "  ✓ index expose project_id"
 
 echo
 echo "[9/28] build-feature-index : rebuild sur mtime (frontmatter modifié)"
@@ -296,6 +310,29 @@ if ! ( cd "$OUT" && bash .ai/scripts/check-features.sh ) >/dev/null 2>&1; then
 fi
 echo "  ✓ depends_on: [] et touches: [] acceptés"
 rm "$OUT/.docs/features/back/empty-arrays.md"
+
+# Validation touches: rejette les chemins hors repo (absolu, .., ~)
+for bad_touch in "/etc/passwd" "../../escape.ts" "~/secret.ts" "src/../../boom.ts"; do
+  cat > "$OUT/.docs/features/back/bad-touch.md" <<FEAT
+---
+id: bad-touch
+scope: back
+title: Bad touch
+status: draft
+depends_on: []
+touches:
+  - $bad_touch
+---
+FEAT
+  bad_out=$( cd "$OUT" && bash .ai/scripts/check-features.sh 2>&1 || true )
+  if ! echo "$bad_out" | grep -q "hors repo"; then
+    echo "  ✗ check-features accepte un touches hors repo : '$bad_touch'"
+    echo "$bad_out"
+    exit 1
+  fi
+done
+rm "$OUT/.docs/features/back/bad-touch.md"
+echo "  ✓ check-features rejette touches hors repo (absolu, .., ~)"
 
 cat > "$OUT/.docs/features/back/legacy-migrate.md" <<'FEAT'
 ---
@@ -645,6 +682,13 @@ if ! grep -q '"to":{"phase":"implement"' "$OUT/.ai/.progress-history.jsonl"; the
   cat "$OUT/.ai/.progress-history.jsonl"
   exit 1
 fi
+# Snapshot doit aussi capturer l'état AVANT (sinon /aic undo ne peut pas restaurer)
+if ! grep -q '"from":{"phase":"spec"' "$OUT/.ai/.progress-history.jsonl"; then
+  echo "  ✗ snapshot n'enregistre pas le from.phase (undo cassé)"
+  cat "$OUT/.ai/.progress-history.jsonl"
+  exit 1
+fi
+echo "  ✓ snapshot complet (from + to) — /aic undo plumbing OK"
 # Vérifier entrée worklog auto-progress
 if [[ ! -f "$OUT/.docs/features/back/specfeat.worklog.md" ]] || \
    ! grep -q "auto-progress" "$OUT/.docs/features/back/specfeat.worklog.md"; then
@@ -1061,6 +1105,76 @@ fi
 
 rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK" "$OUT_LITE" "$OUT_STRICT"
 echo "  ✓ profils dotnet/react/fullstack + modes adoption lite/strict OK"
+
+echo
+echo "[bonus] big-mesh : budget tokens + focus graph-aware"
+# Génère 30 features back + 30 features front + dépendances pour stresser
+# l'inventaire et la section reverse_deps. Borne haute pragmatique : 30k chars
+# (~7500 tokens borne basse) — au-delà, le coût par tour devient sensible.
+OUT_BIG="/tmp/ai-context-smoke-big-$$"
+copier copy --defaults --trust --vcs-ref=HEAD \
+  --data project_name=smoke-big \
+  --data scope_profile=fullstack \
+  "$REPO" "$OUT_BIG" >/dev/null
+mkdir -p "$OUT_BIG/.docs/features/back" "$OUT_BIG/.docs/features/front"
+for i in $(seq 1 30); do
+  cat > "$OUT_BIG/.docs/features/back/big-back-$i.md" <<FEAT
+---
+id: big-back-$i
+scope: back
+title: Big back $i
+status: active
+depends_on: []
+touches:
+  - src/back-$i/**
+---
+FEAT
+  cat > "$OUT_BIG/.docs/features/front/big-front-$i.md" <<FEAT
+---
+id: big-front-$i
+scope: front
+title: Big front $i
+status: active
+depends_on:
+  - back/big-back-$i
+touches:
+  - app/front-$i/**
+---
+FEAT
+done
+( cd "$OUT_BIG" && bash .ai/scripts/build-feature-index.sh --write >/dev/null )
+
+big_full=$( cd "$OUT_BIG" && bash .ai/scripts/pre-turn-reminder.sh 2>/dev/null | wc -c )
+big_focused=$( cd "$OUT_BIG" && AI_CONTEXT_FOCUS=back bash .ai/scripts/pre-turn-reminder.sh 2>/dev/null | wc -c )
+
+if [[ "$big_full" -gt 30000 ]]; then
+  echo "  ✗ pre-turn-reminder full=$big_full chars > 30000 (budget pragmatique cassé)"
+  rm -rf "$OUT_BIG"
+  exit 1
+fi
+echo "  ✓ pre-turn-reminder full = $big_full chars (≤30000)"
+
+if [[ "$big_focused" -ge "$big_full" ]]; then
+  echo "  ✗ AI_CONTEXT_FOCUS=back ne réduit pas l'inventaire (focused=$big_focused, full=$big_full)"
+  rm -rf "$OUT_BIG"
+  exit 1
+fi
+echo "  ✓ AI_CONTEXT_FOCUS réduit la taille (full=$big_full → focus=$big_focused)"
+
+# Vérifie que max_tokens_warn déclenche bien le warning stderr
+warn_out=$( cd "$OUT_BIG" \
+  && yq -i '.context.max_tokens_warn = 100' .ai/config.yml \
+  && bash .ai/scripts/pre-turn-reminder.sh >/dev/null 2>&1; \
+  cd "$OUT_BIG" && bash .ai/scripts/pre-turn-reminder.sh 2>&1 >/dev/null )
+if ! echo "$warn_out" | grep -q "max_tokens_warn"; then
+  echo "  ✗ max_tokens_warn ne déclenche pas le warning"
+  echo "$warn_out"
+  rm -rf "$OUT_BIG"
+  exit 1
+fi
+echo "  ✓ context.max_tokens_warn déclenche le warning attendu"
+
+rm -rf "$OUT_BIG"
 
 echo
 echo "✅ smoke-test PASS"

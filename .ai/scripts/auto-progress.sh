@@ -24,10 +24,21 @@
 set -uo pipefail
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=_lib.sh
+. "$script_dir/_lib.sh"
+
 repo_root="$(cd "$script_dir/../.." && pwd)"
 index_file="$repo_root/.ai/.feature-index.json"
 trace_file="$repo_root/.ai/.session-edits.flushed"
 history_file="$repo_root/.ai/.progress-history.jsonl"
+config_file="$repo_root/.ai/config.yml"
+
+# Opt-out via .ai/config.yml : progress.auto_transitions.spec_to_implement.
+# Défaut = true (V1). Repassez à `false` pour désactiver l'auto-progression.
+if [[ "$(read_config 'progress.auto_transitions.spec_to_implement' 'true' "$config_file")" == "false" ]]; then
+  log_debug "auto-progress désactivé via config.yml"
+  exit 0
+fi
 
 [[ ! -f "$index_file" ]] && exit 0
 [[ ! -s "$trace_file" ]] && exit 0

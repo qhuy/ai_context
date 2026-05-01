@@ -2,13 +2,16 @@
 
 Template [copier](https://copier.readthedocs.io/) pour industrialiser le setup AI context dans n'importe quel projet : shims multi-agents, hooks runtime, feature mesh documenté, garde-fous CI, skills Claude `/aic-*` pour encadrer les gestes récurrents.
 
-> **Objectif** : qu'un agent IA (Claude, Codex, Gemini, Copilot, Cursor) reprenne un projet mature avec **zéro ambiguïté** sur : ce qu'on attend de lui (rules), où sont les features (mesh), ce qui est en cours (progress), et comment clôturer proprement (quality gate).
+> **Objectif** : qu'un agent IA reprenne un projet mature avec **zéro ambiguïté** sur : ce qu'on attend de lui (rules), où sont les features (mesh), ce qui est en cours (progress), et comment clôturer proprement (quality gate).
+>
+> **Honnêteté de scope** : le template est **Claude-first runtime, multi-agent shims**. Tous les agents (Claude, Codex, Gemini, Copilot, Cursor) lisent les mêmes rules statiques et passent les mêmes garde-fous git au commit. Mais l'**injection de contexte par tour** (reminder, features-for-path, auto-worklog, auto-progression immédiate) n'existe aujourd'hui que pour Claude Code. Les autres agents bénéficient des shims + git hooks. Voir [Capacités runtime par agent](#capacités-runtime-par-agent).
 
 ---
 
 ## Sommaire
 
 - [Pourquoi](#pourquoi)
+- [Capacités runtime par agent](#capacités-runtime-par-agent)
 - [Architecture](#architecture)
 - [Installation](#installation)
 - [Cas d'usage](#cas-dusage)
@@ -50,6 +53,22 @@ Ce template **industrialise** tout ça :
 | Index stale après switch de branche | Hook git **`post-checkout`** rebuild auto |
 
 ---
+
+## Capacités runtime par agent
+
+| Capacité | Claude | Codex | Cursor | Gemini | Copilot |
+|---|---|---|---|---|---|
+| Shim racine + lecture `.ai/rules/*` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Pre-turn reminder (UserPromptSubmit) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Features-for-path injection (PreToolUse) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Auto-worklog log + flush (PostToolUse + Stop) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Auto-progression immédiate (Stop hook) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Skills `/aic-*` | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Conventional Commits + `feat:` mesh (commit-msg) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Auto-progression au commit (pre-commit) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Rebuild index post-checkout | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+Les agents non-Claude peuvent invoquer les scripts à la main quand utile (`bash .ai/scripts/features-for-path.sh <path>`, `bash .ai/scripts/resume-features.sh`). Des ports natifs (Cursor MDC, AGENTS.md enrichi) sont en réflexion — voir [PROJECT_STATE.md](PROJECT_STATE.md) roadmap.
 
 ## Architecture
 
@@ -559,7 +578,7 @@ Ces presets sont volontairement courts : ils orientent l'agent sur architecture,
 |---|---|
 | `lite` | retire `.githooks` (git hooks) **et** `.github/workflows/` (CI). Les hooks Claude (`.claude/settings.json`) restent générés si `claude` est dans `agents` — ils sont **disponibles mais optionnels** : à activer via `/hooks` si tu veux l'injection runtime côté Claude. |
 | `standard` | expérience complète : git hooks + CI (si `enable_ci_guard=true`) + hooks Claude (si `claude` actif). |
-| `strict` | comme `standard`, mais conserve `.github/workflows/` même si `enable_ci_guard=false`. La portée actuelle de `strict` se limite à cette garantie CI. Les options renforcées (doctor `--strict` en CI, coverage strict par défaut) sont en réflexion (voir roadmap P1). |
+| `strict` | comme `standard`, plus : (a) `.github/workflows/` conservé même si `enable_ci_guard=false`, (b) la CI exécute `doctor.sh --strict` (échec si dépendances/structure incomplètes), (c) la CI exécute `check-feature-coverage.sh --strict` (échec si code orphelin non couvert par `touches:`). À choisir uniquement quand le mesh couvre raisonnablement le projet (≥80%). |
 
 > En `lite + claude`, les hooks Claude sont scaffoldés mais aucun n'est imposé : tu décides dans `/hooks` ce que tu actives. Pour les git hooks, `lite` ne les scaffolde pas du tout — passe en `standard`/`strict` ou copie `.githooks/` à la main si tu changes d'avis plus tard.
 
@@ -675,16 +694,17 @@ Tous les scripts runtime lisent le dossier métier via `AI_CONTEXT_DOCS_ROOT` re
 
 | Champ | Statut runtime | Lu par |
 |---|---|---|
+| `project_id` | ✅ actif | `build-feature-index.sh` (émis dans `.ai/.feature-index.json`) |
 | `coverage.roots` | ✅ actif | `check-feature-coverage.sh` |
 | `coverage.extensions` | ✅ actif | `check-feature-coverage.sh` |
 | `coverage.exclude_dirs` | ✅ actif | `check-feature-coverage.sh` |
 | `progress.stale_after_days` | ✅ actif | `resume-features.sh` |
-| `progress.auto_transitions.spec_to_implement` | ⚠️ informatif (toujours `true` côté script) | non lu — pour info / futur opt-out |
+| `progress.auto_transitions.spec_to_implement` | ✅ actif | `auto-progress.sh` (opt-out : passer à `false` désactive l'auto spec→implement) |
 | `progress.auto_transitions.implement_to_review` | ⚠️ informatif (manuel uniquement) | non lu — placeholder |
 | `progress.auto_transitions.review_to_done` | ⚠️ informatif (manuel uniquement) | non lu — placeholder |
-| `context.show_statuses` | 🚧 prévu (v0.10+) | non lu aujourd'hui — `pre-turn-reminder.sh` filtre via `AI_CONTEXT_SHOW_ALL_STATUS` |
-| `context.default_focus` | 🚧 prévu (v0.10+) | non lu aujourd'hui — `pre-turn-reminder.sh` lit `AI_CONTEXT_FOCUS` |
-| `context.max_tokens_warn` | 🚧 prévu (v0.10+) | non lu aujourd'hui |
+| `context.show_statuses` | 🚧 prévu | non lu aujourd'hui — `pre-turn-reminder.sh` filtre via `AI_CONTEXT_SHOW_ALL_STATUS` |
+| `context.default_focus` | 🚧 prévu | non lu aujourd'hui — `pre-turn-reminder.sh` lit `AI_CONTEXT_FOCUS` |
+| `context.max_tokens_warn` | ✅ actif | `pre-turn-reminder.sh` (warning stderr si le contexte injecté dépasse le seuil ; 0 = désactivé) |
 | `docs_root` | ⚠️ informatif | les scripts privilégient l'ENV `AI_CONTEXT_DOCS_ROOT` puis le défaut rendu par Copier ; ce champ sert de mémo (et de point d'extension futur) |
 
 Légende : ✅ pleinement actif · ⚠️ champ écrit mais non lu (placeholder / informatif) · 🚧 prévu sur une version future.

@@ -120,6 +120,11 @@ for f in "${files[@]}"; do
   while IFS= read -r t; do
     [[ -z "$t" ]] && continue
     [[ "$t" == "[]" ]] && continue
+    if ! is_path_within_repo "$t"; then
+      ko "$f : touches '$t' hors repo (chemin absolu, traversée .. ou ~ rejetés)"
+      file_fail=1
+      continue
+    fi
     # shellcheck disable=SC2206
     matches=( $t )
     if [[ {% raw %}${#matches[@]}{% endraw %} -eq 0 ]] || [[ ! -e "${matches[0]}" && ! -d "${matches[0]}" ]]; then

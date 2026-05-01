@@ -2,7 +2,28 @@
 
 ## Unreleased
 
-_(rien pour l'instant)_
+### Nouveau
+- `.ai/.feature-index.json` expose désormais `schema_version: "1"` et `project_id` (rendu depuis `project_name` Copier, fallback `basename(repo_root)`). Premier pas vers la fédération cross-project — le format est maintenant un contrat versionné.
+- Helper `read_config` dans `_lib.sh` — lit `.ai/config.yml` via `yq` v4, fallback silencieux si absent. Réutilisable par tous les scripts.
+- Helper `is_path_within_repo` dans `_lib.sh` — rejette les motifs `touches:` absolus (`/etc/...`, `C:\...`), à traversée (`..`, `foo/../bar`) et l'expansion home (`~/...`).
+- Tests unitaires `tests/unit/test-path-matches-touch.sh` — couvre 18 cas (exact, dossier, glob `*` / `?` / `[]` / `**`, edge cases, Windows-friendly). Lancé en tête de smoke-test.
+- CI : `windows-latest` ajouté à la matrix `template-smoke-test.yml` en `continue-on-error: true` (best-effort, non-bloquant). `shellcheck` reste Linux/macOS.
+- Smoke-test : étape bonus « big-mesh » qui génère 60 features (30 back + 30 front avec dépendances), vérifie que `pre-turn-reminder` reste sous 30 000 chars, que `AI_CONTEXT_FOCUS=back` réduit la taille, et que `context.max_tokens_warn` déclenche bien le warning stderr.
+
+### Sécurité
+- `check-features.sh` rejette désormais les motifs `touches:` hors repo (chemin absolu, traversée `..`, expansion `~`). Bloquant en CI. Voir [SECURITY.md — Trust model du feature mesh](SECURITY.md).
+
+### Changé
+- **Promesse multi-agents tempérée** — README + `template/AGENTS.md.jinja` exposent maintenant un tableau « Capacités runtime par agent » : seul Claude bénéficie de l'injection de contexte par tour (UserPromptSubmit, PreToolUse, PostToolUse, Stop). Les autres agents ont les shims statiques + git hooks. Pas de changement de code, juste alignement de la communication.
+- **`adoption_mode=strict` réellement renforcé** — la CI ajoute `doctor.sh --strict` + `check-feature-coverage.sh --strict` quand le mode est `strict`. Plus seulement `.github/workflows/` forcé. Label `copier.yml` corrigé.
+- **`progress.auto_transitions.spec_to_implement` consommé** — `auto-progress.sh` lit maintenant cette clé de `.ai/config.yml`. Repasser à `false` désactive l'auto-progression (vraie option d'opt-out, plus un placeholder).
+- **`context.max_tokens_warn` consommé** — `pre-turn-reminder.sh` émet un warning stderr quand le contexte injecté dépasse le seuil configuré. `0` = désactivé.
+- `docs/getting-started.md` documente explicitement les plateformes : Linux/macOS ✅, WSL2 ✅, Git Bash ⚠️ best-effort, PowerShell pur ❌.
+- `SECURITY.md` ajoute une section « Trust model du feature mesh » : ce qui est validé, ce qui ne l'est pas, recommandations PR.
+
+### Migration
+- `copier update` propage les changements automatiquement. Les consommateurs qui parsent `feature-index.json` peuvent désormais s'appuyer sur `schema_version` pour détecter les ruptures futures.
+- Si tu choisis `adoption_mode=strict` sur un projet existant, la CI peut commencer à échouer (doctor strict + coverage strict). Lance localement avant le commit : `bash .ai/scripts/doctor.sh --strict && bash .ai/scripts/check-feature-coverage.sh --strict`.
 
 ## v0.11.0 — 2026-04-28 « Project guardrails & doctor hotfix »
 

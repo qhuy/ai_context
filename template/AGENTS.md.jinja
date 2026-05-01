@@ -10,4 +10,21 @@ Hard rules (non-négociables, voir `.ai/index.md` pour le détail) :
 
 UX par défaut : **zéro skill à invoquer** — voir `.ai/index.md#auto-progression`.
 
+## Capacités runtime par agent
+
+Le template est **Claude-first** côté runtime. Tous les agents lisent les mêmes rules statiques (`.ai/`) et bénéficient des git hooks au commit, mais l'injection de contexte par tour (reminder, features-for-path, auto-worklog, auto-progress immédiat) n'existe aujourd'hui **que pour Claude Code** :
+
+| Capacité | Claude | Codex | Cursor | Gemini | Copilot |
+|---|---|---|---|---|---|
+| Shim racine + lecture `.ai/rules/*` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Pre-turn reminder (UserPromptSubmit) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Features-for-path injection (PreToolUse) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Auto-worklog log + flush (PostToolUse + Stop) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Auto-progression immédiate (Stop hook) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Conventional Commits + `feat:` mesh (commit-msg) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Auto-progression au commit (pre-commit) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Rebuild index post-checkout | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+Si tu travailles avec un agent non-Claude, consulte le mesh manuellement (`bash .ai/scripts/features-for-path.sh <path>`) avant d'éditer un fichier sensible.
+
 Ce fichier est un shim — aucune règle projet ici. Source unique : `.ai/`.

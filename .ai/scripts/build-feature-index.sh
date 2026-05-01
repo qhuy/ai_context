@@ -156,10 +156,18 @@ if [[ -d "$features_dir" ]]; then
 fi
 
 generated_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+config_file="$repo_root/.ai/config.yml"
+project_id="$(read_config 'project_id' "$(basename "$repo_root")" "$config_file")"
+
+# schema_version: contrat stable du JSON émis. Bumper en cas de breaking change
+# (renommer/supprimer un champ, changer la sémantique d'un type). Les ajouts
+# rétro-compatibles ne nécessitent pas de bump.
 output=$(jq -n \
+  --arg schema_version "1" \
+  --arg project_id "$project_id" \
   --arg generated_at "$generated_at" \
   --argjson features "$features_json" \
-  '{generated_at: $generated_at, features: $features}')
+  '{schema_version: $schema_version, project_id: $project_id, generated_at: $generated_at, features: $features}')
 
 log_debug "features scannées : $count"
 
