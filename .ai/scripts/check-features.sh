@@ -72,6 +72,19 @@ for f in "${files[@]}"; do
     file_fail=1
   fi
 
+  # id / scope : regex stricte. Sécu : ces deux champs servent à construire
+  # des chemins worklog et des clés "scope/id" (auto-worklog-flush, auto-progress).
+  # Un id="../foo" ou scope avec espace ouvrirait un path traversal sur le worklog.
+  declared_id=$(echo "$fm" | grep -E '^id:' | sed -E 's/^id:[[:space:]]*//; s/["'"'"']//g' | tr -d '[:space:]')
+  if [[ -n "$declared_id" && ! "$declared_id" =~ ^[a-z0-9][a-z0-9_-]*$ ]]; then
+    ko "$f : id='$declared_id' invalide (attendu : ^[a-z0-9][a-z0-9_-]*$ — minuscules, chiffres, tirets, underscores)"
+    file_fail=1
+  fi
+  if [[ -n "$declared_scope" && ! "$declared_scope" =~ ^[a-z0-9][a-z0-9_-]*$ ]]; then
+    ko "$f : scope='$declared_scope' invalide (attendu : ^[a-z0-9][a-z0-9_-]*$)"
+    file_fail=1
+  fi
+
   # status enum (warn, pas fail)
   declared_status=$(echo "$fm" | grep -E '^status:' | sed -E 's/^status:[[:space:]]*//; s/["'"'"']//g' | tr -d '[:space:]')
   if [[ -n "$declared_status" ]] && ! is_valid_status "$declared_status"; then
@@ -99,6 +112,11 @@ for f in "${files[@]}"; do
   while IFS= read -r dep; do
     [[ -z "$dep" ]] && continue
     [[ "$dep" == "[]" ]] && continue
+    if ! is_path_within_repo "$dep"; then
+      ko "$f : depends_on '$dep' hors repo (chemin absolu, traversée .. ou ~ rejetés ; format attendu : scope/id)"
+      file_fail=1
+      continue
+    fi
     target="$FEATURES_DIR/$dep.md"
     if [[ ! -f "$target" ]]; then
       ko "$f : depends_on '$dep' → $target introuvable"

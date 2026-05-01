@@ -5,17 +5,21 @@
 ### Nouveau
 - `.ai/.feature-index.json` expose désormais `schema_version: "1"` et `project_id` (rendu depuis `project_name` Copier, fallback `basename(repo_root)`). Premier pas vers la fédération cross-project — le format est maintenant un contrat versionné.
 - Helper `read_config` dans `_lib.sh` — lit `.ai/config.yml` via `yq` v4, fallback silencieux si absent. Réutilisable par tous les scripts.
-- Helper `is_path_within_repo` dans `_lib.sh` — rejette les motifs `touches:` absolus (`/etc/...`, `C:\...`), à traversée (`..`, `foo/../bar`) et l'expansion home (`~/...`).
+- Helper `is_path_within_repo` dans `_lib.sh` — rejette les motifs `touches:` absolus (`/etc/...`, `C:\...`, UNC `\\srv`, backslash `\Windows`), à traversée (`..`, `foo/../bar`), expansion home (`~/...`), et caractères de contrôle (newline/tab/NUL).
 - Tests unitaires `tests/unit/test-path-matches-touch.sh` — couvre 18 cas (exact, dossier, glob `*` / `?` / `[]` / `**`, edge cases, Windows-friendly). Lancé en tête de smoke-test.
+- Tests unitaires `tests/unit/test-is-path-within-repo.sh` — 30 cas couvrant safe (relatifs, globs, espaces) et unsafe (absolus Unix, Windows lettre+drive, UNC, backslash, traversées, home, NUL/tab/newline, vide). Lancé en tête de smoke-test.
 - CI : `windows-latest` ajouté à la matrix `template-smoke-test.yml` en `continue-on-error: true` (best-effort, non-bloquant). `shellcheck` reste Linux/macOS.
 - Smoke-test : étape bonus « big-mesh » qui génère 60 features (30 back + 30 front avec dépendances), vérifie que `pre-turn-reminder` reste sous 30 000 chars, que `AI_CONTEXT_FOCUS=back` réduit la taille, et que `context.max_tokens_warn` déclenche bien le warning stderr.
 
 ### Sécurité
-- `check-features.sh` rejette désormais les motifs `touches:` hors repo (chemin absolu, traversée `..`, expansion `~`). Bloquant en CI. Voir [SECURITY.md — Trust model du feature mesh](SECURITY.md).
+- `check-features.sh` rejette désormais les motifs `touches:` hors repo (chemin absolu Unix/Windows, UNC, backslash, traversée `..`, expansion `~`, caractères de contrôle). Bloquant en CI. Voir [SECURITY.md — Trust model du feature mesh](SECURITY.md).
+- `check-features.sh` impose désormais une regex stricte sur `id` et `scope` (`^[a-z0-9][a-z0-9_-]*$`). Ferme un vecteur de path traversal latent : ces deux champs servent à construire les chemins worklog (`auto-worklog-flush.sh`) et les clés `scope/id` (`auto-progress.sh`). Un `id="../foo"` ou `scope` avec espace/slash sont désormais rejetés au check.
+- `check-features.sh` applique aussi `is_path_within_repo` aux entrées `depends_on:` (auparavant seulement aux `touches:`). Une référence `depends_on: ../../other-project/scope/id` ne traverse plus silencieusement.
 
 ### Changé
 - **Promesse multi-agents tempérée** — README + `template/AGENTS.md.jinja` exposent maintenant un tableau « Capacités runtime par agent » : seul Claude bénéficie de l'injection de contexte par tour (UserPromptSubmit, PreToolUse, PostToolUse, Stop). Les autres agents ont les shims statiques + git hooks. Pas de changement de code, juste alignement de la communication.
 - **`adoption_mode=strict` réellement renforcé** — la CI ajoute `doctor.sh --strict` + `check-feature-coverage.sh --strict` quand le mode est `strict`. Plus seulement `.github/workflows/` forcé. Label `copier.yml` corrigé.
+- **Label `adoption_mode=strict` réaligné** — le choix `copier.yml` annonce maintenant explicitement les deux gates CI activés (`doctor --strict` + `coverage --strict`) et le `_message_after_copy` avertit que sur projet jeune la CI sera rouge tant que la couverture n'est pas raisonnable. Plus de drift entre label et réalité post-renforcement.
 - **`progress.auto_transitions.spec_to_implement` consommé** — `auto-progress.sh` lit maintenant cette clé de `.ai/config.yml`. Repasser à `false` désactive l'auto-progression (vraie option d'opt-out, plus un placeholder).
 - **`context.max_tokens_warn` consommé** — `pre-turn-reminder.sh` émet un warning stderr quand le contexte injecté dépasse le seuil configuré. `0` = désactivé.
 - `docs/getting-started.md` documente explicitement les plateformes : Linux/macOS ✅, WSL2 ✅, Git Bash ⚠️ best-effort, PowerShell pur ❌.

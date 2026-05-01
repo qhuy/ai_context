@@ -52,7 +52,14 @@ _message_after_copy: |
                  (.claude/settings.json) restent générés si Claude est sélectionné,
                  mais ils sont optionnels — tu actives ce que tu veux dans /hooks.
     • standard → expérience complète (git hooks + CI + hooks Claude si Claude actif).
-    • strict   → comme standard + workflows CI conservés même si enable_ci_guard=false.
+    • strict   → standard + workflows CI conservés même si enable_ci_guard=false
+                 + la CI exécute doctor.sh --strict ET check-feature-coverage.sh --strict.
+                 ⚠️  Sur un projet jeune (mesh non couvrant), la CI sera ROUGE tant que
+                 le code n'est pas couvert par des `touches:`. Lance localement avant le
+                 1er push :
+                     bash .ai/scripts/doctor.sh --strict
+                     bash .ai/scripts/check-feature-coverage.sh --strict
+                 Repasse en `standard` si tu n'es pas prêt à enforcer dès maintenant.
 
   Prochaines étapes :
     1. Lire README_AI_CONTEXT.md à la racine du projet.
@@ -125,8 +132,8 @@ adoption_mode:
   choices:
     lite (shims + index/reminder, sans hooks/CI): lite
     standard (expérience complète actuelle): standard
-    strict (CI forcée même si enable_ci_guard=false ; renforcements en cours, voir README): strict
-  help: Niveau d'adoption du framework ai-context
+    strict (standard + CI forcée + doctor.sh --strict + check-feature-coverage.sh --strict ; CI rouge si orphelins): strict
+  help: Niveau d'adoption du framework ai-context (lire README §Modes d'adoption avant strict — projet jeune = CI rouge garantie)
 
 tech_profile:
   type: str

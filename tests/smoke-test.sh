@@ -22,8 +22,12 @@ if ! command -v copier >/dev/null 2>&1; then
 fi
 
 echo
-echo "[0/28] tests unitaires (path_matches_touch)"
+echo "[0a/28] tests unitaires (path_matches_touch)"
 bash tests/unit/test-path-matches-touch.sh
+echo
+
+echo "[0b/28] tests unitaires (is_path_within_repo)"
+bash tests/unit/test-is-path-within-repo.sh
 echo
 
 echo "[1/28] copier copy (profil par défaut)"

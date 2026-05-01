@@ -136,15 +136,28 @@ features_matching_path() {
 }
 
 # Vérifie qu'un motif `touches:` reste à l'intérieur du repo.
-# Rejette : chemins absolus Unix (/etc/...), Windows (C:\...), traversées
-# (.., ../foo, foo/../bar, foo/..), expansion home (~/...).
+# Rejette :
+#   - chemins absolus Unix (/etc/...)
+#   - chemins absolus Windows lettre+drive (C:\..., C:/...)
+#   - chemins UNC Windows (\\server\share, //server/share)
+#   - chemins absolus backslash (\Windows\System32)
+#   - traversées (.., ../foo, foo/../bar, foo/..)
+#   - expansion home (~/...)
+#   - NUL byte ou caractères de contrôle (newline, tab) dans le motif
 # Ne fait pas d'expansion glob — vérifie le motif lui-même.
 # Retourne 0 si le motif est sûr, 1 sinon.
 is_path_within_repo() {
   local p="$1"
   [[ -z "$p" ]] && return 1
+  # Caractères de contrôle (multilignes, tabs). NUL byte n'est pas
+  # vérifié car les variables bash ne peuvent pas en contenir.
+  [[ "$p" == *$'\n'* || "$p" == *$'\t'* ]] && return 1
+  # Absolu Unix ou UNC forward-slash (//server)
   [[ "$p" == /* ]] && return 1
+  # Absolu Windows lettre+drive (C:..., C:/..., C:\...)
   [[ "$p" =~ ^[A-Za-z]: ]] && return 1
+  # Absolu backslash ou UNC Windows (\Windows, \\server)
+  [[ "$p" == \\* ]] && return 1
   [[ "$p" == "~"* ]] && return 1
   case "$p" in
     ..|../*|*/..|*/../*) return 1 ;;
