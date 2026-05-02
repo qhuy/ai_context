@@ -60,13 +60,15 @@ Ce template **industrialise** tout ça :
 |---|---|---|---|---|---|
 | Shim racine + lecture `.ai/rules/*` | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Pre-turn reminder (UserPromptSubmit) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Features-for-path injection (PreToolUse) | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Features-for-path injection (PreToolUse) | ✅ | ❌ | ⚠️ via MDC scopé | ❌ | ❌ |
 | Auto-worklog log + flush (PostToolUse + Stop) | ✅ | ❌ | ❌ | ❌ | ❌ |
 | Auto-progression immédiate (Stop hook) | ✅ | ❌ | ❌ | ❌ | ❌ |
 | Skills `/aic-*` | ✅ | ❌ | ❌ | ❌ | ❌ |
 | Conventional Commits + `feat:` mesh (commit-msg) | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Auto-progression au commit (pre-commit) | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Rebuild index post-checkout | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+Cursor : depuis la R3 du re-audit, le template scaffolde `.cursor/rules/<scope>.mdc` (back, front) avec frontmatter `globs:` qui auto-attache la règle aux fichiers du scope. C'est l'équivalent natif de `features-for-path.sh` côté Cursor — l'agent voit les rules du scope sans intervention quand il édite un fichier matché. Globs par défaut couvrent les conventions courantes ; à customiser dans le projet cible si la structure diffère.
 
 Les agents non-Claude peuvent invoquer les scripts à la main quand utile (`bash .ai/scripts/features-for-path.sh <path>`, `bash .ai/scripts/resume-features.sh`). Des ports natifs (Cursor MDC, AGENTS.md enrichi) sont en réflexion — voir [PROJECT_STATE.md](PROJECT_STATE.md) roadmap.
 
@@ -701,8 +703,7 @@ Tous les scripts runtime lisent le dossier métier via `AI_CONTEXT_DOCS_ROOT` re
 | `coverage.exclude_dirs` | ✅ actif | `check-feature-coverage.sh` |
 | `progress.stale_after_days` | ✅ actif | `resume-features.sh` |
 | `progress.auto_transitions.spec_to_implement` | ✅ actif | `auto-progress.sh` (opt-out : passer à `false` désactive l'auto spec→implement) |
-| `progress.auto_transitions.implement_to_review` | ⚠️ informatif (manuel uniquement) | non lu — placeholder |
-| `progress.auto_transitions.review_to_done` | ⚠️ informatif (manuel uniquement) | non lu — placeholder |
+| `progress.history_max_entries` | ✅ actif | `auto-progress.sh` (FIFO snapshots `/aic undo`, défaut 50) |
 | `context.show_statuses` | 🚧 prévu | non lu aujourd'hui — `pre-turn-reminder.sh` filtre via `AI_CONTEXT_SHOW_ALL_STATUS` |
 | `context.default_focus` | 🚧 prévu | non lu aujourd'hui — `pre-turn-reminder.sh` lit `AI_CONTEXT_FOCUS` |
 | `context.max_tokens_warn` | ✅ actif | `pre-turn-reminder.sh` (warning stderr si le contexte injecté dépasse le seuil ; 0 = désactivé) |

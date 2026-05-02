@@ -34,10 +34,15 @@ coverage:
 
 progress:
   stale_after_days: 14
+  # Auto-progression : nombre maximal de snapshots conservés dans
+  # .ai/.progress-history.jsonl (FIFO). Au-delà, les plus anciens sont
+  # écrasés. Influence la profondeur d'undo possible via /aic undo.
+  history_max_entries: 50
   auto_transitions:
+    # spec → implement : déclenchée par auto-progress.sh quand ≥1 fichier
+    # hors la fiche/worklog est édité dans le tour. Repassez à false pour
+    # désactiver complètement l'auto-progression.
     spec_to_implement: true
-    implement_to_review: false
-    review_to_done: false
 
 context:
   show_statuses:

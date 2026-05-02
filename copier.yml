@@ -23,6 +23,9 @@ _exclude:
   - "{% if 'architecture' not in scopes %}.ai/rules/architecture.md{% endif %}"
   - "{% if 'security' not in scopes %}.ai/rules/security.md{% endif %}"
   - "{% if 'handoff' not in scopes %}.ai/rules/handoff.md{% endif %}"
+  # Cursor MDC scopés (auto-attached via globs) — uniquement si cursor agent + scope présent
+  - "{% if 'cursor' not in agents or 'back' not in scopes %}.cursor/rules/back.mdc{% endif %}"
+  - "{% if 'cursor' not in agents or 'front' not in scopes %}.cursor/rules/front.mdc{% endif %}"
   # Règles tech conditionnelles
   - "{% if tech_profile not in ['dotnet-clean-cqrs', 'fullstack-dotnet-react'] %}.ai/rules/tech-dotnet.md{% endif %}"
   - "{% if tech_profile not in ['react-next', 'fullstack-dotnet-react'] %}.ai/rules/tech-react.md{% endif %}"

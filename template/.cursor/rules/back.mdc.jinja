@@ -1,0 +1,45 @@
+---
+description: Règles back (auto-attachées aux fichiers du scope serveur/API)
+globs:
+  - "src/server/**"
+  - "src/api/**"
+  - "src/middleware/**"
+  - "app/api/**"
+  - "app/server/**"
+  - "**/*.cs"
+  - "**/*.go"
+  - "**/*.rs"
+  - "**/*.py"
+  - "**/*.java"
+  - "**/*.kt"
+alwaysApply: false
+---
+
+<!--
+  Généré par le template copier ai_context.
+  Personnalise les `globs:` ci-dessus selon la structure réelle du projet.
+  La liste fournie cible des conventions courantes (.NET, Go, Rust, Python,
+  Java, Kotlin, paths `src/server`/`src/api`/`app/api`).
+-->
+
+Tu édites un fichier du scope **back** ({{ project_name }}).
+
+Avant toute écriture :
+
+1. **Charger `.ai/rules/back.md`** — règles métier du scope (architecture, contrats API, sécurité, validation, error handling).
+2. **Lister les features actives du scope** :
+   ```bash
+   bash .ai/scripts/resume-features.sh --scope=back
+   ```
+3. **Identifier la feature qui couvre ce path** :
+   ```bash
+   bash .ai/scripts/features-for-path.sh <path>
+   ```
+4. **Si la feature est en `phase: spec`** → tu démarres l'implémentation. La phase basculera automatiquement à `implement` au commit (hook `pre-commit`).
+
+Hard rules (rappel) :
+- Un scope primaire par tour ; cross-scope ⇒ HANDOFF formel ([`/aic-feature-handoff`] côté Claude, ou bloc HANDOFF manuel dans le worklog).
+- Conventional Commits en {{ 'français' if commit_language == 'fr' else 'English' }}. `feat:` exige une feature touchée (hook commit-msg bloque sinon).
+- Frontmatter feature : `id` et `scope` doivent matcher `^[a-z0-9][a-z0-9_-]*$`.
+
+Index complet : `.ai/index.md`. Quality gate : `bash .ai/scripts/check-features.sh && bash .ai/scripts/check-feature-coverage.sh`.

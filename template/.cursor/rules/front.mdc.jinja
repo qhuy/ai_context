@@ -1,0 +1,50 @@
+---
+description: Règles front (auto-attachées aux fichiers du scope UI/client)
+globs:
+  - "src/components/**"
+  - "src/pages/**"
+  - "src/app/**"
+  - "app/(client)/**"
+  - "app/components/**"
+  - "pages/**"
+  - "components/**"
+  - "**/*.tsx"
+  - "**/*.jsx"
+  - "**/*.vue"
+  - "**/*.svelte"
+alwaysApply: false
+---
+
+<!--
+  Généré par le template copier ai_context.
+  Personnalise les `globs:` ci-dessus selon la structure réelle du projet.
+  La liste fournie cible les conventions React/Next/Vue/Svelte (paths
+  `src/components`, `app/(client)`, `pages`, `components`).
+-->
+
+Tu édites un fichier du scope **front** ({{ project_name }}).
+
+Avant toute écriture :
+
+1. **Charger `.ai/rules/front.md`** — règles métier du scope (composants, état, contrats avec back, accessibilité, performance).
+{% if tech_profile in ['react-next', 'fullstack-dotnet-react'] -%}
+2. **Charger les rules tech** : `.ai/rules/tech-react.md`{% if tech_profile == 'fullstack-dotnet-react' %} + `.ai/rules/stack-fullstack-dotnet-react.md` (contrat back/front){% endif %}.
+3. **Vérifier le design system** : `docs/design-system-registry.md` et `docs/atomic-design-map.md` pour respecter la nomenclature et les briques existantes (atoms/molecules/organisms).
+{% else -%}
+2. _(Optionnel selon tech_profile)_ Charger `.ai/rules/tech-<stack>.md` si présent.
+{% endif -%}
+4. **Lister les features actives du scope** :
+   ```bash
+   bash .ai/scripts/resume-features.sh --scope=front
+   ```
+5. **Identifier la feature qui couvre ce path** :
+   ```bash
+   bash .ai/scripts/features-for-path.sh <path>
+   ```
+
+Hard rules (rappel) :
+- Un scope primaire par tour ; cross-scope back↔front ⇒ HANDOFF formel ([`/aic-feature-handoff`] côté Claude).
+- Conventional Commits en {{ 'français' if commit_language == 'fr' else 'English' }}.
+- Pas de full diffs par défaut ; charger uniquement les composants concernés.
+
+Index complet : `.ai/index.md`. Quality gate : `bash .ai/scripts/check-features.sh && bash .ai/scripts/check-feature-coverage.sh`.

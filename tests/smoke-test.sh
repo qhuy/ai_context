@@ -1261,6 +1261,65 @@ done
 echo "  ✓ 4 combinaisons (minimal×generic, backend×dotnet, minimal×react, custom×generic) OK"
 echo "  ℹ couverture matrice : 8/16 combinaisons exercées (incluant les 4 via fullstack×*)"
 
+# Cursor MDC scopés : back.mdc et front.mdc rendus si cursor + scope présent
+combo_cursor="/tmp/ai-context-smoke-cursor-$$"
+copier copy --defaults --trust --vcs-ref=HEAD \
+  --data project_name=smoke-cursor \
+  --data scope_profile=fullstack \
+  --data agents='["claude","cursor"]' \
+  "$REPO" "$combo_cursor" >/dev/null
+for mdc in protocol-reminder.mdc back.mdc front.mdc; do
+  if [[ ! -f "$combo_cursor/.cursor/rules/$mdc" ]]; then
+    echo "  ✗ .cursor/rules/$mdc absent (cursor + fullstack)"
+    rm -rf "$combo_cursor"
+    exit 1
+  fi
+done
+# back.mdc et front.mdc doivent avoir un frontmatter globs:
+for mdc in back.mdc front.mdc; do
+  if ! grep -q "^globs:" "$combo_cursor/.cursor/rules/$mdc"; then
+    echo "  ✗ .cursor/rules/$mdc sans frontmatter globs:"
+    rm -rf "$combo_cursor"
+    exit 1
+  fi
+done
+rm -rf "$combo_cursor"
+
+# Sans cursor dans agents : pas de .cursor/ du tout
+combo_nocursor="/tmp/ai-context-smoke-nocursor-$$"
+copier copy --defaults --trust --vcs-ref=HEAD \
+  --data project_name=smoke-nocursor \
+  --data agents='["claude"]' \
+  "$REPO" "$combo_nocursor" >/dev/null
+if [[ -d "$combo_nocursor/.cursor" ]]; then
+  echo "  ✗ .cursor/ généré alors que cursor pas dans agents"
+  rm -rf "$combo_nocursor"
+  exit 1
+fi
+rm -rf "$combo_nocursor"
+
+# cursor + minimal (sans back/front) : protocol-reminder oui, back/front MDC non
+combo_minimal="/tmp/ai-context-smoke-cursor-minimal-$$"
+copier copy --defaults --trust --vcs-ref=HEAD \
+  --data project_name=smoke-cursor-minimal \
+  --data scope_profile=minimal \
+  --data agents='["claude","cursor"]' \
+  "$REPO" "$combo_minimal" >/dev/null
+if [[ ! -f "$combo_minimal/.cursor/rules/protocol-reminder.mdc" ]]; then
+  echo "  ✗ protocol-reminder.mdc absent (cursor + minimal)"
+  rm -rf "$combo_minimal"
+  exit 1
+fi
+for mdc in back.mdc front.mdc; do
+  if [[ -f "$combo_minimal/.cursor/rules/$mdc" ]]; then
+    echo "  ✗ .cursor/rules/$mdc rendu alors que scope absent (minimal)"
+    rm -rf "$combo_minimal"
+    exit 1
+  fi
+done
+rm -rf "$combo_minimal"
+echo "  ✓ Cursor MDC scopés : protocol-reminder + back/front conditionnels au scope"
+
 echo
 echo "[28c/28] copier update : propagation v0.11.0 → HEAD préserve fichiers custom"
 UPD_OUT="/tmp/ai-context-smoke-update-$$"

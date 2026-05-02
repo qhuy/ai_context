@@ -98,10 +98,15 @@ while IFS= read -r key; do
   )
   printf '%s\n' "$snapshot" >> "$history_file"
 
-  # Trim history à 50 entrées (FIFO)
-  if [[ "$(wc -l < "$history_file")" -gt 50 ]]; then
+  # Trim history (FIFO). Profondeur configurable via
+  # progress.history_max_entries dans .ai/config.yml (défaut 50).
+  history_max="$(read_config 'progress.history_max_entries' '50' "$config_file")"
+  if ! [[ "$history_max" =~ ^[0-9]+$ ]] || [[ "$history_max" -le 0 ]]; then
+    history_max=50
+  fi
+  if [[ "$(wc -l < "$history_file")" -gt "$history_max" ]]; then
     tmp=$(mktemp "${history_file}.XXXXXX")
-    tail -n 50 "$history_file" > "$tmp" && mv "$tmp" "$history_file"
+    tail -n "$history_max" "$history_file" > "$tmp" && mv "$tmp" "$history_file"
   fi
 
   # Patch frontmatter : phase: spec → implement, updated: today

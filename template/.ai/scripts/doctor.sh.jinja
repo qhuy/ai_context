@@ -138,6 +138,49 @@ else
   warn ".ai/scripts/measure-context-size.sh missing"
 fi
 
+# python3 (optionnel — requis pour le comptage tiktoken exact dans measure-context-size)
+if command -v python3 >/dev/null 2>&1; then
+  ok "python3 found (measure-context-size peut utiliser tiktoken)"
+else
+  warn "python3 missing (mesure tokens limitée à l'estimation chars/4)"
+  add_action "(optionnel) installer python3 + 'pip install tiktoken' pour le comptage exact"
+fi
+
+# .claude/settings.json — vérifier la présence des hooks attendus si Claude est utilisé
+if [[ -f ".claude/settings.json" ]] && command -v jq >/dev/null 2>&1; then
+  expected_hooks=("UserPromptSubmit" "PreToolUse" "PostToolUse" "Stop")
+  missing_hooks=()
+  for h in "${expected_hooks[@]}"; do
+    if ! jq -e --arg h "$h" '.hooks[$h]? // empty | length > 0' .claude/settings.json >/dev/null 2>&1; then
+      missing_hooks+=("$h")
+    fi
+  done
+  if [[ {% raw %}${#missing_hooks[@]}{% endraw %} -eq 0 ]]; then
+    ok ".claude/settings.json — hooks Claude présents (4/4)"
+  else
+    warn ".claude/settings.json — hooks manquants : ${missing_hooks[*]}"
+    add_action "ouvrir Claude Code et activer les hooks via /hooks (ou re-scaffolder)"
+  fi
+fi
+
+# .githooks/* exécutables (si core.hooksPath pointe vers .githooks)
+if [[ "$inside_git" -eq 1 ]] && [[ -d ".githooks" ]]; then
+  hooks_path_check="$(git config --get core.hooksPath || true)"
+  if [[ "$hooks_path_check" == ".githooks" ]]; then
+    not_exec=()
+    for h in .githooks/*; do
+      [[ -f "$h" ]] || continue
+      [[ -x "$h" ]] || not_exec+=("$h")
+    done
+    if [[ {% raw %}${#not_exec[@]}{% endraw %} -eq 0 ]]; then
+      ok ".githooks/* exécutables"
+    else
+      ko ".githooks/* non exécutables — les hooks resteront muets : ${not_exec[*]}"
+      add_action "chmod +x .githooks/*"
+    fi
+  fi
+fi
+
 echo
 if [[ {% raw %}${#actions[@]}{% endraw %} -gt 0 ]]; then
   echo "Next actions:"

@@ -3,6 +3,10 @@
 ## Unreleased
 
 ### Nouveau
+- **Cursor MDC scopés** — `.cursor/rules/back.mdc` et `.cursor/rules/front.mdc` générés conditionnellement (si `cursor` dans agents + scope présent) avec frontmatter `globs:` Cursor (auto-attached aux fichiers du scope). Première parité partielle Claude/Cursor sur l'injection contextuelle : Cursor charge automatiquement les règles du scope quand un fichier matché est édité. Globs par défaut couvrent les conventions courantes ; à customiser selon la structure du projet.
+- **AGENTS.md.jinja enrichi** — sections « Setup Commands », « Testing Instructions », « Code Style », « PR Instructions », « Resume cross-session » ajoutées (conformes à la spec [agents.md](https://agents.md)). Les agents non-Claude (Codex, etc.) ont désormais les commandes utiles dès le shim, sans devoir naviguer dans le README.
+- `progress.history_max_entries` dans `.ai/config.yml` — profondeur configurable du FIFO `.progress-history.jsonl` (défaut 50). `auto-progress.sh` lit la valeur via `read_config`. Permet aux projets actifs (>50 transitions/semaine) de remonter plus loin via `/aic undo`.
+- `doctor.sh` étendu — ajoute checks `python3` (warn, pour `tiktoken` exact dans `measure-context-size`), `.claude/settings.json` hooks attendus (UserPromptSubmit/PreToolUse/PostToolUse/Stop), exécutabilité `.githooks/*`. Diagnostic plus complet sur l'écosystème Claude.
 - `.ai/scripts/aic-undo.sh` — script headless qui annule la dernière transition auto-progressée listée dans `.ai/.progress-history.jsonl` : restaure phase + status du frontmatter, append au worklog, rebuild l'index. Mode `--dry-run` par défaut, `--apply` explicite. Le skill conversationnel `/aic undo` peut s'appuyer dessus pour la partie execution. Référé dans le README §Scripts runtime.
 - CI : workflow PR principal `.github/workflows/ai-context-check.yml` étend désormais sa matrix à `windows-latest` (best-effort, `continue-on-error: true`). `shellcheck` reste sur Linux/macOS uniquement. Couverture Windows désormais informative sur le runtime utilisateur quotidien (check-shims, check-features, etc.).
 - `.ai/.feature-index.json` expose désormais `schema_version: "1"` et `project_id` (rendu depuis `project_name` Copier, fallback `basename(repo_root)`). Premier pas vers la fédération cross-project — le format est maintenant un contrat versionné.
@@ -26,8 +30,10 @@
 - **`context.max_tokens_warn` consommé** — `pre-turn-reminder.sh` émet un warning stderr quand le contexte injecté dépasse le seuil configuré. `0` = désactivé.
 - `docs/getting-started.md` documente explicitement les plateformes : Linux/macOS ✅, WSL2 ✅, Git Bash ⚠️ best-effort, PowerShell pur ❌.
 - `SECURITY.md` ajoute une section « Trust model du feature mesh » : ce qui est validé, ce qui ne l'est pas, recommandations PR.
+- **Placeholders `auto_transitions.implement_to_review` / `review_to_done` retirés** — ces clés étaient scaffoldées dans `.ai/config.yml` sans être lues par aucun script (« informatif ») et créaient de la confusion utilisateur (« j'active à `true`, rien ne se passe »). Décision d'honnêteté : on retire jusqu'à ce qu'une vraie heuristique soit définie. Les transitions `implement → review` et `review → done` restent **manuelles** via `/aic` (Claude) ou édition directe du frontmatter. Pas un breaking change : ces clés n'avaient aucun effet runtime.
 
 ### Tests
+- Smoke-test étendu — assertion Cursor MDC scopés après `[28b/28]` : avec `agents=cursor + fullstack` les fichiers `.cursor/rules/{protocol-reminder,back,front}.mdc` sont rendus avec frontmatter `globs:` ; avec `cursor` absent, pas de `.cursor/` ; avec `cursor + minimal` (sans back/front), seul `protocol-reminder.mdc` reste.
 - Smoke-test étendu — étape `[28b/28]` couvre 4 combinaisons additionnelles `scope_profile × tech_profile` (minimal × generic, backend × dotnet-clean-cqrs, minimal × react-next, custom × generic). Couverture matrice porte à 8/16 (les 4 autres via `fullstack × *`). Vérifie : présence/absence des règles tech-* selon profil, présence/absence des scopes métier selon scope_profile, sanity check-shims.
 - Smoke-test étendu — étape `[28c/28]` couvre `copier update v0.11.0 → HEAD` : un fichier user (`MY_CUSTOM.md`) hors périmètre template doit être préservé après update, check-shims doit passer, et le nouveau script `aic-undo.sh` (introduit en R2) doit être propagé. Le canal de diffusion des fixes vers les projets existants est désormais testé en CI.
 - Smoke-test étendu — étape `[9b/28]` lance 5 `build-feature-index.sh --write` en parallèle et vérifie que le JSON reste valide + qu'aucun tmp orphelin (`*.feature-index.json.XXXXXX`) ne traîne. Le lock atomique `mkdir`-based dans `_lib.sh:with_index_lock` est désormais régressable.
@@ -36,6 +42,8 @@
 ### Migration
 - `copier update` propage les changements automatiquement. Les consommateurs qui parsent `feature-index.json` peuvent désormais s'appuyer sur `schema_version` pour détecter les ruptures futures.
 - Si tu choisis `adoption_mode=strict` sur un projet existant, la CI peut commencer à échouer (doctor strict + coverage strict). Lance localement avant le commit : `bash .ai/scripts/doctor.sh --strict && bash .ai/scripts/check-feature-coverage.sh --strict`.
+- `progress.auto_transitions.implement_to_review` / `review_to_done` retirés du `.ai/config.yml` scaffoldé. Les projets existants qui les avaient peuvent les laisser (ils n'ont jamais eu d'effet) ou les supprimer pour faire propre.
+- `progress.history_max_entries` ajouté à `.ai/config.yml` (défaut 50) — un projet existant sans cette clé garde le comportement actuel (50). Pour un mesh très actif, monter à 100-200 prolonge la profondeur d'undo.
 
 ## v0.11.0 — 2026-04-28 « Project guardrails & doctor hotfix »
 

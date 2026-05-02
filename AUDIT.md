@@ -204,11 +204,11 @@ Critères d'acceptation :
 ### R3 — Multi-agents ROI + sur-engineering ménagé (1 semaine)
 
 Critères d'acceptation :
-- [ ] Cursor MDC scopé : générer `.cursor/rules/<scope>.mdc` avec `globs:` dérivés des `touches:` du scope. Parité partielle features-for-path.
-- [ ] AGENTS.md.jinja : ajouter sections « Setup Commands » et « Testing Instructions » conformes à la spec agents.md.
-- [ ] Décision sur `implement_to_review` / `review_to_done` : câbler ou retirer du `config.yml.jinja`.
-- [ ] FIFO 50 : documenter dans README + CHANGELOG, ou paramétrer via `progress.history_max_entries`.
-- [ ] Doctor : ajouter checks `.claude/settings.json` hooks, `python3`, exécutabilité `.githooks/*`.
+- [x] ~~Cursor MDC scopé : générer `.cursor/rules/<scope>.mdc` avec `globs:` dérivés des `touches:` du scope. Parité partielle features-for-path.~~ **Appliqué (R3 commit)** — `.cursor/rules/{back,front}.mdc.jinja` avec globs auto-attached, conditionnés via `_exclude` copier.yml. Smoke-test couvre les 3 cas (cursor+fullstack, sans cursor, cursor+minimal).
+- [x] ~~AGENTS.md.jinja : ajouter sections « Setup Commands » et « Testing Instructions » conformes à la spec agents.md.~~ **Appliqué (R3 commit)** — sections Setup, Testing, Code Style, PR Instructions, Resume cross-session ajoutées.
+- [x] ~~Décision sur `implement_to_review` / `review_to_done` : câbler ou retirer du `config.yml.jinja`.~~ **Appliqué (R3 commit)** — option B retenue (retirer). Les transitions `implement→review` et `review→done` restent manuelles via `/aic`. Anti-confusion utilisateur, pas de breaking change.
+- [x] ~~FIFO 50 : documenter dans README + CHANGELOG, ou paramétrer via `progress.history_max_entries`.~~ **Appliqué (R3 commit)** — variante config retenue. Clé `progress.history_max_entries: 50` ajoutée à `config.yml.jinja`, lue par `auto-progress.sh` via `read_config`. README §Champs actifs marque la clé `✅ actif`.
+- [x] ~~Doctor : ajouter checks `.claude/settings.json` hooks, `python3`, exécutabilité `.githooks/*`.~~ **Appliqué (R3 commit)** — 3 nouveaux checks dans `doctor.sh.jinja`.
 
 ---
 
