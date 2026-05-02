@@ -684,6 +684,7 @@ Le template embarque 8 skills Claude Code (`SKILL.md` + `workflow.md`) et distin
 | `measure-context-size.sh` | Mesure chars/tokens injectés par hook |
 | `auto-worklog-log.sh` | Hook `PostToolUse` : logue les éditions dans `.session-edits.log` |
 | `auto-worklog-flush.sh` | Hook `Stop` : flush log → worklog + bump `progress.updated` |
+| `aic-undo.sh` | Annule la dernière transition auto-progressée (lit `.progress-history.jsonl`, restaure le frontmatter, append au worklog, rebuild index). Headless ; le skill `/aic undo` s'appuie dessus. `--dry-run` par défaut, `--apply` pour exécuter. |
 | `ai-context.sh` | Wrapper CLI MVP — route `doctor` / `resume` / `audit` / `migrate` / `pr-report` / `measure` / `check` / `coverage` / `shims` / `index` / `reminder` vers les scripts dédiés. Aucune logique propre. |
 
 Tous les scripts runtime lisent le dossier métier via `AI_CONTEXT_DOCS_ROOT` rendu depuis `docs_root` (`.docs` par défaut). Les entrées `touches:` sont matchées par un helper unique (`path_matches_touch`) pour garder la même sémantique entre `features-for-path`, auto-worklog, coverage et `pre-commit`.

@@ -187,19 +187,19 @@
 ### R1 — Réparer les corrections incomplètes (1-2 jours, P0 du re-audit)
 
 Critères d'acceptation :
-- [ ] `is_path_within_repo` : étendre à UNC `\\` et backslash absolu `\`. Créer `tests/unit/test-is-path-within-repo.sh` (≥10 cas couvrant Unix abs, Windows `C:`, UNC, traversal mixte, espaces, vide).
-- [ ] Appliquer `is_path_within_repo` aussi aux entrées `depends_on` (path traversal cross-project).
-- [ ] `check-features.sh` + `build-feature-index.sh` : valider `id` et `scope` avec regex `^[a-z0-9][a-z0-9-]*$`. Reject early.
-- [ ] `copier.yml:128` : aligner le label `strict` sur la réalité post-P1 (doctor + coverage). Ajouter dans `_message_after_copy` un avertissement « strict + projet jeune = CI rouge garantie ».
+- [x] ~~`is_path_within_repo` : étendre à UNC `\\` et backslash absolu `\`. Créer `tests/unit/test-is-path-within-repo.sh` (≥10 cas couvrant Unix abs, Windows `C:`, UNC, traversal mixte, espaces, vide).~~ **Appliqué (commit `fb3e771`)** — 31 cas dans le test unit.
+- [x] ~~Appliquer `is_path_within_repo` aussi aux entrées `depends_on` (path traversal cross-project).~~ **Appliqué (commit `fb3e771`).**
+- [x] ~~`check-features.sh` + `build-feature-index.sh` : valider `id` et `scope` avec regex `^[a-z0-9][a-z0-9-]*$`. Reject early.~~ **Appliqué (commit `fb3e771`)** — regex `^[a-z0-9][a-z0-9_-]*$` (underscore aussi accepté pour cohérence avec IDs existants).
+- [x] ~~`copier.yml:128` : aligner le label `strict` sur la réalité post-P1 (doctor + coverage). Ajouter dans `_message_after_copy` un avertissement « strict + projet jeune = CI rouge garantie ».~~ **Appliqué (commit `fb3e771`).**
 
 ### R2 — Combler les tests critiques (3-5 jours)
 
 Critères d'acceptation :
-- [ ] `tests/smoke-test.sh` : étape `copier update` (depuis tag précédent puis vers HEAD) avec fichier customisé conservé.
-- [ ] `aic-undo.sh` headless extrait du skill, testé E2E (créer feature spec → édit → flippe → undo → vérif phase + history).
-- [ ] Smoke-test étendu à ≥8/16 combinaisons `tech_profile × scope_profile`.
-- [ ] Test de concurrence `build-feature-index --write` (2 lancements parallèles, JSON valide attendu).
-- [ ] `ai-context-check.yml` : matrix Windows en `continue-on-error: true` au minimum (signal informatif sur le runtime quotidien).
+- [x] ~~`tests/smoke-test.sh` : étape `copier update` (depuis tag précédent puis vers HEAD) avec fichier customisé conservé.~~ **Appliqué (R2 commit)** — étape `[28c/28]`, copy v0.11.0 → update HEAD, vérifie `MY_CUSTOM.md` préservé + `aic-undo.sh` propagé.
+- [x] ~~`aic-undo.sh` headless extrait du skill, testé E2E (créer feature spec → édit → flippe → undo → vérif phase + history).~~ **Appliqué (R2 commit)** — script `aic-undo.sh` (dogfood + template), assertion E2E après `[18/28]`, idempotence vérifiée.
+- [x] ~~Smoke-test étendu à ≥8/16 combinaisons `tech_profile × scope_profile`.~~ **Appliqué (R2 commit)** — étape `[28b/28]` ajoute 4 combinaisons (minimal×generic, backend×dotnet, minimal×react, custom×generic). Couverture matrice : 8/16.
+- [x] ~~Test de concurrence `build-feature-index --write` (2 lancements parallèles, JSON valide attendu).~~ **Appliqué (R2 commit)** — étape `[9b/28]`, 5 builds parallèles, vérif JSON valide + pas de tmp orphelin.
+- [x] ~~`ai-context-check.yml` : matrix Windows en `continue-on-error: true` au minimum (signal informatif sur le runtime quotidien).~~ **Appliqué (R2 commit)** — matrix `[ubuntu, macos, windows]` avec `continue-on-error` Windows, shellcheck conditionné `runner.os != 'Windows'`.
 
 ### R3 — Multi-agents ROI + sur-engineering ménagé (1 semaine)
 

@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Nouveau
+- `.ai/scripts/aic-undo.sh` — script headless qui annule la dernière transition auto-progressée listée dans `.ai/.progress-history.jsonl` : restaure phase + status du frontmatter, append au worklog, rebuild l'index. Mode `--dry-run` par défaut, `--apply` explicite. Le skill conversationnel `/aic undo` peut s'appuyer dessus pour la partie execution. Référé dans le README §Scripts runtime.
+- CI : workflow PR principal `.github/workflows/ai-context-check.yml` étend désormais sa matrix à `windows-latest` (best-effort, `continue-on-error: true`). `shellcheck` reste sur Linux/macOS uniquement. Couverture Windows désormais informative sur le runtime utilisateur quotidien (check-shims, check-features, etc.).
 - `.ai/.feature-index.json` expose désormais `schema_version: "1"` et `project_id` (rendu depuis `project_name` Copier, fallback `basename(repo_root)`). Premier pas vers la fédération cross-project — le format est maintenant un contrat versionné.
 - Helper `read_config` dans `_lib.sh` — lit `.ai/config.yml` via `yq` v4, fallback silencieux si absent. Réutilisable par tous les scripts.
 - Helper `is_path_within_repo` dans `_lib.sh` — rejette les motifs `touches:` absolus (`/etc/...`, `C:\...`, UNC `\\srv`, backslash `\Windows`), à traversée (`..`, `foo/../bar`), expansion home (`~/...`), et caractères de contrôle (newline/tab/NUL).
@@ -24,6 +26,12 @@
 - **`context.max_tokens_warn` consommé** — `pre-turn-reminder.sh` émet un warning stderr quand le contexte injecté dépasse le seuil configuré. `0` = désactivé.
 - `docs/getting-started.md` documente explicitement les plateformes : Linux/macOS ✅, WSL2 ✅, Git Bash ⚠️ best-effort, PowerShell pur ❌.
 - `SECURITY.md` ajoute une section « Trust model du feature mesh » : ce qui est validé, ce qui ne l'est pas, recommandations PR.
+
+### Tests
+- Smoke-test étendu — étape `[28b/28]` couvre 4 combinaisons additionnelles `scope_profile × tech_profile` (minimal × generic, backend × dotnet-clean-cqrs, minimal × react-next, custom × generic). Couverture matrice porte à 8/16 (les 4 autres via `fullstack × *`). Vérifie : présence/absence des règles tech-* selon profil, présence/absence des scopes métier selon scope_profile, sanity check-shims.
+- Smoke-test étendu — étape `[28c/28]` couvre `copier update v0.11.0 → HEAD` : un fichier user (`MY_CUSTOM.md`) hors périmètre template doit être préservé après update, check-shims doit passer, et le nouveau script `aic-undo.sh` (introduit en R2) doit être propagé. Le canal de diffusion des fixes vers les projets existants est désormais testé en CI.
+- Smoke-test étendu — étape `[9b/28]` lance 5 `build-feature-index.sh --write` en parallèle et vérifie que le JSON reste valide + qu'aucun tmp orphelin (`*.feature-index.json.XXXXXX`) ne traîne. Le lock atomique `mkdir`-based dans `_lib.sh:with_index_lock` est désormais régressable.
+- Smoke-test étendu — assertion E2E `/aic undo` après l'étape `[18/28]` : invoque `aic-undo.sh --apply`, vérifie que la phase est restaurée à `spec`, que le worklog reçoit une ligne `## <ts> — /aic undo`, que `.progress-history.jsonl` est vidé, et que `--apply` sur history vide est idempotent (« Rien à annuler »). La logique du skill `/aic undo` est désormais testable headless.
 
 ### Migration
 - `copier update` propage les changements automatiquement. Les consommateurs qui parsent `feature-index.json` peuvent désormais s'appuyer sur `schema_version` pour détecter les ruptures futures.

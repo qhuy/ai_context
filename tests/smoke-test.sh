@@ -197,6 +197,28 @@ rm -f "$before_marker"
 echo "  ✓ index rebuilt après touch"
 
 echo
+echo "[9b/28] build-feature-index : concurrence (lock atomique)"
+(
+  cd "$OUT"
+  for _ in 1 2 3 4 5; do
+    bash .ai/scripts/build-feature-index.sh --write >/dev/null 2>&1 &
+  done
+  wait
+)
+if ! jq -e . "$idx" >/dev/null 2>&1; then
+  echo "  ✗ index corrompu après 5 builds parallèles"
+  head -5 "$idx"
+  exit 1
+fi
+# mktemp utilise ${index_file}.XXXXXX — un orphelin = mv non joué = lock cassé
+orphans=$(find "$OUT/.ai" -maxdepth 1 -name '.feature-index.json.*' 2>/dev/null | head -1)
+if [[ -n "$orphans" ]]; then
+  echo "  ✗ fichier tmp .feature-index.json.* orphelin : $orphans"
+  exit 1
+fi
+echo "  ✓ 5 builds parallèles : JSON valide, pas de tmp orphelin"
+
+echo
 echo "[10/28] pre-turn-reminder : dépendances inverses exposées"
 cat > "$OUT/.docs/features/back/base.md" <<'FEAT'
 ---
@@ -713,6 +735,33 @@ if [[ "$snap_count_before" != "$snap_count_after" ]]; then
   exit 1
 fi
 echo "  ✓ auto-progress spec→implement + snapshot + idempotence OK"
+
+# Test E2E /aic undo via aic-undo.sh (réutilise l'état post-bascule ci-dessus)
+(
+  cd "$OUT"
+  bash .ai/scripts/aic-undo.sh --apply >/dev/null
+)
+if ! grep -qE "^  phase: spec[[:space:]]*$" "$OUT/.docs/features/back/specfeat.md"; then
+  echo "  ✗ aic-undo n'a pas restauré phase=spec"
+  grep -E "^  phase:" "$OUT/.docs/features/back/specfeat.md"
+  exit 1
+fi
+if ! grep -q "/aic undo" "$OUT/.docs/features/back/specfeat.worklog.md"; then
+  echo "  ✗ worklog sans ligne '/aic undo' après undo"
+  exit 1
+fi
+if [[ -s "$OUT/.ai/.progress-history.jsonl" ]]; then
+  echo "  ✗ history pas vidé après undo de l'unique snapshot"
+  cat "$OUT/.ai/.progress-history.jsonl"
+  exit 1
+fi
+# Idempotence : second --apply sur history vide doit être no-op
+if ! ( cd "$OUT" && bash .ai/scripts/aic-undo.sh --apply 2>&1 ) | grep -q "Rien à annuler"; then
+  echo "  ✗ aic-undo --apply sur history vide ne dit pas 'Rien à annuler'"
+  exit 1
+fi
+echo "  ✓ aic-undo : restaure spec + append worklog + vide history + idempotent"
+
 rm -rf "$OUT/.git" "$OUT/.docs/features/back/specfeat.md" "$OUT/.docs/features/back/specfeat.worklog.md" "$OUT/.ai/.progress-history.jsonl" "$OUT/.ai/.session-edits.flushed" 2>/dev/null || true
 
 echo
@@ -1109,6 +1158,162 @@ fi
 
 rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK" "$OUT_LITE" "$OUT_STRICT"
 echo "  ✓ profils dotnet/react/fullstack + modes adoption lite/strict OK"
+
+echo
+echo "[28b/28] combinaisons scope_profile × tech_profile (couverture matrice)"
+# Couvre 4 combinaisons additionnelles (au-delà des 4 déjà couvertes via fullstack×*) :
+#   minimal × generic        : aucun back/front/architecture/security
+#   backend × dotnet         : back+architecture+security (pas front), tech-dotnet
+#   minimal × react-next     : pas de scope métier, tech-react présent
+#   custom × generic         : minimal scopes, pas de tech profile
+combos=(
+  "minimal:generic"
+  "backend:dotnet-clean-cqrs"
+  "minimal:react-next"
+  "custom:generic"
+)
+for combo in "${combos[@]}"; do
+  scope="${combo%%:*}"
+  tech="${combo##*:}"
+  combo_out="/tmp/ai-context-smoke-${scope}-${tech}-$$"
+  copier copy --defaults --trust --vcs-ref=HEAD \
+    --data project_name="smoke-${scope}-${tech}" \
+    --data scope_profile="$scope" \
+    --data tech_profile="$tech" \
+    "$REPO" "$combo_out" >/dev/null
+
+  # Tous les profils ont core+quality+workflow
+  for required in core.md quality.md workflow.md; do
+    if [[ ! -f "$combo_out/.ai/rules/$required" ]]; then
+      echo "  ✗ $combo : $required absent (toujours requis)"
+      rm -rf "$combo_out"
+      exit 1
+    fi
+  done
+
+  # check-shims doit passer sur chaque combo (sanity)
+  if ! ( cd "$combo_out" && bash .ai/scripts/check-shims.sh >/dev/null 2>&1 ); then
+    echo "  ✗ $combo : check-shims fail"
+    ( cd "$combo_out" && bash .ai/scripts/check-shims.sh )
+    rm -rf "$combo_out"
+    exit 1
+  fi
+
+  # minimal et custom : pas de scopes métier (back/front/architecture/security/handoff)
+  if [[ "$scope" == "minimal" || "$scope" == "custom" ]]; then
+    for forbidden in back.md front.md architecture.md security.md handoff.md; do
+      if [[ -f "$combo_out/.ai/rules/$forbidden" ]]; then
+        echo "  ✗ $combo : $forbidden ne devrait pas être généré"
+        rm -rf "$combo_out"
+        exit 1
+      fi
+    done
+  fi
+
+  # backend : back+architecture+security+handoff oui, front non
+  if [[ "$scope" == "backend" ]]; then
+    for required in back.md architecture.md security.md handoff.md; do
+      if [[ ! -f "$combo_out/.ai/rules/$required" ]]; then
+        echo "  ✗ $combo : $required absent"
+        rm -rf "$combo_out"
+        exit 1
+      fi
+    done
+    if [[ -f "$combo_out/.ai/rules/front.md" ]]; then
+      echo "  ✗ $combo : front.md ne devrait pas être généré (backend uniquement)"
+      rm -rf "$combo_out"
+      exit 1
+    fi
+  fi
+
+  # tech-dotnet uniquement si tech_profile inclut dotnet
+  if [[ "$tech" == "dotnet-clean-cqrs" || "$tech" == "fullstack-dotnet-react" ]]; then
+    if [[ ! -f "$combo_out/.ai/rules/tech-dotnet.md" ]]; then
+      echo "  ✗ $combo : tech-dotnet.md absent"
+      rm -rf "$combo_out"
+      exit 1
+    fi
+  else
+    if [[ -f "$combo_out/.ai/rules/tech-dotnet.md" ]]; then
+      echo "  ✗ $combo : tech-dotnet.md ne devrait pas être généré"
+      rm -rf "$combo_out"
+      exit 1
+    fi
+  fi
+
+  # tech-react uniquement si tech_profile inclut react
+  if [[ "$tech" == "react-next" || "$tech" == "fullstack-dotnet-react" ]]; then
+    if [[ ! -f "$combo_out/.ai/rules/tech-react.md" ]]; then
+      echo "  ✗ $combo : tech-react.md absent"
+      rm -rf "$combo_out"
+      exit 1
+    fi
+  else
+    if [[ -f "$combo_out/.ai/rules/tech-react.md" ]]; then
+      echo "  ✗ $combo : tech-react.md ne devrait pas être généré"
+      rm -rf "$combo_out"
+      exit 1
+    fi
+  fi
+
+  rm -rf "$combo_out"
+done
+echo "  ✓ 4 combinaisons (minimal×generic, backend×dotnet, minimal×react, custom×generic) OK"
+echo "  ℹ couverture matrice : 8/16 combinaisons exercées (incluant les 4 via fullstack×*)"
+
+echo
+echo "[28c/28] copier update : propagation v0.11.0 → HEAD préserve fichiers custom"
+UPD_OUT="/tmp/ai-context-smoke-update-$$"
+
+# Scaffold initial sur v0.11.0 (avant les corrections P0+P1+P2 + R1)
+if ! copier copy --defaults --trust --vcs-ref=v0.11.0 \
+    --data project_name=smoke-update \
+    "$REPO" "$UPD_OUT" >/dev/null 2>&1; then
+  echo "  ⚠ copier copy v0.11.0 indisponible (tag manquant ?), étape skippée"
+else
+  # Fichier user hors périmètre template — doit survivre au update
+  echo "# Custom user file (test copier update)" > "$UPD_OUT/MY_CUSTOM.md"
+
+  # Sanity v0.11.0 : aic-undo.sh n'existe pas encore (introduit dans R2)
+  pre_undo_exists=0
+  [[ -f "$UPD_OUT/.ai/scripts/aic-undo.sh" ]] && pre_undo_exists=1
+
+  # Update vers HEAD (apporte P0+P1+P2 + R1 + R2 working tree)
+  ( cd "$UPD_OUT" && copier update --defaults --trust --vcs-ref=HEAD --overwrite -A >/dev/null 2>&1 ) || true
+
+  if [[ ! -f "$UPD_OUT/MY_CUSTOM.md" ]]; then
+    echo "  ✗ MY_CUSTOM.md (fichier user) disparu après copier update"
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+  if [[ "$(cat "$UPD_OUT/MY_CUSTOM.md")" != "# Custom user file (test copier update)" ]]; then
+    echo "  ✗ MY_CUSTOM.md modifié alors qu'il est hors template"
+    cat "$UPD_OUT/MY_CUSTOM.md"
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+
+  # Sanity : check-shims passe encore après update
+  if ! ( cd "$UPD_OUT" && bash .ai/scripts/check-shims.sh >/dev/null 2>&1 ); then
+    echo "  ✗ check-shims fail après copier update"
+    ( cd "$UPD_OUT" && bash .ai/scripts/check-shims.sh )
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+
+  # Si HEAD contient aic-undo.sh, vérifier qu'il a été propagé (test conditionné
+  # à la disponibilité du script dans le commit testé — utile sur HEAD post-R2)
+  if [[ "$pre_undo_exists" -eq 0 ]] && [[ -f "$REPO/.ai/scripts/aic-undo.sh" ]]; then
+    if [[ ! -f "$UPD_OUT/.ai/scripts/aic-undo.sh" ]]; then
+      echo "  ✗ aic-undo.sh présent dans le repo mais pas propagé via copier update"
+      rm -rf "$UPD_OUT"
+      exit 1
+    fi
+  fi
+
+  rm -rf "$UPD_OUT"
+  echo "  ✓ copier update v0.11.0 → HEAD : fichier user préservé + check-shims OK"
+fi
 
 echo
 echo "[bonus] big-mesh : budget tokens + focus graph-aware"

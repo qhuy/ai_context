@@ -15,13 +15,15 @@ Revient à l'état `progress` précédant la dernière transition appliquée par
 1. Lire `.ai/.progress-history.jsonl` — récupérer la **dernière ligne** (snapshot le plus récent).
 2. Format attendu : `{ts, feature, path, from: {phase, status}, to: {phase, status}}`.
 3. Si fichier absent ou vide → répondre « Rien à annuler (aucun snapshot). » et STOP.
-4. Montrer à l'utilisateur ce qui va être annulé (feature, from → to, timestamp) et demander confirmation **explicite** (« tape "go" pour annuler, ou "non" pour abandonner »).
-5. Sur confirmation :
-   - Patcher le frontmatter de `path` : restaurer `progress.phase = from.phase` et `status = from.status`.
-   - Appender au worklog une ligne `## <ts> — undo` expliquant la restauration.
-   - Supprimer la **dernière ligne** de `.progress-history.jsonl` (tail -n +1 jusqu'à count-1 via mktemp).
+4. Montrer à l'utilisateur ce qui va être annulé (feature, from → to, timestamp) et demander confirmation **explicite** (« tape "go" pour annuler, ou "non" pour abandonner »). Pour préview headless : `bash .ai/scripts/aic-undo.sh` (mode `--dry-run` par défaut).
+5. Sur confirmation : invoquer `bash .ai/scripts/aic-undo.sh --apply`. Le script s'occupe de tout :
+   - Patche le frontmatter de `path` (restaure `progress.phase = from.phase` et `status = from.status`).
+   - Append au worklog une ligne `## <ts> — /aic undo` expliquant la restauration.
+   - Supprime la **dernière ligne** de `.progress-history.jsonl` (FIFO consume).
    - Rebuild `.ai/.feature-index.json`.
 6. Rapporter : feature, état restauré, prochain `/aic undo` pointera sur l'entrée précédente.
+
+> Le script `aic-undo.sh` est testable en CI (smoke-test étape E2E). Si tu dois faire l'undo manuellement (script absent), suis le contrat décrit dans son `--help`.
 
 ### Mode 2 — `/aic <phrase libre>` (override explicite)
 

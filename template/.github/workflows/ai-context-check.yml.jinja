@@ -21,9 +21,18 @@ on:
 jobs:
   check:
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: {% raw %}${{ matrix.os }}{% endraw %}
+    # windows-latest = best-effort. Le shell bash de Git for Windows fonctionne
+    # mais certains comportements (chemins, dépendances) restent à observer.
+    # Une régression Windows ne doit pas bloquer un merge tant que la couverture
+    # reste informative.
+    continue-on-error: {% raw %}${{ matrix.os == 'windows-latest' }}{% endraw %}
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
 
@@ -35,7 +44,7 @@ jobs:
             sudo apt-get install -y jq shellcheck
             sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64
             sudo chmod +x /usr/local/bin/yq
-          else
+          elif [[ "{% raw %}${{ runner.os }}{% endraw %}" == "macOS" ]]; then
             brew update
             brew install jq shellcheck
             arch="$(uname -m)"
@@ -46,9 +55,15 @@ jobs:
             fi
             sudo curl -sSL -o /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/${yq_asset}"
             sudo chmod +x /usr/local/bin/yq
+          else
+            # Windows : jq + yq préinstallés sur les runners GitHub. shellcheck via choco.
+            choco install --no-progress -y shellcheck || true
+            jq --version
+            yq --version
           fi
 
       - name: shellcheck
+        if: runner.os != 'Windows'
         run: shellcheck -S error .ai/scripts/*.sh
 
       - name: check-shims
