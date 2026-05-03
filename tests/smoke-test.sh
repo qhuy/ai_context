@@ -1330,15 +1330,40 @@ if ! copier copy --defaults --trust --vcs-ref=v0.11.0 \
     "$REPO" "$UPD_OUT" >/dev/null 2>&1; then
   echo "  ⚠ copier copy v0.11.0 indisponible (tag manquant ?), étape skippée"
 else
-  # Fichier user hors périmètre template — doit survivre au update
-  echo "# Custom user file (test copier update)" > "$UPD_OUT/MY_CUSTOM.md"
-
   # Sanity v0.11.0 : aic-undo.sh n'existe pas encore (introduit dans R2)
   pre_undo_exists=0
   [[ -f "$UPD_OUT/.ai/scripts/aic-undo.sh" ]] && pre_undo_exists=1
 
+  # Fichier user hors périmètre template — doit survivre au update.
+  # Il est versionné car Copier refuse d'updater un sous-projet dirty.
+  echo "# Custom user file (test copier update)" > "$UPD_OUT/MY_CUSTOM.md"
+
+  # copier update ne fonctionne que dans un sous-projet git-tracké. Certaines
+  # versions de Copier ne matérialisent pas l'answers file sur ce scénario local ;
+  # on le rend explicite pour tester l'upgrade, pas le mécanisme de réponses.
+  if [[ ! -f "$UPD_OUT/.copier-answers.yml" ]]; then
+    cat > "$UPD_OUT/.copier-answers.yml" <<EOF
+# Changes here will be overwritten by Copier
+_commit: v0.11.0
+_src_path: $REPO
+project_name: smoke-update
+EOF
+  fi
+  if [[ ! -d "$UPD_OUT/.git" ]]; then
+    git -C "$UPD_OUT" init >/dev/null
+  fi
+  git -C "$UPD_OUT" add . >/dev/null
+  git -C "$UPD_OUT" commit -m "test: scaffold v0.11.0" >/dev/null
+
   # Update vers HEAD (apporte P0+P1+P2 + R1 + R2 working tree)
-  ( cd "$UPD_OUT" && copier update --defaults --trust --vcs-ref=HEAD --overwrite -A >/dev/null 2>&1 ) || true
+  update_log="/tmp/ai-context-copier-update-$$.log"
+  if ! ( cd "$UPD_OUT" && copier update --defaults --trust --vcs-ref=HEAD -A >"$update_log" 2>&1 ); then
+    echo "  ✗ copier update v0.11.0 → HEAD a échoué"
+    sed -n '1,160p' "$update_log"
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+  rm -f "$update_log"
 
   if [[ ! -f "$UPD_OUT/MY_CUSTOM.md" ]]; then
     echo "  ✗ MY_CUSTOM.md (fichier user) disparu après copier update"
@@ -1386,6 +1411,11 @@ copier copy --defaults --trust --vcs-ref=HEAD \
   "$REPO" "$OUT_BIG" >/dev/null
 mkdir -p "$OUT_BIG/.docs/features/back" "$OUT_BIG/.docs/features/front"
 for i in $(seq 1 30); do
+  front_depends_on=" []"
+  if [[ "$i" -le 10 ]]; then
+    front_depends_on="
+  - back/big-back-$i"
+  fi
   cat > "$OUT_BIG/.docs/features/back/big-back-$i.md" <<FEAT
 ---
 id: big-back-$i
@@ -1403,8 +1433,7 @@ id: big-front-$i
 scope: front
 title: Big front $i
 status: active
-depends_on:
-  - back/big-back-$i
+depends_on:$front_depends_on
 touches:
   - app/front-$i/**
 ---
