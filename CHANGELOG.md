@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v0.12.0 — 2026-05-04 « Agent UX, product traceability & robust updates »
+
 ### Nouveau
 - `ai-context.sh status` — état terminal actionnable : features, delta, hooks, checks principaux, budget reminder et prochaine action minimale.
 - `ai-context.sh brief <path>` — contexte juste-à-temps pour Codex/agents non-hookés avant édition d'un fichier ; route vers `features-for-path --with-docs`.
@@ -9,6 +11,8 @@
 - `.ai/agent/response-style.md` — contrat de clôture de tâche compact/structuré : résultat observable, vérifications, risques, recommandation assumée et prochaine action utile. Chargé via Pack A, pas injecté dans le reminder.
 - Product Traceability Loop V1 — nouveau scope `product`, règle `.ai/rules/product.md`, champs frontmatter optionnels `product.*` et `external_refs`, scripts read-only `check-product-links.sh`, `product-status.sh`, `product-portfolio.sh`, `product-review.sh` et routes `ai-context.sh product-*`. Objectif : relier initiatives produit, artefacts externes, features dev, evidence et décision suivante sans roadmap parallèle.
 - `ai-context.sh first-run` — parcours guidé de 10 minutes après scaffold : activer hooks, vérifier le projet, cadrer la première tâche, créer la première fiche feature et préparer le premier commit.
+- `ai-context.sh repair-copier-metadata` — recrée en dry-run les métadonnées `.copier-answers.yml` quand un projet déjà scaffoldé les a perdues ou n'a jamais versionné `_src_path` / `_commit`. Écriture uniquement avec `--apply`.
+- `ai-context.sh template-diff` — rend le template dans `/tmp` et liste les fichiers à ajouter/modifier sans toucher au worktree courant. Utile pour prévisualiser une update quand le projet est dirty ou fortement customisé.
 - `features-for-path.sh --with-docs` — mode CLI utilisable par Codex pour afficher les fiches feature concernées par un path et leurs dépendances `depends_on`, avec budget borné.
 - Skills intentionnels Claude : `/aic-frame`, `/aic-status`, `/aic-review`, `/aic-ship`. La surface recommandée devient orientée intention (`frame/status/diagnose/review/ship`) au lieu d'exposer les primitives procédurales `aic-feature-*`.
 - Les primitives procédurales sont retirées de `.claude/skills/` et déplacées vers `.ai/workflows/` pour rester utilisables par Claude et Codex sans apparaître comme commandes utilisateur.
@@ -52,6 +56,7 @@
 - Les fiches dogfoodées trop larges migrent leurs surfaces globales (`tests/smoke-test.sh`, CHANGELOG/PROJECT_STATE, etc.) vers `touches_shared` quand elles ne possèdent pas directement le fichier.
 
 ### Tests
+- Smoke-test étendu — assertions `repair-copier-metadata` et `template-diff` : la réparation propose `_src_path`, et la preview externe annonce explicitement qu'elle ne modifie pas le repo courant.
 - Smoke-test étendu — assertion Cursor MDC scopés après `[28b/28]` : avec `agents=cursor + fullstack` les fichiers `.cursor/rules/{protocol-reminder,back,front}.mdc` sont rendus avec frontmatter `globs:` ; avec `cursor` absent, pas de `.cursor/` ; avec `cursor + minimal` (sans back/front), seul `protocol-reminder.mdc` reste.
 - Smoke-test étendu — étape `[28b/28]` couvre 4 combinaisons additionnelles `scope_profile × tech_profile` (minimal × generic, backend × dotnet-clean-cqrs, minimal × react-next, custom × generic). Couverture matrice porte à 8/16 (les 4 autres via `fullstack × *`). Vérifie : présence/absence des règles tech-* selon profil, présence/absence des scopes métier selon scope_profile, sanity check-shims.
 - Smoke-test étendu — étape `[28c/28]` couvre `copier update v0.11.0 → HEAD` : un fichier user (`MY_CUSTOM.md`) hors périmètre template doit être préservé après update, check-shims doit passer, et le nouveau script `aic-undo.sh` (introduit en R2) doit être propagé. Le canal de diffusion des fixes vers les projets existants est désormais testé en CI.
@@ -61,6 +66,9 @@
 - Test unitaire ajouté — `test-review-delta-shared.sh` vérifie que `touches_shared` reste visible dans `review-delta.sh` sans bloquer `check-feature-freshness --staged`.
 
 ### Migration
+- Pour suivre le HEAD GitHub plutôt que le dernier tag publié, utiliser `copier update --vcs-ref=HEAD`. Les docs d'upgrade et `README_AI_CONTEXT.md` le documentent explicitement pour éviter les downgrades involontaires quand `main` est en avance sur le tag.
+- Si `.copier-answers.yml` manque dans un projet déjà scaffoldé, lancer `bash .ai/scripts/ai-context.sh repair-copier-metadata` puis relire la proposition avant `--apply`.
+- Pour évaluer une update sur worktree sale, lancer `bash .ai/scripts/ai-context.sh template-diff`; le rendu temporaire est hors repo et peut être inspecté avec `diff -u`.
 - `copier update` propage les changements automatiquement. Les consommateurs qui parsent `feature-index.json` peuvent désormais s'appuyer sur `schema_version` pour détecter les ruptures futures.
 - Si tu choisis `adoption_mode=strict` sur un projet existant, la CI peut commencer à échouer (doctor strict + coverage strict). Lance localement avant le commit : `bash .ai/scripts/doctor.sh --strict && bash .ai/scripts/check-feature-coverage.sh --strict`.
 - `progress.auto_transitions.implement_to_review` / `review_to_done` retirés du `.ai/config.yml` scaffoldé. Les projets existants qui les avaient peuvent les laisser (ils n'ont jamais eu d'effet) ou les supprimer pour faire propre.

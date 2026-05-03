@@ -3,7 +3,7 @@
 **But** : template `copier` qui industrialise le setup AI context (multi-agent : Claude / Codex / Cursor / Gemini / Copilot) d'un nouveau projet.
 **Remote** : [github.com/qhuy/ai_context](https://github.com/qhuy/ai_context) (public)
 **Local** : chemin de développement local, non versionné.
-**Dernière version publiée** : v0.11.0 — « Project guardrails & doctor hotfix » (voir [CHANGELOG.md](CHANGELOG.md))
+**Dernière version publiée** : v0.12.0 — « Agent UX, product traceability & robust updates » (voir [CHANGELOG.md](CHANGELOG.md))
 
 > Ce fichier est un **point d'entrée rapide**. Pour l'historique détaillé des versions, consulter [CHANGELOG.md](CHANGELOG.md). Pour adopter le template sur un projet existant, [MIGRATION.md](MIGRATION.md). Pour l'architecture visuelle, diagramme mermaid dans [README.md](README.md).
 
@@ -12,7 +12,7 @@
 1. Ouvrir Claude Code dans le dossier local du dépôt `ai_context`.
 2. Lire [CHANGELOG.md](CHANGELOG.md) — les dernières breaking/nouveautés.
 3. Lancer le smoke-test : `export PATH="$HOME/Library/Python/3.9/bin:$PATH" && bash tests/smoke-test.sh` (28 étapes, attendu `✅ PASS`).
-4. Consommer le template : `copier copy gh:qhuy/ai_context ./mon-projet`. Mettre à jour : `cd mon-projet && copier update`.
+4. Consommer le template : `copier copy gh:qhuy/ai_context ./mon-projet`. Mettre à jour : `cd mon-projet && copier update --vcs-ref=HEAD`.
 5. Dogfooder le repo source après évolution du template. Le repo source n'a pas de `.copier-answers.yml` et ne doit pas être mis à jour via `copier update` :
    - preview : `bash .ai/scripts/dogfood-update.sh`
    - apply : `bash .ai/scripts/dogfood-update.sh --apply`
@@ -44,7 +44,7 @@
 - `template/.ai/workflows/` — procédures internes agent-agnostic partagées par Claude et Codex : `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `quality-gate`, `feature-done`, `project-guardrails`.
 - `tests/smoke-test.sh` — 28 assertions end-to-end.
 
-## État actuel (v0.11.0)
+## État actuel (v0.12.0)
 
 - **Feature mesh** — frontmatter validé, détection cycles, warn si active dépend de deprecated, scope enum, touches morte bloquante, `touches_shared` pour surfaces de review non bloquantes.
 - **Continuité inter-session** — frontmatter `progress:` + worklog append-only par feature + `resume-features.sh` 4 buckets.
@@ -53,18 +53,22 @@
 - **i18n** — reminder FR/EN selon `commit_language`.
 - **Presets techniques** — règles stack optionnelles via `tech_profile` (`dotnet-clean-cqrs`, `react-next`, `fullstack-dotnet-react`).
 - **Fiabilité** — `_lib.sh` helpers, matching `touches:` / `touches_shared:` centralisé, lock atomique sur index, globstar, dépendances vérifiées, JSON escaping via jq.
-- **Tags versionnés** — `v0.7.2`, `v0.8.0`, `v0.9.0`, `v0.10.0`, `v0.11.0` — `copier update --vcs-ref=v0.11.0` possible.
+- **Tags versionnés** — `v0.7.2`, `v0.8.0`, `v0.9.0`, `v0.10.0`, `v0.11.0`, `v0.12.0` — `copier update --vcs-ref=v0.12.0` possible.
 - **Documentation** — README avec mermaid + FAQ + use cases, MIGRATION.md progressif, skills self-contained.
 - **Guardrails projet** — `.ai/guardrails.md` cadre les non-goals + glossaire métier (référencé via Pack A, coût tokens nul à chaque tour). Le point d'entrée recommandé est `/aic-frame`; la procédure interne vit dans `.ai/workflows/project-guardrails.md`.
 - **Skills intentionnels** — `/aic-frame` cadre avant implémentation (plan, métier, technique, validation), `/aic-status` reprend, `/aic-review` relit le delta, `/aic-ship` prépare la sortie. Les skills procéduraux restent en backend.
+- **UX CLI agent-agnostic** — `ai-context.sh first-run/status/brief/mission/document-delta/repair/ship-report/review` couvre le cycle courant pour Claude, Codex et agents non-hookés.
+- **Traceability produit** — scope `product`, champs `product.*` / `external_refs` et commandes `product-status`, `product-portfolio`, `product-review`.
+- **Upgrade robuste** — `repair-copier-metadata` recrée `.copier-answers.yml` en dry-run, `template-diff` prévisualise un rendu `/tmp` sur worktree sale, et la doc recommande `copier update --vcs-ref=HEAD`.
 
 ## Roadmap — pistes ouvertes
 
-**P1 — stabilisation v0.10** *(largement traité dans Unreleased)*
+**P1 — stabilisation runtime** *(largement traité en v0.12.0)*
 - ✅ `progress.auto_transitions.spec_to_implement` consommé par `auto-progress.sh` (vrai opt-out).
 - ✅ `context.max_tokens_warn` consommé par `pre-turn-reminder.sh` (warning stderr).
 - ✅ `adoption_mode=strict` renforcé : CI ajoute `doctor --strict` + `coverage --strict`.
 - ✅ `feature-index.json` expose `schema_version` + `project_id`.
+- ✅ Cycle update robuste : metadata Copier réparable et preview externe du template.
 - 🚧 Reste à faire : consommer `context.show_statuses` et `context.default_focus` (aujourd'hui via env vars `AI_CONTEXT_*`).
 - CI source repo : workflow GitHub Actions sur `qhuy/ai_context` lui-même qui exécute `tests/smoke-test.sh` (matrix Ubuntu/macOS).
 - Dog-fooding : appliquer pleinement le mesh sur `ai_context` lui-même (déjà partiellement fait sous `.docs/features/`).
