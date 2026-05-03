@@ -40,7 +40,7 @@
 - `template/{{docs_root}}/features/<scope>/` = maillage feature par scope (back, front, architecture, security).
 - `template/.githooks/commit-msg` + `post-checkout` — enforcement Conventional Commits et rebuild index au switch de branche.
 - `template/.claude/settings.json.jinja` — hooks UserPromptSubmit / PreToolUse / PostToolUse / Stop.
-- `template/.claude/skills/aic-*/` — 9 skills (`aic`, `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `quality-gate`, `feature-done`, `project-guardrails`) avec distinction exposés/internes.
+- `template/.claude/skills/aic-*/` — skills Claude. Surface recommandée : `aic`, `aic-frame`, `aic-status`, `aic-diagnose`, `aic-review`, `aic-ship`. Primitives historiques `aic-feature-*`, `aic-quality-gate`, `aic-project-guardrails` conservées en fallback/interne.
 - `tests/smoke-test.sh` — 28 assertions end-to-end.
 
 ## État actuel (v0.11.0)
@@ -54,7 +54,8 @@
 - **Fiabilité** — `_lib.sh` helpers, matching `touches:` / `touches_shared:` centralisé, lock atomique sur index, globstar, dépendances vérifiées, JSON escaping via jq.
 - **Tags versionnés** — `v0.7.2`, `v0.8.0`, `v0.9.0`, `v0.10.0`, `v0.11.0` — `copier update --vcs-ref=v0.11.0` possible.
 - **Documentation** — README avec mermaid + FAQ + use cases, MIGRATION.md progressif, skills self-contained.
-- **Guardrails projet** — `/aic-project-guardrails` cadre les non-goals + glossaire métier dans `.ai/guardrails.md` (référencé via Pack A, coût tokens nul à chaque tour). Comble le trou « contexte général projet » que ne couvraient ni les rules ni le feature mesh.
+- **Guardrails projet** — `.ai/guardrails.md` cadre les non-goals + glossaire métier (référencé via Pack A, coût tokens nul à chaque tour). Le point d'entrée recommandé est désormais `/aic-frame`; `/aic-project-guardrails` reste compatible.
+- **Skills intentionnels** — `/aic-frame` cadre avant implémentation (plan, métier, technique, validation), `/aic-status` reprend, `/aic-review` relit le delta, `/aic-ship` prépare la sortie. Les skills procéduraux restent en backend.
 
 ## Roadmap — pistes ouvertes
 

@@ -15,7 +15,7 @@ touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "skill /aic écrit ; smoke-test partagé enrichi avec régressions review"
+  step: "UX zéro skill quotidien + surface intentionnelle en fallback"
   blockers: []
   resume_hint: "écrire assertion smoke-test (auto-progression via pre-commit + /aic undo) puis rouvrir workflow/claude-skills pour acter réduction 6→2 skills exposés"
   updated: 2026-04-28
@@ -116,11 +116,11 @@ Principe : invisible quand c'est sûr, visible quand ça mord.
 
 ### Skills granulaires actuels
 
-Les 5 skills `/aic-feature-{new,update,handoff,done,resume}` et `/aic-quality-gate` :
+Les skills procéduraux `/aic-feature-*` et `/aic-quality-gate` :
 - **Disparaissent de l'UX** (plus mentionnés dans `_message_after_copy`, `AGENTS.md`).
 - **Restent comme fonctions internes** (renommés ou conservés sous `template/.claude/skills/aic/internals/`).
 - Invoqués par le hook `Stop` ou par `/aic` selon le routage.
-- `/aic-quality-gate` reste accessible directement (utile en CI/scripts).
+- Restent accessibles directement pour debug ou maintenance, mais la surface recommandée est `/aic-status`, `/aic-review`, `/aic-ship`.
 
 ## Cross-refs
 
@@ -161,6 +161,7 @@ Le skill `/aic` (mode override) reste Claude-only — acceptable : c'est un mode
 - **Renommage `→ workflow/auto-progress`** : envisagé puis **rejeté** pour stabilité d'`id` (cohérent avec notre propre heuristique extension/création).
 - **2026-05-03** — Le smoke-test commun lance désormais les tests unitaires de régression `check-feature-freshness` multi-feature et drift dogfood destination-only. Pas de changement sur `/aic`, mais cette feature touche `tests/smoke-test.sh` et reste documentée pour conformité freshness.
 - **2026-05-03** — `tests/smoke-test.sh` passe en `touches_shared` : il reste visible dans les rapports mais ne rend plus chaque évolution du smoke-test bloquante pour la fiche `/aic`.
+- **2026-05-03** — `_message_after_copy` ne présente plus les primitives procédurales comme gestes utilisateur. Les commandes exposées deviennent intentionnelles : `/aic-frame`, `/aic-status`, `/aic-diagnose`, `/aic-review`, `/aic-ship`.
 - Modèle final inspiré de la philosophie déjà présente dans le projet : *« le rituel doit être invisible »* (cf. `auto-worklog`).
 - **2026-04-24** — Ajout section `Compatibilité multi-agents` après prise de conscience du gap Codex : le hook Stop est Claude-only. Option B (git pre-commit comme point de convergence universel) retenue et implémentée dans `workflow/git-hooks` (mini-chantier 1.5, avant le skill `/aic` lui-même).
 - **2026-04-24** — Chantier 2 : skill `/aic` écrit (`template/.claude/skills/aic/` + dog-food `.claude/skills/aic/`). 2 modes : `/aic undo` (consomme `.progress-history.jsonl`) et `/aic <phrase>` (override conversationnel avec résolution fuzzy + plan + confirmation). Zéro script Bash dédié — la procédure est entièrement dans `workflow.md`, exécutée par l'agent Claude via ses tools standards (Read/Edit/Bash). Pas de rupture de compatibilité : `/aic` reste Claude-only, les autres agents éditent directement les fiches pour les overrides exceptionnels (documenté comme acceptable).

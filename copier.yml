@@ -69,7 +69,7 @@ _message_after_copy: |
     2. {{ "Activer les git hooks   : git config core.hooksPath .githooks && chmod +x .githooks/*" if adoption_mode != 'lite' else "Mode `lite` actif       : git hooks non scaffoldés (.githooks absent)." }}
        {{ "(inclut le pre-commit d'auto-progression universelle — tous agents)" if adoption_mode != 'lite' else "Pour activer l'enforcement git plus tard, repasser en mode `standard`/`strict` ou copier `.githooks` à la main." }}
     3. Éditer .ai/rules/<scope>.md pour enrichir les règles métier.
-    4. {% if 'claude' in agents %}(Claude, recommandé) /aic-project-guardrails → cadrer non-goals + glossaire métier (.ai/guardrails.md, chargé via Pack A){% else %}(recommandé) Créer .ai/guardrails.md à la main : non-goals (≥1) + glossaire métier optionnel{% endif %}
+    4. {% if 'claude' in agents %}(Claude, recommandé) /aic-frame → cadrer le projet/la première feature : plan, spécificités métier/technique, validation, non-goals éventuels (.ai/guardrails.md si utile){% else %}(recommandé) Cadrer la première feature en langage naturel : objectif, non-goals, spécificités métier/technique, validation attendue{% endif %}
     5. Vérifier les shims      : bash .ai/scripts/check-shims.sh
     6. Vérifier les features   : bash .ai/scripts/check-features.sh
     7. (optionnel) couverture  : bash .ai/scripts/check-feature-coverage.sh
@@ -86,19 +86,19 @@ _message_after_copy: |
     Les deux partagent auto-progress.sh et snapshotent dans .ai/.progress-history.jsonl.
     Les transitions `implement → review` et `review → done` restent manuelles via `/aic`.
 
-  Commandes exposées (rares, à utiliser seulement quand l'auto-progression ne suffit pas) :
+  Commandes exposées (intentionnelles, à utiliser quand le langage naturel ne suffit pas) :
     /aic                    → override conversationnel (ex: `/aic repasse en spec`,
                               `/aic rouvre feature-mesh pour ajouter status stable`)
     /aic undo               → annule la dernière bascule auto (consomme .progress-history.jsonl)
-    /aic-feature-resume     → dump EN COURS / BLOQUÉES / STALE / À FAIRE (lecture seule)
-    /aic-feature-audit      → rétro-doc (`discover`) / re-sync (`refresh`) d'une feature
-    /aic-quality-gate       → check go/no-go complet (utile en CI/scripts)
-    /aic-project-guardrails → cadre non-goals + glossaire métier (1-2 fois par projet)
-    /aic-diagnose         → diagnostic du bottleneck principal (Claude). Avec Codex :
-                            demander "diagnostique le blocage" ; même format attendu via .ai/agent/*
+    /aic-frame              → cadrage avant implémentation : plan + métier + technique + validation
+    /aic-status             → où en est-on ? features en cours, blockers, stale, delta
+    /aic-diagnose           → pourquoi ça bloque ? bottleneck principal + prochaine action
+    /aic-review             → quels risques dans le delta courant ? doc, features, checks
+    /aic-ship               → est-ce prêt à commit/PR ? gate + freshness + commit proposé
 
-  Les skills /aic-feature-{new,update,handoff,done} restent internes (invoqués par
-  les hooks et /aic selon l'intent détecté). Pas besoin de les taper à la main.
+  Les skills procéduraux /aic-feature-* et /aic-quality-gate restent des primitives
+  internes/fallback. L'UX recommandée est intentionnelle : frame, status, diagnose,
+  review, ship.
 
   Env vars utiles :
     AI_CONTEXT_DEBUG=1            → logs debug des hooks

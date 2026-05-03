@@ -11,7 +11,7 @@ Ce projet a été scaffoldé depuis le template [`ai_context`](https://github.co
    chmod +x .githooks/*
    ```
 3. Enrichir les fichiers `.ai/rules/<scope>.md` avec les règles spécifiques à ai_context.
-4. **Cadrer les guardrails** (recommandé) : dans Claude Code, lancer `/aic-project-guardrails` pour saisir les non-goals (hors-scope explicite) et le glossaire métier. Crée `.ai/guardrails.md` chargé via Pack A.
+4. **Cadrer avant d'implémenter** (recommandé) : dans Claude Code, lancer `/aic-frame` pour produire objectif, plan, spécificités métier/technique, validation et non-goals éventuels. Peut créer `.ai/guardrails.md` si le cadrage projet le justifie.
 5. Vérifier l'intégrité :
    ```bash
    bash .ai/scripts/check-shims.sh

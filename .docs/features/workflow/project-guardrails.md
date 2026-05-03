@@ -18,7 +18,7 @@ touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "création skill + intégration Pack A + smoke-test ; régressions review incluses"
+  step: "compatibilité maintenue ; cadrage recommandé via aic-frame"
   blockers: []
   resume_hint: "vérifier que le skill rendu apparaît dans /tmp/test-guardrails après copier copy ; valider qu'un dialogue /aic-project-guardrails produit bien .ai/guardrails.md conforme"
   updated: 2026-04-28
@@ -38,7 +38,7 @@ Le skill cible spécifiquement ce qui n'est *pas* déjà dans le README — pour
 
 | Skill | Statut | Quand l'invoquer |
 |---|---|---|
-| `/aic-project-guardrails` | exposé | 1-2 fois dans la vie d'un projet — bootstrap après scaffold + révisions ponctuelles quand les non-goals évoluent |
+| `/aic-project-guardrails` | compatibilité / fallback | Ancien point d'entrée dédié aux non-goals + glossaire ; préférer `/aic-frame` pour un cadrage complet |
 
 ### Workflow
 
@@ -58,7 +58,7 @@ Le skill cible spécifiquement ce qui n'est *pas* déjà dans le README — pour
 
 ## Contrats
 
-- Skill **exposé utilisateur** (pas interne). Catalogue passe de 4 à 5 surfaces utilisateur (`/aic`, `/aic-feature-resume`, `/aic-quality-gate`, `/aic-feature-audit`, `/aic-project-guardrails`).
+- Skill conservé pour compatibilité. La surface utilisateur recommandée est désormais `/aic-frame`.
 - Référencé dans Pack A via `.ai/index.md` § *Séquence de chargement obligatoire* — étape « 3. `.ai/guardrails.md` *(si présent)* ».
 - Pas d'injection runtime dans `pre-turn-reminder.sh` → coût tokens nul après lecture initiale.
 - Idempotent : ré-invocation = mode update sans perte de contenu.
@@ -76,3 +76,4 @@ Le skill cible spécifiquement ce qui n'est *pas* déjà dans le README — pour
 - **2026-05-03** — Dogfooding appliqué au repo source : le skill rendu `.claude/skills/aic-project-guardrails/*`, la référence Pack A dans `.ai/index.md` et l'étape recommandée dans `README_AI_CONTEXT.md` sont synchronisés.
 - **2026-05-03** — `tests/smoke-test.sh` intègre les tests unitaires de régression review. Aucun changement sur le skill guardrails, mais le smoke partagé de cette feature reste aligné.
 - **2026-05-03** — `tests/smoke-test.sh` passe en `touches_shared` pour conserver la visibilité review sans faux blocage freshness.
+- **2026-05-03** — `/aic-project-guardrails` reste supporté pour compatibilité, mais le point d'entrée recommandé devient `/aic-frame`, qui couvre aussi le cadrage feature (plan, métier, technique, validation) et peut matérialiser des guardrails si nécessaire.

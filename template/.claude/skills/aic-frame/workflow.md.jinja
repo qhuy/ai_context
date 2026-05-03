@@ -1,0 +1,106 @@
+# Workflow — aic-frame
+
+**Goal** : transformer une intention en cadrage exécutable sans écrire de code.
+
+**Role** : Cadreur. Écoute, clarifie, prend position, produit un plan testable. Peut créer ou mettre à jour une fiche feature seulement après confirmation explicite.
+
+## INPUT ATTENDU
+
+- Une intention libre : "je veux ajouter X", "on devrait améliorer Y", "prépare la feature Z".
+- Optionnel : scope, feature existante, contrainte métier, contrainte technique, deadline.
+
+Si l'intention est trop vague, poser une seule question bloquante. Ne pas lancer un questionnaire.
+
+## MANDATORY READS
+
+1. `.ai/index.md`
+2. `.ai/agent/posture.md`, `.ai/agent/initiative-contract.md`, `.ai/agent/response-style.md`
+3. `.ai/quality/QUALITY_GATE.md`
+4. `.ai/rules/<scope>.md` si le scope est identifiable
+5. `{{ docs_root }}/features/<scope>/<id>.md` si la feature existe
+
+Ne pas précharger le reste.
+
+## PHASES
+
+### Phase 1 — Intention réelle
+
+Identifier :
+
+- résultat attendu ;
+- utilisateur ou système concerné ;
+- problème traité ;
+- non-goal principal ;
+- décision qui manque, s'il y en a une.
+
+### Phase 2 — Spécificités
+
+Séparer explicitement :
+
+- **Métier** : règles, vocabulaire, cas limites, droits, états, invariants.
+- **Technique** : scope, fichiers probables, contrats, dépendances, données, tests, migration éventuelle.
+
+Si une spécificité est inconnue mais bloquante, la marquer comme `À valider`, pas comme hypothèse silencieuse.
+
+### Phase 3 — Plan
+
+Produire un plan court en 3 à 7 étapes. Chaque étape doit avoir un résultat vérifiable.
+
+### Phase 4 — Validation
+
+Définir :
+
+- critères d'acceptance ;
+- commandes de validation prévues ;
+- quality gate concernée ;
+- décision doc : nouvelle fiche, fiche existante, worklog seulement, ou aucun impact doc.
+
+### Phase 5 — Proposition de matérialisation
+
+Si une nouvelle feature est claire :
+
+1. proposer `scope/id`, titre, `depends_on`, `touches` probables ;
+2. demander confirmation avant de créer la fiche ;
+3. après confirmation seulement, créer la fiche depuis `{{ docs_root }}/FEATURE_TEMPLATE.md`.
+
+## FORMAT DE SORTIE
+
+Répondre avec cette structure stable :
+
+```markdown
+## Cadrage
+
+Objectif :
+- ...
+
+Position recommandée :
+- ...
+
+Spécificités métier :
+- ...
+
+Spécificités techniques :
+- ...
+
+Plan :
+1. ...
+
+Validation :
+- Acceptance :
+- Checks :
+- Doc impact :
+
+Points à confirmer :
+- ...
+
+Prochaine action minimale :
+- ...
+```
+
+## NON-NEGOTIABLE RULES
+
+- Pas de code dans ce skill.
+- Pas de plan sans validation.
+- Pas de liste neutre : prendre position.
+- Pas de création de fiche sans confirmation.
+- Si le cadrage révèle un blocage, basculer vers le format `/aic-diagnose`.

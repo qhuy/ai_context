@@ -49,7 +49,7 @@ Ce template **industrialise** tout ça :
 | Agent poli mais passif, vague ou trop explicatif | **`.ai/agent/*`** : posture, initiative, style de réponse et diagnostic juste-à-temps |
 | Agent qui invente des features ou duplique du code | **Feature mesh** (`{{ docs_root }}/features/<scope>/<id>.md`) avec `touches:` vérifié |
 | Pas de traçabilité entre commits et features | **Conventional Commits** bloquants, hook `feat:` refuse si aucune feature touchée |
-| Travail perdu entre sessions | **Frontmatter `progress:`** + **worklog append-only** + `/aic-feature-resume` |
+| Travail perdu entre sessions | **Frontmatter `progress:`** + **worklog append-only** + `/aic-status` |
 | Contexte qui explose les tokens | Filtrage par status + **`measure-context-size.sh`** + reminder compressé |
 | Code orphelin (pas couvert par feature) | **`check-feature-coverage.sh`** détecte la dérive |
 | Index stale après switch de branche | Hook git **`post-checkout`** rebuild auto |
@@ -119,16 +119,22 @@ flowchart LR
   subgraph Skills["Commandes /aic-* exposées utilisateur"]
     direction TB
     SAic[/aic (incl. undo)/]
-    SResume[/aic-feature-resume/]
-    SAudit[/aic-feature-audit/]
-    SGate[/aic-quality-gate/]
+    SFrame[/aic-frame/]
+    SStatus[/aic-status/]
+    SDiagnose[/aic-diagnose/]
+    SReview[/aic-review/]
+    SShip[/aic-ship/]
   end
 
   subgraph SkillsInternal["Skills internes (hooks + /aic)"]
     direction TB
     SNew[/aic-feature-new/]
+    SResume[/aic-feature-resume/]
     SUpdate[/aic-feature-update/]
     SHandoff[/aic-feature-handoff/]
+    SAudit[/aic-feature-audit/]
+    SGate[/aic-quality-gate/]
+    SGuard[/aic-project-guardrails/]
     SDone[/aic-feature-done/]
   end
 
@@ -260,14 +266,14 @@ bash .ai/scripts/check-shims.sh        # ✅ shims OK
 bash .ai/scripts/check-features.sh     # ⚠️ aucune feature (normal au début)
 ```
 
-Puis (recommandé) cadrer les guardrails projet — non-goals + glossaire métier qui orientent l'agent au-delà du README :
+Puis (recommandé) cadrer la première vraie tâche avant d'implémenter — objectif, non-goals, spécificités métier/technique, plan et validation :
 
 ```
 # Dans Claude Code :
-/aic-project-guardrails
+/aic-frame
 ```
 
-Crée `.ai/guardrails.md` (chargé via Pack A à chaque session, coût tokens nul à chaque tour).
+Si le cadrage révèle des non-goals ou un glossaire durable, l'agent peut proposer de créer `.ai/guardrails.md` (chargé via Pack A à chaque session, coût tokens nul à chaque tour).
 
 Exemple pour un projet C# backend + React/Next :
 
@@ -408,9 +414,11 @@ copier update
 
 Les réponses précédentes sont relues depuis `.copier-answers.yml`. Un diff est proposé par fichier — tu contrôles ce qui est appliqué. Relis [CHANGELOG.md](CHANGELOG.md) pour les breaking notes éventuelles.
 
-### 4. Créer une nouvelle feature
+### 4. Cadrer puis créer une nouvelle feature
 
-Dans Claude Code, invoque `/aic-feature-new` (le skill fait le reste). Ou manuellement, dans le dossier choisi via `docs_root` (`.docs` par défaut, `docs` possible) :
+Dans Claude Code, commence par `/aic-frame`. Il produit un cadrage stable : objectif, position recommandée, spécificités métier, spécificités techniques, plan, validation et points à confirmer. Si la feature est claire, il propose ensuite `scope/id`, `depends_on` et `touches`, puis demande confirmation avant de créer la fiche.
+
+Fallback manuel, dans le dossier choisi via `docs_root` (`.docs` par défaut, `docs` possible) :
 
 ```bash
 cp {{ docs_root }}/FEATURE_TEMPLATE.md {{ docs_root }}/features/back/auth-session.md
@@ -446,10 +454,10 @@ progress:
 **Le cas d'usage le plus précieux du template**. Au début d'une nouvelle session Claude :
 
 ```
-/aic-feature-resume
+/aic-status
 ```
 
-Le skill exécute `resume-features.sh`, affiche :
+Le skill exécute `resume-features.sh` et, si un delta git existe, `review-delta.sh`. Il affiche un état actionnable :
 
 ```
 ═══ resume-features ═══
@@ -465,17 +473,17 @@ Le skill exécute `resume-features.sh`, affiche :
   back/billing-legacy phase=review  updated=2026-04-01
 ```
 
-Tu choisis laquelle reprendre. Claude charge la fiche + le worklog + les rules du scope, résume l'état, demande confirmation, puis reprend au bon endroit.
+Tu choisis laquelle reprendre. Claude charge la fiche + le worklog + les rules du scope, résume l'état, demande confirmation, puis reprend au bon endroit. Le skill historique `/aic-feature-resume` reste disponible en fallback, mais `/aic-status` est l'entrée recommandée.
 
 **Auto-logging** (v0.7.1+) : deux hooks silencieux s'occupent du routine :
 - `PostToolUse` sur Write/Edit/MultiEdit → logue chaque modification dans `.ai/.session-edits.log`
 - `Stop` (fin de tour) → flush le log : une entrée worklog par feature touchée + bump `progress.updated` à today
 
-Tu n'as donc **plus besoin** d'invoquer `/aic-feature-update` pour chaque "j'ai modifié tel fichier". Invoque-le uniquement pour les **changements d'intent** : nouvelle `phase`, apparition/levée de `blocker`, nouveau `resume_hint`.
+Tu n'as donc **plus besoin** d'invoquer `/aic-feature-update` pour chaque "j'ai modifié tel fichier". Passe par `/aic` pour les rares corrections d'intent : nouvelle `phase`, apparition/levée de `blocker`, nouveau `resume_hint`.
 
 ### 6. Passer la main à un autre scope (handoff)
 
-Tu finis la partie back d'une feature, le front doit prendre le relais (ou tu bascules de session demain). `/aic-feature-handoff` formalise :
+Tu finis la partie back d'une feature, le front doit prendre le relais (ou tu bascules de session demain). Demande-le en langage naturel ou via `/aic` ; la primitive interne `/aic-feature-handoff` formalise :
 
 ```markdown
 ## 2026-04-23 14:30 — HANDOFF → front
@@ -497,7 +505,7 @@ PENDING
 
 ### 7. Clôturer une feature
 
-`/aic-quality-gate` puis `/aic-feature-done` :
+Utilise `/aic-ship` :
 
 ```
 | Check                    | Status | Détails              |
@@ -511,7 +519,7 @@ PENDING
 Verdict : GO
 ```
 
-Puis `/aic-feature-done` valide l'evidence (build+tests), passe `status: done`, scelle le worklog, suggère :
+Si le verdict est `GO`, `/aic-ship` propose un message de commit en français et attend confirmation avant toute action git. La clôture technique reste portée par les primitives internes (`aic-quality-gate`, `aic-feature-done`) quand nécessaire.
 
 ```
 feat(back): session JWT + refresh token
@@ -548,7 +556,7 @@ bash .ai/scripts/check-feature-coverage.sh --strict  # exit 1 si orphelins (CI)
 
 Scanne `src/`, `app/`, `lib/` et liste les fichiers non couverts par un `touches:` de feature. À passer en `--strict` en CI quand la couverture est raisonnable (>80%).
 
-Côté Claude, `/aic-feature-audit discover <scope>` va plus loin : propose un `id`/`title` pour chaque groupe d'orphelins et délègue la création à `/aic-feature-new` après confirmation ligne par ligne. Le pendant `/aic-feature-audit refresh <scope>/<id>` re-synchronise le frontmatter (`touches`, `depends_on`, `status`) avec la réalité du code.
+Côté Claude, demande une review du mesh via `/aic-review` ou utilise le fallback interne `/aic-feature-audit discover <scope>` pour proposer un `id`/`title` par groupe d'orphelins. Le pendant interne `refresh <scope>/<id>` re-synchronise le frontmatter (`touches`, `depends_on`, `status`) avec la réalité du code.
 
 ---
 
@@ -693,19 +701,23 @@ Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et dist
 | Commande | Quand l'utiliser |
 |---|---|
 | `/aic` | Override conversationnel (inclut `/aic undo`) si l'auto-progression se trompe |
-| `/aic-feature-resume` | Début de session — scan des features en cours, choix, chargement contexte |
-| `/aic-feature-audit` | Rétro-doc (`discover <scope>`) ou re-sync (`refresh <scope>/<id>`) d'une fiche vs code réel |
-| `/aic-quality-gate` | Avant commit/PR — verdict go/no-go factuel |
-| `/aic-project-guardrails` | 1-2 fois par projet — cadre non-goals + glossaire métier dans `.ai/guardrails.md` (oriente l'agent sur ce qui est hors-scope) |
+| `/aic-frame` | Cadrage avant implémentation — objectif, position, spécificités métier/technique, plan, validation |
+| `/aic-status` | Début de session — état actionnable, blockers, stale, delta courant, prochaine reprise |
 | `/aic-diagnose` | Diagnostic du bottleneck principal. Équivalent Codex : "diagnostique le blocage" |
+| `/aic-review` | Avant review/PR — risques du delta, features impactées, doc/freshness, checks |
+| `/aic-ship` | Avant commit/push — quality gate, evidence, commit proposé, confirmation obligatoire |
 
 ### Internes (normalement non invoqués à la main)
 
 | Skill | Rôle |
 |---|---|
 | `/aic-feature-new` | Créer fiche + worklog initial |
+| `/aic-feature-resume` | Backend historique de reprise, remplacé côté UX par `/aic-status` |
 | `/aic-feature-update` | Mettre à jour `progress.*` sur changement d'intent |
 | `/aic-feature-handoff` | Formaliser une passation inter-scope/session |
+| `/aic-feature-audit` | Backend de rétro-doc/re-sync, à réserver à la maintenance mesh |
+| `/aic-quality-gate` | Backend déterministe de `/aic-ship` |
+| `/aic-project-guardrails` | Compatibilité historique ; préférer `/aic-frame` pour le cadrage |
 | `/aic-feature-done` | Clôturer la feature (evidence + status `done`) |
 
 ---

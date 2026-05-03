@@ -14,7 +14,7 @@ Entrée unique pour tout agent AI. Les shims à la racine (AGENTS.md, CLAUDE.md,
    - `.ai/agent/posture.md` — posture, écoute, diagnostic, prise de position
    - `.ai/agent/initiative-contract.md` — quand agir, proposer, ou demander confirmation
    - `.ai/agent/response-style.md` — réponses concrètes, persuasion saine, prochaine action
-4. `.ai/guardrails.md` — non-goals + glossaire métier (si présent ; créé via `/aic-project-guardrails`)
+4. `.ai/guardrails.md` — non-goals + glossaire métier (si présent ; créé via `/aic-frame` ou `/aic-project-guardrails`)
 
 Puis **identifier le scope primaire** et charger :
 
@@ -67,7 +67,7 @@ Règles inférées automatiquement (V1, conservatrice) :
 - `progress.updated` bumpée à chaque édition.
 - Worklog appendé avec la liste des fichiers modifiés.
 
-Les transitions `implement → review` et `review → done` restent manuelles (override explicite ou `aic-feature-done`) pour éviter les faux positifs.
+Les transitions `implement → review` et `review → done` restent manuelles (via `/aic` ou `/aic-ship`) pour éviter les faux positifs.
 
 ### Skill `/aic` (override, rare)
 
@@ -78,19 +78,22 @@ Les transitions `implement → review` et `review → done` restent manuelles (o
 - `/aic force done` — clôture sans attendre inférence evidence
 - `/aic undo` — annule la dernière transition auto
 
-Interfaces Claude Code accessibles directement (lecture/CI) :
-- `/aic-feature-resume` — buckets EN COURS / BLOQUÉES / STALE / À FAIRE
-- `/aic-quality-gate` — check go/no-go complet
-- `/aic-project-guardrails` — cadre non-goals + glossaire métier (1-2 fois par projet ; produit `.ai/guardrails.md`)
-- `/aic-diagnose` — diagnostic stable du bottleneck principal quand une tâche ou feature est bloquée
+Interfaces Claude Code accessibles directement (intentionnelles) :
+- `/aic-frame` — cadrer une tâche/feature avant implémentation : plan, spécificités métier/technique, validation
+- `/aic-status` — où en est-on ? features en cours, blockers, stale, delta courant
+- `/aic-diagnose` — pourquoi ça bloque ? bottleneck principal + prochaine action minimale
+- `/aic-review` — quels risques dans le delta courant ? features impactées, doc, checks
+- `/aic-ship` — est-ce prêt à commit/PR ? quality gate + freshness + commit proposé
 
-Les autres skills `/aic-feature-{new,update,handoff,done}` sont **internes** (invoqués par les hooks et par `/aic`). Pas besoin de les taper à la main.
+Skills procéduraux internes / fallback :
+- `/aic-feature-{new,resume,update,handoff,audit,done}` et `/aic-quality-gate` restent disponibles pour debug ou délégation interne, mais ne constituent plus l'UX utilisateur recommandée.
+- `/aic-project-guardrails` reste supporté pour compatibilité ; `/aic-frame` est le point d'entrée recommandé pour le cadrage.
 
 ### Compatibilité Claude / Codex
 
-- **Claude Code** : peut utiliser les skills `.claude/skills/aic-*` quand ils existent.
+- **Claude Code** : peut utiliser les skills intentionnels `.claude/skills/aic-*` quand ils existent.
 - **Codex** : ne dépend d'aucun skill Claude. Il lit `AGENTS.md` → `.ai/index.md`, charge `.ai/agent/*`, puis applique les mêmes contrats en langage naturel.
-- Pour un diagnostic sous Codex, demander simplement : "diagnostique le blocage" ; Codex doit produire le même format que `/aic-diagnose`.
+- Pour Codex, demander en langage naturel : "cadre cette feature", "montre le status", "diagnostique le blocage", "review le delta", "prépare le ship". Codex applique les mêmes formats via `.ai/agent/*`.
 
 ## Runtime enforcement
 

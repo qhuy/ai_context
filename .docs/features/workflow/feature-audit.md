@@ -57,7 +57,7 @@ Deux modes explicites (argument obligatoire, pas d'auto-détection) :
 
 ## Contrats
 
-- **Exposé utilisateur** (pas interne) — rejoint le catalogue des 3 skills visibles (`/aic`, `/aic-feature-resume`, `/aic-quality-gate`) en 4ème entrée.
+- **Fallback interne / maintenance mesh** — anciennement exposé directement ; l'UX recommandée passe désormais par `/aic-review` ou une demande naturelle de rétro-doc.
 - **Dry-run par défaut** — aucune écriture sans `--apply` explicite.
 - **Jamais de batch silencieux** — `--apply` demande toujours confirmation fiche par fiche en `discover`, ou une confirmation globale en `refresh`.
 - **Délègue aux skills internes** — n'écrit pas directement. Passe par `/aic-feature-new` (discover) ou `/aic-feature-update` (refresh) pour préserver les invariants (worklog, progress bump).
