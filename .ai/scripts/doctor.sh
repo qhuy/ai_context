@@ -155,7 +155,7 @@ if [[ -f ".claude/settings.json" ]] && command -v jq >/dev/null 2>&1; then
       missing_hooks+=("$h")
     fi
   done
-  if [[ {% raw %}${#missing_hooks[@]}{% endraw %} -eq 0 ]]; then
+  if [[ ${#missing_hooks[@]} -eq 0 ]]; then
     ok ".claude/settings.json — hooks Claude présents (4/4)"
   else
     warn ".claude/settings.json — hooks manquants : ${missing_hooks[*]}"
@@ -172,7 +172,7 @@ if [[ "$inside_git" -eq 1 ]] && [[ -d ".githooks" ]]; then
       [[ -f "$h" ]] || continue
       [[ -x "$h" ]] || not_exec+=("$h")
     done
-    if [[ {% raw %}${#not_exec[@]}{% endraw %} -eq 0 ]]; then
+    if [[ ${#not_exec[@]} -eq 0 ]]; then
       ok "hooks git exécutables"
     else
       ko ".githooks/* non exécutables — les hooks resteront muets : ${not_exec[*]}"
@@ -182,7 +182,7 @@ if [[ "$inside_git" -eq 1 ]] && [[ -d ".githooks" ]]; then
 fi
 
 echo
-if [[ {% raw %}${#actions[@]}{% endraw %} -gt 0 ]]; then
+if [[ ${#actions[@]} -gt 0 ]]; then
   echo "Next actions:"
   i=1
   for a in "${actions[@]}"; do

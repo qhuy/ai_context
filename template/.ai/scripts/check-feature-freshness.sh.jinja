@@ -64,15 +64,17 @@ is_feature_doc_path() {
   [[ "$path" == "$AI_CONTEXT_FEATURES_DIR"/*".md" ]]
 }
 
-staged_contains_doc_for_feature() {
-  local staged_file="$1"
+staged_has_doc_for_feature() {
+  local staged_docs="$1"
   local feature_path="$2"
   local scope="$3"
   local id="$4"
-  local doc_path
-  while IFS= read -r doc_path; do
-    [[ "$staged_file" == "$doc_path" ]] && return 0
-  done < <(feature_doc_paths "$feature_path" "$scope" "$id")
+  local dir worklog_path
+  dir="$(dirname "$feature_path")"
+  worklog_path="$dir/$id.worklog.md"
+
+  printf '%s\n' "$staged_docs" | grep -Fxq "$feature_path" && return 0
+  printf '%s\n' "$staged_docs" | grep -Fxq "$worklog_path" && return 0
   return 1
 }
 
@@ -91,7 +93,14 @@ run_staged_check() {
   failures=$(mktemp "${TMPDIR:-/tmp}/ai-context-freshness.XXXXXX")
   trap 'rm -f "$failures"' RETURN
 
-  local rel scope id feature_path matched_doc staged_doc_candidate candidates
+  local staged_docs
+  staged_docs=$(printf '%s\n' "$staged" | while IFS= read -r rel; do
+    if is_feature_doc_path "$rel"; then
+      printf '%s\n' "$rel"
+    fi
+  done)
+
+  local rel scope id feature_path matched_doc candidates
   while IFS= read -r rel; do
     [[ -z "$rel" ]] && continue
     is_feature_doc_path "$rel" && continue
@@ -101,12 +110,9 @@ run_staged_check() {
     while IFS=$'\t' read -r scope id feature_path; do
       [[ -z "$scope" || -z "$id" || -z "$feature_path" ]] && continue
       candidates="${candidates}${rel}"$'\t'"${scope}/${id}"$'\t'"${feature_path}"$'\n'
-      while IFS= read -r staged_doc_candidate; do
-        if staged_contains_doc_for_feature "$staged_doc_candidate" "$feature_path" "$scope" "$id"; then
-          matched_doc=1
-          break
-        fi
-      done <<< "$staged"
+      if staged_has_doc_for_feature "$staged_docs" "$feature_path" "$scope" "$id"; then
+        matched_doc=1
+      fi
 
     done < <(features_matching_path "$index_file" "$rel")
 

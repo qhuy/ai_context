@@ -18,8 +18,8 @@
 # 50 dernières entrées gardées) pour permettre /aic undo plus tard.
 #
 # Silencieux et best-effort : ne bloque jamais. Lit le state via les fichiers
-# (auto-worklog-flush.sh vient de tourner et a clear .session-edits.log,
-# donc on s'appuie sur l'index + une trace volatile pré-flush).
+# (auto-worklog-flush.sh vient de tourner et a déplacé .session-edits.log
+# vers .session-edits.flushed, qu'on consomme puis vide).
 
 set -uo pipefail
 

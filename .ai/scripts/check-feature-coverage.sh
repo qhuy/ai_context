@@ -12,7 +12,9 @@
 #   bash .ai/scripts/check-feature-coverage.sh            # warn (exit 0 même avec orphelins)
 #   bash .ai/scripts/check-feature-coverage.sh --strict   # exit 1 si orphelins
 #
-# Config : éditer COVERAGE_ROOTS ci-dessous selon le repo.
+# Config :
+#   - defaults ci-dessous (compatibilité)
+#   - override optionnel via .ai/config.yml (section coverage)
 
 set -euo pipefail
 
@@ -27,6 +29,7 @@ repo_root="$(cd "$script_dir/../.." && pwd)"
 cd "$repo_root"
 
 index_file=".ai/.feature-index.json"
+config_file=".ai/config.yml"
 mode="${1:---warn}"
 
 # Zones de code à auditer. Ajuste selon ton repo.
@@ -36,8 +39,68 @@ COVERAGE_ROOTS=(
   "lib"
 )
 
+# Dossiers générés / dépendances à ignorer même s'ils vivent sous COVERAGE_ROOTS.
+COVERAGE_EXCLUDE_DIRS=(
+  "bin"
+  "obj"
+  "node_modules"
+  "dist"
+  "build"
+  ".next"
+  "wwwroot"
+  "coverage"
+  "TestResults"
+)
+
 # Extensions prises en compte
-COVERAGE_EXTS="ts tsx js jsx py rb go rs java kt swift php"
+COVERAGE_EXTS="cs cshtml ts tsx js jsx py rb go rs java kt swift php"
+
+read_coverage_list_from_config() {
+  local key="$1"
+  awk -v key="$key" '
+    /^coverage:[[:space:]]*$/ { in_cov=1; next }
+    in_cov && /^[^[:space:]]/ { in_cov=0; in_list=0 }
+    in_cov && $0 ~ ("^[[:space:]]*" key ":[[:space:]]*$") { in_list=1; next }
+    in_list {
+      if ($0 ~ /^[[:space:]]*-[[:space:]]*/) {
+        sub(/^[[:space:]]*-[[:space:]]*/, "", $0)
+        gsub(/[[:space:]]+$/, "", $0)
+        gsub(/^["'\'']|["'\'']$/, "", $0)
+        if (length($0) > 0) print $0
+        next
+      }
+      if ($0 ~ /^[[:space:]]*$/) next
+      in_list=0
+    }
+  ' "$config_file"
+}
+
+if [[ -f "$config_file" ]]; then
+  cfg_roots=()
+  while IFS= read -r line; do
+    [[ -n "$line" ]] && cfg_roots+=("$line")
+  done < <(read_coverage_list_from_config "roots")
+
+  cfg_exts=()
+  while IFS= read -r line; do
+    [[ -n "$line" ]] && cfg_exts+=("$line")
+  done < <(read_coverage_list_from_config "extensions")
+
+  cfg_excludes=()
+  while IFS= read -r line; do
+    [[ -n "$line" ]] && cfg_excludes+=("$line")
+  done < <(read_coverage_list_from_config "exclude_dirs")
+
+  if [[ ${#cfg_roots[@]} -gt 0 ]]; then
+    COVERAGE_ROOTS=("${cfg_roots[@]}")
+  fi
+  if [[ ${#cfg_exts[@]} -gt 0 ]]; then
+    COVERAGE_EXTS="${cfg_exts[*]}"
+  fi
+  if [[ ${#cfg_excludes[@]} -gt 0 ]]; then
+    COVERAGE_EXCLUDE_DIRS=("${cfg_excludes[@]}")
+  fi
+fi
 
 # Rebuild index si besoin
 if [[ ! -f "$index_file" ]]; then
@@ -78,6 +141,13 @@ total=0
 orphans=()
 for root in "${COVERAGE_ROOTS[@]}"; do
   [[ -d "$root" ]] || continue
+  prune_args=()
+  for excluded in "${COVERAGE_EXCLUDE_DIRS[@]}"; do
+    if [[ ${#prune_args[@]} -gt 0 ]]; then
+      prune_args+=( -o )
+    fi
+    prune_args+=( -name "$excluded" )
+  done
   while IFS= read -r -d '' file; do
     total=$((total + 1))
     covered=0
@@ -88,7 +158,7 @@ for root in "${COVERAGE_ROOTS[@]}"; do
       fi
     done
     [[ $covered -eq 0 ]] && orphans+=("$file")
-  done < <(find "$root" -type f \( "${ext_args[@]}" \) -print0 2>/dev/null)
+  done < <(find "$root" \( "${prune_args[@]}" \) -type d -prune -o -type f \( "${ext_args[@]}" \) -print0 2>/dev/null)
 done
 
 covered_count=$((total - ${#orphans[@]}))

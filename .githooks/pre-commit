@@ -3,7 +3,7 @@
 #
 # Pourquoi : le hook Claude `Stop` (auto-progress.sh) bascule les phases
 # silencieusement pour les utilisateurs Claude. Pour garantir que tout agent
-# (codex, cursor, gemini, copilot, humain) bénéficie du même automatisme,
+# (claude, codex, humain) bénéficie du même automatisme,
 # on ré-applique la logique au moment du commit — point de convergence universel.
 #
 # Comportement :

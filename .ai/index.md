@@ -10,13 +10,19 @@ Entrée unique pour tout agent AI. Les shims à la racine (AGENTS.md, CLAUDE.md,
 
 1. Ce fichier (`.ai/index.md`)
 2. `.ai/quality/QUALITY_GATE.md` — critères BLOQUANTS avant DONE
+3. Couche agent behavior — à charger une fois en début de session ou pour toute tâche importante :
+   - `.ai/agent/posture.md` — posture, écoute, diagnostic, prise de position
+   - `.ai/agent/initiative-contract.md` — quand agir, proposer, ou demander confirmation
+   - `.ai/agent/response-style.md` — réponses concrètes, persuasion saine, prochaine action
+4. `.ai/guardrails.md` — non-goals + glossaire métier (si présent ; créé via `/aic-project-guardrails`)
 
 Puis **identifier le scope primaire** et charger :
 
-3. `.ai/rules/<scope>.md` (Pack B, scope-dépendant)
-4. **Lister** `ls .docs/features/<scope>/` — obligatoire à chaque tâche (pas conditionnel).
-5. Si la tâche touche une feature existante → charger `.docs/features/<scope>/<id>.md` **et** suivre récursivement ses `depends_on`.
-6. Si la tâche crée une nouvelle feature → créer le fichier depuis `.docs/FEATURE_TEMPLATE.md` AVANT tout commit.
+5. `.ai/rules/<scope>.md` (Pack B, scope-dépendant)
+6. **Lister** `ls .docs/features/<scope>/` — obligatoire à chaque tâche (pas conditionnel).
+7. Si la tâche touche une feature existante → charger `.docs/features/<scope>/<id>.md` **et** suivre récursivement ses `depends_on`.
+8. Si la tâche crée une nouvelle feature → créer le fichier depuis `.docs/FEATURE_TEMPLATE.md` AVANT tout commit.
+
 
 ## Scopes disponibles
 
@@ -25,6 +31,8 @@ Puis **identifier le scope primaire** et charger :
 | `core` | [.ai/rules/core.md](rules/core.md) | — |
 | `quality` | [.ai/rules/quality.md](rules/quality.md) | — |
 | `workflow` | [.ai/rules/workflow.md](rules/workflow.md) | — |
+
+
 
 
 ## Feature mesh (règle transverse, systématique)
@@ -50,7 +58,7 @@ Toute feature DOIT avoir son fichier sous `.docs/features/<scope>/<id>.md`.
 | Canal | Déclenché par | Agents bénéficiaires | Latence |
 |---|---|---|---|
 | Hook Claude `Stop` (`auto-progress.sh`) | fin de tour Claude Code | Claude | immédiat (avant commit) |
-| Hook git `pre-commit` (`.githooks/pre-commit`) | `git commit` | tous (claude, codex, cursor, gemini, copilot, humain CLI) | au commit |
+| Hook git `pre-commit` (`.githooks/pre-commit`) | `git commit` | tous (claude, codex, humain CLI) | au commit |
 
 Les deux partagent le même script et snapshotent chaque transition dans `.ai/.progress-history.jsonl` (append-only, 50 dernières, gitignored) pour permettre `/aic undo`.
 
@@ -59,18 +67,30 @@ Règles inférées automatiquement (V1, conservatrice) :
 - `progress.updated` bumpée à chaque édition.
 - Worklog appendé avec la liste des fichiers modifiés.
 
-Les transitions `implement → review` et `review → done` restent manuelles pour éviter les faux positifs.
+Les transitions `implement → review` et `review → done` restent manuelles (override explicite ou `aic-feature-done`) pour éviter les faux positifs.
 
 ### Skill `/aic` (override, rare)
 
 À n'utiliser que quand l'auto-progression se trompe :
-- `/aic repasse en spec`, `/aic marque blocked`, `/aic rouvre feature-X`, `/aic force done`, `/aic undo`.
+- `/aic repasse en spec` — rollback d'une bascule mal inférée
+- `/aic marque ça blocked, j'attends X` — bloqueur explicite
+- `/aic rouvre feature-X pour Y` — réouverture d'une fiche `done`
+- `/aic force done` — clôture sans attendre inférence evidence
+- `/aic undo` — annule la dernière transition auto
 
-Skills accessibles directement (lecture/CI) :
+Interfaces Claude Code accessibles directement (lecture/CI) :
 - `/aic-feature-resume` — buckets EN COURS / BLOQUÉES / STALE / À FAIRE
 - `/aic-quality-gate` — check go/no-go complet
+- `/aic-project-guardrails` — cadre non-goals + glossaire métier (1-2 fois par projet ; produit `.ai/guardrails.md`)
+- `/aic-diagnose` — diagnostic stable du bottleneck principal quand une tâche ou feature est bloquée
 
-Les autres `/aic-feature-{new,update,handoff,done}` sont **internes** (invoqués par les hooks et par `/aic`).
+Les autres skills `/aic-feature-{new,update,handoff,done}` sont **internes** (invoqués par les hooks et par `/aic`). Pas besoin de les taper à la main.
+
+### Compatibilité Claude / Codex
+
+- **Claude Code** : peut utiliser les skills `.claude/skills/aic-*` quand ils existent.
+- **Codex** : ne dépend d'aucun skill Claude. Il lit `AGENTS.md` → `.ai/index.md`, charge `.ai/agent/*`, puis applique les mêmes contrats en langage naturel.
+- Pour un diagnostic sous Codex, demander simplement : "diagnostique le blocage" ; Codex doit produire le même format que `/aic-diagnose`.
 
 ## Runtime enforcement
 

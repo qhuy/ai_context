@@ -16,6 +16,7 @@
 - Tests unitaires `tests/unit/test-is-path-within-repo.sh` — 30 cas couvrant safe (relatifs, globs, espaces) et unsafe (absolus Unix, Windows lettre+drive, UNC, backslash, traversées, home, NUL/tab/newline, vide). Lancé en tête de smoke-test.
 - CI : `windows-latest` ajouté à la matrix `template-smoke-test.yml` en `continue-on-error: true` (best-effort, non-bloquant). `shellcheck` reste Linux/macOS.
 - Smoke-test : étape bonus « big-mesh » qui génère 60 features (30 back + 30 front avec dépendances), vérifie que `pre-turn-reminder` reste sous 30 000 chars, que `AI_CONTEXT_FOCUS=back` réduit la taille, et que `context.max_tokens_warn` déclenche bien le warning stderr.
+- Scripts source-only de dogfooding : `.ai/scripts/dogfood-update.sh` rend le template dans `/tmp` puis synchronise le runtime du repo source ; `.ai/scripts/check-dogfood-drift.sh` compare le runtime dogfoodé à un rendu Copier minimal en ignorant les fichiers mainteneur source-only.
 
 ### Sécurité
 - `check-features.sh` rejette désormais les motifs `touches:` hors repo (chemin absolu Unix/Windows, UNC, backslash, traversée `..`, expansion `~`, caractères de contrôle). Bloquant en CI. Voir [SECURITY.md — Trust model du feature mesh](SECURITY.md).
@@ -31,6 +32,7 @@
 - `docs/getting-started.md` documente explicitement les plateformes : Linux/macOS ✅, WSL2 ✅, Git Bash ⚠️ best-effort, PowerShell pur ❌.
 - `SECURITY.md` ajoute une section « Trust model du feature mesh » : ce qui est validé, ce qui ne l'est pas, recommandations PR.
 - **Placeholders `auto_transitions.implement_to_review` / `review_to_done` retirés** — ces clés étaient scaffoldées dans `.ai/config.yml` sans être lues par aucun script (« informatif ») et créaient de la confusion utilisateur (« j'active à `true`, rien ne se passe »). Décision d'honnêteté : on retire jusqu'à ce qu'une vraie heuristique soit définie. Les transitions `implement → review` et `review → done` restent **manuelles** via `/aic` (Claude) ou édition directe du frontmatter. Pas un breaking change : ces clés n'avaient aucun effet runtime.
+- `doctor.sh --strict` ne considère plus `.githooks/README.md` comme un hook à rendre exécutable. Le contrôle cible uniquement `commit-msg`, `pre-commit` et `post-checkout`.
 
 ### Tests
 - Smoke-test étendu — assertion Cursor MDC scopés après `[28b/28]` : avec `agents=cursor + fullstack` les fichiers `.cursor/rules/{protocol-reminder,back,front}.mdc` sont rendus avec frontmatter `globs:` ; avec `cursor` absent, pas de `.cursor/` ; avec `cursor + minimal` (sans back/front), seul `protocol-reminder.mdc` reste.

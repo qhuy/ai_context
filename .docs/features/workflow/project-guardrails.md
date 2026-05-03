@@ -7,6 +7,9 @@ depends_on:
   - workflow/claude-skills
   - core/feature-mesh
 touches:
+  - .claude/skills/aic-project-guardrails/**
+  - .ai/index.md
+  - README_AI_CONTEXT.md
   - template/.claude/skills/aic-project-guardrails/**
   - template/.ai/index.md.jinja
   - template/README_AI_CONTEXT.md.jinja
@@ -69,3 +72,4 @@ Le skill cible spécifiquement ce qui n'est *pas* déjà dans le README — pour
 ## Historique / décisions
 
 - **2026-04-28** — Création. Première itération envisageait un skill 4-sections (Vision + Users + Non-goals + Glossaire) sous le nom `/aic-project-bootstrap`. Audit honnête : Vision et Users sont redondants avec README et `project_description`. Resserrage aux **Non-goals + Glossaire** seuls (la valeur unique non couverte ailleurs), renommage en `/aic-project-guardrails` (intent : orienter l'agent, éviter la dérive — distinct d'un README marketing). Le fichier produit vit sous `.ai/` (orientation agent) et non sous `{{ docs_root }}/` (doc métier).
+- **2026-05-03** — Dogfooding appliqué au repo source : le skill rendu `.claude/skills/aic-project-guardrails/*`, la référence Pack A dans `.ai/index.md` et l'étape recommandée dans `README_AI_CONTEXT.md` sont synchronisés.

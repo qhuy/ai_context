@@ -15,10 +15,10 @@ touches:
   - template/.github/workflows/ai-context-check.yml.jinja
 progress:
   phase: implement
-  step: "check freshness + enforcement commit"
+  step: "staged freshness robuste sur gros commits"
   blockers: []
-  resume_hint: "verifier shellcheck et checks quality apres branchement CI"
-  updated: 2026-04-29
+  resume_hint: "verifier le mode --staged --strict pendant les commits multi-features"
+  updated: 2026-05-03
 ---
 
 # Fraicheur documentaire des features
@@ -48,4 +48,5 @@ Aucune dependance de feature declaree.
 
 ## Historique / decisions
 
+- 2026-05-03 : simplification du controle staged. Le script pre-calcule les fiches/worklogs stages au lieu de rescanner tous les fichiers stages pour chaque feature candidate, ce qui evite un crash local silencieux sur gros commits dogfood.
 - 2026-04-29 : creation du filet de securite doc/code freshness pour completer `check-features.sh`, qui valide la structure mais pas la maintenance semantique.

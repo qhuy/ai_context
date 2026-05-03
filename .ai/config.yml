@@ -1,0 +1,53 @@
+docs_root: ".docs"
+project_id: "ai_context"
+
+coverage:
+  roots:
+    - src
+    - app
+    - lib
+  extensions:
+    - cs
+    - cshtml
+    - ts
+    - tsx
+    - js
+    - jsx
+    - py
+    - rb
+    - go
+    - rs
+    - java
+    - kt
+    - swift
+    - php
+  exclude_dirs:
+    - bin
+    - obj
+    - node_modules
+    - dist
+    - build
+    - .next
+    - wwwroot
+    - coverage
+    - TestResults
+
+progress:
+  stale_after_days: 14
+  # Auto-progression : nombre maximal de snapshots conservés dans
+  # .ai/.progress-history.jsonl (FIFO). Au-delà, les plus anciens sont
+  # écrasés. Influence la profondeur d'undo possible via /aic undo.
+  history_max_entries: 50
+  auto_transitions:
+    # spec → implement : déclenchée par auto-progress.sh quand ≥1 fichier
+    # hors la fiche/worklog est édité dans le tour. Repassez à false pour
+    # désactiver complètement l'auto-progression.
+    spec_to_implement: true
+
+context:
+  show_statuses:
+    - active
+    - draft
+    - "?"
+  default_focus: null
+  max_tokens_warn: 6000

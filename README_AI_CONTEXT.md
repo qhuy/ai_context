@@ -11,7 +11,8 @@ Ce projet a été scaffoldé depuis le template [`ai_context`](https://github.co
    chmod +x .githooks/*
    ```
 3. Enrichir les fichiers `.ai/rules/<scope>.md` avec les règles spécifiques à ai_context.
-4. Vérifier l'intégrité :
+4. **Cadrer les guardrails** (recommandé) : dans Claude Code, lancer `/aic-project-guardrails` pour saisir les non-goals (hors-scope explicite) et le glossaire métier. Crée `.ai/guardrails.md` chargé via Pack A.
+5. Vérifier l'intégrité :
    ```bash
    bash .ai/scripts/check-shims.sh
    bash .ai/scripts/check-features.sh
@@ -28,6 +29,8 @@ Ce projet a été scaffoldé depuis le template [`ai_context`](https://github.co
 - `core` → `.ai/rules/core.md`
 - `quality` → `.ai/rules/quality.md`
 - `workflow` → `.ai/rules/workflow.md`
+
+
 
 
 ## Feature mesh (systématique)
@@ -50,8 +53,8 @@ Les réponses déjà données sont relues depuis `.copier-answers.yml`. Tu contr
 
 ## Runtime
 
-- Claude Code : hooks `UserPromptSubmit` (reminder), `PreToolUse` (commit guard + features par path), `PostToolUse` (auto-worklog) et `Stop` (flush + auto-progress) configurés dans `.claude/settings.json` — activer avec `/hooks` au premier démarrage.
-- Git : hooks `commit-msg`, `pre-commit` et `post-checkout` sous `.githooks/` (active via `git config core.hooksPath .githooks`). `commit-msg` bloque les `feat:` sans feature doc ; `pre-commit` applique l'auto-progression agent-agnostic ; `post-checkout` reconstruit l'index.
+- Claude Code : hooks `UserPromptSubmit` (reminder) + `PreToolUse` sur `git commit` (feature mesh guard) configurés dans `.claude/settings.json` — activer avec `/hooks` au premier démarrage.
+- Git : hook `commit-msg` sous `.githooks/` (active via `git config core.hooksPath .githooks`). Bloque les `feat:` sans feature doc, même hors Claude.
 - Contenu du reminder : `.ai/reminder.md` (éditable librement).
 
 ## Checks

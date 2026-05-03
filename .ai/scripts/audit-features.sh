@@ -1,0 +1,228 @@
+#!/bin/bash
+# audit-features.sh — Audit agent-agnostique du mesh (MVP discover only).
+#
+# Usage :
+#   bash .ai/scripts/audit-features.sh discover <scope> [--apply]
+#   bash .ai/scripts/audit-features.sh --help
+#
+# Périmètre actuel (MVP) :
+#   - mode `discover <scope>` uniquement
+#   - dry-run par défaut, --apply crée des fiches draft minimales (un par groupe orphelin)
+#   - aucune confirmation interactive ; aucun mode `refresh` ; pas de filtrage `--since`
+#
+# Pour une UX plus riche (refresh, --interactive, déléguer à /aic-feature-new),
+# utiliser le skill Claude `/aic-feature-audit` (workflow.md). Voir aussi la
+# feature `workflow/feature-audit`.
+
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=_lib.sh
+. "$script_dir/_lib.sh"
+
+require_cmd jq git
+enable_globstar
+
+repo_root="$(cd "$script_dir/../.." && pwd)"
+cd "$repo_root"
+
+mode="${1:-}"
+target="${2:-}"
+apply=0
+for arg in "$@"; do
+  case "$arg" in
+    --apply) apply=1 ;;
+    -h|--help) mode="help" ;;
+  esac
+done
+
+usage() {
+  cat <<'USAGE'
+Usage: bash .ai/scripts/audit-features.sh discover <scope> [--apply]
+
+MVP discover only — pas de mode `refresh`, pas de mode interactif.
+Dry-run par défaut. --apply crée des fiches draft minimales.
+
+Options :
+  --apply       écrit les fiches draft (sinon dry-run)
+  -h, --help    affiche cette aide
+USAGE
+}
+
+if [[ "$mode" == "help" ]]; then
+  usage
+  exit 0
+fi
+
+if [[ "$mode" != "discover" || -z "$target" ]]; then
+  usage >&2
+  exit 1
+fi
+
+scope="$target"
+features_scope_dir="$AI_CONTEXT_FEATURES_DIR/$scope"
+if [[ ! -d "$features_scope_dir" ]]; then
+  echo "❌ scope inconnu: $scope (dossier absent: $features_scope_dir)" >&2
+  exit 1
+fi
+
+index_file=".ai/.feature-index.json"
+if [[ ! -f "$index_file" ]]; then
+  bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
+fi
+if [[ ! -f "$index_file" ]]; then
+  echo "❌ index absent: $index_file" >&2
+  exit 1
+fi
+
+touches=()
+while IFS= read -r t; do
+  [[ -n "$t" ]] && touches+=("$t")
+done < <(jq -r --arg s "$scope" '
+  .features[]
+  | select(.scope == $s and (.status == "active" or .status == "draft"))
+  | (.touches // [])[]
+' "$index_file" | sort -u)
+
+exclude_path() {
+  local p="$1"
+  [[ "$p" == .ai/* ]] && return 0
+  [[ "$p" == .docs/* ]] && return 0
+  [[ "$p" == docs/* ]] && return 0
+  [[ "$p" == .githooks/* ]] && return 0
+  [[ "$p" == .github/* ]] && return 0
+  [[ "$p" == .claude/* ]] && return 0
+  [[ "$p" == node_modules/* ]] && return 0
+  [[ "$p" == dist/* ]] && return 0
+  [[ "$p" == build/* ]] && return 0
+  [[ "$p" == coverage/* ]] && return 0
+  return 1
+}
+
+tracked=()
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  while IFS= read -r f; do
+    [[ -n "$f" ]] && tracked+=("$f")
+  done < <(git ls-files --cached --others --exclude-standard)
+else
+  # Fallback hors repo git (scaffold neuf, smoke-test) : find filtré.
+  while IFS= read -r f; do
+    [[ -n "$f" ]] && tracked+=("$f")
+  done < <(find . -type f \
+    -not -path './.git/*' \
+    -not -path './.ai/*' \
+    -not -path './.docs/*' \
+    -not -path './docs/*' \
+    -not -path './.githooks/*' \
+    -not -path './.github/*' \
+    -not -path './.claude/*' \
+    -not -path './node_modules/*' \
+    -not -path './dist/*' \
+    -not -path './build/*' \
+    -not -path './coverage/*' \
+    | sed 's|^\./||')
+fi
+orphans=()
+if [[ "${#tracked[@]}" -gt 0 ]]; then
+  for f in "${tracked[@]}"; do
+    exclude_path "$f" && continue
+    [[ -f "$f" ]] || continue
+    covered=0
+    if [[ "${#touches[@]}" -gt 0 ]]; then
+      for t in "${touches[@]}"; do
+        if path_matches_touch "$f" "$t"; then
+          covered=1
+          break
+        fi
+      done
+    fi
+    [[ "$covered" -eq 0 ]] && orphans+=("$f")
+  done
+fi
+
+groups=()
+group_keys=""
+for f in "${orphans[@]}"; do
+  d="$(dirname "$f")"
+  [[ "$d" == "." ]] && d="$scope"
+  if ! printf '%s\n' "$group_keys" | grep -Fxq "$d"; then
+    groups+=("$d")
+    group_keys+="$d"$'\n'
+  fi
+done
+
+echo "═══ audit-features discover <$scope> ═══"
+echo "dry-run: $([[ "$apply" -eq 1 ]] && echo "no (--apply)" || echo "yes")"
+echo
+
+if [[ "${#orphans[@]}" -eq 0 ]]; then
+  echo "✓ Aucun orphelin détecté."
+  exit 0
+fi
+
+echo "| Fichiers orphelins | id proposé | title inféré |"
+echo "|---|---|---|"
+for g in "${groups[@]}"; do
+  id_guess="$(basename "$g" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')"
+  [[ -z "$id_guess" ]] && id_guess="todo-feature"
+  title_guess="$(echo "$id_guess" | sed -E 's/-+/ /g; s/\b(.)/\U\1/g')"
+  first_file=""
+  for f in "${orphans[@]}"; do
+    d="$(dirname "$f")"
+    [[ "$d" == "." ]] && d="$scope"
+    if [[ "$d" == "$g" ]]; then
+      first_file="$f"
+      break
+    fi
+  done
+  echo "| $first_file | $id_guess | $title_guess |"
+done
+
+if [[ "$apply" -eq 0 ]]; then
+  echo
+  echo "ℹ️ Dry-run terminé. Rejoue avec --apply pour créer les fiches draft."
+  exit 0
+fi
+
+echo
+echo "⚠️ --apply actif : création de fiches draft minimales."
+for g in "${groups[@]}"; do
+  id_guess="$(basename "$g" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')"
+  [[ -z "$id_guess" ]] && id_guess="todo-feature"
+  feature_file="$AI_CONTEXT_FEATURES_DIR/$scope/$id_guess.md"
+  worklog_file="$AI_CONTEXT_FEATURES_DIR/$scope/$id_guess.worklog.md"
+  [[ -f "$feature_file" ]] && continue
+
+  title_guess="$(echo "$id_guess" | sed -E 's/-+/ /g; s/\b(.)/\U\1/g')"
+  first_file=""
+  for f in "${orphans[@]}"; do
+    d="$(dirname "$f")"
+    [[ "$d" == "." ]] && d="$scope"
+    if [[ "$d" == "$g" ]]; then
+      first_file="$f"
+      break
+    fi
+  done
+  cat > "$feature_file" <<EOF
+---
+id: $id_guess
+scope: $scope
+title: $title_guess
+status: draft
+depends_on: []
+touches:
+  - $first_file
+---
+EOF
+  cat > "$worklog_file" <<EOF
+# Worklog — $scope/$id_guess
+
+## $(date +%Y-%m-%d) — création par audit-features --apply
+
+- Fiche draft créée automatiquement depuis un groupe d'orphelins.
+EOF
+  echo "  + $feature_file"
+done
+
+bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
+echo "✓ apply terminé"

@@ -25,6 +25,9 @@ AI_CONTEXT_DOCS_ROOT="${AI_CONTEXT_DOCS_ROOT:-.docs}"
 AI_CONTEXT_FEATURES_DIR="$AI_CONTEXT_DOCS_ROOT/features"
 AI_CONTEXT_SCHEMA_FILE="${AI_CONTEXT_SCHEMA_FILE:-.ai/schema/feature.schema.json}"
 
+# Lit un enum depuis le schema JSON via jq. Fallback hardcodé si schema/jq absent.
+# Usage : read_schema_enum <jq-path> <fallback>
+# Ex.   : read_schema_enum '.properties.status.enum' "draft active done deprecated archived"
 read_schema_enum() {
   local jq_path="$1"
   local fallback="$2"

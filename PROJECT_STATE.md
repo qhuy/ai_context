@@ -13,6 +13,10 @@
 2. Lire [CHANGELOG.md](CHANGELOG.md) — les dernières breaking/nouveautés.
 3. Lancer le smoke-test : `export PATH="$HOME/Library/Python/3.9/bin:$PATH" && bash tests/smoke-test.sh` (28 étapes, attendu `✅ PASS`).
 4. Consommer le template : `copier copy gh:qhuy/ai_context ./mon-projet`. Mettre à jour : `cd mon-projet && copier update`.
+5. Dogfooder le repo source après évolution du template. Le repo source n'a pas de `.copier-answers.yml` et ne doit pas être mis à jour via `copier update` :
+   - preview : `bash .ai/scripts/dogfood-update.sh`
+   - apply : `bash .ai/scripts/dogfood-update.sh --apply`
+   - drift : `bash .ai/scripts/check-dogfood-drift.sh`
 
 ## Architecture (vue d'ensemble)
 
@@ -27,6 +31,7 @@
 - `template/.ai/scripts/audit-features.sh` — audit agent-agnostique (`discover`, dry-run par défaut, `--apply` explicite).
 - `template/.ai/scripts/migrate-features.sh` — migration frontmatter (`schema_version`, status legacy, champs manquants) en dry-run/apply.
 - `template/.ai/scripts/pr-report.sh` — rapport markdown d'impact features depuis un diff git.
+- `.ai/scripts/dogfood-update.sh` + `check-dogfood-drift.sh` — scripts source-only pour appliquer / contrôler le runtime rendu dans ce repo sans utiliser `copier update` sur le repo mainteneur.
 - CI : `yq` versionnée et `shellcheck` sur `.ai/scripts/*.sh` dans les workflows de garde.
 - CI check : matrix `ubuntu-latest` + `macos-latest` sur le workflow principal.
 - `copier.yml` expose `adoption_mode` (`lite`, `standard`, `strict`) pour calibrer hooks/CI dès le scaffold.
@@ -59,6 +64,7 @@
 - 🚧 Reste à faire : consommer `context.show_statuses` et `context.default_focus` (aujourd'hui via env vars `AI_CONTEXT_*`).
 - CI source repo : workflow GitHub Actions sur `qhuy/ai_context` lui-même qui exécute `tests/smoke-test.sh` (matrix Ubuntu/macOS).
 - Dog-fooding : appliquer pleinement le mesh sur `ai_context` lui-même (déjà partiellement fait sous `.docs/features/`).
+- Dog-fooding runtime : script source-only disponible ; les workflows CI source restent volontairement hors synchronisation car plus stricts que le rendu downstream.
 
 **P2 — confort UX**
 - Pipelines CI hors GitHub Actions (Azure DevOps, GitLab).

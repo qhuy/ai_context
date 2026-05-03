@@ -18,5 +18,5 @@ chmod +x .githooks/*
   - Invoque `.ai/scripts/auto-progress.sh` (même logique que le hook Claude `Stop`).
   - Re-stage les fiches/worklogs modifiés pour que la bascule soit dans le commit.
   - Non bloquant (best-effort : toute erreur → exit 0).
-  - Garantit que Codex, Cursor, Gemini, Copilot ou un humain en CLI bénéficient
+  - Garantit que codex ou un humain en CLI bénéficient
     du même automatisme que Claude Code.

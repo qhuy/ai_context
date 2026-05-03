@@ -7,6 +7,7 @@ depends_on:
   - quality/ci-guard
   - core/template-engine
 touches:
+  - .ai/scripts/doctor.sh
   - template/.ai/scripts/doctor.sh.jinja
   - README.md
   - PROJECT_STATE.md
@@ -56,3 +57,4 @@ Réduire la friction d'adoption en fournissant un point d'entrée unique de diag
 - 2026-04-28 : édition cross-feature (PR1 v0.10) — README, PROJECT_STATE et CHANGELOG synchronisés avec la portée actuelle de `doctor.sh` (mode par défaut informatif, `--strict` opt-in). Aucun changement de comportement runtime ; entrée d'historique pour conformité anti-doc-drift (touches inclut README/PROJECT_STATE/CHANGELOG).
 - 2026-04-28 : `tests/smoke-test.sh` étendu (assertions `pr-report --format=json` + `--include-docs`, wrapper `ai-context.sh`, `audit-features` paths-with-spaces, `check-features` exige depends_on/touches). Aucun impact sur le comportement de `doctor.sh` lui-même mais le smoke-test reste la garantie de non-régression.
 - 2026-04-28 (post-v0.10.0) : fix faux positifs détectés au sanity check post-tag. `doctor.sh` testait la présence des scripts critiques avec `[[ -x ".ai/scripts/X.sh" ]]` (executable bit) alors que le bit +x n'est pas systématiquement préservé après rendu Copier (modes 644 vs 755). Tous les scripts sont invoqués via `bash <script>` qui n'a pas besoin du bit +x. Remplacé par `[[ -f ]]` (présence du fichier). Concerne `check-shims.sh`, `check-features.sh`, `measure-context-size.sh`. Bug pré-existant depuis l'introduction de `doctor.sh` (v0.9+), non bloquant car doctor par défaut exit 0, mais cosmétique et trompeur. Pas de release dédiée — sera embarqué dans v0.10.1 ou la prochaine version.
+- 2026-05-03 : correction du contrôle `.githooks` : `doctor --strict` vérifie désormais uniquement les vrais hooks exécutables (`commit-msg`, `pre-commit`, `post-checkout`) et ignore `.githooks/README.md`. Évite de demander `chmod +x` sur une documentation.
