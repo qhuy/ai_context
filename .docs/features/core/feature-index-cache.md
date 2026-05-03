@@ -6,9 +6,12 @@ status: active
 depends_on:
   - core/feature-mesh
 touches:
+  - .ai/scripts/build-feature-index.sh
   - template/.ai/scripts/build-feature-index.sh.jinja
   - template/.ai/scripts/_lib.sh.jinja
   - .ai/scripts/_lib.sh
+  - template/.ai/scripts/pr-report.sh.jinja
+  - .ai/scripts/pr-report.sh
 progress:
   phase: review
   step: "bootstrap dog-fooding (v0.9 historique)"
@@ -32,7 +35,7 @@ progress:
 
 ## Contrats
 
-- Sortie : tableau JSON `[{id, scope, title, status, depends_on, touches, progress?, path}]`.
+- Sortie : tableau JSON `[{id, scope, title, status, depends_on, touches, touches_shared, progress?, path}]`.
 - Idempotent : 2 builds successifs produisent un JSON byte-identique.
 - Tolérance : feature au frontmatter invalide → exclue + warning, pas d'arrêt.
 
@@ -47,3 +50,4 @@ progress:
 - 2026-04-24 : centralisation du matching `touches:` dans `_lib.sh` (`path_matches_touch` + `features_matching_path`). Les hooks/scripts consommateurs partagent désormais la même sémantique exact/dossier/glob/`/**`.
 - 2026-04-24 : `AI_CONTEXT_DOCS_ROOT` et `AI_CONTEXT_FEATURES_DIR` ajoutés dans `_lib.sh` pour que les scripts runtime suivent le `docs_root` rendu par Copier au lieu de réencoder `.docs/features`.
 - 2026-04-28 : ajout `is_valid_phase()` dans `.ai/scripts/_lib.sh` (dogfoodé) **et** `template/.ai/scripts/_lib.sh.jinja` (la doc d'en-tête le promettait déjà via `PHASE_ENUM`). Suppression de la définition locale dupliquée dans `template/.ai/scripts/check-features.sh.jinja`. Aucun changement de comportement runtime — la fonction délègue à `PHASE_ENUM` (lui-même dérivé du schema). Smoke-test [11/28] couvre toujours le warning `progress.phase='typo'`.
+- 2026-05-03 : index enrichi avec `touches_shared` et helpers `_lib.sh` dédiés (`features_matching_shared_path`, `features_related_to_path`). `features_matching_path` reste volontairement limité aux `touches` directs pour préserver la sémantique bloquante.

@@ -60,19 +60,33 @@ compare_tree() {
   local label="$1"
   local src="$2"
   local dst="$3"
+  local rel
   if [[ ! -d "$dst" ]]; then
     echo "missing-runtime: $label ($dst)"
     diff_found=1
     return
   fi
   while IFS= read -r rel; do
-    case "$rel" in
-      .feature-index.json|.progress-history.jsonl|scripts/dogfood-update.sh|scripts/check-dogfood-drift.sh)
-        continue
-        ;;
-    esac
+    is_ignored_runtime_extra "$rel" && continue
     compare_file "$label/$rel" "$src/$rel" "$dst/$rel"
   done < <(cd "$src" && find . -type f | sed 's#^\./##' | sort)
+
+  while IFS= read -r rel; do
+    is_ignored_runtime_extra "$rel" && continue
+    if [[ ! -e "$src/$rel" ]]; then
+      echo "extra-runtime: $label/$rel"
+      diff_found=1
+    fi
+  done < <(cd "$dst" && find . -type f | sed 's#^\./##' | sort)
+}
+
+is_ignored_runtime_extra() {
+  case "$1" in
+    .feature-index.json|.progress-history.jsonl|.session-edits.log|.session-edits.flushed|scripts/dogfood-update.sh|scripts/check-dogfood-drift.sh)
+      return 0
+      ;;
+  esac
+  return 1
 }
 
 echo "═══ check-dogfood-drift ═══"

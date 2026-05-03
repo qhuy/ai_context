@@ -10,7 +10,7 @@ touches:
   - template/**
 progress:
   phase: review
-  step: "enrichir les presets techno (V1 tech-dotnet + tech-react + stack-fullstack)"
+  step: "enrichir les presets techno ; template freshness renforcé"
   blockers: []
   resume_hint: "3 presets enrichis ; smoke-test OK ; prêt pour commit + DONE"
   updated: 2026-04-28
@@ -72,3 +72,4 @@ Ce moteur produit le squelette consommé par `feature-mesh`, `feature-index-cach
 - 2026-04-28 : ajout de fichiers OSS `CONTRIBUTING.md`, `SECURITY.md`, `RELEASE.md` à la racine du repo source (non scaffoldés par Copier vers le projet cible — ils restent spécifiques au mainteneur du template). README pointé vers ces 3 fichiers.
 - 2026-04-28 (impl) : commit dédié de l'implémentation `template/.ai/scripts/ai-context.sh.jinja` après que la documentation des entries ci-dessus soit déjà landée (PR1 docs précédait PR5 impl). Le script est rendu sous `.ai/scripts/ai-context.sh` dans tout scaffold, sans logique métier.
 - 2026-05-03 : correction anti-régression du rendu `template/AGENTS.md.jinja` — retour à un shim mince conforme à `check-shims.sh` (≤15 lignes). Les détails agent-runtime restent dans `.ai/index.md` / README, pas dans le shim.
+- 2026-05-03 : correction du rendu `template/.ai/scripts/check-feature-freshness.sh.jinja` pour contrôler la documentation staged par feature candidate, et non par fichier global. Préserve le contrat Copier en miroir du runtime dogfoodé.

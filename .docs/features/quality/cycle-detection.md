@@ -10,7 +10,7 @@ touches:
   - template/.ai/scripts/check-features.sh.jinja
 progress:
   phase: review
-  step: "bootstrap dog-fooding (v0.9 historique)"
+  step: "bootstrap dog-fooding ; check-features partagé avec touches_shared"
   blockers: []
   resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
   updated: 2026-04-28
@@ -40,3 +40,4 @@ Validation côté `feature-mesh` ; rejoué par `smoke-test` et `ci-guard`.
 ## Historique / décisions
 
 - Choix `jq` plutôt que Python : zéro runtime supplémentaire, déjà requis par `feature-index-cache`.
+- 2026-05-03 : `check-features.sh` valide aussi les chemins optionnels `touches_shared`. Aucun changement sur la DFS de cycles, mais le fichier script partagé reste couvert par cette fiche.

@@ -11,7 +11,7 @@ touches:
   - tests/**
 progress:
   phase: review
-  step: "bootstrap dog-fooding (v0.9 historique)"
+  step: "tests unitaires de régression review et touches_shared intégrés"
   blockers: []
   resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
   updated: 2026-04-28
@@ -41,6 +41,8 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 
 ## Historique / décisions
 
+- 2026-05-03 : ajout des tests unitaires `[0c]` et `[0d]` dans le smoke-test : freshness multi-feature et drift dogfood destination-only.
+- 2026-05-03 : ajout du test unitaire `[0e]` pour vérifier que `touches_shared` ne bloque pas `check-feature-freshness --staged` mais reste visible dans `review-delta.sh`.
 - v0.7.2 : ajout assertion sur escaping JSON (régression).
 - v0.9 : ajout assertion sur `AI_CONTEXT_FOCUS` graph + i18n FR/EN.
 - 2026-04-24 : ajout [18/27] — vérifie que le pre-commit `auto-progress.sh` bascule `spec → implement`, écrit le snapshot dans `.progress-history.jsonl`, crée la ligne `auto-progress` dans le worklog, et est idempotent (second commit sans re-bump). HANDOFF reçu depuis `workflow/conversational-skills` (chantier 4). Révélé au passage un bug fixé : `auto-progress.sh` ne créait pas le worklog si absent — correctif appliqué dans `.ai/scripts/` + `template/.ai/scripts/`, cross-ref tracée dans `core/template-engine` Historique.

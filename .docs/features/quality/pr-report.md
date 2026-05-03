@@ -7,14 +7,21 @@ depends_on:
   - core/feature-index-cache
   - core/feature-mesh
 touches:
+  - .ai/scripts/pr-report.sh
+  - .ai/scripts/review-delta.sh
+  - .ai/scripts/ai-context.sh
   - template/.ai/scripts/pr-report.sh.jinja
+  - template/.ai/scripts/review-delta.sh.jinja
+  - template/.ai/scripts/ai-context.sh.jinja
+  - tests/unit/test-review-delta-shared.sh
+touches_shared:
   - README.md
   - PROJECT_STATE.md
   - CHANGELOG.md
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "v0.10 — exclusions par défaut + format JSON + warnings enrichis"
+  step: "v0.10 — exclusions par défaut + format JSON + warnings enrichis ; smoke-test inclut les régressions review"
   blockers: []
   resume_hint: "ajouter une intégration CI (commentaire PR automatique) — passer en review une fois le wrapper ai-context-bot stabilisé"
   updated: 2026-04-28
@@ -29,9 +36,10 @@ Rendre visible la valeur du mesh dans les PRs via un rapport markdown simple: fe
 ## Comportement attendu
 
 - `bash .ai/scripts/pr-report.sh --base=<ref> --head=<ref>`
+- `bash .ai/scripts/review-delta.sh --staged`
 - Produit :
   - entête base/head et volume de fichiers modifiés ;
-  - liste des features impactées via matching `touches` ;
+  - liste des features impactées via matching `touches` et liées via `touches_shared` ;
   - warnings pour fichiers non couverts.
 
 ## Contrats
@@ -52,3 +60,5 @@ Rendre visible la valeur du mesh dans les PRs via un rapport markdown simple: fe
 - 2026-04-28 : enrichissement v0.10 du script `template/.ai/scripts/pr-report.sh.jinja`. Ajouts : `--format=json` (markdown reste défaut), `--include-docs` pour lever les exclusions, exclusions par défaut sur fichiers documentaires (README/CHANGELOG/MIGRATION/PROJECT_STATE/LICENSE/.github/.ai/docs/.docs/features), warnings nouveaux : `feature done modifiée`, fichier `multi-couvert`, `depends_on deprecated/archived`, feature `stale` (>14j sans update). Fallback shallow-clone : si `--base` n'est pas atteignable, retombe sur HEAD~1 et l'annonce dans la note. Aucune logique modifiée pour `--format=markdown` sans options : le rapport reste lisible avec ces deux nouveautés ajoutées en pied (compteur `Fichiers analysés`, ligne `Exclus par défaut`).
 - 2026-04-28 : `tests/smoke-test.sh` enrichi avec assertions `--format=json` (jq parse), `--include-docs` (`docs_excluded=0`) et exclusion par défaut (`docs_excluded ≥ 1` quand un README est modifié).
 - 2026-04-28 (impl) : commit dédié de l'implémentation `pr-report.sh.jinja` après que la documentation des entries précédentes soit déjà landée — split en deux commits pour séparer la trace décisionnelle de l'implémentation Bash.
+- 2026-05-03 : `tests/smoke-test.sh` lance désormais les tests unitaires de régression avant les scénarios Copier. Pas de changement de `pr-report.sh`, mais la feature reste dans le périmètre smoke partagé.
+- 2026-05-03 : ajout de `review-delta.sh` (runtime + template + wrapper `ai-context review`) pour produire un rapport stable de review : fichiers, features directes, features liées shared, risques et checks recommandés. `pr-report.sh` expose aussi `related_features` et `warnings.shared_only`.

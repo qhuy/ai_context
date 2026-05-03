@@ -5,9 +5,11 @@ title: Feature mesh markdown (frontmatter + dépendances cross-scope)
 status: active
 depends_on: []
 touches:
+  - .docs/FEATURE_TEMPLATE.md
+  - .ai/schema/feature.schema.json
+  - .ai/scripts/check-features.sh
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
   - template/{{docs_root}}/features/**
-  - template/.ai/schema/feature.schema.json
   - template/.ai/scripts/check-features.sh.jinja
   - template/.ai/scripts/migrate-features.sh.jinja
 progress:
@@ -27,7 +29,7 @@ Source unique de vérité pour les features d'un projet : un fichier markdown pa
 ## Comportement attendu
 
 - Chaque feature vit sous `<docs_root>/features/<scope>/<id>.md`.
-- Le frontmatter expose `id`, `scope`, `title`, `status`, `depends_on`, `touches` (+ `progress` optionnel).
+- Le frontmatter expose `id`, `scope`, `title`, `status`, `depends_on`, `touches` (+ `touches_shared` et `progress` optionnels).
 - `depends_on` autorise les arêtes cross-scope (`back/x` peut dépendre de `security/y`).
 - `touches` accepte les globs ; consommé par `features-for-path.sh` pour injecter le bon contexte à l'édition.
 
@@ -53,3 +55,4 @@ Source unique de vérité pour les features d'un projet : un fichier markdown pa
 - 2026-04-27 : ajout de `migrate-features.sh` pour migration dry-run/apply des frontmatters legacy (schema_version, champs requis, status normalisé).
 - 2026-04-27 : centralisation des enums (`status`, `progress.phase`) — `_lib.sh` les dérive maintenant du schema JSON via `read_schema_enum()`, fallback hardcodé si schema absent. Suppression de la duplication dans `check-features.sh`. Smoke-test couvre l'ajout d'un statut au schema.
 - 2026-04-28 : alignement `check-features.sh` sur le schema (Option A) — `depends_on` et `touches` sont maintenant des **clés frontmatter obligatoires** (toujours déclarables comme `[]` mais ne peuvent plus être omises). Cohérence avec `feature.schema.json` qui les exige déjà dans `required`. Côté template **et** côté dogfooding (`.ai/scripts/check-features.sh`). Sync de la version dogfoodée pour qu'elle ait également le check `progress.phase` (via `is_valid_phase`, désormais dans `_lib.sh`).
+- 2026-05-03 : ajout optionnel `touches_shared` au contrat frontmatter. Il distingue surfaces de review/reporting et ownership direct, sans changer l'obligation existante sur `touches`.

@@ -137,7 +137,9 @@ fi
 
 # ─── Analyse impact ───────────────────────────────────────────────────────
 warnings=()
+shared_only=()
 impacted_keys=()
+related_keys=()
 done_modified=()
 multi_covered=()
 stale_threshold=14
@@ -145,8 +147,20 @@ today_epoch=$(date +%s 2>/dev/null || echo 0)
 
 for f in ${filtered[@]+"${filtered[@]}"}; do
   matched="$(features_matching_path "$index_file" "$f" || true)"
+  shared_matched="$(features_matching_shared_path "$index_file" "$f" || true)"
   if [[ -z "$matched" ]]; then
-    warnings+=("fichier non couvert par touches: \`$f\`")
+    if [[ -n "$shared_matched" ]]; then
+      shared_keys=""
+      while IFS=$'\t' read -r scope id _path; do
+        [[ -n "$scope" && -n "$id" ]] || continue
+        key="$scope/$id"
+        related_keys+=("$key")
+        shared_keys+="$key "
+      done <<< "$shared_matched"
+      shared_only+=("\`$f\` lié via touches_shared: $shared_keys")
+    else
+      warnings+=("fichier non couvert par touches: \`$f\`")
+    fi
     continue
   fi
 
@@ -165,6 +179,11 @@ for f in ${filtered[@]+"${filtered[@]}"}; do
       done_modified+=("$key (\`$f\`)")
     fi
   done <<< "$matched"
+
+  while IFS=$'\t' read -r scope id _path; do
+    [[ -n "$scope" && -n "$id" ]] || continue
+    related_keys+=("$scope/$id")
+  done <<< "$shared_matched"
 
   if [[ "$count" -gt 1 ]]; then
     multi_covered+=("\`$f\` couvert par $count features: $file_keys")
@@ -242,13 +261,22 @@ emit_markdown() {
     done
   fi
 
+  if [[ "{% raw %}${#related_keys[@]}{% endraw %}" -gt 0 ]]; then
+    echo
+    echo "### Features liées (shared)"
+    printf '%s\n' "${related_keys[@]}" | sort -u | while IFS= read -r key; do
+      echo "- $key"
+    done
+  fi
+
   echo
   echo "### Warnings"
-  local total_warn=$(({% raw %}${#warnings[@]}{% endraw %} + {% raw %}${#done_modified[@]}{% endraw %} + {% raw %}${#multi_covered[@]}{% endraw %} + {% raw %}${#deprecated_links[@]}{% endraw %} + {% raw %}${#stale_features[@]}{% endraw %}))
+  local total_warn=$(({% raw %}${#warnings[@]}{% endraw %} + {% raw %}${#shared_only[@]}{% endraw %} + {% raw %}${#done_modified[@]}{% endraw %} + {% raw %}${#multi_covered[@]}{% endraw %} + {% raw %}${#deprecated_links[@]}{% endraw %} + {% raw %}${#stale_features[@]}{% endraw %}))
   if [[ "$total_warn" -eq 0 ]]; then
     echo "- _(aucun)_"
   else
     for w in ${warnings[@]+"${warnings[@]}"}; do echo "- $w"; done
+    for w in ${shared_only[@]+"${shared_only[@]}"}; do echo "- ℹ️ $w"; done
     for w in ${done_modified[@]+"${done_modified[@]}"}; do echo "- ⚠️ feature \`done\` modifiée : $w"; done
     for w in ${multi_covered[@]+"${multi_covered[@]}"}; do echo "- ℹ️ $w"; done
     for w in ${deprecated_links[@]+"${deprecated_links[@]}"}; do echo "- ⚠️ $w"; done
@@ -265,7 +293,9 @@ emit_json() {
     --argjson filtered "$(printf '%s\n' ${filtered[@]+"${filtered[@]}"} | jq -R . | jq -s .)" \
     --argjson docs_excluded "$docs_excluded" \
     --argjson impacted "$(printf '%s\n' ${impacted_keys[@]+"${impacted_keys[@]}"} | jq -R . | jq -s 'unique')" \
+    --argjson related "$(printf '%s\n' ${related_keys[@]+"${related_keys[@]}"} | jq -R . | jq -s 'unique')" \
     --argjson warnings "$(printf '%s\n' ${warnings[@]+"${warnings[@]}"} | jq -R . | jq -s .)" \
+    --argjson shared_only "$(printf '%s\n' ${shared_only[@]+"${shared_only[@]}"} | jq -R . | jq -s .)" \
     --argjson done_modified "$(printf '%s\n' ${done_modified[@]+"${done_modified[@]}"} | jq -R . | jq -s .)" \
     --argjson multi_covered "$(printf '%s\n' ${multi_covered[@]+"${multi_covered[@]}"} | jq -R . | jq -s .)" \
     --argjson deprecated_links "$(printf '%s\n' ${deprecated_links[@]+"${deprecated_links[@]}"} | jq -R . | jq -s .)" \
@@ -278,8 +308,10 @@ emit_json() {
       filtered_files: $filtered,
       docs_excluded: $docs_excluded,
       impacted_features: $impacted,
+      related_features: $related,
       warnings: {
         uncovered: $warnings,
+        shared_only: $shared_only,
         done_modified: $done_modified,
         multi_covered: $multi_covered,
         deprecated_links: $deprecated_links,

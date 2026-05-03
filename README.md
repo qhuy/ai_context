@@ -714,7 +714,7 @@ Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et dist
 
 | Script | Rôle |
 |---|---|
-| `_lib.sh` | Helpers partagés : dépendances, status visibles, matching canonique `touches:`, `docs_root` runtime |
+| `_lib.sh` | Helpers partagés : dépendances, status visibles, matching canonique `touches:` / `touches_shared:`, `docs_root` runtime |
 | `build-feature-index.sh` | Compile `{{ docs_root }}/features/**/*.md` → `.ai/.feature-index.json` |
 | `pre-turn-reminder.sh` | Hook `UserPromptSubmit` : reminder + inventory filtré + reverse deps |
 | `features-for-path.sh` | Hook `PreToolUse Write` : features qui couvrent un path |
@@ -726,15 +726,16 @@ Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et dist
 | `resume-features.sh` | Buckets EN COURS / BLOQUÉES / STALE / À FAIRE |
 | `audit-features.sh` | Audit agent-agnostique (`discover <scope>`, dry-run par défaut) |
 | `migrate-features.sh` | Migration frontmatter (dry-run par défaut, `--apply` explicite) |
-| `pr-report.sh` | Génère un rapport PR markdown (features impactées + warnings) |
+| `pr-report.sh` | Génère un rapport PR markdown/json (features impactées + liées + warnings) |
+| `review-delta.sh` | Synthèse review-friendly du delta courant (fichiers, features, risques, checks) |
 | `doctor.sh` | Diagnostic installation (dépendances, hooks, checks) |
 | `measure-context-size.sh` | Mesure chars/tokens injectés par hook |
 | `auto-worklog-log.sh` | Hook `PostToolUse` : logue les éditions dans `.session-edits.log` |
 | `auto-worklog-flush.sh` | Hook `Stop` : flush log → worklog + bump `progress.updated` |
 | `aic-undo.sh` | Annule la dernière transition auto-progressée (lit `.progress-history.jsonl`, restaure le frontmatter, append au worklog, rebuild index). Headless ; le skill `/aic undo` s'appuie dessus. `--dry-run` par défaut, `--apply` pour exécuter. |
-| `ai-context.sh` | Wrapper CLI MVP — route `doctor` / `resume` / `audit` / `migrate` / `pr-report` / `measure` / `check` / `coverage` / `shims` / `index` / `reminder` vers les scripts dédiés. Aucune logique propre. |
+| `ai-context.sh` | Wrapper CLI MVP — route `doctor` / `resume` / `audit` / `migrate` / `pr-report` / `review` / `measure` / `check` / `coverage` / `shims` / `index` / `reminder` vers les scripts dédiés. Aucune logique propre. |
 
-Tous les scripts runtime lisent le dossier métier via `AI_CONTEXT_DOCS_ROOT` rendu depuis `docs_root` (`.docs` par défaut). Les entrées `touches:` sont matchées par un helper unique (`path_matches_touch`) pour garder la même sémantique entre `features-for-path`, auto-worklog, coverage et `pre-commit`.
+Tous les scripts runtime lisent le dossier métier via `AI_CONTEXT_DOCS_ROOT` rendu depuis `docs_root` (`.docs` par défaut). Les entrées `touches:` sont matchées par un helper unique (`path_matches_touch`) pour garder la même sémantique entre `features-for-path`, auto-worklog, coverage et `pre-commit`. `touches_shared:` sert aux surfaces transverses visibles en review mais non bloquantes pour `check-feature-freshness --staged`.
 
 ## Champs actifs de `.ai/config.yml`
 

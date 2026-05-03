@@ -11,10 +11,11 @@ touches:
   - .claude/skills/aic-feature-audit/**
   - template/.claude/skills/aic-feature-audit/**
   - template/.ai/scripts/audit-features.sh.jinja
+touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "cadrage initial — modes discover/refresh, dry-run par défaut"
+  step: "cadrage initial — modes discover/refresh ; smoke-test partagé enrichi"
   blockers: []
   resume_hint: "écrire SKILL.md + workflow.md (both .claude/ et template/.claude/), puis valider via check-features.sh"
   updated: 2026-04-28
@@ -75,3 +76,5 @@ Deux modes explicites (argument obligatoire, pas d'auto-détection) :
 - **2026-04-27** — Correctif discover : l'audit inclut maintenant aussi les fichiers non trackés (`git ls-files --cached --others --exclude-standard`) pour détecter `src/orphan.ts` dans le smoke-test ; retrait de `mapfile`/`declare -A` pour meilleure compatibilité Bash 3.2.
 - **2026-04-27** — Correctif discover (smoke-test CI rouge) : fallback `find` quand `audit-features.sh` tourne hors repo git (cas scaffold neuf), et garde `${arr[@]+...}` pour tolérer `tracked`/`touches` vides sous `set -u` en Bash 3.2.
 - **2026-04-28** — Robustesse aux paths-with-spaces : refactor des boucles `for f in ${arr[@]+"${arr[@]}"}` (sujettes à word-splitting selon les versions Bash) vers `if [[ ${#arr[@]} -gt 0 ]]; then for f in "${arr[@]}"; fi`. Préserve la sécurité `set -u` Bash 3.2 ET la fidélité des chemins avec espaces. Ajout du sous-mode `--help` (et `-h`) qui annonce explicitement le périmètre `MVP discover only` avec renvoi vers le skill `/aic-feature-audit` pour l'UX riche (refresh, --interactive). Smoke-test [12/28] enrichi : assertion `--help` + cas `src/with space/file.ts` orphelin doit apparaître dans la sortie discover.
+- **2026-05-03** — Le smoke-test partagé exécute deux tests unitaires de régression avant les scénarios Copier. Aucun changement sur `audit-features.sh`, mais le fichier `tests/smoke-test.sh` est couvert par cette feature.
+- **2026-05-03** — `tests/smoke-test.sh` passe en `touches_shared` pour signaler le lien de review sans bloquer la fraîcheur documentaire de cette feature à chaque ajout de smoke global.

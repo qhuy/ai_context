@@ -59,7 +59,7 @@ if ! copier copy --defaults --trust --vcs-ref=HEAD \
   exit 1
 fi
 
-sync_args=(-a --checksum)
+sync_args=(-a --checksum --delete)
 
 echo "═══ dogfood-update ($mode) ═══"
 echo "Rendu temporaire : $out"
@@ -68,11 +68,18 @@ echo
 run_rsync() {
   local src="$1"
   local dst="$2"
+  shift 2
   echo "→ $dst"
-  rsync "${sync_args[@]}" "$src" "$dst"
+  rsync "${sync_args[@]}" "$@" "$src" "$dst"
 }
 
-run_rsync "$out/.ai/" ".ai/"
+run_rsync "$out/.ai/" ".ai/" \
+  --exclude='.feature-index.json' \
+  --exclude='.progress-history.jsonl' \
+  --exclude='.session-edits.log' \
+  --exclude='.session-edits.flushed' \
+  --exclude='scripts/dogfood-update.sh' \
+  --exclude='scripts/check-dogfood-drift.sh'
 run_rsync "$out/.claude/settings.json" ".claude/settings.json"
 run_rsync "$out/.claude/skills/" ".claude/skills/"
 run_rsync "$out/.githooks/" ".githooks/"

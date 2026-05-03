@@ -6,7 +6,6 @@ status: active
 depends_on:
   - workflow/claude-skills
 touches:
-  - README.md
   - copier.yml
   - .ai/agent/**
   - .ai/index.md
@@ -14,6 +13,8 @@ touches:
   - template/.ai/agent/**
   - template/.ai/index.md.jinja
   - template/.claude/skills/aic-diagnose/**
+touches_shared:
+  - README.md
 progress:
   phase: implement
   step: "docs agent behavior + skill diagnostic"
@@ -60,3 +61,4 @@ La couche doit améliorer la proactivité, l'écoute, le diagnostic, la capacit�
 - 2026-05-03 — Création de la couche comportementale en trois fichiers séparés et d'un skill `/aic-diagnose`. Décision explicite : Pack A référence la couche, le reminder ne l'injecte pas. Le message Copier expose `/aic-diagnose` sans ajouter d'étape obligatoire.
 - 2026-05-03 — Compatibilité Claude/Codex explicitée : Claude peut utiliser le skill `/aic-diagnose`; Codex applique le même diagnostic via `.ai/agent/*` et un prompt naturel.
 - 2026-05-03 — Dogfooding appliqué au repo source : `.ai/agent/*`, `.ai/index.md` et le skill rendu `.claude/skills/aic-diagnose/*` sont synchronisés depuis le rendu Copier minimal.
+- 2026-05-03 — `README.md` passe en `touches_shared` : la documentation utilisateur reste visible en review, mais les ajouts transverses README ne rendent plus cette fiche bloquante.

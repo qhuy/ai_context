@@ -14,10 +14,11 @@ touches:
   - template/.ai/index.md.jinja
   - template/README_AI_CONTEXT.md.jinja
   - copier.yml
+touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "création skill + intégration Pack A + smoke-test"
+  step: "création skill + intégration Pack A + smoke-test ; régressions review incluses"
   blockers: []
   resume_hint: "vérifier que le skill rendu apparaît dans /tmp/test-guardrails après copier copy ; valider qu'un dialogue /aic-project-guardrails produit bien .ai/guardrails.md conforme"
   updated: 2026-04-28
@@ -73,3 +74,5 @@ Le skill cible spécifiquement ce qui n'est *pas* déjà dans le README — pour
 
 - **2026-04-28** — Création. Première itération envisageait un skill 4-sections (Vision + Users + Non-goals + Glossaire) sous le nom `/aic-project-bootstrap`. Audit honnête : Vision et Users sont redondants avec README et `project_description`. Resserrage aux **Non-goals + Glossaire** seuls (la valeur unique non couverte ailleurs), renommage en `/aic-project-guardrails` (intent : orienter l'agent, éviter la dérive — distinct d'un README marketing). Le fichier produit vit sous `.ai/` (orientation agent) et non sous `{{ docs_root }}/` (doc métier).
 - **2026-05-03** — Dogfooding appliqué au repo source : le skill rendu `.claude/skills/aic-project-guardrails/*`, la référence Pack A dans `.ai/index.md` et l'étape recommandée dans `README_AI_CONTEXT.md` sont synchronisés.
+- **2026-05-03** — `tests/smoke-test.sh` intègre les tests unitaires de régression review. Aucun changement sur le skill guardrails, mais le smoke partagé de cette feature reste aligné.
+- **2026-05-03** — `tests/smoke-test.sh` passe en `touches_shared` pour conserver la visibilité review sans faux blocage freshness.

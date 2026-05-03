@@ -15,6 +15,7 @@
 #   audit        → bash .ai/scripts/audit-features.sh
 #   migrate      → bash .ai/scripts/migrate-features.sh
 #   pr-report    → bash .ai/scripts/pr-report.sh
+#   review       → bash .ai/scripts/review-delta.sh
 #   measure      → bash .ai/scripts/measure-context-size.sh
 #   check        → bash .ai/scripts/check-features.sh
 #   coverage     → bash .ai/scripts/check-feature-coverage.sh
@@ -40,6 +41,7 @@ Commandes :
   audit        audit-features.sh (discover <scope>)
   migrate      migration frontmatter (--apply explicite)
   pr-report    rapport markdown/json d'impact feature depuis un diff git
+  review       synthèse review-friendly du delta courant
   measure      taille contexte injecté par les hooks
   check        check-features.sh (frontmatter + scope + depends_on + touches)
   coverage     check-feature-coverage.sh (orphelins)
@@ -66,6 +68,7 @@ case "$cmd" in
   audit)      exec bash "$script_dir/audit-features.sh" "$@" ;;
   migrate)    exec bash "$script_dir/migrate-features.sh" "$@" ;;
   pr-report)  exec bash "$script_dir/pr-report.sh" "$@" ;;
+  review)     exec bash "$script_dir/review-delta.sh" "$@" ;;
   measure)    exec bash "$script_dir/measure-context-size.sh" "$@" ;;
   check)      exec bash "$script_dir/check-features.sh" "$@" ;;
   coverage)   exec bash "$script_dir/check-feature-coverage.sh" "$@" ;;

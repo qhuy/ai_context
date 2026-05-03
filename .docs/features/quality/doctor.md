@@ -9,13 +9,14 @@ depends_on:
 touches:
   - .ai/scripts/doctor.sh
   - template/.ai/scripts/doctor.sh.jinja
+touches_shared:
   - README.md
   - PROJECT_STATE.md
   - CHANGELOG.md
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "MVP script doctor (checks dépendances/hooks/index + next actions)"
+  step: "MVP script doctor (checks dépendances/hooks/index + next actions) ; smoke-test couvre les régressions review"
   blockers: []
   resume_hint: "évaluer extraction future vers ai-context doctor (CLI) avec flags --json/--strict"
   updated: 2026-04-28
@@ -58,3 +59,5 @@ Réduire la friction d'adoption en fournissant un point d'entrée unique de diag
 - 2026-04-28 : `tests/smoke-test.sh` étendu (assertions `pr-report --format=json` + `--include-docs`, wrapper `ai-context.sh`, `audit-features` paths-with-spaces, `check-features` exige depends_on/touches). Aucun impact sur le comportement de `doctor.sh` lui-même mais le smoke-test reste la garantie de non-régression.
 - 2026-04-28 (post-v0.10.0) : fix faux positifs détectés au sanity check post-tag. `doctor.sh` testait la présence des scripts critiques avec `[[ -x ".ai/scripts/X.sh" ]]` (executable bit) alors que le bit +x n'est pas systématiquement préservé après rendu Copier (modes 644 vs 755). Tous les scripts sont invoqués via `bash <script>` qui n'a pas besoin du bit +x. Remplacé par `[[ -f ]]` (présence du fichier). Concerne `check-shims.sh`, `check-features.sh`, `measure-context-size.sh`. Bug pré-existant depuis l'introduction de `doctor.sh` (v0.9+), non bloquant car doctor par défaut exit 0, mais cosmétique et trompeur. Pas de release dédiée — sera embarqué dans v0.10.1 ou la prochaine version.
 - 2026-05-03 : correction du contrôle `.githooks` : `doctor --strict` vérifie désormais uniquement les vrais hooks exécutables (`commit-msg`, `pre-commit`, `post-checkout`) et ignore `.githooks/README.md`. Évite de demander `chmod +x` sur une documentation.
+- 2026-05-03 : `tests/smoke-test.sh` embarque les tests unitaires de régression `check-feature-freshness` multi-feature et drift dogfood destination-only. Pas de changement de comportement `doctor.sh`, mais la garantie globale exécutée avec le doctor strict reste synchronisée.
+- 2026-05-03 : les surfaces transverses `README.md`, `PROJECT_STATE.md`, `CHANGELOG.md` et `tests/smoke-test.sh` passent en `touches_shared` pour rester visibles en review sans rendre chaque édition transverse bloquante pour cette fiche.

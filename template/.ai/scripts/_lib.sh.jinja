@@ -12,7 +12,11 @@
 #   path_matches_touch <path> <touch>
 #                               — 0 si un chemin repo matche une entrée touches:
 #   features_matching_path <index> <path>
-#                               — liste scope/id/path des features couvrant un path
+#                               — liste scope/id/path des features couvrant un path via touches
+#   features_matching_shared_path <index> <path>
+#                               — liste scope/id/path des features liées via touches_shared
+#   features_related_to_path <index> <path>
+#                               — liste kind/scope/id/path (direct|shared)
 #   STATUS_ENUM                 — liste des status valides (space-separated)
 #   PHASE_ENUM                  — liste des progress.phase valides (space-separated)
 #   is_valid_status "s"         — 0 si valide, 1 sinon
@@ -136,6 +140,28 @@ features_matching_path() {
     fi
   done < <(jq -r '.features[] | . as $f | ($f.touches // [])[] | [$f.scope, $f.id, $f.path, .] | @tsv' "$index_file" 2>/dev/null) \
     | awk '!seen[$0]++'
+}
+
+features_matching_shared_path() {
+  local index_file="$1"
+  local rel_path="$2"
+
+  [[ -f "$index_file" ]] || return 0
+
+  while IFS=$'\t' read -r scope id feature_path touch; do
+    [[ -z "$scope" || -z "$touch" ]] && continue
+    if path_matches_touch "$rel_path" "$touch"; then
+      printf '%s\t%s\t%s\n' "$scope" "$id" "$feature_path"
+    fi
+  done < <(jq -r '.features[] | . as $f | ($f.touches_shared // [])[] | [$f.scope, $f.id, $f.path, .] | @tsv' "$index_file" 2>/dev/null) \
+    | awk '!seen[$0]++'
+}
+
+features_related_to_path() {
+  local index_file="$1"
+  local rel_path="$2"
+  features_matching_path "$index_file" "$rel_path" | awk -F '\t' 'BEGIN{OFS="\t"} {print "direct",$1,$2,$3}'
+  features_matching_shared_path "$index_file" "$rel_path" | awk -F '\t' 'BEGIN{OFS="\t"} {print "shared",$1,$2,$3}'
 }
 
 # Vérifie qu'un motif `touches:` reste à l'intérieur du repo.

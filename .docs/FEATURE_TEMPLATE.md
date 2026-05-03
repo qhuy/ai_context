@@ -5,6 +5,9 @@ title: <Titre court de la feature>
 status: draft
 depends_on: []
 touches: []
+# Optionnel : surfaces partagées utiles au reporting/review, non bloquantes
+# pour `check-feature-freshness --staged`.
+touches_shared: []
 # progress : état de reprise entre sessions (optionnel, auto-géré par /aic-feature-update)
 progress:
   phase: spec         # spec | implement | test | review | done
@@ -54,6 +57,7 @@ Choix marquants, ADRs liées, décisions produit.
 
 **Frontmatter optionnel (reprise entre sessions)** :
 
+- `touches_shared` : surfaces transverses liées à la feature (`tests/smoke-test.sh`, `CHANGELOG.md`, docs d'état). Ces chemins apparaissent dans les rapports mais ne déclenchent pas l'obligation de fiche/worklog dans `check-feature-freshness --staged`.
 - `progress.phase` : étape courante du cycle
 - `progress.step` : détail libre (humain)
 - `progress.blockers` : liste courte ; si non vide, apparaît dans `/aic-feature-resume`

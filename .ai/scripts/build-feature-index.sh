@@ -2,7 +2,7 @@
 # build-feature-index.sh — Compile le maillage features en JSON (ai_context).
 #
 # Scanne .docs/features/*/*.md et extrait pour chaque feature :
-#   id, scope, status, touches[], depends_on[], path (relatif au repo).
+#   id, scope, status, touches[], touches_shared[], depends_on[], path (relatif au repo).
 #
 # Parsing YAML :
 #   - si `yq` (v4) est disponible → parsing propre du frontmatter
@@ -66,7 +66,7 @@ feature_to_json() {
   local folder_scope
   folder_scope=$(basename "$(dirname "$file")")
 
-  local id scope status touches_json deps_json
+  local id scope status touches_json touches_shared_json deps_json
   local phase="" step="" blockers_json="[]" resume_hint="" updated=""
 
   if [[ $has_yq -eq 1 ]]; then
@@ -76,6 +76,7 @@ feature_to_json() {
     scope=$(echo "$fm" | yq -r '.scope // ""')
     status=$(echo "$fm" | yq -r '.status // ""')
     touches_json=$(echo "$fm" | yq -o=json -I=0 '.touches // []')
+    touches_shared_json=$(echo "$fm" | yq -o=json -I=0 '.touches_shared // []')
     deps_json=$(echo "$fm" | yq -o=json -I=0 '.depends_on // []')
     phase=$(echo "$fm" | yq -r '.progress.phase // ""')
     step=$(echo "$fm" | yq -r '.progress.step // ""')
@@ -87,6 +88,7 @@ feature_to_json() {
     scope=$(extract_scalar_awk "$file" "scope")
     status=$(extract_scalar_awk "$file" "status")
     touches_json=$(extract_list_awk "$file" "touches" | jq -R . | jq -s .)
+    touches_shared_json=$(extract_list_awk "$file" "touches_shared" | jq -R . | jq -s .)
     deps_json=$(extract_list_awk "$file" "depends_on" | jq -R . | jq -s .)
     # progress.* : parsing best-effort en fallback awk (yq recommandé pour précision)
     phase=$(awk '/^progress:/{flag=1; next} flag && /^  phase:/{sub(/^  phase:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/["'"'"']//g; s/[[:space:]]+$//')
@@ -122,6 +124,7 @@ feature_to_json() {
     --arg status "$status" \
     --arg path "$rel" \
     --argjson touches "$touches_json" \
+    --argjson touches_shared "$touches_shared_json" \
     --argjson depends_on "$deps_json" \
     --arg phase "$phase" \
     --arg step "$step" \
@@ -130,7 +133,7 @@ feature_to_json() {
     --arg updated "$updated" \
     '{
       id: $id, scope: $scope, status: $status, path: $path,
-      touches: $touches, depends_on: $depends_on,
+      touches: $touches, touches_shared: $touches_shared, depends_on: $depends_on,
       progress: {
         phase: $phase, step: $step, blockers: $blockers,
         resume_hint: $resume_hint, updated: $updated

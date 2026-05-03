@@ -6,11 +6,12 @@ status: active
 depends_on:
   - core/template-engine
 touches:
-  - template/**
+  - template/docs/design-system-registry.md.jinja
+  - template/docs/atomic-design-map.md.jinja
   - copier.yml
 progress:
   phase: review
-  step: "V1 livrée — 2 squelettes + exclusion + smoke-test étendu"
+  step: "V1 livrée — 2 squelettes + exclusion + smoke-test étendu ; freshness template renforcé"
   blockers: []
   resume_hint: "créer 2 fichiers .jinja dans template/docs/ rendus uniquement si tech_profile ∈ {react-next, fullstack-dotnet-react} ; structure par catégorie + 1 composant commenté d'exemple"
   updated: 2026-04-28
@@ -50,3 +51,5 @@ Objectif : moissonner deux squelettes minimalistes dès `copier copy` quand le `
 
 - 2026-04-24 : fiche créée après enrichissement des presets techno. Règle `tech-react` « registry obligatoire dans le même commit » sans squelette = friction UX au bootstrap. Décision : rendre les squelettes via copier conditionnellement.
 - 2026-04-24 : implémentation V1. Ajout `template/docs/design-system-registry.md.jinja` (structure par catégorie Layout/Forms/Lists/Navigation/Feedback/Partials + entrée d'exemple commentée par catégorie) et `template/docs/atomic-design-map.md.jinja` (légende atomic + summary compteurs + 3 tableaux vides UI/Feature/Routes). Exclusion conditionnelle dans `copier.yml` (`tech_profile not in ['react-next', 'fullstack-dotnet-react']`). Extension du smoke-test [28/28] avec 6 assertions : absents en profil dotnet-only, présents en react-next et fullstack. Smoke-test PASS.
+- 2026-05-03 : le template du freshness check valide désormais chaque feature candidate individuellement quand un fichier partagé matche plusieurs fiches. Pas de changement sur les squelettes DS, mais `template/**` reste couvert par cette feature et la doc est alignée.
+- 2026-05-03 : réduction du bruit `touches:` : remplacement de `template/**` par les deux squelettes réellement possédés (`template/docs/design-system-registry.md.jinja`, `template/docs/atomic-design-map.md.jinja`). Les modifications génériques du template restent couvertes par `core/template-engine`.

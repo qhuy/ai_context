@@ -9,7 +9,7 @@
 #   - progress.phase ∈ {spec, implement, test, review, done, blocked} (warn si hors enum)
 #   - scope == nom du dossier parent
 #   - chaque depends_on pointe vers un fichier existant
-#   - chaque touches pointe vers un chemin existant (fichier, dossier, ou glob)
+#   - chaque touches / touches_shared pointe vers un chemin existant (fichier, dossier, ou glob)
 #
 # Rafraîchit .ai/.feature-index.json si tout passe.
 #
@@ -133,27 +133,32 @@ for f in "${files[@]}"; do
     fi
   done <<< "$deps"
 
-  tchs=$(awk '/^touches:/{flag=1; next} flag && /^  *-/{print; next} flag && /^[^[:space:]]/{flag=0}' "$f" \
-    | sed -E 's/^[[:space:]]*-[[:space:]]*//; s/["'"'"']//g')
-  while IFS= read -r t; do
-    [[ -z "$t" ]] && continue
-    [[ "$t" == "[]" ]] && continue
-    if ! is_path_within_repo "$t"; then
-      ko "$f : touches '$t' hors repo (chemin absolu, traversée .. ou ~ rejetés)"
-      file_fail=1
-      continue
-    fi
-    # shellcheck disable=SC2206
-    matches=( $t )
-    if [[ {% raw %}${#matches[@]}{% endraw %} -eq 0 ]] || [[ ! -e "${matches[0]}" && ! -d "${matches[0]}" ]]; then
-      if [[ -e "$t" || -d "$t" ]]; then
-        :
-      else
-        ko "$f : touches '$t' ne résout aucun chemin réel"
+  for touch_key in touches touches_shared; do
+    tchs=$(awk -v k="^${touch_key}:" '
+      $0 ~ k {flag=1; next}
+      flag && /^  *-/ {print; next}
+      flag && /^[^[:space:]]/ {flag=0}
+    ' "$f" | sed -E 's/^[[:space:]]*-[[:space:]]*//; s/["'"'"']//g')
+    while IFS= read -r t; do
+      [[ -z "$t" ]] && continue
+      [[ "$t" == "[]" ]] && continue
+      if ! is_path_within_repo "$t"; then
+        ko "$f : $touch_key '$t' hors repo (chemin absolu, traversée .. ou ~ rejetés)"
         file_fail=1
+        continue
       fi
-    fi
-  done <<< "$tchs"
+      # shellcheck disable=SC2206
+      matches=( $t )
+      if [[ {% raw %}${#matches[@]}{% endraw %} -eq 0 ]] || [[ ! -e "${matches[0]}" && ! -d "${matches[0]}" ]]; then
+        if [[ -e "$t" || -d "$t" ]]; then
+          :
+        else
+          ko "$f : $touch_key '$t' ne résout aucun chemin réel"
+          file_fail=1
+        fi
+      fi
+    done <<< "$tchs"
+  done
 
   [[ "$file_fail" -eq 0 ]] && ok "$f"
 done

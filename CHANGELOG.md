@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Nouveau
+- `.ai/scripts/review-delta.sh` — rapport review-friendly du delta courant (`--staged` ou `--base/--head`) listant fichiers, features directes, features liées via `touches_shared`, risques détectés et checks recommandés. Exposé via `ai-context.sh review`.
+- `touches_shared` — champ frontmatter optionnel pour les surfaces transverses utiles au reporting/review mais non bloquantes pour la fraîcheur documentaire staged. `build-feature-index.sh`, `_lib.sh`, `check-features.sh` et `pr-report.sh` le consomment.
 - **Cursor MDC scopés** — `.cursor/rules/back.mdc` et `.cursor/rules/front.mdc` générés conditionnellement (si `cursor` dans agents + scope présent) avec frontmatter `globs:` Cursor (auto-attached aux fichiers du scope). Première parité partielle Claude/Cursor sur l'injection contextuelle : Cursor charge automatiquement les règles du scope quand un fichier matché est édité. Globs par défaut couvrent les conventions courantes ; à customiser selon la structure du projet.
 - **AGENTS.md.jinja enrichi** — sections « Setup Commands », « Testing Instructions », « Code Style », « PR Instructions », « Resume cross-session » ajoutées (conformes à la spec [agents.md](https://agents.md)). Les agents non-Claude (Codex, etc.) ont désormais les commandes utiles dès le shim, sans devoir naviguer dans le README.
 - `progress.history_max_entries` dans `.ai/config.yml` — profondeur configurable du FIFO `.progress-history.jsonl` (défaut 50). `auto-progress.sh` lit la valeur via `read_config`. Permet aux projets actifs (>50 transitions/semaine) de remonter plus loin via `/aic undo`.
@@ -33,6 +35,10 @@
 - `SECURITY.md` ajoute une section « Trust model du feature mesh » : ce qui est validé, ce qui ne l'est pas, recommandations PR.
 - **Placeholders `auto_transitions.implement_to_review` / `review_to_done` retirés** — ces clés étaient scaffoldées dans `.ai/config.yml` sans être lues par aucun script (« informatif ») et créaient de la confusion utilisateur (« j'active à `true`, rien ne se passe »). Décision d'honnêteté : on retire jusqu'à ce qu'une vraie heuristique soit définie. Les transitions `implement → review` et `review → done` restent **manuelles** via `/aic` (Claude) ou édition directe du frontmatter. Pas un breaking change : ces clés n'avaient aucun effet runtime.
 - `doctor.sh --strict` ne considère plus `.githooks/README.md` comme un hook à rendre exécutable. Le contrôle cible uniquement `commit-msg`, `pre-commit` et `post-checkout`.
+- `check-feature-freshness.sh --staged` valide maintenant la fraîcheur documentaire par feature candidate, pas seulement par fichier touché. Un fichier couvert par plusieurs features exige donc une fiche/worklog staged pour chacune.
+- `dogfood-update.sh --apply` synchronise le runtime avec suppression des fichiers obsolètes (`rsync --delete`) tout en préservant les caches et scripts source-only explicitement exclus.
+- `pr-report.sh` distingue maintenant les features impactées directement (`touches`) et les features liées (`touches_shared`) ; les fichiers uniquement shared ne sont plus signalés comme non couverts.
+- Les fiches dogfoodées trop larges migrent leurs surfaces globales (`tests/smoke-test.sh`, CHANGELOG/PROJECT_STATE, etc.) vers `touches_shared` quand elles ne possèdent pas directement le fichier.
 
 ### Tests
 - Smoke-test étendu — assertion Cursor MDC scopés après `[28b/28]` : avec `agents=cursor + fullstack` les fichiers `.cursor/rules/{protocol-reminder,back,front}.mdc` sont rendus avec frontmatter `globs:` ; avec `cursor` absent, pas de `.cursor/` ; avec `cursor + minimal` (sans back/front), seul `protocol-reminder.mdc` reste.
@@ -40,6 +46,8 @@
 - Smoke-test étendu — étape `[28c/28]` couvre `copier update v0.11.0 → HEAD` : un fichier user (`MY_CUSTOM.md`) hors périmètre template doit être préservé après update, check-shims doit passer, et le nouveau script `aic-undo.sh` (introduit en R2) doit être propagé. Le canal de diffusion des fixes vers les projets existants est désormais testé en CI.
 - Smoke-test étendu — étape `[9b/28]` lance 5 `build-feature-index.sh --write` en parallèle et vérifie que le JSON reste valide + qu'aucun tmp orphelin (`*.feature-index.json.XXXXXX`) ne traîne. Le lock atomique `mkdir`-based dans `_lib.sh:with_index_lock` est désormais régressable.
 - Smoke-test étendu — assertion E2E `/aic undo` après l'étape `[18/28]` : invoque `aic-undo.sh --apply`, vérifie que la phase est restaurée à `spec`, que le worklog reçoit une ligne `## <ts> — /aic undo`, que `.progress-history.jsonl` est vidé, et que `--apply` sur history vide est idempotent (« Rien à annuler »). La logique du skill `/aic undo` est désormais testable headless.
+- Tests unitaires ajoutés — `test-check-feature-freshness.sh` couvre la régression multi-feature du staged freshness ; `test-dogfood-drift-extra.sh` couvre les fichiers runtime destination-only. Tous deux sont lancés en tête de `tests/smoke-test.sh`.
+- Test unitaire ajouté — `test-review-delta-shared.sh` vérifie que `touches_shared` reste visible dans `review-delta.sh` sans bloquer `check-feature-freshness --staged`.
 
 ### Migration
 - `copier update` propage les changements automatiquement. Les consommateurs qui parsent `feature-index.json` peuvent désormais s'appuyer sur `schema_version` pour détecter les ruptures futures.

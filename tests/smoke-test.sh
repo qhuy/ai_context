@@ -30,6 +30,18 @@ echo "[0b/28] tests unitaires (is_path_within_repo)"
 bash tests/unit/test-is-path-within-repo.sh
 echo
 
+echo "[0c/28] tests unitaires (freshness multi-feature)"
+bash tests/unit/test-check-feature-freshness.sh
+echo
+
+echo "[0d/28] tests unitaires (dogfood drift destination-only)"
+bash tests/unit/test-dogfood-drift-extra.sh
+echo
+
+echo "[0e/28] tests unitaires (review delta + touches_shared)"
+bash tests/unit/test-review-delta-shared.sh
+echo
+
 echo "[1/28] copier copy (profil par défaut)"
 copier copy --defaults --trust --vcs-ref=HEAD \
   --data project_name=smoke-project \
@@ -58,6 +70,11 @@ if grep -q "mapfile" "$OUT/.ai/scripts/pr-report.sh"; then
   exit 1
 fi
 echo "  ✓ pr-report.sh compatible Bash 3.2 (sans mapfile)"
+if ! ( cd "$OUT" && bash .ai/scripts/review-delta.sh --help ) | grep -q "Review Delta"; then
+  echo "  ✗ review-delta.sh --help invalide"
+  exit 1
+fi
+echo "  ✓ review-delta.sh --help OK"
 # pr-report.sh : format JSON valide + exclusions par défaut + --include-docs
 (
   cd "$OUT"
@@ -103,6 +120,10 @@ if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "Commandes
 fi
 if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh shims ) >/dev/null 2>&1; then
   echo "  ✗ ai-context.sh shims (alias check-shims) échoue"
+  exit 1
+fi
+if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh review --help ) | grep -q "Review Delta"; then
+  echo "  ✗ ai-context.sh review ne route pas vers review-delta"
   exit 1
 fi
 if ( cd "$OUT" && bash .ai/scripts/ai-context.sh inexistant ) >/dev/null 2>&1; then

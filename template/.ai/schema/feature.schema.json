@@ -37,6 +37,14 @@
         "minLength": 1
       }
     },
+    "touches_shared": {
+      "description": "Surfaces partagées utiles au reporting/review mais non bloquantes pour la fraîcheur documentaire.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
     "progress": {
       "type": "object",
       "additionalProperties": true,

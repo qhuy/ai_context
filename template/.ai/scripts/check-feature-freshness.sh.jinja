@@ -100,25 +100,18 @@ run_staged_check() {
     fi
   done)
 
-  local rel scope id feature_path matched_doc candidates
+  local rel scope id feature_path
   while IFS= read -r rel; do
     [[ -z "$rel" ]] && continue
     is_feature_doc_path "$rel" && continue
 
-    matched_doc=0
-    candidates=""
     while IFS=$'\t' read -r scope id feature_path; do
       [[ -z "$scope" || -z "$id" || -z "$feature_path" ]] && continue
-      candidates="${candidates}${rel}"$'\t'"${scope}/${id}"$'\t'"${feature_path}"$'\n'
-      if staged_has_doc_for_feature "$staged_docs" "$feature_path" "$scope" "$id"; then
-        matched_doc=1
+      if ! staged_has_doc_for_feature "$staged_docs" "$feature_path" "$scope" "$id"; then
+        printf '%s\t%s/%s\t%s\n' "$rel" "$scope" "$id" "$feature_path" >> "$failures"
       fi
 
     done < <(features_matching_path "$index_file" "$rel")
-
-    if [[ -n "$candidates" && "$matched_doc" -eq 0 ]]; then
-      printf '%s' "$candidates" >> "$failures"
-    fi
   done <<< "$staged"
 
   echo "═══ check-feature-freshness (staged) ═══"
