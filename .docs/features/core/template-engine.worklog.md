@@ -75,3 +75,8 @@
   - README.md
   - copier.yml
   - template/.ai/scripts/doctor.sh.jinja
+
+## 2026-05-03 — docs
+- Correction du diagramme Mermaid de la section Architecture du README :
+  - labels `/aic-*` rendus avec guillemets Mermaid ;
+  - label d'arête `dry-run` reformulé sans parenthèses.

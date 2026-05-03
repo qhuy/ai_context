@@ -118,12 +118,12 @@ flowchart LR
 
   subgraph Skills["Commandes /aic-* exposées utilisateur"]
     direction TB
-    SAic[/aic (incl. undo)/]
-    SFrame[/aic-frame/]
-    SStatus[/aic-status/]
-    SDiagnose[/aic-diagnose/]
-    SReview[/aic-review/]
-    SShip[/aic-ship/]
+    SAic["/aic (incl. undo)"]
+    SFrame["/aic-frame"]
+    SStatus["/aic-status"]
+    SDiagnose["/aic-diagnose"]
+    SReview["/aic-review"]
+    SShip["/aic-ship"]
   end
 
   subgraph SkillsInternal["Procédures internes (.ai/workflows)"]
@@ -179,7 +179,7 @@ flowchart LR
   SNew -->|crée| Feat & Wlog
   SResume -->|scanne| FIndex
   SResume -->|charge fiche + worklog| Agent
-  SAudit -->|propose (dry-run)| Agent
+  SAudit -->|propose en dry-run| Agent
   SAudit -->|apply confirmé| SNew & SUpdate
   SUpdate -->|maj intent| Feat
   SUpdate -->|append| Wlog
