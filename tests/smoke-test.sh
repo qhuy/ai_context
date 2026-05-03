@@ -118,6 +118,42 @@ if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "Commandes
   echo "  ✗ ai-context.sh --help ne liste pas les commandes"
   exit 1
 fi
+if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "brief <path>"; then
+  echo "  ✗ ai-context.sh --help ne présente pas brief <path>"
+  exit 1
+fi
+if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q 'mission "<objectif>"'; then
+  echo "  ✗ ai-context.sh --help ne présente pas mission"
+  exit 1
+fi
+if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "ship-report"; then
+  echo "  ✗ ai-context.sh --help ne présente pas ship-report"
+  exit 1
+fi
+if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh status ) | grep -q "Prochaine action minimale"; then
+  echo "  ✗ ai-context.sh status ne produit pas un état actionnable"
+  exit 1
+fi
+mission_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh mission "préparer une feature back" )
+if ! printf '%s' "$mission_out" | grep -q "## Mission Brief"; then
+  echo "  ✗ ai-context.sh mission ne produit pas de brief"
+  exit 1
+fi
+repair_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh repair )
+if ! printf '%s' "$repair_out" | grep -q "## Repair Plan"; then
+  echo "  ✗ ai-context.sh repair ne produit pas de plan"
+  exit 1
+fi
+document_delta_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh document-delta )
+if ! printf '%s' "$document_delta_out" | grep -q "## Document Delta"; then
+  echo "  ✗ ai-context.sh document-delta ne produit pas de rapport"
+  exit 1
+fi
+ship_report_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh ship-report )
+if ! printf '%s' "$ship_report_out" | grep -q "## AI Context Ship Report"; then
+  echo "  ✗ ai-context.sh ship-report ne produit pas de rapport"
+  exit 1
+fi
 if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh shims ) >/dev/null 2>&1; then
   echo "  ✗ ai-context.sh shims (alias check-shims) échoue"
   exit 1
@@ -163,21 +199,65 @@ echo "[7/28] features-for-path : silent si aucune feature, matche via touches:"
 if ! bash "$OUT/.ai/scripts/features-for-path.sh" src/foo.ts >/dev/null 2>&1; then
   echo "  ✓ aucune feature → exit 1 (attendu)"
 fi
-mkdir -p "$OUT/.docs/features/back"
+mkdir -p "$OUT/.docs/features/back" "$OUT/.docs/features/core"
+cat > "$OUT/.docs/features/core/base.md" <<'FEAT'
+---
+id: base
+scope: core
+title: Base
+status: active
+depends_on: []
+touches: []
+---
+
+# Base
+
+Contexte partagé attendu dans l'injection juste-à-temps.
+FEAT
 cat > "$OUT/.docs/features/back/sample.md" <<'FEAT'
 ---
 id: sample
 scope: back
 title: Sample
 status: active
-depends_on: []
+depends_on:
+  - core/base
 touches:
   - src/foo.ts
 ---
+
+# Sample
+
+Contexte direct attendu dans l'injection juste-à-temps.
 FEAT
 mkdir -p "$OUT/src" && echo "// stub" > "$OUT/src/foo.ts"
 ( cd "$OUT" && bash .ai/scripts/features-for-path.sh src/foo.ts | grep -q 'back/sample' ) \
   && echo "  ✓ path→feature résolu"
+hook_ctx=$(
+  cd "$OUT"
+  printf '%s' '{"tool_name":"Edit","tool_input":{"file_path":"src/foo.ts"}}' \
+    | bash .ai/scripts/features-for-path.sh \
+    | jq -r '.hookSpecificOutput.additionalContext'
+)
+if ! printf '%s' "$hook_ctx" | grep -q 'Contexte feature injecté juste-à-temps'; then
+  echo "  ✗ hook features-for-path n'injecte pas les fiches"
+  exit 1
+fi
+if ! printf '%s' "$hook_ctx" | grep -q 'Contexte direct attendu'; then
+  echo "  ✗ hook features-for-path n'injecte pas la fiche directe"
+  exit 1
+fi
+if ! printf '%s' "$hook_ctx" | grep -q 'Contexte partagé attendu'; then
+  echo "  ✗ hook features-for-path n'injecte pas depends_on"
+  exit 1
+fi
+echo "  ✓ hook injecte fiche directe + depends_on"
+brief_ctx=$( cd "$OUT" && bash .ai/scripts/ai-context.sh brief src/foo.ts )
+if ! printf '%s' "$brief_ctx" | grep -q 'Contexte direct attendu'; then
+  echo "  ✗ ai-context.sh brief n'expose pas le contexte feature"
+  exit 1
+fi
+echo "  ✓ ai-context.sh brief expose le contexte feature"
 
 echo
 echo "[8/28] build-feature-index : index JSON créé par features-for-path"

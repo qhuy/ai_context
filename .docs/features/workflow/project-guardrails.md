@@ -18,7 +18,7 @@ touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "procédure déplacée sous .ai/workflows ; cadrage recommandé via aic-frame"
+  step: "README_AI_CONTEXT clarifie le cycle mission→ship"
   blockers: []
   resume_hint: "vérifier que la procédure rendue apparaît dans .ai/workflows/ après copier copy ; valider qu'un cadrage /aic-frame peut produire .ai/guardrails.md conforme"
   updated: 2026-05-03
@@ -79,3 +79,5 @@ La procédure cible spécifiquement ce qui n'est *pas* déjà dans le README —
 - **2026-05-03** — `tests/smoke-test.sh` passe en `touches_shared` pour conserver la visibilité review sans faux blocage freshness.
 - **2026-05-03** — Étape intermédiaire : `/aic-project-guardrails` était maintenu pour compatibilité, mais le point d'entrée recommandé devenait déjà `/aic-frame`.
 - **2026-05-03** — Retrait du skill Claude `/aic-project-guardrails` et déplacement de sa logique dans `.ai/workflows/project-guardrails.md`, consommable par Claude et Codex via `/aic-frame`.
+- **2026-05-03** — `README_AI_CONTEXT.md` conserve `/aic-frame` comme cadrage recommandé, mais ajoute une table de workflow quotidien (`status`, `brief`, `review`, `doctor/check`) pour clarifier l'usage après bootstrap.
+- **2026-05-03** — La table quotidienne s'étend à `mission`, `document-delta`, `repair` et `ship-report` : le cadrage projet reste `/aic-frame`, tandis que la CLI couvre les gestes Codex/agents non-hookés.

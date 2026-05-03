@@ -29,7 +29,7 @@ touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "skills publics intentionnels, primitives déplacées sous .ai/workflows"
+  step: "workflow quotidien documenté de mission à ship-report"
   blockers: []
   resume_hint: "valider smoke-test et ajuster README si la table publique reste trop procédurale"
   updated: 2026-05-03
@@ -76,3 +76,5 @@ Les primitives procédurales vivent sous `.ai/workflows/`. Elles restent disponi
 
 - 2026-05-03 : création des skills intentionnels `/aic-frame`, `/aic-status`, `/aic-review`, `/aic-ship`. Décision initiale : ne plus présenter les primitives procédurales comme UX recommandée.
 - 2026-05-03 : retrait des primitives procédurales de `.claude/skills/` et déplacement sous `.ai/workflows/` pour préserver la logique interne tout en gardant la parité Claude/Codex.
+- 2026-05-03 : `README_AI_CONTEXT.md` et son template ajoutent un workflow quotidien orienté intention : `status`, `brief <path>`, `review`, `doctor/check`. Objectif : rendre l'UX Codex explicite sans ajouter de skill procédural.
+- 2026-05-03 : workflow quotidien étendu avec `mission`, `document-delta`, `repair` et `ship-report`. Objectif : proposer une surface naturelle Claude/Codex sans réintroduire les skills procéduraux.

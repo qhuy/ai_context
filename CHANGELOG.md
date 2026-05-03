@@ -3,6 +3,11 @@
 ## Unreleased
 
 ### Nouveau
+- `ai-context.sh status` — état terminal actionnable : features, delta, hooks, checks principaux, budget reminder et prochaine action minimale.
+- `ai-context.sh brief <path>` — contexte juste-à-temps pour Codex/agents non-hookés avant édition d'un fichier ; route vers `features-for-path --with-docs`.
+- `ai-context.sh mission "<objectif>"`, `document-delta`, `repair`, `ship-report` — UX CLI intentionnelle pour cadrer une tâche, relier delta↔docs, réparer le mesh sans action destructive et préparer la sortie commit/PR. Compatible Claude/Codex sans gonfler le reminder.
+- `.ai/agent/response-style.md` — contrat de clôture de tâche compact/structuré : résultat observable, vérifications, risques, recommandation assumée et prochaine action utile. Chargé via Pack A, pas injecté dans le reminder.
+- `features-for-path.sh --with-docs` — mode CLI utilisable par Codex pour afficher les fiches feature concernées par un path et leurs dépendances `depends_on`, avec budget borné.
 - Skills intentionnels Claude : `/aic-frame`, `/aic-status`, `/aic-review`, `/aic-ship`. La surface recommandée devient orientée intention (`frame/status/diagnose/review/ship`) au lieu d'exposer les primitives procédurales `aic-feature-*`.
 - Les primitives procédurales sont retirées de `.claude/skills/` et déplacées vers `.ai/workflows/` pour rester utilisables par Claude et Codex sans apparaître comme commandes utilisateur.
 - `.ai/scripts/review-delta.sh` — rapport review-friendly du delta courant (`--staged` ou `--base/--head`) listant fichiers, features directes, features liées via `touches_shared`, risques détectés et checks recommandés. Exposé via `ai-context.sh review`.
@@ -28,6 +33,7 @@
 - `check-features.sh` applique aussi `is_path_within_repo` aux entrées `depends_on:` (auparavant seulement aux `touches:`). Une référence `depends_on: ../../other-project/scope/id` ne traverse plus silencieusement.
 
 ### Changé
+- `features-for-path.sh` injecte désormais, côté hook Claude `PreToolUse Write/Edit`, un contexte juste-à-temps borné : fiches directes touchées + `depends_on` récursifs. Le `pre-turn-reminder` reste inchangé, donc le coût par prompt ne gonfle pas.
 - UX skills : `aic-feature-*`, `aic-quality-gate` et `aic-project-guardrails` ne sont plus exposés comme skills Claude. Les procédures équivalentes vivent sous `.ai/workflows/`, partagées par Claude et Codex. `/aic-frame` devient le point d'entrée de cadrage avec plan, spécificités métier/technique et validation.
 - **Promesse multi-agents tempérée** — README + `template/AGENTS.md.jinja` exposent maintenant un tableau « Capacités runtime par agent » : seul Claude bénéficie de l'injection de contexte par tour (UserPromptSubmit, PreToolUse, PostToolUse, Stop). Les autres agents ont les shims statiques + git hooks. Pas de changement de code, juste alignement de la communication.
 - **`adoption_mode=strict` réellement renforcé** — la CI ajoute `doctor.sh --strict` + `check-feature-coverage.sh --strict` quand le mode est `strict`. Plus seulement `.github/workflows/` forcé. Label `copier.yml` corrigé.

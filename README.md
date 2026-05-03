@@ -227,7 +227,7 @@ flowchart LR
 
 1. **UserPromptSubmit** → `pre-turn-reminder.sh` injecte `reminder.md` + features actives filtrées par `status` + reverse deps.
 2. **Agent** raisonne et décide d'écrire.
-3. **PreToolUse Write/Edit** → `features-for-path.sh` injecte en additional context les features qui couvrent le path modifié (via `touches:`).
+3. **PreToolUse Write/Edit** → `features-for-path.sh` injecte en additional context les features qui couvrent le path modifié (via `touches:`) + des extraits bornés de leurs fiches et `depends_on`.
 4. **PreToolUse Bash git commit** → `check-commit-features.sh` valide Conventional Commits et bloque `feat:` si aucune feature touchée.
 5. **PostToolUse Write/Edit** → `auto-worklog-log.sh` append au log volatile.
 6. **Stop** (fin de tour) → `auto-worklog-flush.sh` flush le log dans les worklogs des features impactées, bumpe `progress.updated`, rebuild l'index, clear le log.
@@ -660,9 +660,20 @@ La couche `.ai/agent/*` ajoute de la qualité comportementale sans grossir les s
 
 - `posture.md` : écoute, diagnostic, prise de position, rigueur sans sur-explication.
 - `initiative-contract.md` : quand agir directement, quand proposer, quand demander confirmation.
-- `response-style.md` : réponses concrètes, persuasion non manipulatrice, fin orientée prochaine action.
+- `response-style.md` : réponses concrètes, persuasion non manipulatrice, récap de clôture adaptatif, recommandation et prochaine action.
 
 Chargement : `.ai/index.md` la référence dans le Pack A, à lire une fois en début de session ou pour une tâche importante. Elle n'est pas injectée à chaque tour par `pre-turn-reminder.sh`, donc son coût est visible seulement quand l'agent la charge explicitement.
+
+Clôture attendue : l'agent termine les tâches significatives par un récap lisible, adapté à la taille du travail. Pour une petite tâche, le format compact suffit :
+
+```markdown
+Fait : <résultat observable>
+Vérifié : <check lancé, ou non lancé avec raison>
+Recommandation : <position assumée>
+Prochaine action : <action minimale utile>
+```
+
+Pour une tâche plus large, une review ou une décision, le format structuré ajoute un tableau `Résultat / Périmètre / Vérifications / Risques restants`, puis une recommandation et une prochaine action. Le tableau n'est pas obligatoire : il est utilisé seulement quand il améliore la lecture.
 
 Compatibilité :
 
@@ -729,7 +740,7 @@ Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et dist
 | `_lib.sh` | Helpers partagés : dépendances, status visibles, matching canonique `touches:` / `touches_shared:`, `docs_root` runtime |
 | `build-feature-index.sh` | Compile `{{ docs_root }}/features/**/*.md` → `.ai/.feature-index.json` |
 | `pre-turn-reminder.sh` | Hook `UserPromptSubmit` : reminder + inventory filtré + reverse deps |
-| `features-for-path.sh` | Hook `PreToolUse Write` : features qui couvrent un path |
+| `features-for-path.sh` | Hook `PreToolUse Write` : features qui couvrent un path + contexte feature borné ; CLI `--with-docs` pour Codex |
 | `check-shims.sh` | Vérifie shims cohérents avec `.ai/index.md` |
 | `check-ai-references.sh` | Détecte les références cassées vers `.ai/` |
 | `check-features.sh` | Valide frontmatter + scope + `depends_on` + `touches` |
@@ -745,7 +756,7 @@ Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et dist
 | `auto-worklog-log.sh` | Hook `PostToolUse` : logue les éditions dans `.session-edits.log` |
 | `auto-worklog-flush.sh` | Hook `Stop` : flush log → worklog + bump `progress.updated` |
 | `aic-undo.sh` | Annule la dernière transition auto-progressée (lit `.progress-history.jsonl`, restaure le frontmatter, append au worklog, rebuild index). Headless ; le skill `/aic undo` s'appuie dessus. `--dry-run` par défaut, `--apply` pour exécuter. |
-| `ai-context.sh` | Wrapper CLI MVP — route `doctor` / `resume` / `audit` / `migrate` / `pr-report` / `review` / `measure` / `check` / `coverage` / `shims` / `index` / `reminder` vers les scripts dédiés. Aucune logique propre. |
+| `ai-context.sh` | CLI UX : `mission "<objectif>"`, `status`, `brief <path>`, `document-delta`, `repair`, `ship-report`, puis routes `doctor` / `resume` / `audit` / `migrate` / `pr-report` / `review` / `measure` / `check` / `coverage` / `shims` / `index` / `reminder`. |
 
 Tous les scripts runtime lisent le dossier métier via `AI_CONTEXT_DOCS_ROOT` rendu depuis `docs_root` (`.docs` par défaut). Les entrées `touches:` sont matchées par un helper unique (`path_matches_touch`) pour garder la même sémantique entre `features-for-path`, auto-worklog, coverage et `pre-commit`. `touches_shared:` sert aux surfaces transverses visibles en review mais non bloquantes pour `check-feature-freshness --staged`.
 

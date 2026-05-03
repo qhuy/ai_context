@@ -7,12 +7,18 @@
 # Modes :
 #   - CLI : bash features-for-path.sh <path>
 #           Sortie texte, exit 0 si trouvé, exit 1 sinon.
+#           Option : --with-docs injecte les fiches liées (utile hors Claude).
 #   - Claude PreToolUse hook : JSON sur stdin {tool_name, tool_input.file_path},
 #           écrit un JSON avec hookSpecificOutput.additionalContext.
 #
 # Globs supportés : * ? [abc] et ** (si bash ≥4 ; sinon ** = *).
 #
 # Debug : AI_CONTEXT_DEBUG=1 bash features-for-path.sh <path>
+#
+# Bornes d'injection :
+#   AI_CONTEXT_INJECT_FEATURE_DOCS=0       désactive les extraits docs en hook.
+#   AI_CONTEXT_FEATURE_DOC_MAX_CHARS=10000 budget total des extraits.
+#   AI_CONTEXT_FEATURE_DOC_PER_DOC_CHARS=3000 budget par fiche.
 
 set -euo pipefail
 
@@ -41,11 +47,119 @@ ensure_index() {
   fi
 }
 
+feature_keys=""
+feature_context=""
+feature_context_truncated=0
+feature_doc_max_chars="${AI_CONTEXT_FEATURE_DOC_MAX_CHARS:-10000}"
+feature_doc_per_doc_chars="${AI_CONTEXT_FEATURE_DOC_PER_DOC_CHARS:-3000}"
+
+seen_feature_key() {
+  local key="$1"
+  printf '%s\n' "$feature_keys" | grep -Fxq "$key"
+}
+
+add_feature_key() {
+  local key="$1"
+  [[ -z "$key" ]] && return 0
+  if seen_feature_key "$key"; then
+    return 0
+  fi
+  feature_keys+="$key"$'\n'
+
+  local dep
+  while IFS= read -r dep; do
+    [[ -z "$dep" || "$dep" == "null" ]] && continue
+    add_feature_key "$dep"
+  done < <(jq -r --arg key "$key" '
+    .features[]
+    | select((.scope + "/" + .id) == $key)
+    | (.depends_on // [])[]
+  ' "$index_file" 2>/dev/null || true)
+}
+
+load_feature_context() {
+  feature_context=""
+  feature_context_truncated=0
+
+  [[ "${AI_CONTEXT_INJECT_FEATURE_DOCS:-1}" == "0" ]] && return 0
+  [[ -f "$index_file" ]] || return 0
+  [[ "$feature_doc_max_chars" =~ ^[0-9]+$ ]] || feature_doc_max_chars=10000
+  [[ "$feature_doc_per_doc_chars" =~ ^[0-9]+$ ]] || feature_doc_per_doc_chars=3000
+  [[ "$feature_doc_max_chars" -gt 0 && "$feature_doc_per_doc_chars" -gt 0 ]] || return 0
+
+  local key path abs_path header excerpt remaining doc_budget excerpt_len current_len
+  while IFS= read -r key; do
+    [[ -n "$key" ]] || continue
+    current_len=$(printf '%s' "$feature_context" | wc -c | tr -d ' ')
+    remaining=$((feature_doc_max_chars - current_len))
+    if [[ "$remaining" -le 200 ]]; then
+      feature_context_truncated=1
+      break
+    fi
+
+    path=$(jq -r --arg key "$key" '
+      .features[]
+      | select((.scope + "/" + .id) == $key)
+      | .path // empty
+    ' "$index_file" 2>/dev/null | head -1)
+    [[ -n "$path" ]] || continue
+    if ! is_path_within_repo "$path"; then
+      continue
+    fi
+    abs_path="$repo_root/$path"
+    [[ -f "$abs_path" ]] || continue
+
+    header=$'\n''--- '"$key"' ('"$path"$') ---\n'
+    doc_budget="$feature_doc_per_doc_chars"
+    if [[ "$doc_budget" -gt "$remaining" ]]; then
+      doc_budget="$remaining"
+    fi
+    excerpt=$(LC_ALL=C head -c "$doc_budget" "$abs_path" 2>/dev/null || true)
+    excerpt_len=$(printf '%s' "$excerpt" | wc -c | tr -d ' ')
+    if [[ -n "$excerpt" ]]; then
+      feature_context+="$header$excerpt"$'\n'
+      if [[ "$excerpt_len" -ge "$doc_budget" ]]; then
+        feature_context+=$'[... extrait tronqué ...]\n'
+        feature_context_truncated=1
+      fi
+    fi
+  done <<< "$feature_keys"
+
+  if [[ -n "$feature_context" ]]; then
+    feature_context=$'\nContexte feature injecté juste-à-temps (features directes + depends_on ; borné) :\n'"$feature_context"
+    if [[ "$feature_context_truncated" == "1" ]]; then
+      feature_context+=$'\nNote : contexte tronqué par budget. Si la décision dépend du détail, lis la fiche complète avant d'\''écrire.\n'
+    fi
+  fi
+}
+
 # ─── Détection du mode ───
 target_path=""
 mode="cli"
-if [[ $# -ge 1 ]]; then
-  target_path="$1"
+with_docs=0
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --with-docs|--docs)
+      with_docs=1
+      shift
+      ;;
+    --no-docs)
+      AI_CONTEXT_INJECT_FEATURE_DOCS=0
+      shift
+      ;;
+    -*)
+      echo "Usage : $0 [--with-docs] [--no-docs] <path>" >&2
+      exit 2
+      ;;
+    *)
+      target_path="$1"
+      shift
+      ;;
+  esac
+done
+
+if [[ -n "$target_path" ]]; then
+  mode="cli"
 elif [[ ! -t 0 ]]; then
   mode="hook"
   payload=$(cat)
@@ -74,6 +188,7 @@ if [[ -f "$index_file" ]]; then
   while IFS=$'\t' read -r scope id path; do
     [[ -z "$scope" ]] && continue
     matches+="  • ${scope}/${id} (${path})"$'\n'
+    add_feature_key "${scope}/${id}"
   done < <(features_matching_path "$index_file" "$rel_path")
 
   if [[ -n "$matches" ]]; then
@@ -90,7 +205,11 @@ if [[ "$mode" == "hook" ]]; then
   if [[ -z "$matches" ]]; then
     exit 0
   fi
+  load_feature_context
   ctx=$'⚠️  Features concernées par ce fichier — relis-les AVANT d\'écrire, mets à jour leur section Historique APRÈS :\n'"$matches"
+  if [[ -n "$feature_context" ]]; then
+    ctx+="$feature_context"
+  fi
   jq -n --arg c "$ctx" '{
     hookSpecificOutput: {
       hookEventName: "PreToolUse",
@@ -104,4 +223,8 @@ else
   fi
   echo "Features concernées par '$rel_path' :"
   printf '%s' "$matches"
+  if [[ "$with_docs" == "1" ]]; then
+    load_feature_context
+    printf '%s' "$feature_context"
+  fi
 fi

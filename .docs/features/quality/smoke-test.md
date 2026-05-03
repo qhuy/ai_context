@@ -11,7 +11,7 @@ touches:
   - tests/**
 progress:
   phase: review
-  step: "tests unitaires de régression review et touches_shared intégrés"
+  step: "smoke couvre la CLI UX ai-context complète"
   blockers: []
   resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
   updated: 2026-04-28
@@ -26,7 +26,7 @@ Vérifier en un script que la chaîne complète tient : `copier copy` → check-
 ## Comportement attendu
 
 - Lancement local : `bash tests/smoke-test.sh`.
-- 28 assertions, exit non-zéro à la première qui casse.
+- 28 étapes, exit non-zéro à la première qui casse.
 - Crée un projet jetable dans `/tmp`, applique le template, exerce les scripts.
 
 ## Contrats
@@ -45,6 +45,9 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-05-03 : ajout du test unitaire `[0e]` pour vérifier que `touches_shared` ne bloque pas `check-feature-freshness --staged` mais reste visible dans `review-delta.sh`.
 - 2026-05-03 : l'assertion skills attend désormais les skills intentionnels `/aic-frame`, `/aic-status`, `/aic-review`, `/aic-ship` en plus des primitives historiques conservées.
 - 2026-05-03 : l'assertion skills vérifie désormais 6 skills Claude publics et 8 workflows internes `.ai/workflows/`, et bloque la réapparition des anciens skills procéduraux exposés.
+- 2026-05-03 : étape `[7/28]` enrichie pour vérifier que le hook `features-for-path` injecte la fiche directe et une fiche `depends_on`, pas seulement la liste des features.
+- 2026-05-03 : smoke-test enrichi pour figer l'UX `ai-context.sh status` (prochaine action minimale) et `ai-context.sh brief <path>` (contexte feature exposé hors hooks Claude).
+- 2026-05-03 : smoke-test enrichi pour figer `ai-context.sh mission`, `repair`, `document-delta` et `ship-report` sur un scaffold sans git actif, afin de garantir une UX Codex/Claude utilisable dès le bootstrap.
 - v0.7.2 : ajout assertion sur escaping JSON (régression).
 - v0.9 : ajout assertion sur `AI_CONTEXT_FOCUS` graph + i18n FR/EN.
 - 2026-04-24 : ajout [18/27] — vérifie que le pre-commit `auto-progress.sh` bascule `spec → implement`, écrit le snapshot dans `.progress-history.jsonl`, crée la ligne `auto-progress` dans le worklog, et est idempotent (second commit sans re-bump). HANDOFF reçu depuis `workflow/conversational-skills` (chantier 4). Révélé au passage un bug fixé : `auto-progress.sh` ne créait pas le worklog si absent — correctif appliqué dans `.ai/scripts/` + `template/.ai/scripts/`, cross-ref tracée dans `core/template-engine` Historique.

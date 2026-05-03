@@ -18,7 +18,7 @@ touches:
   - .docs/FEATURE_TEMPLATE.md
 progress:
   phase: implement
-  step: "runtime dogfood synchronisé avec workflows internes"
+  step: "CLI UX mission→ship dogfoodée dans le runtime source"
   blockers: []
   resume_hint: "vérifier shims, features, measure-context-size et smoke ciblé après sync"
   updated: 2026-05-03
@@ -42,6 +42,7 @@ Faire consommer au repo source `ai_context` la même couche runtime que celle g�
 - Ne pas écraser les fichiers mainteneur qui ne font pas partie du runtime consommateur.
 - Après sync : `check-shims`, `check-ai-references`, `check-features` et `measure-context-size` doivent passer.
 - Le drift check doit distinguer runtime synchronisé et fichiers source-only conservés volontairement.
+- Les scripts runtime dogfoodés restent alignés avec le template ; une injection hook ajoutée côté source doit être présente côté `template/.ai/scripts/`.
 
 ## Commandes
 
@@ -61,3 +62,6 @@ Faire consommer au repo source `ai_context` la même couche runtime que celle g�
 - 2026-05-03 : dogfooding de la migration des primitives procédurales vers `.ai/workflows/` ; le runtime source expose désormais 6 skills Claude publics et 8 workflows internes partagés avec Codex.
 - 2026-05-03 : application dogfooding de la version courante au repo source. Choix conservateur : synchroniser le runtime généré, mais conserver les workflows CI source quand ils sont plus stricts que le rendu downstream.
 - 2026-05-03 : ajout des scripts source-only `dogfood-update.sh` et `check-dogfood-drift.sh`. Ils rendent le template dans `/tmp`, synchronisent ou comparent les fichiers runtime, et ignorent explicitement les fichiers mainteneur source-only.
+- 2026-05-03 : `features-for-path.sh` synchronisé runtime/template pour injecter en hook Claude les fiches directes + `depends_on`, et offrir un mode CLI `--with-docs` utilisable par Codex.
+- 2026-05-03 : `ai-context.sh status` et `ai-context.sh brief <path>` dogfoodés côté repo source ; `README_AI_CONTEXT.md` documente le workflow quotidien Claude/Codex.
+- 2026-05-03 : dogfooding des commandes `mission`, `document-delta`, `repair` et `ship-report` dans `.ai/scripts/ai-context.sh`; `README_AI_CONTEXT.md` documente désormais le cycle cadrage → édition JIT → doc delta → ship.

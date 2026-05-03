@@ -21,7 +21,7 @@ touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "v0.10 — exclusions par défaut + format JSON + warnings enrichis ; smoke-test inclut les régressions review"
+  step: "ai-context expose mission/document-delta/repair/ship-report"
   blockers: []
   resume_hint: "ajouter une intégration CI (commentaire PR automatique) — passer en review une fois le wrapper ai-context-bot stabilisé"
   updated: 2026-04-28
@@ -62,3 +62,5 @@ Rendre visible la valeur du mesh dans les PRs via un rapport markdown simple: fe
 - 2026-04-28 (impl) : commit dédié de l'implémentation `pr-report.sh.jinja` après que la documentation des entries précédentes soit déjà landée — split en deux commits pour séparer la trace décisionnelle de l'implémentation Bash.
 - 2026-05-03 : `tests/smoke-test.sh` lance désormais les tests unitaires de régression avant les scénarios Copier. Pas de changement de `pr-report.sh`, mais la feature reste dans le périmètre smoke partagé.
 - 2026-05-03 : ajout de `review-delta.sh` (runtime + template + wrapper `ai-context review`) pour produire un rapport stable de review : fichiers, features directes, features liées shared, risques et checks recommandés. `pr-report.sh` expose aussi `related_features` et `warnings.shared_only`.
+- 2026-05-03 : `ai-context.sh` gagne deux commandes UX : `status` (état humain actionnable + prochaine action minimale) et `brief <path>` (route vers `features-for-path --with-docs` pour Codex/agents non-hookés). Les routes existantes restent compatibles.
+- 2026-05-03 : extension UX du wrapper avec `mission`, `document-delta`, `repair` et `ship-report`. Ces commandes composent les checks/reports existants, restent non destructives par défaut, et donnent une prochaine action concrète aux agents Claude/Codex.

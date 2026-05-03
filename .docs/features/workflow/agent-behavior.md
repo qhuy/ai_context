@@ -17,7 +17,7 @@ touches_shared:
   - README.md
 progress:
   phase: implement
-  step: "surface Claude/Codex intentionnelle + workflows internes"
+  step: "contrat de clôture de réponse ajouté"
   blockers: []
   resume_hint: "vérifier check-features + mesure contexte après intégration"
   updated: 2026-05-03
@@ -51,6 +51,7 @@ La couche doit améliorer la proactivité, l'écoute, le diagnostic, la capacit�
 - Message Copier : `/aic-diagnose` est listé parmi les commandes rares exposées.
 - Compatibilité Codex : `.ai/index.md` documente l'équivalent naturel de `/aic-diagnose`.
 - Mesure contexte : l'absence de modification de `template/.ai/reminder.md.jinja` garantit que `measure-context-size.sh` ne charge pas cette couche à chaque tour.
+- Clôture de tâche : `response-style.md` définit un format adaptatif compact/structuré pour livrer résultat, validations, risques, recommandation et prochaine action sans imposer un tableau systématique.
 
 ## Cross-refs
 
@@ -64,3 +65,4 @@ La couche doit améliorer la proactivité, l'écoute, le diagnostic, la capacit�
 - 2026-05-03 — `README.md` passe en `touches_shared` : la documentation utilisateur reste visible en review, mais les ajouts transverses README ne rendent plus cette fiche bloquante.
 - 2026-05-03 — `.ai/index.md` reformule la surface Claude/Codex autour d'intentions (`frame/status/diagnose/review/ship`) plutôt que de skills procéduraux.
 - 2026-05-03 — La logique procédurale est déplacée sous `.ai/workflows/`, ce qui conserve la parité Claude/Codex sans gonfler les shims ni le reminder.
+- 2026-05-03 — `response-style.md` ajoute un contrat de clôture de tâche : format compact pour les petites réponses, format structuré avec tableau quand le périmètre/les checks/les risques le justifient, et recommandation assumée + prochaine action minimale.
