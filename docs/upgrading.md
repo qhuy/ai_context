@@ -6,7 +6,7 @@ Quand le template évolue sur GitHub (nouvelles règles, nouveaux checks, fixes)
 
 ```bash
 cd mon-projet
-copier update
+copier update --vcs-ref=HEAD
 ```
 
 Copier lit `.copier-answers.yml` pour retrouver les réponses initiales. Il te montre un **diff** pour chaque fichier modifié et te demande quoi faire :
@@ -14,6 +14,46 @@ Copier lit `.copier-answers.yml` pour retrouver les réponses initiales. Il te m
 - `y` : appliquer le changement.
 - `n` : ignorer.
 - `d` : voir le diff en détail.
+
+Pourquoi `--vcs-ref=HEAD` : Copier cible souvent le dernier tag publié par défaut. Si `main` contient une version plus récente que le dernier tag, `copier update` seul peut proposer une mise à jour vers une version plus ancienne que le HEAD GitHub.
+
+## Prévisualiser sans toucher au repo
+
+Sur un worktree sale, `copier update` refuse de démarrer. C'est sain pour éviter les merges implicites, mais pénible pour estimer l'effort. Utilise plutôt :
+
+```bash
+bash .ai/scripts/ai-context.sh template-diff
+```
+
+La commande rend le template dans `/tmp`, liste les fichiers template à ajouter ou modifier, et ne modifie pas le projet courant. Tu peux cibler une source ou une ref précise :
+
+```bash
+bash .ai/scripts/ai-context.sh template-diff --src-path gh:qhuy/ai_context --vcs-ref HEAD
+```
+
+## Réparer `.copier-answers.yml`
+
+Si le projet a été scaffoldé sans `.copier-answers.yml`, Copier ne connaît plus `_src_path` ni `_commit`, donc `copier update` ne peut pas fonctionner proprement.
+
+Preview :
+
+```bash
+bash .ai/scripts/ai-context.sh repair-copier-metadata
+```
+
+Écriture explicite :
+
+```bash
+bash .ai/scripts/ai-context.sh repair-copier-metadata --apply
+```
+
+Si le projet vient d'une source ou d'un tag précis :
+
+```bash
+bash .ai/scripts/ai-context.sh repair-copier-metadata --src-path gh:qhuy/ai_context --commit v0.11.0 --apply
+```
+
+La commande infère `project_name`, `docs_root`, le profil de scopes, les agents et le mode d'adoption depuis les fichiers présents. Relis le YAML proposé avant `--apply` si le projet a été fortement customisé.
 
 ## Si tu as personnalisé un fichier généré
 
@@ -39,7 +79,7 @@ git stash pop
 
 ## Épingler une version
 
-Par défaut `copier update` remonte à la dernière version. Pour cibler un tag :
+Pour cibler un tag au lieu de `HEAD` :
 
 ```bash
 copier update --vcs-ref v0.2.0

@@ -416,10 +416,28 @@ Quand le mesh couvre suffisamment le projet, tu peux rendre `check-features.sh` 
 
 ```bash
 cd mon-projet
-copier update
+copier update --vcs-ref=HEAD
 ```
 
 Les réponses précédentes sont relues depuis `.copier-answers.yml`. Un diff est proposé par fichier — tu contrôles ce qui est appliqué. Relis [CHANGELOG.md](CHANGELOG.md) pour les breaking notes éventuelles.
+
+`--vcs-ref=HEAD` est volontaire : Copier peut choisir le dernier tag publié par défaut. Si le HEAD GitHub est plus récent que le dernier tag, cette option évite un downgrade involontaire.
+
+Si `.copier-answers.yml` est absent ou incomplet :
+
+```bash
+bash .ai/scripts/ai-context.sh repair-copier-metadata
+# relire la proposition, puis :
+bash .ai/scripts/ai-context.sh repair-copier-metadata --apply
+```
+
+Si le worktree est sale ou si tu veux estimer l'update sans toucher au projet :
+
+```bash
+bash .ai/scripts/ai-context.sh template-diff
+```
+
+Voir [docs/upgrading.md](docs/upgrading.md) pour les variantes `--src-path`, `--commit` et `--vcs-ref`.
 
 ### 4. Cadrer puis créer une nouvelle feature
 
@@ -767,7 +785,7 @@ Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et dist
 | `auto-worklog-log.sh` | Hook `PostToolUse` : logue les éditions dans `.session-edits.log` |
 | `auto-worklog-flush.sh` | Hook `Stop` : flush log → worklog + bump `progress.updated` |
 | `aic-undo.sh` | Annule la dernière transition auto-progressée (lit `.progress-history.jsonl`, restaure le frontmatter, append au worklog, rebuild index). Headless ; le skill `/aic undo` s'appuie dessus. `--dry-run` par défaut, `--apply` pour exécuter. |
-| `ai-context.sh` | CLI UX : `first-run`, `mission "<objectif>"`, `status`, `brief <path>`, `document-delta`, `repair`, `ship-report`, `product-status`, `product-portfolio`, `product-review product/<id>`, puis routes `doctor` / `resume` / `audit` / `migrate` / `pr-report` / `review` / `measure` / `check` / `coverage` / `shims` / `index` / `reminder`. |
+| `ai-context.sh` | CLI UX : `first-run`, `mission "<objectif>"`, `status`, `brief <path>`, `document-delta`, `repair`, `repair-copier-metadata`, `template-diff`, `ship-report`, `product-status`, `product-portfolio`, `product-review product/<id>`, puis routes `doctor` / `resume` / `audit` / `migrate` / `pr-report` / `review` / `measure` / `check` / `coverage` / `shims` / `index` / `reminder`. |
 
 Tous les scripts runtime lisent le dossier métier via `AI_CONTEXT_DOCS_ROOT` rendu depuis `docs_root` (`.docs` par défaut). Les entrées `touches:` sont matchées par un helper unique (`path_matches_touch`) pour garder la même sémantique entre `features-for-path`, auto-worklog, coverage et `pre-commit`. `touches_shared:` sert aux surfaces transverses visibles en review mais non bloquantes pour `check-feature-freshness --staged`.
 

@@ -53,4 +53,4 @@ Les questions posées par `copier copy` et leurs effets.
 - `.ai/scripts/pre-turn-reminder.sh`, `check-shims.sh`, `check-ai-references.sh`
 - `README_AI_CONTEXT.md`
 - `{{docs_root}}/.gitkeep`
-- `.copier-answers.yml` (tracking du template appliqué)
+- `.copier-answers.yml` (tracking du template appliqué ; doit être versionné pour permettre `copier update --vcs-ref=HEAD`)

@@ -83,3 +83,4 @@ La procédure cible spécifiquement ce qui n'est *pas* déjà dans le README —
 - **2026-05-03** — La table quotidienne s'étend à `mission`, `document-delta`, `repair` et `ship-report` : le cadrage projet reste `/aic-frame`, tandis que la CLI couvre les gestes Codex/agents non-hookés.
 - **2026-05-03** — Le cadrage produit est désormais porté par `scope: product` dans le feature mesh ; les guardrails restent limités aux non-goals/glossaire et ne deviennent pas une roadmap parallèle.
 - **2026-05-04** — `first-run` mentionne `/aic-frame` et `.ai/guardrails.md` comme étape possible, sans réintroduire `/aic-project-guardrails` dans l'UX publique.
+- **2026-05-04** — La doc d'update ajoute `repair-copier-metadata` et `template-diff`; le cadrage projet reste séparé des métadonnées Copier, mais README_AI_CONTEXT est synchronisé sur la nouvelle surface CLI.

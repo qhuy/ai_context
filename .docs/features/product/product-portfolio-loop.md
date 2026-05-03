@@ -55,7 +55,7 @@ product:
     strategic_fit: high
 progress:
   phase: implement
-  step: "First-run UX ajouté pour guider le premier usage après scaffold"
+  step: "CLI update Copier documentée sur les surfaces partagées"
   blockers: []
   resume_hint: "valider smoke-test, check-product-links, dogfood drift et first-run sur rendu Copier"
   updated: 2026-05-04

@@ -180,6 +180,24 @@ if ! printf '%s' "$repair_out" | grep -q "## Repair Plan"; then
   echo "  ✗ ai-context.sh repair ne produit pas de plan"
   exit 1
 fi
+repair_copier_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh repair-copier-metadata )
+if ! printf '%s' "$repair_copier_out" | grep -q "## Copier Metadata Repair"; then
+  echo "  ✗ ai-context.sh repair-copier-metadata ne produit pas de plan"
+  exit 1
+fi
+if ! printf '%s' "$repair_copier_out" | grep -q "_src_path:"; then
+  echo "  ✗ ai-context.sh repair-copier-metadata ne propose pas _src_path"
+  exit 1
+fi
+template_diff_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh template-diff --src-path "$REPO" --vcs-ref HEAD )
+if ! printf '%s' "$template_diff_out" | grep -q "## Template Diff"; then
+  echo "  ✗ ai-context.sh template-diff ne produit pas de rapport"
+  exit 1
+fi
+if ! printf '%s' "$template_diff_out" | grep -q "repo courant modifié: non"; then
+  echo "  ✗ ai-context.sh template-diff ne garantit pas la preview externe"
+  exit 1
+fi
 document_delta_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh document-delta )
 if ! printf '%s' "$document_delta_out" | grep -q "## Document Delta"; then
   echo "  ✗ ai-context.sh document-delta ne produit pas de rapport"

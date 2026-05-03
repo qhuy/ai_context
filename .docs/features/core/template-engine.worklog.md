@@ -80,3 +80,17 @@
 - Correction du diagramme Mermaid de la section Architecture du README :
   - labels `/aic-*` rendus avec guillemets Mermaid ;
   - label d'arête `dry-run` reformulé sans parenthèses.
+
+## 2026-05-04 — update robustness
+- Fichiers modifiés :
+  - README.md
+  - README_AI_CONTEXT.md
+  - docs/upgrading.md
+  - docs/variables.md
+  - template/README_AI_CONTEXT.md.jinja
+  - template/.ai/scripts/ai-context.sh.jinja
+  - .ai/scripts/ai-context.sh
+- Intention :
+  - rendre le cycle install → customize → update plus robuste après retour projet réel ;
+  - documenter `copier update --vcs-ref=HEAD` ;
+  - fournir un repair explicite des métadonnées Copier et une preview externe du template sans toucher au worktree courant.

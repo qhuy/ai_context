@@ -57,10 +57,26 @@ Toute feature ajoute ou met à jour un fichier `{{ docs_root }}/features/<scope>
 Quand le template évolue sur GitHub :
 
 ```bash
-copier update
+copier update --vcs-ref=HEAD
 ```
 
 Les réponses déjà données sont relues depuis `.copier-answers.yml`. Tu contrôles le diff appliqué.
+
+`--vcs-ref=HEAD` évite que Copier choisisse le dernier tag publié si le HEAD GitHub est plus récent.
+
+Si `.copier-answers.yml` manque ou ne contient pas `_src_path` / `_commit` :
+
+```bash
+bash .ai/scripts/ai-context.sh repair-copier-metadata
+# relire la proposition, puis :
+bash .ai/scripts/ai-context.sh repair-copier-metadata --apply
+```
+
+Pour prévisualiser une update sans toucher au repo courant, même si le worktree est sale :
+
+```bash
+bash .ai/scripts/ai-context.sh template-diff
+```
 
 ## Runtime
 
@@ -79,6 +95,8 @@ Les réponses déjà données sont relues depuis `.copier-answers.yml`. Tu contr
 | Préparer une édition avec Codex | `bash .ai/scripts/ai-context.sh brief <path>` |
 | Vérifier les docs du delta | `bash .ai/scripts/ai-context.sh document-delta` |
 | Réparer le mesh | `bash .ai/scripts/ai-context.sh repair` |
+| Réparer les métadonnées Copier | `bash .ai/scripts/ai-context.sh repair-copier-metadata` |
+| Prévisualiser le template | `bash .ai/scripts/ai-context.sh template-diff` |
 | Relire mon delta | `bash .ai/scripts/ai-context.sh review` |
 | Préparer le ship | `bash .ai/scripts/ai-context.sh ship-report` |
 | Tracer les initiatives produit | `bash .ai/scripts/ai-context.sh product-status` puis `bash .ai/scripts/ai-context.sh product-portfolio` |

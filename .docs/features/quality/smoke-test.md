@@ -11,10 +11,10 @@ touches:
   - tests/**
 progress:
   phase: review
-  step: "smoke couvre la CLI UX ai-context complète"
+  step: "smoke couvre la robustesse update Copier"
   blockers: []
-  resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-04-28
+  resume_hint: "relancer tests/smoke-test.sh après stabilisation des commandes update"
+  updated: 2026-05-04
 ---
 
 # Smoke-test
@@ -50,6 +50,7 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-05-03 : smoke-test enrichi pour figer `ai-context.sh mission`, `repair`, `document-delta` et `ship-report` sur un scaffold sans git actif, afin de garantir une UX Codex/Claude utilisable dès le bootstrap.
 - 2026-05-03 : smoke-test enrichi pour rendre depuis une copie temporaire du workspace courant, couvrir le scope `product`, `check-product-links`, `product-status`, `product-portfolio`, `product-review` et l'indexation `product.initiative`.
 - 2026-05-04 : smoke-test enrichi pour couvrir `ai-context.sh first-run` et éviter la régression où `mission "roadmap produit"` était classé `front` à cause du motif `ui` dans `produit`.
+- 2026-05-04 : smoke-test enrichi pour couvrir `ai-context.sh repair-copier-metadata` et `template-diff`, afin de figer la réparation de `.copier-answers.yml` et la preview externe du template.
 - v0.7.2 : ajout assertion sur escaping JSON (régression).
 - v0.9 : ajout assertion sur `AI_CONTEXT_FOCUS` graph + i18n FR/EN.
 - 2026-04-24 : ajout [18/27] — vérifie que le pre-commit `auto-progress.sh` bascule `spec → implement`, écrit le snapshot dans `.progress-history.jsonl`, crée la ligne `auto-progress` dans le worklog, et est idempotent (second commit sans re-bump). HANDOFF reçu depuis `workflow/conversational-skills` (chantier 4). Révélé au passage un bug fixé : `auto-progress.sh` ne créait pas le worklog si absent — correctif appliqué dans `.ai/scripts/` + `template/.ai/scripts/`, cross-ref tracée dans `core/template-engine` Historique.

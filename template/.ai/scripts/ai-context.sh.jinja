@@ -16,6 +16,8 @@
 #   brief <path> → contexte feature juste-à-temps pour un fichier
 #   mission      → cadrage léger avant une tâche importante
 #   repair       → plan de réparation non destructif du mesh
+#   repair-copier-metadata → recrée .copier-answers.yml si absent
+#   template-diff → preview externe du template sans toucher au repo
 #   document-delta → docs/features à vérifier depuis le delta courant
 #   ship-report  → synthèse de sortie avant commit/PR
 #   product-status / product-portfolio / product-review → traceability produit
@@ -52,6 +54,10 @@ Commandes :
                cadrage léger : scope probable, docs à lire, plan, validations
   repair [--apply]
                plan de réparation du mesh ; --apply reconstruit seulement l'index
+  repair-copier-metadata [--apply] [--src-path <src>] [--commit <ref>]
+               recrée .copier-answers.yml si absent ou incomplet
+  template-diff [--src-path <src>] [--vcs-ref <ref>]
+               rend le template dans /tmp et liste les écarts sans toucher au repo
   document-delta
                suggestions de documentation à partir du delta courant/staged
   ship-report  rapport de sortie : delta, docs, checks, commit proposé
@@ -84,6 +90,92 @@ status_label() {
   else
     printf 'ATTENTION'
   fi
+}
+
+yaml_scalar() {
+  local file="$1"
+  local key="$2"
+  [[ -f "$file" ]] || return 1
+  awk -F': *' -v key="$key" '$1 == key { print $2; found=1; exit } END { exit found ? 0 : 1 }' "$file" \
+    | sed 's/^["'\'']//' | sed 's/["'\'']$//'
+}
+
+infer_project_name() {
+  yaml_scalar "$repo_root/.ai/config.yml" project_id 2>/dev/null \
+    || yaml_scalar "$repo_root/.copier-answers.yml" project_name 2>/dev/null \
+    || basename "$repo_root"
+}
+
+infer_docs_root() {
+  yaml_scalar "$repo_root/.ai/config.yml" docs_root 2>/dev/null \
+    || yaml_scalar "$repo_root/.copier-answers.yml" docs_root 2>/dev/null \
+    || echo ".docs"
+}
+
+infer_scope_profile() {
+  local docs_root has_back has_front has_arch has_security
+  docs_root="$(infer_docs_root)"
+  has_back=0
+  has_front=0
+  has_arch=0
+  has_security=0
+  [[ -d "$repo_root/$docs_root/features/back" ]] && has_back=1
+  [[ -d "$repo_root/$docs_root/features/front" ]] && has_front=1
+  [[ -d "$repo_root/$docs_root/features/architecture" ]] && has_arch=1
+  [[ -d "$repo_root/$docs_root/features/security" ]] && has_security=1
+  if [[ "$has_back$has_front" == "11" ]]; then
+    echo "fullstack"
+  elif [[ "$has_back$has_arch$has_security" == "111" ]]; then
+    echo "backend"
+  else
+    echo "minimal"
+  fi
+}
+
+infer_agents_yaml() {
+  local found=0
+  [[ -f "$repo_root/.claude/settings.json" || -f "$repo_root/CLAUDE.md" ]] && { echo "  - claude"; found=1; }
+  [[ -f "$repo_root/AGENTS.md" ]] && { echo "  - codex"; found=1; }
+  [[ -d "$repo_root/.cursor" ]] && { echo "  - cursor"; found=1; }
+  [[ -f "$repo_root/GEMINI.md" ]] && { echo "  - gemini"; found=1; }
+  [[ -f "$repo_root/.github/copilot-instructions.md" ]] && { echo "  - copilot"; found=1; }
+  [[ "$found" -eq 0 ]] && printf '%s\n%s\n' "  - claude" "  - codex"
+}
+
+infer_adoption_mode() {
+  if [[ ! -d "$repo_root/.githooks" ]]; then
+    echo "lite"
+  elif [[ -f "$repo_root/.github/workflows/ai-context-check.yml" ]]; then
+    echo "standard"
+  else
+    echo "standard"
+  fi
+}
+
+write_repaired_answers() {
+  local target="$1"
+  local src_path="$2"
+  local commit_ref="$3"
+  local project_name docs_root scope_profile adoption_mode
+  project_name="$(infer_project_name)"
+  docs_root="$(infer_docs_root)"
+  scope_profile="$(infer_scope_profile)"
+  adoption_mode="$(infer_adoption_mode)"
+  cat >"$target" <<EOF
+# Changes here will be overwritten by Copier
+_src_path: $src_path
+_commit: $commit_ref
+project_name: $project_name
+project_description: ""
+scope_profile: $scope_profile
+adoption_mode: $adoption_mode
+tech_profile: generic
+commit_language: fr
+docs_root: $docs_root
+agents:
+$(infer_agents_yaml)
+enable_ci_guard: true
+EOF
 }
 
 inside_git_repo() {
@@ -587,6 +679,162 @@ Prochaine action minimale :
 EOF
 }
 
+run_repair_copier_metadata() {
+  cd "$repo_root"
+  local apply="no"
+  local src_path="gh:qhuy/ai_context"
+  local commit_ref="HEAD"
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --apply) apply="yes"; shift ;;
+      --src-path) src_path="${2:?--src-path requiert une valeur}"; shift 2 ;;
+      --commit|--vcs-ref) commit_ref="${2:?--commit requiert une valeur}"; shift 2 ;;
+      -h|--help)
+        echo "Usage: bash .ai/scripts/ai-context.sh repair-copier-metadata [--apply] [--src-path <src>] [--commit <ref>]"
+        exit 0
+        ;;
+      *)
+        echo "Argument inconnu: $1" >&2
+        exit 2
+        ;;
+    esac
+  done
+
+  local answers_file="$repo_root/.copier-answers.yml"
+  local status="absent"
+  if [[ -f "$answers_file" ]]; then
+    if grep -q '^_src_path:' "$answers_file" && grep -q '^_commit:' "$answers_file"; then
+      status="complet"
+    else
+      status="incomplet"
+    fi
+  fi
+
+  local tmp_answers
+  tmp_answers="$(mktemp "${TMPDIR:-/tmp}/ai-context-copier-answers.XXXXXX.yml")"
+  write_repaired_answers "$tmp_answers" "$src_path" "$commit_ref"
+
+  cat <<EOF
+## Copier Metadata Repair
+
+État :
+- .copier-answers.yml: $status
+- src: $src_path
+- commit/ref: $commit_ref
+- apply: $apply
+
+Metadata proposée :
+\`\`\`yaml
+EOF
+  sed -n '1,120p' "$tmp_answers"
+  cat <<'EOF'
+```
+EOF
+
+  if [[ "$apply" == "yes" ]]; then
+    if [[ "$status" == "complet" ]]; then
+      echo
+      echo "Aucune écriture : .copier-answers.yml contient déjà _src_path et _commit."
+    else
+      cp "$tmp_answers" "$answers_file"
+      echo
+      echo "Écrit : .copier-answers.yml"
+    fi
+  else
+    cat <<'EOF'
+
+Prochaine action minimale :
+- Relire la metadata ci-dessus puis relancer avec `--apply` si elle correspond au scaffold réel.
+- Ensuite tester sans downgrade : `copier update --vcs-ref=HEAD --dry-run` ou `bash .ai/scripts/ai-context.sh template-diff`.
+EOF
+  fi
+  rm -f "$tmp_answers"
+}
+
+run_template_diff() {
+  cd "$repo_root"
+  local src_path="gh:qhuy/ai_context"
+  local vcs_ref="HEAD"
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --src-path) src_path="${2:?--src-path requiert une valeur}"; shift 2 ;;
+      --vcs-ref|--commit) vcs_ref="${2:?--vcs-ref requiert une valeur}"; shift 2 ;;
+      -h|--help)
+        echo "Usage: bash .ai/scripts/ai-context.sh template-diff [--src-path <src>] [--vcs-ref <ref>]"
+        exit 0
+        ;;
+      *)
+        echo "Argument inconnu: $1" >&2
+        exit 2
+        ;;
+    esac
+  done
+
+  if ! command -v copier >/dev/null 2>&1; then
+    echo "copier introuvable. Installer Copier puis relancer: pipx install copier" >&2
+    exit 127
+  fi
+
+  local render_dir answers_tmp copy_log project_name docs_root scope_profile adoption_mode
+  render_dir="$(mktemp -d "${TMPDIR:-/tmp}/ai-context-template-diff.XXXXXX")"
+  answers_tmp="$(mktemp "${TMPDIR:-/tmp}/ai-context-template-data.XXXXXX.yml")"
+  copy_log="$(mktemp "${TMPDIR:-/tmp}/ai-context-template-copy.XXXXXX.log")"
+  project_name="$(infer_project_name)"
+  docs_root="$(infer_docs_root)"
+  scope_profile="$(infer_scope_profile)"
+  adoption_mode="$(infer_adoption_mode)"
+  write_repaired_answers "$answers_tmp" "$src_path" "$vcs_ref"
+
+  if ! copier copy --defaults --trust --vcs-ref="$vcs_ref" \
+      --data project_name="$project_name" \
+      --data docs_root="$docs_root" \
+      --data scope_profile="$scope_profile" \
+      --data adoption_mode="$adoption_mode" \
+      "$src_path" "$render_dir" >"$copy_log" 2>&1; then
+    sed -n '1,120p' "$copy_log" >&2
+    rm -rf "$render_dir" "$answers_tmp" "$copy_log"
+    echo "Rendu template impossible depuis $src_path@$vcs_ref" >&2
+    exit 1
+  fi
+
+  cat <<EOF
+## Template Diff
+
+Rendu externe :
+- src: $src_path
+- ref: $vcs_ref
+- tmp: $render_dir
+- repo courant modifié: non
+
+Fichiers template différents ou absents :
+EOF
+
+  local found=0 rel
+  while IFS= read -r rel; do
+    [[ "$rel" == ".copier-answers.yml" ]] && continue
+    if [[ ! -e "$repo_root/$rel" ]]; then
+      echo "- ADD $rel"
+      found=1
+    elif ! diff -q "$render_dir/$rel" "$repo_root/$rel" >/dev/null 2>&1; then
+      echo "- CHANGE $rel"
+      found=1
+    fi
+  done < <(cd "$render_dir" && find . -type f | sed 's#^\./##' | sort)
+
+  if [[ "$found" -eq 0 ]]; then
+    echo "- Aucun écart détecté sur les fichiers rendus."
+  fi
+
+  cat <<EOF
+
+Prochaine action minimale :
+- Inspecter un fichier précis avec : diff -u "$repo_root/<path>" "$render_dir/<path>"
+- Supprimer le rendu temporaire quand il n'est plus utile : rm -rf "$render_dir"
+EOF
+
+  rm -f "$answers_tmp" "$copy_log"
+}
+
 cmd="${1:-}"
 case "$cmd" in
   ""|-h|--help|help)
@@ -602,6 +850,8 @@ case "$cmd" in
   brief)      run_brief "$@" ;;
   mission)    run_mission "$@" ;;
   repair)     run_repair "$@" ;;
+  repair-copier-metadata) run_repair_copier_metadata "$@" ;;
+  template-diff) run_template_diff "$@" ;;
   document-delta) run_document_delta "$@" ;;
   ship-report) run_ship_report "$@" ;;
   product-status) exec bash "$script_dir/product-status.sh" "$@" ;;

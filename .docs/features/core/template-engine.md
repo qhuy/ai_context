@@ -7,13 +7,17 @@ depends_on: []
 touches:
   - copier.yml
   - README.md
+  - README_AI_CONTEXT.md
+  - docs/upgrading.md
+  - docs/variables.md
+  - .ai/scripts/ai-context.sh
   - template/**
 progress:
   phase: review
-  step: "template expose la CLI UX mission→ship"
+  step: "template sécurise le cycle install→update Copier"
   blockers: []
-  resume_hint: "3 presets enrichis ; smoke-test OK ; prêt pour commit + DONE"
-  updated: 2026-04-28
+  resume_hint: "Valider les commandes repair-copier-metadata/template-diff et smoke-test"
+  updated: 2026-05-04
 ---
 
 # Moteur de template copier
@@ -80,3 +84,4 @@ Ce moteur produit le squelette consommé par `feature-mesh`, `feature-index-cach
 - 2026-05-03 : `template/.ai/scripts/ai-context.sh.jinja` expose aussi `mission`, `document-delta`, `repair` et `ship-report` pour couvrir le cycle complet cadrage → édition JIT → doc delta → sortie, sans nouvelle injection reminder ni hook.
 - 2026-05-03 : le template rend désormais le scope `product`, ses scripts read-only et son dossier features ; les profils Copier conservent core/quality/workflow/product comme socle.
 - 2026-05-04 : `template/.ai/scripts/ai-context.sh.jinja` expose `first-run`, un parcours read-only post-scaffold. `template/README_AI_CONTEXT.md.jinja` et le README racine pointent vers cette première action.
+- 2026-05-04 : retour projet post-upgrade intégré — documentation de `copier update --vcs-ref=HEAD`, ajout des commandes CLI non destructives `repair-copier-metadata` (recréation contrôlée de `.copier-answers.yml`) et `template-diff` (rendu `/tmp` pour prévisualiser l'update sur worktree sale). `.copier-answers.yml` est explicitement traité comme metadata à versionner.

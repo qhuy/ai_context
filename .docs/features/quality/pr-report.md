@@ -66,3 +66,4 @@ Rendre visible la valeur du mesh dans les PRs via un rapport markdown simple: fe
 - 2026-05-03 : extension UX du wrapper avec `mission`, `document-delta`, `repair` et `ship-report`. Ces commandes composent les checks/reports existants, restent non destructives par défaut, et donnent une prochaine action concrète aux agents Claude/Codex.
 - 2026-05-03 : le wrapper expose aussi les rapports product (`product-status`, `product-portfolio`, `product-review`) ; `pr-report` reste inchangé mais la surface review/ship peut recommander ces checks quand le delta touche `scope: product`.
 - 2026-05-04 : `ai-context.sh first-run` ajouté au wrapper. Aucun changement de `pr-report.sh`, mais la surface CLI de sortie/review reste documentée dans cette fiche partagée.
+- 2026-05-04 : `ai-context.sh` ajoute `repair-copier-metadata` et `template-diff`; aucun changement de `pr-report.sh`, mais le smoke partagé et la surface CLI documentée sont étendus.

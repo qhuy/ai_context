@@ -80,3 +80,4 @@ Les primitives procédurales vivent sous `.ai/workflows/`. Elles restent disponi
 - 2026-05-03 : workflow quotidien étendu avec `mission`, `document-delta`, `repair` et `ship-report`. Objectif : proposer une surface naturelle Claude/Codex sans réintroduire les skills procéduraux.
 - 2026-05-03 : `ai-context.sh` ajoute les commandes intentionnelles `product-status`, `product-portfolio` et `product-review` pour piloter les initiatives sans nouveau skill obligatoire.
 - 2026-05-04 : ajout de l'intention `first-run` pour guider le premier usage après scaffold sans obliger Claude/Codex à invoquer un skill procédural.
+- 2026-05-04 : ajout des intentions CLI `repair-copier-metadata` et `template-diff` pour rendre le cycle update Copier pilotable en langage naturel, sans nouveau skill utilisateur.
