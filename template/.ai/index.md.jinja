@@ -10,16 +10,20 @@
 
 1. Ce fichier (`.ai/index.md`)
 2. `.ai/quality/QUALITY_GATE.md` — critères BLOQUANTS avant DONE
-3. `.ai/guardrails.md` — non-goals + glossaire métier (si présent ; créé via `/aic-project-guardrails`)
+3. Couche agent behavior — à charger une fois en début de session ou pour toute tâche importante :
+   - `.ai/agent/posture.md` — posture, écoute, diagnostic, prise de position
+   - `.ai/agent/initiative-contract.md` — quand agir, proposer, ou demander confirmation
+   - `.ai/agent/response-style.md` — réponses concrètes, persuasion saine, prochaine action
+4. `.ai/guardrails.md` — non-goals + glossaire métier (si présent ; créé via `/aic-project-guardrails`)
 
 Puis **identifier le scope primaire** et charger :
 
-4. `.ai/rules/<scope>.md` (Pack B, scope-dépendant)
-5. **Lister** `ls {{ docs_root }}/features/<scope>/` — obligatoire à chaque tâche (pas conditionnel).
-6. Si la tâche touche une feature existante → charger `{{ docs_root }}/features/<scope>/<id>.md` **et** suivre récursivement ses `depends_on`.
-7. Si la tâche crée une nouvelle feature → créer le fichier depuis `{{ docs_root }}/FEATURE_TEMPLATE.md` AVANT tout commit.
+5. `.ai/rules/<scope>.md` (Pack B, scope-dépendant)
+6. **Lister** `ls {{ docs_root }}/features/<scope>/` — obligatoire à chaque tâche (pas conditionnel).
+7. Si la tâche touche une feature existante → charger `{{ docs_root }}/features/<scope>/<id>.md` **et** suivre récursivement ses `depends_on`.
+8. Si la tâche crée une nouvelle feature → créer le fichier depuis `{{ docs_root }}/FEATURE_TEMPLATE.md` AVANT tout commit.
 {% if tech_profile != 'generic' %}
-8. Charger les règles tech du preset :
+9. Charger les règles tech du preset :
 {% if tech_profile in ['dotnet-clean-cqrs', 'fullstack-dotnet-react'] %}
    - `.ai/rules/tech-dotnet.md` si la tâche touche C#/.NET
 {% endif %}
@@ -103,12 +107,19 @@ Les transitions `implement → review` et `review → done` restent manuelles (o
 - `/aic force done` — clôture sans attendre inférence evidence
 - `/aic undo` — annule la dernière transition auto
 
-Skills accessibles directement (lecture/CI) :
+Interfaces Claude Code accessibles directement (lecture/CI) :
 - `/aic-feature-resume` — buckets EN COURS / BLOQUÉES / STALE / À FAIRE
 - `/aic-quality-gate` — check go/no-go complet
 - `/aic-project-guardrails` — cadre non-goals + glossaire métier (1-2 fois par projet ; produit `.ai/guardrails.md`)
+- `/aic-diagnose` — diagnostic stable du bottleneck principal quand une tâche ou feature est bloquée
 
 Les autres skills `/aic-feature-{new,update,handoff,done}` sont **internes** (invoqués par les hooks et par `/aic`). Pas besoin de les taper à la main.
+
+### Compatibilité Claude / Codex
+
+- **Claude Code** : peut utiliser les skills `.claude/skills/aic-*` quand ils existent.
+- **Codex** : ne dépend d'aucun skill Claude. Il lit `AGENTS.md` → `.ai/index.md`, charge `.ai/agent/*`, puis applique les mêmes contrats en langage naturel.
+- Pour un diagnostic sous Codex, demander simplement : "diagnostique le blocage" ; Codex doit produire le même format que `/aic-diagnose`.
 
 ## Runtime enforcement
 

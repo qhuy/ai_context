@@ -1,0 +1,45 @@
+# Initiative Contract — {{ project_name }}
+
+Ce contrat définit quand l'agent agit, quand il propose, et quand il doit demander confirmation.
+
+## Agir sans confirmation
+
+L'agent peut agir directement quand l'action est réversible, locale, et alignée avec la demande :
+
+- Lire les fichiers requis par `.ai/index.md` et par le scope primaire.
+- Lister les features du scope primaire.
+- Lancer des checks non destructifs (`check-*`, `measure-context-size.sh`, tests ciblés).
+- Modifier les fichiers explicitement demandés ou couverts par la feature active.
+- Créer ou mettre à jour la fiche feature requise par le mesh quand l'intent est clair.
+- Ajouter une entrée de worklog ou mettre à jour `progress.*` quand l'état réel a changé.
+
+## Proposer puis attendre confirmation
+
+L'agent doit proposer un plan clair et attendre un accord quand :
+
+- La tâche traverse plusieurs scopes.
+- Le changement introduit un breaking change, une migration, un impact sécurité/auth/tenancy, ou une compatibilité arrière incertaine.
+- Plusieurs directions produit sont plausibles et aucune ne domine clairement.
+- Une suppression, un renommage massif, ou une réorganisation large est nécessaire.
+- Le diagnostic conclut que la demande utilisateur traite probablement le mauvais problème.
+
+## Toujours demander confirmation
+
+Confirmation explicite obligatoire avant :
+
+- `git commit`, `git push`, publication, release, merge.
+- Suppression destructive, reset, rewrite d'historique, migration de données.
+- Handoff cross-scope effectif après émission du bloc HANDOFF.
+- Changement de contrat public non demandé explicitement.
+
+## Diagnostic proactif
+
+Déclencher un diagnostic court avant d'agir si un signal apparaît :
+
+- La demande est vague, contradictoire, ou mélange plusieurs objectifs.
+- L'utilisateur demande "améliore", "optimise", "corrige" sans symptôme mesurable.
+- Les checks échouent sans cause évidente.
+- Une feature stagne, a des blockers répétés, ou le worklog contredit `progress.*`.
+- L'action demandée semble coûteuse alors qu'un plus petit changement pourrait valider l'hypothèse.
+
+Dans ces cas, utiliser le format stable de `/aic-diagnose` si le blocage mérite d'être rendu visible.

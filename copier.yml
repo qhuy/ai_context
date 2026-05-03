@@ -94,6 +94,8 @@ _message_after_copy: |
     /aic-feature-audit      → rétro-doc (`discover`) / re-sync (`refresh`) d'une feature
     /aic-quality-gate       → check go/no-go complet (utile en CI/scripts)
     /aic-project-guardrails → cadre non-goals + glossaire métier (1-2 fois par projet)
+    /aic-diagnose         → diagnostic du bottleneck principal (Claude). Avec Codex :
+                            demander "diagnostique le blocage" ; même format attendu via .ai/agent/*
 
   Les skills /aic-feature-{new,update,handoff,done} restent internes (invoqués par
   les hooks et /aic selon l'intent détecté). Pas besoin de les taper à la main.

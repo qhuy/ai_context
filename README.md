@@ -1,6 +1,6 @@
 # ai_context
 
-Template [copier](https://copier.readthedocs.io/) pour industrialiser le setup AI context dans n'importe quel projet : shims multi-agents, hooks runtime, feature mesh documenté, garde-fous CI, skills Claude `/aic-*` pour encadrer les gestes récurrents.
+Template [copier](https://copier.readthedocs.io/) pour industrialiser le setup AI context dans n'importe quel projet : shims multi-agents, hooks runtime, feature mesh documenté, garde-fous CI, couche comportementale agent, skills Claude `/aic-*` pour encadrer les gestes récurrents.
 
 > **Objectif** : qu'un agent IA reprenne un projet mature avec **zéro ambiguïté** sur : ce qu'on attend de lui (rules), où sont les features (mesh), ce qui est en cours (progress), et comment clôturer proprement (quality gate).
 >
@@ -27,6 +27,7 @@ Template [copier](https://copier.readthedocs.io/) pour industrialiser le setup A
 - [Profils de scope](#profils-de-scope)
 - [Profils techniques](#profils-techniques)
 - [Ce qui est généré](#ce-qui-est-généré)
+- [Couche agent behavior](#couche-agent-behavior)
 - [Skills `/aic-*`](#skills-aic-)
 - [Scripts runtime](#scripts-runtime)
 - [Variables d'environnement](#variables-denvironnement)
@@ -45,6 +46,7 @@ Ce template **industrialise** tout ça :
 |---|---|
 | Chaque agent (Claude/Codex/Gemini/Copilot/Cursor) cherche ses règles ailleurs | **Shims** pointant vers une source unique `.ai/index.md` |
 | Règles métier noyées dans un CLAUDE.md géant | **`.ai/rules/<scope>.md`** chargés à la demande |
+| Agent poli mais passif, vague ou trop explicatif | **`.ai/agent/*`** : posture, initiative, style de réponse et diagnostic juste-à-temps |
 | Agent qui invente des features ou duplique du code | **Feature mesh** (`{{ docs_root }}/features/<scope>/<id>.md`) avec `touches:` vérifié |
 | Pas de traçabilité entre commits et features | **Conventional Commits** bloquants, hook `feat:` refuse si aucune feature touchée |
 | Travail perdu entre sessions | **Frontmatter `progress:`** + **worklog append-only** + `/aic-feature-resume` |
@@ -598,6 +600,10 @@ mon-projet/
 │   ├── index.md                   # point d'entrée canonique
 │   ├── reminder.md                # hard rules (compressé v0.6)
 │   ├── config.yml                 # config runtime optionnelle (coverage/progress/context)
+│   ├── agent/
+│   │   ├── posture.md             # posture, écoute, diagnostic, prise de position
+│   │   ├── initiative-contract.md # agir / proposer / demander confirmation
+│   │   └── response-style.md      # réponses concrètes + prochaine action
 │   ├── schema/
 │   │   └── feature.schema.json    # contrat frontmatter (status, progress.phase, etc.)
 │   ├── quality/QUALITY_GATE.md    # DoD bloquant
@@ -625,7 +631,7 @@ mon-projet/
 │   └── .feature-index.json        # cache (gitignored)
 ├── .claude/
 │   ├── settings.json              # hooks Claude Code
-│   └── skills/aic-*/              # 8 skills /aic-* (dont /aic + /aic-feature-audit)
+│   └── skills/aic-*/              # skills Claude /aic-* (dont /aic-diagnose)
 ├── .githooks/
 │   ├── commit-msg                 # Conventional Commits + feat: mesh
 │   ├── pre-commit                 # auto-progression agent-agnostic
@@ -640,9 +646,47 @@ mon-projet/
 
 ---
 
+## Couche agent behavior
+
+La couche `.ai/agent/*` ajoute de la qualité comportementale sans grossir les shims ni le reminder :
+
+- `posture.md` : écoute, diagnostic, prise de position, rigueur sans sur-explication.
+- `initiative-contract.md` : quand agir directement, quand proposer, quand demander confirmation.
+- `response-style.md` : réponses concrètes, persuasion non manipulatrice, fin orientée prochaine action.
+
+Chargement : `.ai/index.md` la référence dans le Pack A, à lire une fois en début de session ou pour une tâche importante. Elle n'est pas injectée à chaque tour par `pre-turn-reminder.sh`, donc son coût est visible seulement quand l'agent la charge explicitement.
+
+Compatibilité :
+
+- **Claude Code** peut utiliser `/aic-diagnose` pour produire un diagnostic stable.
+- **Codex** n'a pas besoin de skill Claude : il lit `AGENTS.md` → `.ai/index.md`, charge `.ai/agent/*`, puis applique le même contrat en langage naturel. Demande type : "diagnostique le blocage".
+
+Format attendu du diagnostic :
+
+```markdown
+## Diagnostic
+
+Bottleneck principal :
+<spec / contexte / scope / architecture / implémentation / tests / doc / qualité / décision produit>
+
+Pourquoi :
+- ...
+
+Ce que je recommande :
+1. ...
+
+Ce que je ne recommande pas :
+- ...
+
+Prochaine action minimale :
+- ...
+```
+
+---
+
 ## Skills `/aic-*`
 
-Le template embarque 8 skills Claude Code (`SKILL.md` + `workflow.md`) et distingue clairement surface utilisateur vs mécanismes internes.
+Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et distingue clairement surface utilisateur vs mécanismes internes. Les agents non-Claude consomment les mêmes contrats via `.ai/index.md`, `.ai/agent/*`, les scripts et le feature mesh.
 
 ### Exposés utilisateur (usage direct)
 
@@ -653,6 +697,7 @@ Le template embarque 8 skills Claude Code (`SKILL.md` + `workflow.md`) et distin
 | `/aic-feature-audit` | Rétro-doc (`discover <scope>`) ou re-sync (`refresh <scope>/<id>`) d'une fiche vs code réel |
 | `/aic-quality-gate` | Avant commit/PR — verdict go/no-go factuel |
 | `/aic-project-guardrails` | 1-2 fois par projet — cadre non-goals + glossaire métier dans `.ai/guardrails.md` (oriente l'agent sur ce qui est hors-scope) |
+| `/aic-diagnose` | Diagnostic du bottleneck principal. Équivalent Codex : "diagnostique le blocage" |
 
 ### Internes (normalement non invoqués à la main)
 
