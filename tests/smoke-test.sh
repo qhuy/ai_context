@@ -786,8 +786,8 @@ echo "  ✓ aic-undo : restaure spec + append worklog + vide history + idempoten
 rm -rf "$OUT/.git" "$OUT/.docs/features/back/specfeat.md" "$OUT/.docs/features/back/specfeat.worklog.md" "$OUT/.ai/.progress-history.jsonl" "$OUT/.ai/.session-edits.flushed" 2>/dev/null || true
 
 echo
-echo "[19/28] skills aic-* présents dans .claude/skills/"
-for s in aic aic-frame aic-status aic-diagnose aic-review aic-ship aic-feature-new aic-feature-resume aic-feature-update aic-feature-handoff aic-feature-audit aic-quality-gate aic-feature-done aic-project-guardrails; do
+echo "[19/28] skills publics + workflows internes présents"
+for s in aic aic-frame aic-status aic-diagnose aic-review aic-ship; do
   if [[ ! -f "$OUT/.claude/skills/$s/SKILL.md" ]]; then
     echo "  ✗ $s/SKILL.md absent"
     exit 1
@@ -801,7 +801,24 @@ for s in aic aic-frame aic-status aic-diagnose aic-review aic-ship aic-feature-n
     exit 1
   fi
 done
-echo "  ✓ 14 skills aic-* présents avec SKILL.md + workflow.md"
+for s in feature-new feature-resume feature-update feature-handoff feature-audit quality-gate feature-done project-guardrails; do
+  if [[ ! -f "$OUT/.ai/workflows/$s.md" ]]; then
+    echo "  ✗ .ai/workflows/$s.md absent"
+    exit 1
+  fi
+done
+if find "$OUT/.claude/skills" -maxdepth 1 -type d -name 'aic-feature-*' | grep -q .; then
+  echo "  ✗ skills procéduraux aic-feature-* encore exposés"
+  find "$OUT/.claude/skills" -maxdepth 1 -type d -name 'aic-feature-*'
+  exit 1
+fi
+for s in aic-quality-gate aic-project-guardrails; do
+  if [[ -d "$OUT/.claude/skills/$s" ]]; then
+    echo "  ✗ $s encore exposé comme skill Claude"
+    exit 1
+  fi
+done
+echo "  ✓ 6 skills publics + 8 workflows internes présents"
 # .ai/index.md référence .ai/guardrails.md dans Pack A
 if ! grep -q "guardrails.md" "$OUT/.ai/index.md"; then
   echo "  ✗ .ai/index.md ne référence pas .ai/guardrails.md (Pack A)"

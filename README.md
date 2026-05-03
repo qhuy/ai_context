@@ -126,16 +126,16 @@ flowchart LR
     SShip[/aic-ship/]
   end
 
-  subgraph SkillsInternal["Skills internes (hooks + /aic)"]
+  subgraph SkillsInternal["Procédures internes (.ai/workflows)"]
     direction TB
-    SNew[/aic-feature-new/]
-    SResume[/aic-feature-resume/]
-    SUpdate[/aic-feature-update/]
-    SHandoff[/aic-feature-handoff/]
-    SAudit[/aic-feature-audit/]
-    SGate[/aic-quality-gate/]
-    SGuard[/aic-project-guardrails/]
-    SDone[/aic-feature-done/]
+    SNew[feature-new]
+    SResume[feature-resume]
+    SUpdate[feature-update]
+    SHandoff[feature-handoff]
+    SAudit[feature-audit]
+    SGate[quality-gate]
+    SGuard[project-guardrails]
+    SDone[feature-done]
   end
 
   subgraph Scripts["Scripts CLI"]
@@ -473,17 +473,17 @@ Le skill exécute `resume-features.sh` et, si un delta git existe, `review-delta
   back/billing-legacy phase=review  updated=2026-04-01
 ```
 
-Tu choisis laquelle reprendre. Claude charge la fiche + le worklog + les rules du scope, résume l'état, demande confirmation, puis reprend au bon endroit. Le skill historique `/aic-feature-resume` reste disponible en fallback, mais `/aic-status` est l'entrée recommandée.
+Tu choisis laquelle reprendre. Claude charge la fiche + le worklog + les rules du scope, résume l'état, demande confirmation, puis reprend au bon endroit. La logique de reprise vit dans `.ai/workflows/feature-resume.md`, utilisable aussi par Codex ; `/aic-status` est l'entrée recommandée côté Claude.
 
 **Auto-logging** (v0.7.1+) : deux hooks silencieux s'occupent du routine :
 - `PostToolUse` sur Write/Edit/MultiEdit → logue chaque modification dans `.ai/.session-edits.log`
 - `Stop` (fin de tour) → flush le log : une entrée worklog par feature touchée + bump `progress.updated` à today
 
-Tu n'as donc **plus besoin** d'invoquer `/aic-feature-update` pour chaque "j'ai modifié tel fichier". Passe par `/aic` pour les rares corrections d'intent : nouvelle `phase`, apparition/levée de `blocker`, nouveau `resume_hint`.
+Tu n'as donc **plus besoin** de demander une mise à jour procédurale pour chaque "j'ai modifié tel fichier". Passe par `/aic` pour les rares corrections d'intent : nouvelle `phase`, apparition/levée de `blocker`, nouveau `resume_hint`.
 
 ### 6. Passer la main à un autre scope (handoff)
 
-Tu finis la partie back d'une feature, le front doit prendre le relais (ou tu bascules de session demain). Demande-le en langage naturel ou via `/aic` ; la primitive interne `/aic-feature-handoff` formalise :
+Tu finis la partie back d'une feature, le front doit prendre le relais (ou tu bascules de session demain). Demande-le en langage naturel ou via `/aic` ; la procédure interne `.ai/workflows/feature-handoff.md` formalise :
 
 ```markdown
 ## 2026-04-23 14:30 — HANDOFF → front
@@ -519,7 +519,7 @@ Utilise `/aic-ship` :
 Verdict : GO
 ```
 
-Si le verdict est `GO`, `/aic-ship` propose un message de commit en français et attend confirmation avant toute action git. La clôture technique reste portée par les primitives internes (`aic-quality-gate`, `aic-feature-done`) quand nécessaire.
+Si le verdict est `GO`, `/aic-ship` propose un message de commit en français et attend confirmation avant toute action git. La clôture technique s'appuie sur `.ai/workflows/quality-gate.md` et `.ai/workflows/feature-done.md` quand nécessaire.
 
 ```
 feat(back): session JWT + refresh token
@@ -556,7 +556,7 @@ bash .ai/scripts/check-feature-coverage.sh --strict  # exit 1 si orphelins (CI)
 
 Scanne `src/`, `app/`, `lib/` et liste les fichiers non couverts par un `touches:` de feature. À passer en `--strict` en CI quand la couverture est raisonnable (>80%).
 
-Côté Claude, demande une review du mesh via `/aic-review` ou utilise le fallback interne `/aic-feature-audit discover <scope>` pour proposer un `id`/`title` par groupe d'orphelins. Le pendant interne `refresh <scope>/<id>` re-synchronise le frontmatter (`touches`, `depends_on`, `status`) avec la réalité du code.
+Côté Claude, demande une review du mesh via `/aic-review`. En maintenance avancée, la procédure `.ai/workflows/feature-audit.md` couvre les modes `discover <scope>` et `refresh <scope>/<id>` pour proposer un `id`/`title` par groupe d'orphelins ou re-synchroniser le frontmatter (`touches`, `depends_on`, `status`) avec la réalité du code.
 
 ---
 
@@ -707,18 +707,18 @@ Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et dist
 | `/aic-review` | Avant review/PR — risques du delta, features impactées, doc/freshness, checks |
 | `/aic-ship` | Avant commit/push — quality gate, evidence, commit proposé, confirmation obligatoire |
 
-### Internes (normalement non invoqués à la main)
+### Procédures internes agent-agnostic
 
-| Skill | Rôle |
+| Procédure | Rôle |
 |---|---|
-| `/aic-feature-new` | Créer fiche + worklog initial |
-| `/aic-feature-resume` | Backend historique de reprise, remplacé côté UX par `/aic-status` |
-| `/aic-feature-update` | Mettre à jour `progress.*` sur changement d'intent |
-| `/aic-feature-handoff` | Formaliser une passation inter-scope/session |
-| `/aic-feature-audit` | Backend de rétro-doc/re-sync, à réserver à la maintenance mesh |
-| `/aic-quality-gate` | Backend déterministe de `/aic-ship` |
-| `/aic-project-guardrails` | Compatibilité historique ; préférer `/aic-frame` pour le cadrage |
-| `/aic-feature-done` | Clôturer la feature (evidence + status `done`) |
+| `.ai/workflows/feature-new.md` | Créer fiche + worklog initial |
+| `.ai/workflows/feature-resume.md` | Reprise déterministe, backend de `/aic-status` |
+| `.ai/workflows/feature-update.md` | Mettre à jour `progress.*` sur changement d'intent |
+| `.ai/workflows/feature-handoff.md` | Formaliser une passation inter-scope/session |
+| `.ai/workflows/feature-audit.md` | Rétro-doc/re-sync, maintenance mesh |
+| `.ai/workflows/quality-gate.md` | Backend déterministe de `/aic-ship` |
+| `.ai/workflows/project-guardrails.md` | Procédure de cadrage guardrails, déclenchée via `/aic-frame` |
+| `.ai/workflows/feature-done.md` | Clôturer la feature (evidence + status `done`) |
 
 ---
 
@@ -797,7 +797,7 @@ Non. Stratégie **rolling** possible : tu documentes au fil des modifs. `check-f
 Passe-les en `status: done` (ou `deprecated`, `archived`). Le filtre v0.6 les masque du reminder. Override ponctuel via `AI_CONTEXT_SHOW_ALL_STATUS=1`.
 
 **Q — Que se passe-t-il si deux sessions travaillent sur la même feature ?**
-Rien de bloquant côté template (pas de lock). Le worklog étant append-only, les deux entrées coexistent avec timestamps. Bonne pratique : `/aic-feature-handoff` dès qu'on anticipe un conflit.
+Rien de bloquant côté template (pas de lock). Le worklog étant append-only, les deux entrées coexistent avec timestamps. Bonne pratique : demander un handoff dès qu'on anticipe un conflit ; l'agent applique `.ai/workflows/feature-handoff.md`.
 
 **Q — Comment étendre le template pour mon domaine ?**
 - Ajoute un scope : `.ai/rules/<mon-scope>.md` + `{{ docs_root }}/features/<mon-scope>/`.

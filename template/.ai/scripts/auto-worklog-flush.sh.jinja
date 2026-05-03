@@ -9,7 +9,7 @@
 #   - progress.updated : date du jour
 #   - worklog : ligne "Fichiers modifiés: <liste>"
 # Ne touche JAMAIS phase / step / blockers / resume_hint / status.
-# Pour changer ces champs volontairement, utiliser /aic-feature-update.
+# Pour changer ces champs volontairement, utiliser `.ai/workflows/feature-update.md`.
 #
 # Silencieux et best-effort.
 
@@ -74,11 +74,11 @@ while IFS= read -r key; do
       ' "$feature_md" > "$tmp" && mv "$tmp" "$feature_md"
     fi
     # Si progress: existe mais pas updated:, on ne l'ajoute pas (structure trop fragile en awk).
-    # /aic-feature-update s'en occupera au prochain passage manuel.
+    # `.ai/workflows/feature-update.md` s'en occupera au prochain passage manuel.
   fi
 done <<< "$features"
 
-# Rebuild index pour que /aic-feature-resume reflète les nouveaux updated
+# Rebuild index pour que `.ai/workflows/feature-resume.md` reflète les nouveaux updated
 bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
 
 # Préserve la trace pour auto-progress.sh (chaîné après dans le hook Stop).

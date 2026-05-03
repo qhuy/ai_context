@@ -18,7 +18,7 @@ touches:
   - .docs/FEATURE_TEMPLATE.md
 progress:
   phase: implement
-  step: "runtime dogfood synchronisé avec les skills intentionnels"
+  step: "runtime dogfood synchronisé avec workflows internes"
   blockers: []
   resume_hint: "vérifier shims, features, measure-context-size et smoke ciblé après sync"
   updated: 2026-05-03
@@ -58,5 +58,6 @@ Faire consommer au repo source `ai_context` la même couche runtime que celle g�
 
 - 2026-05-03 : correction du drift destination-only. Le drift check signale maintenant les fichiers runtime présents côté repo source mais absents du rendu Copier, et `dogfood-update.sh --apply` utilise `rsync --delete` avec exclusions explicites pour caches et scripts source-only. Ajout d'un test unitaire dédié.
 - 2026-05-03 : dogfooding des nouveaux skills intentionnels (`aic-frame`, `aic-status`, `aic-review`, `aic-ship`) dans `.claude/skills/` et mise à jour de `.ai/index.md` / `README_AI_CONTEXT.md`.
+- 2026-05-03 : dogfooding de la migration des primitives procédurales vers `.ai/workflows/` ; le runtime source expose désormais 6 skills Claude publics et 8 workflows internes partagés avec Codex.
 - 2026-05-03 : application dogfooding de la version courante au repo source. Choix conservateur : synchroniser le runtime généré, mais conserver les workflows CI source quand ils sont plus stricts que le rendu downstream.
 - 2026-05-03 : ajout des scripts source-only `dogfood-update.sh` et `check-dogfood-drift.sh`. Ils rendent le template dans `/tmp`, synchronisent ou comparent les fichiers runtime, et ignorent explicitement les fichiers mainteneur source-only.

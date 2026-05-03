@@ -96,9 +96,9 @@ _message_after_copy: |
     /aic-review             → quels risques dans le delta courant ? doc, features, checks
     /aic-ship               → est-ce prêt à commit/PR ? gate + freshness + commit proposé
 
-  Les skills procéduraux /aic-feature-* et /aic-quality-gate restent des primitives
-  internes/fallback. L'UX recommandée est intentionnelle : frame, status, diagnose,
-  review, ship.
+  Les primitives procédurales vivent sous .ai/workflows/ et ne sont plus exposées
+  comme skills Claude. Claude et Codex consomment les mêmes procédures internes,
+  mais l'UX recommandée reste intentionnelle : frame, status, diagnose, review, ship.
 
   Env vars utiles :
     AI_CONTEXT_DEBUG=1            → logs debug des hooks

@@ -1,10 +1,10 @@
-# Workflow — aic-quality-gate
+# Procédure interne — quality-gate
 
-**Goal** : produire un verdict go/no-go factuel avant `feat:` commit, PR, ou `/aic-feature-done`. Zéro interprétation, uniquement des checks déterministes.
+**Goal** : produire un verdict go/no-go factuel avant `feat:` commit, PR, ou `feature-done`. Zéro interprétation, uniquement des checks déterministes.
 
 **Role** : Inspecteur. Lecture seule, pas de correction.
 
-**Skill chain** : (travail) → **`/aic-quality-gate`** → (corrections si no-go) → `/aic-feature-done` ou `git commit`.
+**Procedure chain** : (travail) → **`.ai/workflows/quality-gate.md`** → (corrections si no-go) → `.ai/workflows/feature-done.md` ou `git commit`.
 
 ## PHASES
 
@@ -53,7 +53,7 @@ GO / NO-GO
 
 ## NON-NEGOTIABLE RULES
 
-- **Aucun fix dans ce skill** — si un check fail, rendre la main à l'utilisateur avec action à faire. Le fix se fait hors gate.
+- **Aucun fix dans cette procédure** — si un check fail, rendre la main à l'utilisateur avec action à faire. Le fix se fait hors gate.
 - GO exige **zéro** ❌ ; les ⚠️ n'empêchent pas GO mais sont listés.
 - Ne jamais cacher un fail. Rapport complet même si long.
-- Idempotent : relancer le skill ne change rien dans le repo (lecture seule sauf rebuild éventuel de l'index).
+- Idempotent : relancer la procédure ne change rien dans le repo (lecture seule sauf rebuild éventuel de l'index).

@@ -8,19 +8,19 @@ touches: []
 # Optionnel : surfaces partagées utiles au reporting/review, non bloquantes
 # pour `check-feature-freshness --staged`.
 touches_shared: []
-# progress : état de reprise entre sessions (optionnel, auto-géré par /aic-feature-update)
+# progress : état de reprise entre sessions (optionnel, auto-géré par `.ai/workflows/feature-update.md`)
 progress:
   phase: spec         # spec | implement | test | review | done
   step: ""            # libre, ex : "4/7 controller"
   blockers: []        # liste courte, ex : "API spec TBD"
   resume_hint: ""     # où reprendre concrètement
-  updated: ""         # YYYY-MM-DD, mis à jour à chaque /aic-feature-update
+  updated: ""         # YYYY-MM-DD, mis à jour à chaque `.ai/workflows/feature-update.md`
 ---
 
 # <Titre>
 
 > Copier ce fichier vers `.docs/features/<scope>/<id>.md` pour chaque nouvelle feature.
-> Journal d'avancement append-only : `.docs/features/<scope>/<id>.worklog.md` (créé par `/aic-feature-new`).
+> Journal d'avancement append-only : `.docs/features/<scope>/<id>.worklog.md` (créé via `.ai/workflows/feature-new.md`).
 
 ## Objectif
 
@@ -60,7 +60,7 @@ Choix marquants, ADRs liées, décisions produit.
 - `touches_shared` : surfaces transverses liées à la feature (`tests/smoke-test.sh`, `CHANGELOG.md`, docs d'état). Ces chemins apparaissent dans les rapports mais ne déclenchent pas l'obligation de fiche/worklog dans `check-feature-freshness --staged`.
 - `progress.phase` : étape courante du cycle
 - `progress.step` : détail libre (humain)
-- `progress.blockers` : liste courte ; si non vide, apparaît dans `/aic-feature-resume`
+- `progress.blockers` : liste courte ; si non vide, apparaît dans la reprise feature.
 - `progress.resume_hint` : ce qu'un·e agent doit savoir pour reprendre
 - `progress.updated` : date ISO, auto-renseignée
 

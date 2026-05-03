@@ -1,10 +1,10 @@
-# Workflow — aic-feature-resume
+# Procédure interne — feature-resume
 
 **Goal** : reprendre un travail interrompu (nouvelle session, switch de branche, bascule de scope) sans perdre le fil.
 
-**Role** : Lecteur d'état. Zéro écriture dans ce skill.
+**Role** : Lecteur d'état. Zéro écriture dans cette procédure.
 
-**Skill chain** : `/aic-feature-resume` → (travail) → `/aic-feature-update` (à chaque pause) → `/aic-feature-done`.
+**Procedure chain** : `.ai/workflows/feature-resume.md` → (travail) → `.ai/workflows/feature-update.md` (à chaque pause) → `.ai/workflows/feature-done.md`.
 
 ## PHASES
 
@@ -19,7 +19,7 @@ Output attendu : 4 buckets (EN COURS / BLOQUÉES / STALE / À FAIRE).
 - Si **un seul** candidat EN COURS → le charger d'office.
 - Si **plusieurs** → demander à l'utilisateur laquelle reprendre (ne PAS deviner).
 - Si **aucun EN COURS** mais BLOQUÉES → lister les blockers, demander si on débloque.
-- Si vide total → suggérer `/aic-feature-new`.
+- Si vide total → suggérer `feature-new`.
 
 ### Phase 3 — Chargement du contexte
 Pour la feature choisie (`<scope>/<id>`) :
@@ -40,4 +40,4 @@ Demander explicitement : "Je reprends ici, d'accord ?" avant toute écriture de 
 - **Ne jamais supposer** quelle feature reprendre sans confirmation explicite.
 - Si `progress.updated` > 14j → signaler la staleness, demander si la spec est encore valide.
 - Si le worklog contredit `progress.phase` → warn et demander arbitrage.
-- Après reprise → le prochain `/aic-feature-update` DOIT refléter le fait qu'on a repris (ligne "reprise par <session>").
+- Après reprise → le prochain `feature-update` DOIT refléter le fait qu'on a repris (ligne "reprise par <session>").

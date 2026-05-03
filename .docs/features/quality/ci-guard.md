@@ -12,10 +12,10 @@ touches:
   - template/.github/workflows/ai-context-check.yml.jinja
 progress:
   phase: review
-  step: "bootstrap dog-fooding (v0.9 historique)"
+  step: "freshness documentaire rafraîchie après dogfood"
   blockers: []
   resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-04-28
+  updated: 2026-05-03
 ---
 
 # CI guard
@@ -50,3 +50,4 @@ Filet de sécurité au-dessus de `git-hooks` (qui peuvent être contournés loca
 - 2026-04-27 : correctif template workflow : expressions GitHub Actions `${{ ... }}` échappées avec `{% raw %}` dans `template/.github/workflows/ai-context-check.yml.jinja` pour éviter `jinja2.exceptions.UndefinedError: 'matrix' is undefined` pendant `copier copy`.
 - 2026-04-27 : correctif template scripts : toutes les expansions Bash `${#...}` dans les fichiers `template/.ai/scripts/*.jinja` sont protégées par `{% raw %}` pour éviter `jinja2.exceptions.TemplateSyntaxError: Missing end of comment tag` au `copier copy`.
 - 2026-04-28 : `template-smoke-test.yml` étendu en matrix `ubuntu-latest` + `macos-latest` (au lieu d'Ubuntu seul). Install cross-platform de copier avec gestion du `--break-system-packages` sur macOS (PEP 668), shellcheck + jq cross-platform, yq pin v4.44.3, déclencheurs étendus à `.ai/scripts/**` et `.ai/schema/**` pour rattraper les changements dogfoodés. Ajout `workflow_dispatch` pour permettre un relancement manuel. Cible : prévenir les régressions Copier/Jinja avant tag de release.
+- 2026-05-03 : freshness documentaire rafraîchie après dogfood ; aucun changement de contrat CI.

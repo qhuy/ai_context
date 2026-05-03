@@ -4,6 +4,7 @@
 
 ### Nouveau
 - Skills intentionnels Claude : `/aic-frame`, `/aic-status`, `/aic-review`, `/aic-ship`. La surface recommandée devient orientée intention (`frame/status/diagnose/review/ship`) au lieu d'exposer les primitives procédurales `aic-feature-*`.
+- Les primitives procédurales sont retirées de `.claude/skills/` et déplacées vers `.ai/workflows/` pour rester utilisables par Claude et Codex sans apparaître comme commandes utilisateur.
 - `.ai/scripts/review-delta.sh` — rapport review-friendly du delta courant (`--staged` ou `--base/--head`) listant fichiers, features directes, features liées via `touches_shared`, risques détectés et checks recommandés. Exposé via `ai-context.sh review`.
 - `touches_shared` — champ frontmatter optionnel pour les surfaces transverses utiles au reporting/review mais non bloquantes pour la fraîcheur documentaire staged. `build-feature-index.sh`, `_lib.sh`, `check-features.sh` et `pr-report.sh` le consomment.
 - **Cursor MDC scopés** — `.cursor/rules/back.mdc` et `.cursor/rules/front.mdc` générés conditionnellement (si `cursor` dans agents + scope présent) avec frontmatter `globs:` Cursor (auto-attached aux fichiers du scope). Première parité partielle Claude/Cursor sur l'injection contextuelle : Cursor charge automatiquement les règles du scope quand un fichier matché est édité. Globs par défaut couvrent les conventions courantes ; à customiser selon la structure du projet.
@@ -27,7 +28,7 @@
 - `check-features.sh` applique aussi `is_path_within_repo` aux entrées `depends_on:` (auparavant seulement aux `touches:`). Une référence `depends_on: ../../other-project/scope/id` ne traverse plus silencieusement.
 
 ### Changé
-- UX skills : `aic-feature-*`, `aic-quality-gate` et `aic-project-guardrails` restent disponibles pour compatibilité/fallback mais ne sont plus la surface utilisateur recommandée. `/aic-frame` devient le point d'entrée de cadrage avec plan, spécificités métier/technique et validation.
+- UX skills : `aic-feature-*`, `aic-quality-gate` et `aic-project-guardrails` ne sont plus exposés comme skills Claude. Les procédures équivalentes vivent sous `.ai/workflows/`, partagées par Claude et Codex. `/aic-frame` devient le point d'entrée de cadrage avec plan, spécificités métier/technique et validation.
 - **Promesse multi-agents tempérée** — README + `template/AGENTS.md.jinja` exposent maintenant un tableau « Capacités runtime par agent » : seul Claude bénéficie de l'injection de contexte par tour (UserPromptSubmit, PreToolUse, PostToolUse, Stop). Les autres agents ont les shims statiques + git hooks. Pas de changement de code, juste alignement de la communication.
 - **`adoption_mode=strict` réellement renforcé** — la CI ajoute `doctor.sh --strict` + `check-feature-coverage.sh --strict` quand le mode est `strict`. Plus seulement `.github/workflows/` forcé. Label `copier.yml` corrigé.
 - **Label `adoption_mode=strict` réaligné** — le choix `copier.yml` annonce maintenant explicitement les deux gates CI activés (`doctor --strict` + `coverage --strict`) et le `_message_after_copy` avertit que sur projet jeune la CI sera rouge tant que la couverture n'est pas raisonnable. Plus de drift entre label et réalité post-renforcement.

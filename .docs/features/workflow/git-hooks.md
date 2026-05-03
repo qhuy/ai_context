@@ -13,10 +13,10 @@ touches:
   - .githooks/**
 progress:
   phase: implement
-  step: "ajout pre-commit auto-progression universelle (parité agent-agnostic)"
+  step: "freshness documentaire rafraîchie après dogfood"
   blockers: []
   resume_hint: "écrire assertion smoke-test pour pre-commit (staged → bascule phase spec→implement via git commit)"
-  updated: 2026-04-24
+  updated: 2026-05-03
 ---
 
 # Git hooks
@@ -51,3 +51,4 @@ Faire respecter le mesh au moment du commit et tenir l'index à jour entre branc
 - Heuristique d'extraction du message commit (`-m "..."`, heredoc) : si format atypique, validation passe silencieusement. Limitation tracée dans PROJECT_STATE.md.
 - **2026-04-24** — Réouverture (phase=implement) : ajout du hook `pre-commit` pour parité agent-agnostic. Décision prise dans le cadre de `workflow/conversational-skills` v3 (auto-progression invisible) : le hook Claude `Stop` seul ne couvrait que Claude Code, rupture de garantie pour les autres agents du multiselect `agents` copier. Option B retenue (git pre-commit = point de convergence universel) après comparaison avec option A (acter Claude-first — rejetée, rupture de promesse multi-agent) et option C (wrapper script — rejetée, friction d'invocation).
 - **2026-04-24** — Refactor : `pre-commit` source `_lib.sh` et utilise `features_matching_path`, au lieu de dupliquer une logique `jq startswith/endswith`.
+- 2026-05-03 : freshness documentaire rafraîchie après dogfood ; les contrats `commit-msg`, `post-checkout` et `pre-commit` restent inchangés.

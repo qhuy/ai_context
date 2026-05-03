@@ -9,10 +9,10 @@ touches:
   - template/.ai/scripts/pre-turn-reminder.sh.jinja
 progress:
   phase: review
-  step: "bootstrap dog-fooding (v0.9 historique)"
+  step: "freshness documentaire rafraîchie après dogfood"
   blockers: []
   resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-04-24
+  updated: 2026-05-03
 ---
 
 # Graph-aware injection
@@ -41,3 +41,4 @@ Optimisation au-dessus de `feature-index-cache`. Ne remplace pas le filtrage par
 ## Historique / décisions
 
 - v0.9.0 : introduction. Gain mesuré ~5× sur mesh ~100 features.
+- 2026-05-03 : freshness documentaire rafraîchie après dogfood ; le contrat `AI_CONTEXT_FOCUS` reste inchangé.

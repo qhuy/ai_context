@@ -1,10 +1,10 @@
-# Workflow — aic-feature-update
+# Procédure interne — feature-update
 
 **Goal** : persister l'état d'avancement d'une feature pour qu'une session ultérieure puisse reprendre sans ambiguïté.
 
 **Role** : Scribe de journal. Pas de code applicatif.
 
-**Skill chain** : `/aic-feature-new` → **`/aic-feature-update`** (répété) → `/aic-feature-handoff` ou `/aic-feature-done`.
+**Procedure chain** : `feature-new` → **`feature-update`** (répété) → `.ai/workflows/feature-handoff.md` ou `feature-done`.
 
 ## QUAND APPELER
 
@@ -23,7 +23,7 @@ Tant qu'il n'y a rien de neuf côté intent, le hook automatique suffit.
 
 ## INPUT ATTENDU
 
-L'utilisateur (ou le skill appelant) fournit :
+L'utilisateur (ou la procédure appelant) fournit :
 - `scope/id` de la feature concernée
 - Résumé court de ce qui vient d'être fait (1-3 lignes)
 - Nouveau `progress.phase` si changé (`spec | implement | test | review | done`)
@@ -66,7 +66,7 @@ Ajouter une entrée **au bas** de `<id>.worklog.md` :
 ```bash
 bash .ai/scripts/build-feature-index.sh --write
 ```
-(Pour que `/aic-feature-resume` voie l'update.)
+(Pour que `.ai/workflows/feature-resume.md` voie l'update.)
 
 ### Phase 5 — Confirmation
 1 ligne : "✅ progress sauvé : <scope>/<id> phase=<X> step=<Y>".
@@ -75,5 +75,5 @@ bash .ai/scripts/build-feature-index.sh --write
 
 - **Append-only** sur le worklog. Jamais de `Edit` destructif sur une entrée passée.
 - `progress.updated` DOIT être la date du jour (pas copiée de l'ancienne valeur).
-- Si `progress.phase` passe à `done` dans ce skill → **STOP** et rediriger vers `/aic-feature-done` (validations supplémentaires).
+- Si `progress.phase` passe à `done` dans cette procédure → **STOP** et rediriger vers `.ai/workflows/feature-done.md` (validations supplémentaires).
 - Si `blockers` reste non vide > 3 updates → signaler qu'il faut peut-être splitter la feature.

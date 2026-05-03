@@ -14,7 +14,7 @@ Entrée unique pour tout agent AI. Les shims à la racine (AGENTS.md, CLAUDE.md,
    - `.ai/agent/posture.md` — posture, écoute, diagnostic, prise de position
    - `.ai/agent/initiative-contract.md` — quand agir, proposer, ou demander confirmation
    - `.ai/agent/response-style.md` — réponses concrètes, persuasion saine, prochaine action
-4. `.ai/guardrails.md` — non-goals + glossaire métier (si présent ; créé via `/aic-frame` ou `/aic-project-guardrails`)
+4. `.ai/guardrails.md` — non-goals + glossaire métier (si présent ; cadré via `/aic-frame`)
 
 Puis **identifier le scope primaire** et charger :
 
@@ -85,9 +85,9 @@ Interfaces Claude Code accessibles directement (intentionnelles) :
 - `/aic-review` — quels risques dans le delta courant ? features impactées, doc, checks
 - `/aic-ship` — est-ce prêt à commit/PR ? quality gate + freshness + commit proposé
 
-Skills procéduraux internes / fallback :
-- `/aic-feature-{new,resume,update,handoff,audit,done}` et `/aic-quality-gate` restent disponibles pour debug ou délégation interne, mais ne constituent plus l'UX utilisateur recommandée.
-- `/aic-project-guardrails` reste supporté pour compatibilité ; `/aic-frame` est le point d'entrée recommandé pour le cadrage.
+Procédures internes agent-agnostic :
+- Les primitives procédurales ne sont plus exposées comme skills Claude. Elles vivent sous `.ai/workflows/` pour Claude et Codex : `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `quality-gate`, `feature-done`, `project-guardrails`.
+- Les skills publics peuvent s'y référer comme procédure interne, mais l'utilisateur ne doit plus avoir à invoquer `/aic-feature-*`, `/aic-quality-gate` ou `/aic-project-guardrails`.
 
 ### Compatibilité Claude / Codex
 

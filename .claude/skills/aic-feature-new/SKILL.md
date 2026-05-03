@@ -1,6 +1,0 @@
----
-name: aic-feature-new
-description: Crée une nouvelle feature documentée (frontmatter + worklog) dans .docs/features/<scope>/<id>.md. À invoquer AVANT tout `feat:`.
----
-
-Suivre `workflow.md` dans ce dossier.

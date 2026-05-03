@@ -54,3 +54,4 @@ Objectif : moissonner deux squelettes minimalistes dès `copier copy` quand le `
 - 2026-05-03 : le template du freshness check valide désormais chaque feature candidate individuellement quand un fichier partagé matche plusieurs fiches. Pas de changement sur les squelettes DS, mais `template/**` reste couvert par cette feature et la doc est alignée.
 - 2026-05-03 : réduction du bruit `touches:` : remplacement de `template/**` par les deux squelettes réellement possédés (`template/docs/design-system-registry.md.jinja`, `template/docs/atomic-design-map.md.jinja`). Les modifications génériques du template restent couvertes par `core/template-engine`.
 - 2026-05-03 : `copier.yml` modifié pour la surface skills intentionnelle. Aucun changement sur les squelettes DS ; entrée ajoutée car la fiche conserve historiquement `copier.yml` dans `touches`.
+- 2026-05-03 : `copier.yml` modifié pour le retrait des skills procéduraux exposés. Aucun changement sur les squelettes DS.

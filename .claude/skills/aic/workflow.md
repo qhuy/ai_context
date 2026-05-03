@@ -38,7 +38,7 @@ Exemples valides :
    - Si un `<scope>/<id>` est cité explicitement → l'utiliser.
    - Sinon : chercher fuzzy dans `.ai/.feature-index.json` (mots-clés de la phrase matchés sur `id` / `title`).
    - Si ambigu → lister les candidats et demander.
-   - Si zéro match et la phrase décrit une création → proposer `/aic-feature-new` (ou créer direct si intent très clair).
+   - Si zéro match et la phrase décrit une création → cadrer via `/aic-frame`, puis appliquer `.ai/workflows/feature-new.md` après confirmation explicite.
 2. **Détecter l'intent** (tableau de correspondance indicatif, pas exhaustif) :
 
    | Vocabulaire | Action |

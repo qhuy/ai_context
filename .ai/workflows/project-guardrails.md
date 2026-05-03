@@ -1,12 +1,12 @@
-# Workflow — aic-project-guardrails
+# Procédure interne — project-guardrails
 
 **Goal** : produire / mettre à jour `.ai/guardrails.md` avec les **non-goals** et le **glossaire métier** du projet — pour orienter l'agent et éviter qu'il dérive vers des features non souhaitées ou utilise un vocabulaire imprécis.
 
-**Role** : Scribe + design partner. Pas de code applicatif dans ce skill — uniquement documentation d'orientation agent.
+**Role** : Scribe + design partner. Pas de code applicatif dans cette procédure — uniquement documentation d'orientation agent.
 
 **Quand l'invoquer** : 1-2 fois dans la vie d'un projet. Bootstrap après `copier copy`, puis révisions ponctuelles quand les non-goals évoluent (pivot produit, nouveau scope explicitement abandonné).
 
-**Pourquoi pas Vision/Users ici** : ces sections sont déjà dans le README et la `project_description` (copier). Dupliquer = désynchronisation garantie. Ce skill se concentre sur ce qui n'est *jamais* écrit ailleurs.
+**Pourquoi pas Vision/Users ici** : ces sections sont déjà dans le README et la `project_description` (copier). Dupliquer = désynchronisation garantie. Cette procédure se concentre sur ce qui n'est *jamais* écrit ailleurs.
 
 ## PRECONDITION
 
@@ -43,8 +43,8 @@ Pour chaque non-goal recueilli :
 
 **Refus** : si 0 item après 2 relances, abort avec message :
 ```
-/aic-project-guardrails — abort
-Aucun non-goal défini. Sans non-goals explicites, ce skill n'apporte pas de valeur (le glossaire seul peut vivre dans le README).
+project-guardrails — abort
+Aucun non-goal défini. Sans non-goals explicites, cette procédure n'apporte pas de valeur (le glossaire seul peut vivre dans le README).
 Reviens quand tu as identifié au moins 1 hors-scope clair, ou édite directement le README pour le glossaire.
 ```
 
@@ -82,8 +82,8 @@ Si `ajuster` → revenir à la phase concernée. Si `non` → annuler sans écri
 # {{ project_name }} — Guardrails agent
 
 > Ce que l'agent doit savoir pour rester dans les rails.
-> Pour la vision/utilisateurs/architecture : voir [README](../README.md).
-> Ré-exécuter `/aic-project-guardrails` pour réviser.
+> Pour la vision/utilisateurs/architecture : voir le README du projet.
+> Réviser via `/aic-frame` pour réviser.
 
 ## Non-goals (explicitement hors-scope)
 
@@ -98,7 +98,7 @@ Vocabulaire à utiliser tel quel :
 - **<acronyme>** : <développé> — <définition>
 
 ---
-*Généré/mis à jour par `/aic-project-guardrails` le YYYY-MM-DD.*
+*Généré/mis à jour via `/aic-frame` le YYYY-MM-DD.*
 ```
 
 > Note : utiliser le `project_name` réel du projet courant, pas `{{ project_name }}` littéral. Si non récupérable depuis `.copier-answers.yml`, demander à l'utilisateur.
@@ -129,6 +129,6 @@ Prochaine étape : commit `chore(workflow): cadre les guardrails projet (non-goa
 - **Non-goals : ≥1 item** sinon abort (cf. Phase 2).
 - **Glossaire : optionnel** — section omise si vide, pas écrite vide.
 - **Pas de section Vision / Users / Roadmap** dans le fichier généré (intentionnel — éviter doublon avec README).
-- **Pas de `feat:` commit** déclenché par ce skill : c'est de la doc d'orientation, pas une feature applicative. Suggérer `chore(workflow):` ou `docs(workflow):`.
+- **Pas de `feat:` commit** déclenché par cette procédure : c'est de la doc d'orientation, pas une feature applicative. Suggérer `chore(workflow):` ou `docs(workflow):`.
 - **Idempotent** : ré-invocation = mode update sans perte de contenu sauf confirmation explicite (`replace`).
 - **Pas d'injection runtime** : ne pas modifier `.ai/scripts/pre-turn-reminder.sh` ni `.ai/reminder.md` (le fichier est lu via Pack A en début de session, coût tokens nul à chaque tour).

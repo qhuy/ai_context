@@ -10,8 +10,8 @@
 #   - dry-run par défaut, --apply crée des fiches draft minimales (un par groupe orphelin)
 #   - aucune confirmation interactive ; aucun mode `refresh` ; pas de filtrage `--since`
 #
-# Pour une UX plus riche (refresh, --interactive, déléguer à /aic-feature-new),
-# utiliser le skill Claude `/aic-feature-audit` (workflow.md). Voir aussi la
+# Pour une UX plus riche (refresh, --interactive, déléguer à `.ai/workflows/feature-new.md`),
+# utiliser la procédure interne `.ai/workflows/feature-audit.md`. Voir aussi la
 # feature `workflow/feature-audit`.
 
 set -euo pipefail

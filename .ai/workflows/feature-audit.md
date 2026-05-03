@@ -1,10 +1,10 @@
-# Workflow — aic-feature-audit
+# Procédure interne — feature-audit
 
 **Goal** : détecter les dérives entre le code et le mesh feature, proposer des corrections, ne jamais écrire sans confirmation.
 
-**Role** : Auditeur. Lit git + mesh, propose, délègue l'écriture aux skills internes (`/aic-feature-new`, `/aic-feature-update`).
+**Role** : Auditeur. Lit git + mesh, propose, délègue l'écriture aux procédures internes (feature-new, feature-update).
 
-**Skill chain** : `/aic-feature-audit discover <scope>` → `/aic-feature-new` (par ligne validée) ; `/aic-feature-audit refresh <scope>/<id>` → `/aic-feature-update` (après confirmation).
+**Procedure chain** : `.ai/workflows/feature-audit.md` mode `discover <scope>` → `.ai/workflows/feature-new.md` (par ligne validée) ; `.ai/workflows/feature-audit.md` mode `refresh <scope>/<id>` → `.ai/workflows/feature-update.md` (après confirmation).
 
 ## PRECONDITION
 
@@ -44,7 +44,7 @@
 
 #### Phase 3 — Application (si `--apply`)
 1. Pour chaque ligne, demander confirmation (`y/n/skip/edit`).
-2. Sur `y` ou `edit` (après édition) → invoquer `/aic-feature-new` avec les valeurs validées.
+2. Sur `y` ou `edit` (après édition) → appliquer `.ai/workflows/feature-new.md` avec les valeurs validées.
 3. Sur `skip` → passer à la ligne suivante.
 4. Jamais de batch silencieux : toujours une confirmation par ligne.
 
@@ -66,8 +66,8 @@
 
 #### Phase 3 — Application (si `--apply`)
 1. Demander confirmation globale (`y/n`).
-2. Sur `y` → invoquer `/aic-feature-update` avec le patch frontmatter.
-3. Laisser `/aic-feature-update` gérer le bump `progress.updated` et le worklog.
+2. Sur `y` → appliquer `.ai/workflows/feature-update.md` avec le patch frontmatter.
+3. Laisser `.ai/workflows/feature-update.md` gérer le bump `progress.updated` et le worklog.
 
 ### Phase finale — Validation (les deux modes)
 
@@ -81,7 +81,7 @@ Si rouge → signaler à l'utilisateur, ne pas corriger silencieusement.
 ## NON-NEGOTIABLE RULES
 
 - **Dry-run par défaut** : absence de `--apply` ⇒ aucune écriture, jamais.
-- **Délégation obligatoire** : ne jamais écrire directement dans `.docs/features/` — toujours via `/aic-feature-new` ou `/aic-feature-update`.
+- **Délégation obligatoire** : ne jamais écrire directement dans `.docs/features/` — toujours via `.ai/workflows/feature-new.md` ou `.ai/workflows/feature-update.md`.
 - **Confirmation fiche par fiche** en `discover` ; **confirmation globale** en `refresh`. Pas de bypass.
 - Si `check-features.sh` échoue après application → remonter l'erreur, ne pas masquer.
 - Ne jamais utiliser `grep -r` : s'appuyer sur `git log --name-only` et le feature-index.

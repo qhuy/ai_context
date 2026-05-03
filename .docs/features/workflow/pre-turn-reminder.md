@@ -11,10 +11,10 @@ touches:
   - template/.ai/reminder.md.jinja
 progress:
   phase: review
-  step: "bootstrap dog-fooding (v0.9 historique)"
+  step: "freshness documentaire rafraîchie après dogfood"
   blockers: []
   resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-04-24
+  updated: 2026-05-03
 ---
 
 # Pre-turn reminder
@@ -46,3 +46,4 @@ Première brique du flux invisible. Suivi par `auto-worklog` (capture les éditi
 - v0.6 : filtre status active.
 - v0.8 : i18n.
 - v0.9 : graph-aware focus.
+- 2026-05-03 : freshness documentaire rafraîchie après dogfood ; aucun changement de format ou de budget d'injection.

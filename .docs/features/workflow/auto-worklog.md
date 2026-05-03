@@ -34,7 +34,7 @@ Capturer sans friction les modifications d'une session Claude vers les worklog d
 
 ## Contrats
 
-- Worklog : append-only, jamais édité ailleurs (skill `/aic-feature-update` passe par ce mécanisme).
+- Worklog : append-only, jamais édité ailleurs ; la procédure `.ai/workflows/feature-update.md` passe par ce mécanisme.
 - Path d'édition non rattachable à une feature → ignoré (pas d'orphan log).
 - Échappement JSON sûr (paths avec quotes).
 

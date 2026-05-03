@@ -10,7 +10,7 @@ touches:
   - template/**
 progress:
   phase: review
-  step: "enrichir les presets techno ; template freshness renforcé"
+  step: "rendu Copier expose 6 skills publics + workflows internes"
   blockers: []
   resume_hint: "3 presets enrichis ; smoke-test OK ; prêt pour commit + DONE"
   updated: 2026-04-28
@@ -74,3 +74,4 @@ Ce moteur produit le squelette consommé par `feature-mesh`, `feature-index-cach
 - 2026-05-03 : correction anti-régression du rendu `template/AGENTS.md.jinja` — retour à un shim mince conforme à `check-shims.sh` (≤15 lignes). Les détails agent-runtime restent dans `.ai/index.md` / README, pas dans le shim.
 - 2026-05-03 : correction du rendu `template/.ai/scripts/check-feature-freshness.sh.jinja` pour contrôler la documentation staged par feature candidate, et non par fichier global. Préserve le contrat Copier en miroir du runtime dogfoodé.
 - 2026-05-03 : `_message_after_copy` réoriente les commandes exposées vers une surface intentionnelle (`frame/status/diagnose/review/ship`) et recommande `/aic-frame` au bootstrap plutôt que `/aic-project-guardrails`.
+- 2026-05-03 : les workflows procéduraux sont rendus sous `template/.ai/workflows/` et les skills Claude procéduraux sont supprimés du template. Le rendu Copier conserve 6 skills publics et partage les procédures internes avec Codex.

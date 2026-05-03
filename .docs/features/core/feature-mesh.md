@@ -14,7 +14,7 @@ touches:
   - template/.ai/scripts/migrate-features.sh.jinja
 progress:
   phase: review
-  step: "bootstrap dog-fooding (v0.9 historique)"
+  step: "template feature aligné sur workflows internes"
   blockers: []
   resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
   updated: 2026-04-28
@@ -56,3 +56,4 @@ Source unique de vérité pour les features d'un projet : un fichier markdown pa
 - 2026-04-27 : centralisation des enums (`status`, `progress.phase`) — `_lib.sh` les dérive maintenant du schema JSON via `read_schema_enum()`, fallback hardcodé si schema absent. Suppression de la duplication dans `check-features.sh`. Smoke-test couvre l'ajout d'un statut au schema.
 - 2026-04-28 : alignement `check-features.sh` sur le schema (Option A) — `depends_on` et `touches` sont maintenant des **clés frontmatter obligatoires** (toujours déclarables comme `[]` mais ne peuvent plus être omises). Cohérence avec `feature.schema.json` qui les exige déjà dans `required`. Côté template **et** côté dogfooding (`.ai/scripts/check-features.sh`). Sync de la version dogfoodée pour qu'elle ait également le check `progress.phase` (via `is_valid_phase`, désormais dans `_lib.sh`).
 - 2026-05-03 : ajout optionnel `touches_shared` au contrat frontmatter. Il distingue surfaces de review/reporting et ownership direct, sans changer l'obligation existante sur `touches`.
+- 2026-05-03 : template de fiche mis à jour pour référencer `.ai/workflows/feature-new.md`, `.ai/workflows/feature-update.md` et la reprise feature au lieu d'anciens skills procéduraux.

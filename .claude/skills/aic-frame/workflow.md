@@ -62,6 +62,7 @@ Si une nouvelle feature est claire :
 1. proposer `scope/id`, titre, `depends_on`, `touches` probables ;
 2. demander confirmation avant de créer la fiche ;
 3. après confirmation seulement, créer la fiche depuis `.docs/FEATURE_TEMPLATE.md`.
+4. utiliser `.ai/workflows/feature-new.md` comme procédure d'écriture si une fiche doit être matérialisée.
 
 ## FORMAT DE SORTIE
 

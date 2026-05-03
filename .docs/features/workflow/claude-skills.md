@@ -1,16 +1,17 @@
 ---
 id: claude-skills
 scope: workflow
-title: Skills /aic* (surface intentionnelle + primitives internes)
+title: Skills /aic* publics + procédures internes
 status: active
 depends_on:
   - core/feature-mesh
   - workflow/auto-worklog
 touches:
   - template/.claude/skills/**
+  - template/.ai/workflows/**
 progress:
   phase: implement
-  step: "surface UX intentionnelle : frame/status/diagnose/review/ship"
+  step: "surface Claude publique limitée, procédures internes dans .ai/workflows"
   blockers: []
   resume_hint: "valider en usage réel que les 4 skills internes ne sont plus invoqués à la main ; après quoi passer en review"
   updated: 2026-04-28
@@ -20,7 +21,7 @@ progress:
 
 ## Objectif
 
-Fournir les primitives du cycle de vie feature côté agent Claude, mais exposer à l'utilisateur des intentions lisibles plutôt que des étapes internes du mesh.
+Exposer côté Claude uniquement les intentions lisibles, et déplacer les étapes internes du mesh dans `.ai/workflows/` pour qu'elles soient partagées par Claude et Codex.
 
 ## Comportement attendu
 
@@ -35,24 +36,25 @@ Fournir les primitives du cycle de vie feature côté agent Claude, mais exposer
 | `/aic-review` | Review du delta courant : risques, features, doc, checks | Avant review humaine, PR ou correction de findings |
 | `/aic-ship` | Gate de sortie : freshness, quality gate, evidence, commit proposé | Avant commit, PR ou push |
 
-### Skills internes (invoqués par les hooks et par `/aic`)
+### Procédures internes (`.ai/workflows/`, non exposées comme skills Claude)
 
-| Skill | Rôle | Invocateur |
+| Procédure | Rôle | Invocateur |
 |---|---|---|
-| `/aic-feature-new` | Créer fiche + worklog | `/aic` sur intent « crée / développe X » |
-| `/aic-feature-resume` | Buckets EN COURS / BLOQUÉES / STALE / À FAIRE | Backend de `/aic-status` |
-| `/aic-feature-update` | Bump `progress` (phase/step/blockers/resume_hint) | `/aic` sur intent « blocked / pause / j'attends » |
-| `/aic-feature-handoff` | Passation inter-scope | `/aic handoff vers X` ou détection auto cross-scope |
-| `/aic-feature-audit` | Rétro-doc / re-sync d'une fiche vs code réel | Backend ponctuel de `/aic-review` ou maintenance mesh |
-| `/aic-quality-gate` | Check go/no-go déterministe | Backend de `/aic-ship` |
-| `/aic-feature-done` | Clôture (evidence + status done) | `/aic force done` ou auto-progression V2 (pas encore implémentée) |
+| `feature-new` | Créer fiche + worklog | `/aic-frame` après confirmation ou `/aic` sur intent explicite |
+| `feature-resume` | Buckets EN COURS / BLOQUÉES / STALE / À FAIRE | Backend de `/aic-status` |
+| `feature-update` | Bump `progress` (phase/step/blockers/resume_hint) | `/aic` sur intent « blocked / pause / j'attends » |
+| `feature-handoff` | Passation inter-scope | `/aic handoff vers X` ou détection auto cross-scope |
+| `feature-audit` | Rétro-doc / re-sync d'une fiche vs code réel | Backend ponctuel de `/aic-review` ou maintenance mesh |
+| `quality-gate` | Check go/no-go déterministe | Backend de `/aic-ship` |
+| `feature-done` | Clôture (evidence + status done) | `/aic force done` ou auto-progression V2 (pas encore implémentée) |
+| `project-guardrails` | Non-goals + glossaire métier | `/aic-frame` quand un cadrage projet est nécessaire |
 
 ## Contrats
 
-- Chaque skill : `SKILL.md` (description courte) + `workflow.md` (procédure détaillée).
-- Les skills internes **existent toujours** et restent **invocables à la main** pour cas de fallback (debug, contournement), mais ne sont plus documentés comme UX recommandée.
+- Chaque skill public Claude : `SKILL.md` (description courte) + `workflow.md` (procédure d'orchestration).
+- Les procédures internes vivent sous `.ai/workflows/` et ne sont pas invocables comme commandes Claude.
 - Aucun skill ne contourne `auto-worklog` : ils déclenchent des éditions, le hook s'en charge.
-- `aic-quality-gate` invoque `check-shims` + `check-features` + `check-feature-coverage` + `measure-context-size`.
+- `quality-gate` invoque `check-shims` + `check-features` + `check-feature-coverage` + `measure-context-size`.
 
 ## Cross-refs
 
@@ -67,3 +69,4 @@ Fournir les primitives du cycle de vie feature côté agent Claude, mais exposer
 - **2026-04-24** — Réouverture (phase=implement). Catalogue refondu : passage de 6 skills exposés à **3 exposés + 4 internes**. Origine : `workflow/conversational-skills` v3 (auto-progression invisible via hook Stop + pre-commit). Les skills internes ne disparaissent pas — ils restent au même emplacement, juste cachés de la surface utilisateur (`_message_after_copy`, `AGENTS.md → .ai/index.md`). Le nouveau skill `/aic` (override) rejoint le catalogue comme point d'entrée conversationnel unique quand l'auto-progression doit être corrigée. Aucune suppression de fichier ; uniquement redéclaration du rôle.
 - **2026-04-28** — Catalogue passe à **9 skills** (5 exposés + 4 internes). Ajout de `/aic-project-guardrails` (voir `workflow/project-guardrails`) qui cadre les non-goals + glossaire métier dans `.ai/guardrails.md` — comble le trou « contexte général projet » que ne couvraient ni les rules ni le feature mesh. Resynchronisation de la table avec la réalité : `/aic-feature-audit` était déjà exposé dans `README.md` (`_message_after_copy`) mais absent de cette fiche — ajouté pour cohérence.
 - **2026-05-03** — Refonte UX : ajout de `/aic-frame`, `/aic-status`, `/aic-review`, `/aic-ship` et repositionnement des skills `aic-feature-*` + `aic-quality-gate` comme primitives internes/fallback. Motivation : éviter une surface procédurale qui force l'utilisateur à connaître les étapes du mesh.
+- **2026-05-03** — Migration : suppression des skills procéduraux de `.claude/skills/` et déplacement des workflows sous `.ai/workflows/`. Objectif : ne plus exposer les primitives tout en conservant une procédure partagée Claude/Codex.

@@ -17,7 +17,7 @@ touches_shared:
   - README.md
 progress:
   phase: implement
-  step: "docs agent behavior + skill diagnostic"
+  step: "surface Claude/Codex intentionnelle + workflows internes"
   blockers: []
   resume_hint: "vérifier check-features + mesure contexte après intégration"
   updated: 2026-05-03
@@ -63,3 +63,4 @@ La couche doit améliorer la proactivité, l'écoute, le diagnostic, la capacit�
 - 2026-05-03 — Dogfooding appliqué au repo source : `.ai/agent/*`, `.ai/index.md` et le skill rendu `.claude/skills/aic-diagnose/*` sont synchronisés depuis le rendu Copier minimal.
 - 2026-05-03 — `README.md` passe en `touches_shared` : la documentation utilisateur reste visible en review, mais les ajouts transverses README ne rendent plus cette fiche bloquante.
 - 2026-05-03 — `.ai/index.md` reformule la surface Claude/Codex autour d'intentions (`frame/status/diagnose/review/ship`) plutôt que de skills procéduraux.
+- 2026-05-03 — La logique procédurale est déplacée sous `.ai/workflows/`, ce qui conserve la parité Claude/Codex sans gonfler les shims ni le reminder.

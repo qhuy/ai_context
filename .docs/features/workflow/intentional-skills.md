@@ -7,6 +7,8 @@ depends_on:
   - workflow/claude-skills
   - workflow/agent-behavior
 touches:
+  - .ai/workflows/**
+  - template/.ai/workflows/**
   - .claude/skills/aic-frame/**
   - .claude/skills/aic-status/**
   - .claude/skills/aic-review/**
@@ -27,7 +29,7 @@ touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "surface UX intentionnelle + nouveau skill de cadrage aic-frame"
+  step: "skills publics intentionnels, primitives déplacées sous .ai/workflows"
   blockers: []
   resume_hint: "valider smoke-test et ajuster README si la table publique reste trop procédurale"
   updated: 2026-05-03
@@ -47,7 +49,7 @@ Le vocabulaire utilisateur devient :
 - review ;
 - ship.
 
-Les skills procéduraux `aic-feature-*` et `aic-quality-gate` restent disponibles comme backend/fallback, mais ne sont plus la surface recommandée.
+Les primitives procédurales vivent sous `.ai/workflows/`. Elles restent disponibles pour Claude et Codex, mais ne sont plus exposées comme skills Claude invocables par l'utilisateur.
 
 ## Comportement attendu
 
@@ -55,6 +57,7 @@ Les skills procéduraux `aic-feature-*` et `aic-quality-gate` restent disponible
 - `/aic-status` reprend le contexte : features en cours, blockers, stale, delta courant, prochaine action.
 - `/aic-review` analyse le delta : risques, features directes/liées, doc/freshness, checks.
 - `/aic-ship` prépare la sortie : quality gate, freshness staged, evidence, risques, commit proposé.
+- `.ai/workflows/*` porte les procédures internes : création/reprise/update/handoff/audit/gate/done/guardrails.
 
 ## Contrats
 
@@ -62,6 +65,7 @@ Les skills procéduraux `aic-feature-*` et `aic-quality-gate` restent disponible
 - `/aic-frame` ne code pas et ne crée pas de fiche sans confirmation.
 - `/aic-ship` ne commit/push jamais sans confirmation explicite.
 - Les équivalents Codex restent en langage naturel : "cadre cette feature", "montre le status", "review le delta", "prépare le ship".
+- Claude et Codex s'appuient sur les mêmes procédures internes `.ai/workflows/`, sans dupliquer de logique dans les shims.
 
 ## Cross-refs
 
@@ -70,4 +74,5 @@ Les skills procéduraux `aic-feature-*` et `aic-quality-gate` restent disponible
 
 ## Historique / décisions
 
-- 2026-05-03 : création des skills intentionnels `/aic-frame`, `/aic-status`, `/aic-review`, `/aic-ship`. Décision : ne pas supprimer les primitives procédurales pour préserver la compatibilité, mais ne plus les présenter comme UX recommandée.
+- 2026-05-03 : création des skills intentionnels `/aic-frame`, `/aic-status`, `/aic-review`, `/aic-ship`. Décision initiale : ne plus présenter les primitives procédurales comme UX recommandée.
+- 2026-05-03 : retrait des primitives procédurales de `.claude/skills/` et déplacement sous `.ai/workflows/` pour préserver la logique interne tout en gardant la parité Claude/Codex.
