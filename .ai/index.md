@@ -41,7 +41,7 @@ Puis **identifier le scope primaire** et charger :
 Toute feature DOIT avoir son fichier sous `.docs/features/<scope>/<id>.md`.
 
 - **Organisation par scope** — un front peut dépendre d'un back via `depends_on: ["back/<id>"]`, un back peut dépendre d'une security via `depends_on: ["security/<id>"]`, etc.
-- **Product Portfolio Loop** — les initiatives produit vivent sous `scope: product`; les features dev les relient via `product.initiative`, pas via `depends_on` sauf vraie dépendance technique.
+- **Product Traceability Loop** — les initiatives produit vivent sous `scope: product`; les features dev les relient via `product.initiative`, pas via `depends_on` sauf vraie dépendance technique. Les specs, stories ou tickets externes se relient via `external_refs`.
 - **Frontmatter obligatoire** : `id`, `scope`, `title`, `status`, `depends_on`, `touches`. Squelette dans `.docs/FEATURE_TEMPLATE.md`.
 - **Enforcement** : `.githooks/commit-msg` bloque tout `feat:` qui ne touche aucun fichier `.docs/features/`. `.ai/scripts/check-features.sh` valide le maillage en CI.
 

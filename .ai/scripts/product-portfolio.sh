@@ -1,5 +1,5 @@
 #!/bin/bash
-# product-portfolio.sh — Arbitrage simple des initiatives product.
+# product-portfolio.sh — Comparaison read-only des initiatives product.
 
 set -euo pipefail
 
@@ -15,7 +15,7 @@ cd "$repo_root"
 index_file=".ai/.feature-index.json"
 bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
 
-echo "## Product Portfolio"
+echo "## Product Traceability"
 echo
 echo "| Initiative | State | Impact | Confidence | Appetite | Evidence | Score | Recommendation |"
 echo "|---|---|---:|---:|---:|---:|---:|---|"
@@ -49,7 +49,7 @@ if [[ "$(jq '[.features[] | select(.scope == "product")] | length' "$index_file"
 fi
 
 echo
-echo "## Portfolio Decision"
+echo "## Focus Decision"
 jq -r '
   def v($x): if $x == "high" then 3 elif $x == "medium" then 2 elif $x == "low" then 1 else 0 end;
   def cost($x): if $x == "large" then 3 elif $x == "medium" then 2 elif $x == "small" then 1 else 2 end;

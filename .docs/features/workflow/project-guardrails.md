@@ -82,3 +82,4 @@ La procédure cible spécifiquement ce qui n'est *pas* déjà dans le README —
 - **2026-05-03** — `README_AI_CONTEXT.md` conserve `/aic-frame` comme cadrage recommandé, mais ajoute une table de workflow quotidien (`status`, `brief`, `review`, `doctor/check`) pour clarifier l'usage après bootstrap.
 - **2026-05-03** — La table quotidienne s'étend à `mission`, `document-delta`, `repair` et `ship-report` : le cadrage projet reste `/aic-frame`, tandis que la CLI couvre les gestes Codex/agents non-hookés.
 - **2026-05-03** — Le cadrage produit est désormais porté par `scope: product` dans le feature mesh ; les guardrails restent limités aux non-goals/glossaire et ne deviennent pas une roadmap parallèle.
+- **2026-05-04** — `first-run` mentionne `/aic-frame` et `.ai/guardrails.md` comme étape possible, sans réintroduire `/aic-project-guardrails` dans l'UX publique.

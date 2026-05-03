@@ -255,6 +255,12 @@ brew install jq yq             # jq obligatoire ; yq v4 recommandé
 copier copy gh:qhuy/ai_context ./mon-nouveau-projet
 ```
 
+Par défaut, Copier peut privilégier le dernier tag publié. Pour tester la toute dernière version de `main` avant tag :
+
+```bash
+copier copy --vcs-ref=HEAD gh:qhuy/ai_context ./mon-nouveau-projet
+```
+
 Copier pose les questions de base (nom, profil de scopes, preset technique optionnel, langue commits, docs root, agents activés, CI). Puis :
 
 ```bash
@@ -264,6 +270,7 @@ git config core.hooksPath .githooks && chmod +x .githooks/*
 
 bash .ai/scripts/check-shims.sh        # ✅ shims OK
 bash .ai/scripts/check-features.sh     # ⚠️ aucune feature (normal au début)
+bash .ai/scripts/ai-context.sh first-run
 ```
 
 Puis (recommandé) cadrer la première vraie tâche avant d'implémenter — objectif, non-goals, spécificités métier/technique, plan et validation :
@@ -744,11 +751,11 @@ Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et dist
 | `check-shims.sh` | Vérifie shims cohérents avec `.ai/index.md` |
 | `check-ai-references.sh` | Détecte les références cassées vers `.ai/` |
 | `check-features.sh` | Valide frontmatter + scope + `depends_on` + `touches` |
-| `check-product-links.sh` | Valide les liens `product.initiative`, initiatives product et signaux portfolio |
+| `check-product-links.sh` | Valide les liens `product.initiative`, initiatives product et signaux de décision |
 | `check-commit-features.sh` | Conventional Commits + `feat:` exige feature touchée |
 | `check-feature-coverage.sh` | Détecte code orphelin (non couvert par `touches:`) |
-| `product-status.sh` | Vue COO des initiatives product et des features dev liées |
-| `product-portfolio.sh` | Arbitrage portefeuille : impact, confiance, coût, evidence, recommandation |
+| `product-status.sh` | Vue de traceability des initiatives product et des features dev liées |
+| `product-portfolio.sh` | Comparaison read-only : impact, confiance, coût, evidence, recommandation |
 | `product-review.sh` | Review décisionnelle d'une initiative `product/<id>` |
 | `resume-features.sh` | Buckets EN COURS / BLOQUÉES / STALE / À FAIRE |
 | `audit-features.sh` | Audit agent-agnostique (`discover <scope>`, dry-run par défaut) |
@@ -760,7 +767,7 @@ Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et dist
 | `auto-worklog-log.sh` | Hook `PostToolUse` : logue les éditions dans `.session-edits.log` |
 | `auto-worklog-flush.sh` | Hook `Stop` : flush log → worklog + bump `progress.updated` |
 | `aic-undo.sh` | Annule la dernière transition auto-progressée (lit `.progress-history.jsonl`, restaure le frontmatter, append au worklog, rebuild index). Headless ; le skill `/aic undo` s'appuie dessus. `--dry-run` par défaut, `--apply` pour exécuter. |
-| `ai-context.sh` | CLI UX : `mission "<objectif>"`, `status`, `brief <path>`, `document-delta`, `repair`, `ship-report`, `product-status`, `product-portfolio`, `product-review product/<id>`, puis routes `doctor` / `resume` / `audit` / `migrate` / `pr-report` / `review` / `measure` / `check` / `coverage` / `shims` / `index` / `reminder`. |
+| `ai-context.sh` | CLI UX : `first-run`, `mission "<objectif>"`, `status`, `brief <path>`, `document-delta`, `repair`, `ship-report`, `product-status`, `product-portfolio`, `product-review product/<id>`, puis routes `doctor` / `resume` / `audit` / `migrate` / `pr-report` / `review` / `measure` / `check` / `coverage` / `shims` / `index` / `reminder`. |
 
 Tous les scripts runtime lisent le dossier métier via `AI_CONTEXT_DOCS_ROOT` rendu depuis `docs_root` (`.docs` par défaut). Les entrées `touches:` sont matchées par un helper unique (`path_matches_touch`) pour garder la même sémantique entre `features-for-path`, auto-worklog, coverage et `pre-commit`. `touches_shared:` sert aux surfaces transverses visibles en review mais non bloquantes pour `check-feature-freshness --staged`.
 

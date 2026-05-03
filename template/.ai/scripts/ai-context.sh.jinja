@@ -11,13 +11,14 @@
 #
 # Sous-commandes (toutes les options du script cible sont passées telles quelles) :
 #   doctor       → bash .ai/scripts/doctor.sh
+#   first-run    → parcours guidé après scaffold
 #   status       → état humain actionnable du mesh courant
 #   brief <path> → contexte feature juste-à-temps pour un fichier
 #   mission      → cadrage léger avant une tâche importante
 #   repair       → plan de réparation non destructif du mesh
 #   document-delta → docs/features à vérifier depuis le delta courant
 #   ship-report  → synthèse de sortie avant commit/PR
-#   product-status / product-portfolio / product-review → pilotage produit
+#   product-status / product-portfolio / product-review → traceability produit
 #   resume       → bash .ai/scripts/resume-features.sh
 #   audit        → bash .ai/scripts/audit-features.sh
 #   migrate      → bash .ai/scripts/migrate-features.sh
@@ -44,6 +45,7 @@ Usage: bash .ai/scripts/ai-context.sh <command> [args...]
 CLI ai_context — commandes intentionnelles + accès aux scripts dédiés.
 
 Commandes :
+  first-run    parcours guidé 10 minutes après scaffold
   status       état actionnable : features, delta, hooks, checks, prochaine action
   brief <path> contexte juste-à-temps avant d'éditer un fichier (Codex-friendly)
   mission "<objectif>"
@@ -54,9 +56,9 @@ Commandes :
                suggestions de documentation à partir du delta courant/staged
   ship-report  rapport de sortie : delta, docs, checks, commit proposé
   product-status
-               vue COO des initiatives product et features dev liées
+               vue des initiatives product et features dev liées
   product-portfolio
-               arbitrage portefeuille : impact, confiance, coût, recommandation
+               comparaison read-only : impact, confiance, coût, recommandation
   product-review product/<id>
                review décisionnelle d'une initiative product
   doctor       diagnostic non destructif (dépendances, hooks, index, checks)
@@ -117,6 +119,7 @@ infer_scope_from_text() {
   local text
   text="$(printf '%s' "$*" | LC_ALL=C tr '[:upper:]' '[:lower:]')"
   case "$text" in
+    *product*|*produit*|*roadmap*|*portfolio*|*initiative*|*priorit*) echo "product" ;;
     *front*|*ui*|*ux*|*react*|*vue*|*css*|*page*|*écran*|*ecran*) echo "front" ;;
     *back*|*api*|*server*|*serveur*|*database*|*db*|*sql*|*endpoint*) echo "back" ;;
     *archi*|*architecture*|*design*|*adr*) echo "architecture" ;;
@@ -130,15 +133,92 @@ infer_scope_from_text() {
 
 print_active_feature_hints() {
   local limit="${1:-6}"
+  local scope_filter="${2:-}"
   local index_file="$repo_root/.ai/.feature-index.json"
   bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
   if [[ -f "$index_file" ]] && command -v jq >/dev/null 2>&1; then
-    jq -r --argjson limit "$limit" '
+    jq -r --argjson limit "$limit" --arg scope_filter "$scope_filter" '
       [.features[]
         | select(.status == "active" or .status == "draft")
+        | select($scope_filter == "" or .scope == $scope_filter)
         | "- `" + .path + "` — " + .scope + "/" + .id + ": " + (.title // "sans titre")
       ][0:$limit][]' "$index_file" 2>/dev/null || true
   fi
+}
+
+run_first_run() {
+  cd "$repo_root"
+  local project_name docs_root hooks_line claude_line product_line first_dev_scope
+
+  project_name="$(basename "$repo_root")"
+  docs_root=".docs"
+  if [[ -f ".ai/config.yml" ]]; then
+    docs_root="$(awk -F': *' '/^docs_root:/{print $2; exit}' .ai/config.yml 2>/dev/null | tr -d '"' || true)"
+    [[ -n "$docs_root" ]] || docs_root=".docs"
+  fi
+
+  hooks_line="git hooks absents"
+  if [[ -d ".githooks" ]]; then
+    hooks_line="git config core.hooksPath .githooks && chmod +x .githooks/*"
+  fi
+
+  claude_line="Claude non scaffoldé"
+  if [[ -f ".claude/settings.json" ]]; then
+    claude_line="Dans Claude Code: lancer /hooks et activer les hooks proposés"
+  fi
+
+  product_line="Créer une initiative product si le projet a un enjeu produit à tracer."
+  if [[ -d "$docs_root/features/product" ]]; then
+    product_line="Créer une initiative product dans \`$docs_root/features/product/<id>.md\` si la tâche porte un pari produit."
+  fi
+
+  first_dev_scope="back"
+  [[ -d "$docs_root/features/front" ]] && first_dev_scope="front"
+  [[ -d "$docs_root/features/back" ]] && first_dev_scope="back"
+
+  cat <<EOF
+## First Run
+
+But :
+- Passer de "template installé" à "première tâche pilotable" en 10 minutes.
+
+1. Activer les garde-fous locaux
+   - \`$hooks_line\`
+   - $claude_line
+
+2. Vérifier que le scaffold est sain
+   - \`bash .ai/scripts/ai-context.sh status\`
+   - \`bash .ai/scripts/ai-context.sh doctor\`
+
+3. Cadrer la première vraie tâche
+   - Claude : \`/aic-frame\`
+   - Codex/autres : \`bash .ai/scripts/ai-context.sh mission "<objectif>"\`
+
+4. Créer la première trace de travail
+   - $product_line
+   - Créer la première feature dev dans \`$docs_root/features/$first_dev_scope/<id>.md\` depuis \`$docs_root/FEATURE_TEMPLATE.md\`.
+   - Si elle sert une initiative product, ajouter :
+
+\`\`\`yaml
+product:
+  initiative: product/<id>
+  contribution: ""
+  evidence: ""
+external_refs:
+  speckit: ""
+  bmad_story: ""
+\`\`\`
+
+5. Avant d'éditer un fichier
+   - \`bash .ai/scripts/ai-context.sh brief <path>\`
+
+6. Avant commit ou PR
+   - \`bash .ai/scripts/ai-context.sh document-delta\`
+   - \`bash .ai/scripts/ai-context.sh ship-report\`
+
+Prochaine action minimale :
+- Lancer \`bash .ai/scripts/ai-context.sh mission "<première tâche>"\`, puis créer la fiche feature proposée avant le premier commit.
+EOF
 }
 
 run_status() {
@@ -292,7 +372,11 @@ $docs_scope
 
 Features actives candidates :
 EOF
-  hints="$(print_active_feature_hints 6)"
+  if [[ "$scope" != "à confirmer" ]]; then
+    hints="$(print_active_feature_hints 6 "$scope")"
+  else
+    hints="$(print_active_feature_hints 6)"
+  fi
   if [[ -n "$hints" ]]; then
     printf '%s\n' "$hints"
   else
@@ -513,6 +597,7 @@ esac
 shift
 
 case "$cmd" in
+  first-run)  run_first_run "$@" ;;
   status)     run_status "$@" ;;
   brief)      run_brief "$@" ;;
   mission)    run_mission "$@" ;;

@@ -132,6 +132,10 @@ if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "brief <pa
   echo "  ✗ ai-context.sh --help ne présente pas brief <path>"
   exit 1
 fi
+if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "first-run"; then
+  echo "  ✗ ai-context.sh --help ne présente pas first-run"
+  exit 1
+fi
 if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q 'mission "<objectif>"'; then
   echo "  ✗ ai-context.sh --help ne présente pas mission"
   exit 1
@@ -148,9 +152,27 @@ if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh status ) | grep -q "Prochaine
   echo "  ✗ ai-context.sh status ne produit pas un état actionnable"
   exit 1
 fi
+first_run_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh first-run )
+if ! printf '%s' "$first_run_out" | grep -q "## First Run"; then
+  echo "  ✗ ai-context.sh first-run ne produit pas de parcours de démarrage"
+  exit 1
+fi
+if ! printf '%s' "$first_run_out" | grep -q "première tâche"; then
+  echo "  ✗ ai-context.sh first-run ne propose pas de prochaine action"
+  exit 1
+fi
 mission_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh mission "préparer une feature back" )
 if ! printf '%s' "$mission_out" | grep -q "## Mission Brief"; then
   echo "  ✗ ai-context.sh mission ne produit pas de brief"
+  exit 1
+fi
+mission_product_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh mission "prioriser la roadmap produit" )
+if ! printf '%s' "$mission_product_out" | grep -q "Scope primaire probable :"; then
+  echo "  ✗ ai-context.sh mission product ne produit pas de scope"
+  exit 1
+fi
+if ! printf '%s' "$mission_product_out" | grep -A1 "Scope primaire probable :" | grep -q "product"; then
+  echo "  ✗ ai-context.sh mission classe mal une demande produit"
   exit 1
 fi
 repair_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh repair )
@@ -243,6 +265,9 @@ product:
     expected_impact: medium
     urgency: medium
     strategic_fit: high
+external_refs:
+  speckit: ".specify/specs/activation-test/spec.md"
+  bmad_story: "docs/stories/activation-test.md"
 progress:
   phase: spec
   step: "initiative product smoke"
@@ -279,6 +304,9 @@ product:
   initiative: product/activation-test
   contribution: "Expose une feature dev liée au pilotage product."
   evidence: "Smoke product-review voit back/sample"
+external_refs:
+  speckit: ".specify/specs/activation-test/tasks.md"
+  bmad_story: "docs/stories/activation-test.md"
 ---
 
 # Sample
@@ -324,7 +352,7 @@ if ! printf '%s' "$product_status" | grep -q "product/activation-test"; then
   exit 1
 fi
 product_portfolio=$( cd "$OUT" && bash .ai/scripts/ai-context.sh product-portfolio )
-if ! printf '%s' "$product_portfolio" | grep -q "Product Portfolio"; then
+if ! printf '%s' "$product_portfolio" | grep -q "Product Traceability"; then
   echo "  ✗ product-portfolio ne produit pas de rapport"
   exit 1
 fi
@@ -333,7 +361,7 @@ if ! printf '%s' "$product_review" | grep -q "Décision recommandée"; then
   echo "  ✗ product-review ne produit pas de décision"
   exit 1
 fi
-echo "  ✓ Product Portfolio Loop OK"
+echo "  ✓ Product Traceability Loop OK"
 
 echo
 echo "[8/28] build-feature-index : index JSON créé par features-for-path"
@@ -352,6 +380,11 @@ if ! jq -e '.features[] | select(.id == "sample" and .product.initiative == "pro
   exit 1
 fi
 echo "  ✓ index expose product.initiative"
+if ! jq -e '.features[] | select(.id == "sample" and .external_refs.speckit == ".specify/specs/activation-test/tasks.md")' "$idx" >/dev/null; then
+  echo "  ✗ index ne contient pas external_refs pour sample/back"
+  exit 1
+fi
+echo "  ✓ index expose external_refs"
 if ! jq -e '.schema_version == "1"' "$idx" >/dev/null; then
   echo "  ✗ index manque schema_version: \"1\""
   exit 1

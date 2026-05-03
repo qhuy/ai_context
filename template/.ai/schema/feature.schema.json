@@ -45,6 +45,13 @@
         "minLength": 1
       }
     },
+    "external_refs": {
+      "description": "Références vers specs, stories, tickets ou artefacts externes. Permet de relier BMAD, Spec Kit, Linear, Jira, GitHub, etc. sans dupliquer leur contenu.",
+      "type": "object",
+      "additionalProperties": {
+        "type": ["string", "array", "object", "null"]
+      }
+    },
     "progress": {
       "type": "object",
       "additionalProperties": true,

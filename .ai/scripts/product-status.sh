@@ -1,5 +1,5 @@
 #!/bin/bash
-# product-status.sh — Vue COO des initiatives product et des features liées.
+# product-status.sh — Vue de traceability des initiatives product et des features liées.
 
 set -euo pipefail
 

@@ -2,7 +2,7 @@
 # build-feature-index.sh — Compile le maillage features en JSON (ai_context).
 #
 # Scanne .docs/features/*/*.md et extrait pour chaque feature :
-#   id, scope, status, touches[], touches_shared[], depends_on[], product{}, path (relatif au repo).
+#   id, scope, status, touches[], touches_shared[], depends_on[], product{}, external_refs{}, path (relatif au repo).
 #
 # Parsing YAML :
 #   - si `yq` (v4) est disponible → parsing propre du frontmatter
@@ -66,9 +66,10 @@ feature_to_json() {
   local folder_scope
   folder_scope=$(basename "$(dirname "$file")")
 
-  local id scope status touches_json touches_shared_json deps_json
+  local id scope status touches_json touches_shared_json deps_json external_refs_json
   local phase="" step="" blockers_json="[]" resume_hint="" updated=""
   local product_json="{}"
+  external_refs_json="{}"
 
   if [[ $has_yq -eq 1 ]]; then
     local fm
@@ -80,6 +81,7 @@ feature_to_json() {
     touches_shared_json=$(echo "$fm" | yq -o=json -I=0 '.touches_shared // []')
     deps_json=$(echo "$fm" | yq -o=json -I=0 '.depends_on // []')
     product_json=$(echo "$fm" | yq -o=json -I=0 '.product // {}')
+    external_refs_json=$(echo "$fm" | yq -o=json -I=0 '.external_refs // {}')
     phase=$(echo "$fm" | yq -r '.progress.phase // ""')
     step=$(echo "$fm" | yq -r '.progress.step // ""')
     blockers_json=$(echo "$fm" | yq -o=json -I=0 '.progress.blockers // []')
@@ -92,6 +94,27 @@ feature_to_json() {
     touches_json=$(extract_list_awk "$file" "touches" | jq -R . | jq -s .)
     touches_shared_json=$(extract_list_awk "$file" "touches_shared" | jq -R . | jq -s .)
     deps_json=$(extract_list_awk "$file" "depends_on" | jq -R . | jq -s .)
+    external_refs_raw=$(awk '
+      /^external_refs:/{flag=1; next}
+      flag && /^  [A-Za-z0-9_.-]+:/{print; next}
+      flag && /^[^[:space:]]/{flag=0}
+    ' "$file" | sed -E 's/^[[:space:]]*//; s/[[:space:]]+$//')
+    if [[ -n "$external_refs_raw" ]]; then
+      external_refs_json=$(printf '%s\n' "$external_refs_raw" | awk '
+        /^[A-Za-z0-9_.-]+:/ {
+          key=$0
+          sub(/:.*/, "", key)
+          val=$0
+          sub(/^[^:]+:[[:space:]]*/, "", val)
+          gsub(/^"|"$/, "", val)
+          if (val != "") print key "\t" val
+        }
+      ' | jq -Rn '
+        reduce inputs as $line ({};
+          ($line | split("\t")) as $p
+          | if ($p|length) >= 2 then . + {($p[0]): $p[1]} else . end
+        )')
+    fi
     product_type=$(awk '/^product:/{flag=1; next} flag && /^  type:/{sub(/^  type:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
     product_initiative=$(awk '/^product:/{flag=1; next} flag && /^  initiative:/{sub(/^  initiative:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
     product_contribution=$(awk '/^product:/{flag=1; next} flag && /^  contribution:/{sub(/^  contribution:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
@@ -156,6 +179,7 @@ feature_to_json() {
     --argjson touches_shared "$touches_shared_json" \
     --argjson depends_on "$deps_json" \
     --argjson product "$product_json" \
+    --argjson external_refs "$external_refs_json" \
     --arg phase "$phase" \
     --arg step "$step" \
     --argjson blockers "$blockers_json" \
@@ -164,7 +188,7 @@ feature_to_json() {
     '{
       id: $id, scope: $scope, status: $status, path: $path,
       touches: $touches, touches_shared: $touches_shared, depends_on: $depends_on,
-      product: $product,
+      product: $product, external_refs: $external_refs,
       progress: {
         phase: $phase, step: $step, blockers: $blockers,
         resume_hint: $resume_hint, updated: $updated

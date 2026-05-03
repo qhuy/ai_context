@@ -58,3 +58,4 @@ Source unique de vérité pour les features d'un projet : un fichier markdown pa
 - 2026-05-03 : ajout optionnel `touches_shared` au contrat frontmatter. Il distingue surfaces de review/reporting et ownership direct, sans changer l'obligation existante sur `touches`.
 - 2026-05-03 : template de fiche mis à jour pour référencer `.ai/workflows/feature-new.md`, `.ai/workflows/feature-update.md` et la reprise feature au lieu d'anciens skills procéduraux.
 - 2026-05-03 : ajout du scope `product` et du lien typé `product.initiative` pour relier initiative produit et features dev sans détourner `depends_on` de son rôle technique.
+- 2026-05-04 : ajout du champ optionnel `external_refs` au frontmatter pour relier specs, stories, tickets et artefacts externes sans les dupliquer dans le mesh.

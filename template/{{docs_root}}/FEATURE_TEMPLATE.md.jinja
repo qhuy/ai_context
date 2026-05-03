@@ -11,6 +11,9 @@ touches_shared: []
 # Optionnel : lien produit. Pour `scope: product`, décrit l'initiative.
 # Pour les autres scopes, relie la feature à une initiative product/<id>.
 product: {}
+# Optionnel : références vers specs, stories, tickets ou artefacts externes
+# (Spec Kit, BMAD, Linear, Jira, GitHub, docs internes, etc.).
+external_refs: {}
 # progress : état de reprise entre sessions (optionnel, auto-géré par `.ai/workflows/feature-update.md`)
 progress:
   phase: spec         # spec | implement | test | review | done
@@ -43,7 +46,7 @@ Description fonctionnelle depuis le point de vue utilisateur (ou du client de l'
 
 Dépendances déclarées dans le frontmatter `depends_on`. Décrire brièvement comment cette feature interagit avec chacune.
 
-Si cette feature sert une initiative produit, renseigner `product.initiative`. Si cette feature est une initiative `scope: product`, renseigner le pari, la métrique, la prochaine date de décision et les critères de cut.
+Si cette feature sert une initiative produit, renseigner `product.initiative`. Si cette feature est une initiative `scope: product`, renseigner le pari, la métrique, la prochaine date de décision et les critères de cut. Si le détail vit dans BMAD, Spec Kit, Linear, Jira ou un autre outil, ajouter un lien dans `external_refs` plutôt que dupliquer le contenu.
 
 ## Historique / décisions
 
@@ -64,6 +67,7 @@ Choix marquants, ADRs liées, décisions produit.
 
 - `touches_shared` : surfaces transverses liées à la feature (`tests/smoke-test.sh`, `CHANGELOG.md`, docs d'état). Ces chemins apparaissent dans les rapports mais ne déclenchent pas l'obligation de fiche/worklog dans `check-feature-freshness --staged`.
 - `product` : lien produit typé. Pour une initiative `scope: product`, utiliser `product.type: initiative`, `bet`, `success_metric`, `leading_indicator`, `decision_state`, `next_decision_date`, `kill_criteria`, `portfolio.*`. Pour une feature dev, utiliser `product.initiative`, `contribution`, `evidence`.
+- `external_refs` : index de références externes (`speckit`, `bmad_story`, `linear`, `jira`, `github`, etc.). Sert à relier sans copier les artefacts produits par d'autres workflows.
 - `progress.phase` : étape courante du cycle
 - `progress.step` : détail libre (humain)
 - `progress.blockers` : liste courte ; si non vide, apparaît dans la reprise feature.

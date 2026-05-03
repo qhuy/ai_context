@@ -1,5 +1,5 @@
 #!/bin/bash
-# check-product-links.sh — Valide les liens Product Portfolio Loop.
+# check-product-links.sh — Valide les liens Product Traceability Loop.
 #
 # Usage :
 #   bash .ai/scripts/check-product-links.sh          # warn, exit 0

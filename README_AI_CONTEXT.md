@@ -17,6 +17,10 @@ Ce projet a été scaffoldé depuis le template [`ai_context`](https://github.co
    bash .ai/scripts/check-shims.sh
    bash .ai/scripts/check-features.sh
    ```
+6. Lancer le parcours de démarrage :
+   ```bash
+   bash .ai/scripts/ai-context.sh first-run
+   ```
 
 ## Agents activés
 
@@ -39,7 +43,7 @@ Ce projet a été scaffoldé depuis le template [`ai_context`](https://github.co
 Toute feature ajoute ou met à jour un fichier `.docs/features/<scope>/<id>.md` basé sur `.docs/FEATURE_TEMPLATE.md`.
 
 - Organisation par scope (`product/`, `back/`, `front/`, `architecture/`, `security/`).
-- Le scope `product` suit les initiatives et arbitrages ; les features dev les relient via `product.initiative`.
+- Le scope `product` trace les initiatives et décisions ; les features dev les relient via `product.initiative`, et les specs/stories/tickets externes via `external_refs`.
 - Cross-refs via `depends_on` (ex : une feature front liste les features back consommées).
 - Enforcement : `.githooks/commit-msg` bloque tout commit `feat:` sans fichier feature.
 
@@ -63,6 +67,7 @@ Les réponses déjà données sont relues depuis `.copier-answers.yml`. Tu contr
 
 | Intention | Commande |
 |---|---|
+| Démarrer après scaffold | `bash .ai/scripts/ai-context.sh first-run` |
 | Cadrer une mission | `bash .ai/scripts/ai-context.sh mission "<objectif>"` |
 | Voir où j'en suis | `bash .ai/scripts/ai-context.sh status` |
 | Préparer une édition avec Codex | `bash .ai/scripts/ai-context.sh brief <path>` |
@@ -70,7 +75,7 @@ Les réponses déjà données sont relues depuis `.copier-answers.yml`. Tu contr
 | Réparer le mesh | `bash .ai/scripts/ai-context.sh repair` |
 | Relire mon delta | `bash .ai/scripts/ai-context.sh review` |
 | Préparer le ship | `bash .ai/scripts/ai-context.sh ship-report` |
-| Piloter le produit | `bash .ai/scripts/ai-context.sh product-status` puis `bash .ai/scripts/ai-context.sh product-portfolio` |
+| Tracer les initiatives produit | `bash .ai/scripts/ai-context.sh product-status` puis `bash .ai/scripts/ai-context.sh product-portfolio` |
 | Vérifier avant commit | `bash .ai/scripts/ai-context.sh doctor` puis `bash .ai/scripts/ai-context.sh check` |
 
 Claude reçoit le contexte feature automatiquement via hooks. Codex et les autres agents peuvent cadrer avec `mission`, obtenir le même contexte juste-à-temps avec `brief <path>` avant d'éditer, puis vérifier la sortie avec `document-delta` et `ship-report`.
@@ -79,6 +84,6 @@ Claude reçoit le contexte feature automatiquement via hooks. Codex et les autre
 
 - `bash .ai/scripts/check-shims.sh` — garde-fou structure shims.
 - `bash .ai/scripts/check-features.sh` — maillage feature (frontmatter + scope + depends_on).
-- `bash .ai/scripts/check-product-links.sh` — liens product.initiative + initiatives product.
+- `bash .ai/scripts/check-product-links.sh` — liens `product.initiative` + initiatives product.
 - `bash .ai/scripts/check-ai-references.sh` — vérifie les liens markdown internes.
 - `bash .ai/scripts/check-commit-features.sh` — Conventional Commits + feat: touche features/.

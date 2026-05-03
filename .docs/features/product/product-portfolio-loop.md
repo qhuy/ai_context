@@ -1,7 +1,7 @@
 ---
 id: product-portfolio-loop
 scope: product
-title: Product Portfolio Loop
+title: Product Traceability Loop
 status: active
 depends_on:
   - workflow/agent-behavior
@@ -38,9 +38,9 @@ touches_shared:
   - CHANGELOG.md
 product:
   type: initiative
-  bet: "Relier les arbitrages produit aux features dev améliore la qualité des décisions sans créer de roadmap parallèle."
+  bet: "Relier les décisions produit, les artefacts externes et les features dev améliore la qualité des décisions sans créer de roadmap parallèle."
   target_user: "Développeurs solo et équipes produit/tech qui utilisent ai_context"
-  success_metric: "Une initiative product peut être suivie via status, portfolio et review en sortie CLI stable."
+  success_metric: "Une initiative product peut être suivie via status, portfolio/review et external_refs en sortie CLI/index stable."
   leading_indicator: "Smoke-test couvre product-status, product-portfolio et product-review sur un scaffold Copier."
   decision_state: explore
   next_decision_date: 2026-05-17
@@ -55,31 +55,32 @@ product:
     strategic_fit: high
 progress:
   phase: implement
-  step: "V1 product scope + scripts read-only en cours"
+  step: "First-run UX ajouté pour guider le premier usage après scaffold"
   blockers: []
-  resume_hint: "valider smoke-test, check-product-links, dogfood drift et freshness"
-  updated: 2026-05-03
+  resume_hint: "valider smoke-test, check-product-links, dogfood drift et first-run sur rendu Copier"
+  updated: 2026-05-04
 ---
 
-# Product Portfolio Loop
+# Product Traceability Loop
 
 ## Objectif
 
-Ajouter un pilotage COO/CEO au feature mesh sans créer une roadmap séparée ni injecter de contexte produit à chaque tour.
+Ajouter une couche de traceability produit au feature mesh sans créer une roadmap séparée ni injecter de contexte produit à chaque tour.
 
 Le modèle cible :
 
 ```text
-initiative product -> features dev liées -> evidence -> décision suivante
+initiative product -> refs externes -> features dev liées -> evidence -> décision suivante
 ```
 
 ## Comportement attendu
 
 - `scope: product` représente une initiative produit.
 - Les features dev se relient à une initiative via `product.initiative`.
+- Les specs, stories, tickets et docs externes se relient via `external_refs`.
 - `depends_on` reste réservé aux dépendances techniques ou de contexte.
 - `check-product-links.sh` signale les initiatives floues, non exécutables ou liées à tort.
-- `product-status.sh` donne une vue COO des initiatives et dev linked.
+- `product-status.sh` donne une vue de traceability des initiatives et dev linked.
 - `product-portfolio.sh` compare impact, confiance, coût et evidence.
 - `product-review.sh product/<id>` recommande une décision `continue / cut / pivot / scale`.
 
@@ -87,7 +88,8 @@ initiative product -> features dev liées -> evidence -> décision suivante
 
 - Read-only : aucun script produit ne modifie les fichiers.
 - Pas de reminder : la couche produit est lue juste-à-temps.
-- Pas de roadmap parallèle : la roadmap est une vue calculée depuis `.docs/features/product/*.md`.
+- Pas de roadmap parallèle : `.docs/features/product/*.md` reste un index d'initiatives et de décisions.
+- Interop : BMAD, Spec Kit, Linear, Jira, GitHub et autres sources restent propriétaires de leurs artefacts ; `external_refs` ne fait que les relier.
 - Compatible Claude/Codex : la surface commune passe par `ai-context.sh product-*`.
 
 ## Cross-refs
@@ -97,4 +99,6 @@ initiative product -> features dev liées -> evidence -> décision suivante
 
 ## Historique / décisions
 
-- 2026-05-03 : décision de ne pas copier BOS tel quel. Le besoin retenu est un Product Portfolio Loop adapté au logiciel : initiatives product, lien typé vers features dev, evidence et décision suivante.
+- 2026-05-03 : décision de ne pas copier BOS tel quel. Le besoin retenu est une boucle product adaptée au logiciel : initiatives product, lien typé vers features dev, evidence et décision suivante.
+- 2026-05-04 : passe first user experience. Ajout d'un parcours read-only `ai-context.sh first-run`, documentation dans README/README_AI_CONTEXT et smoke test dédié pour réduire la friction après scaffold.
+- 2026-05-04 : recadrage marché. Le scope product devient une couche de traceability/governance compatible BMAD, Spec Kit et tickets externes via `external_refs`, pas une roadmap autonome.
