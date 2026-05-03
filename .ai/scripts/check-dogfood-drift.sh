@@ -19,13 +19,20 @@ if ! command -v copier >/dev/null 2>&1; then
   exit 1
 fi
 
+src_copy="$(mktemp -d /tmp/ai-context-dogfood-src-XXXXXX)"
 out="$(mktemp -d /tmp/ai-context-dogfood-drift-XXXXXX)"
-cleanup() { rm -rf "$out"; }
-trap cleanup EXIT
 copy_log="$(mktemp /tmp/ai-context-dogfood-drift-copy-XXXXXX.log)"
-trap 'rm -rf "$out"; rm -f "$copy_log"' EXIT
+trap 'rm -rf "$src_copy" "$out"; rm -f "$copy_log"' EXIT
 
-if ! copier copy --defaults --trust --vcs-ref=HEAD \
+rsync -a --delete \
+  --exclude='.git' \
+  --exclude='.ai/.feature-index.json' \
+  --exclude='.ai/.progress-history.jsonl' \
+  --exclude='.ai/.session-edits.log' \
+  --exclude='.ai/.session-edits.flushed' \
+  "$repo_root/" "$src_copy/"
+
+if ! copier copy --defaults --trust \
   --data project_name=ai_context \
   --data project_description='Template copier pour industrialiser le contexte des agents IA' \
   --data scope_profile=minimal \
@@ -35,7 +42,7 @@ if ! copier copy --defaults --trust --vcs-ref=HEAD \
   --data docs_root=.docs \
   --data agents='["claude","codex"]' \
   --data enable_ci_guard=true \
-  "$repo_root" "$out" >"$copy_log" 2>&1; then
+  "$src_copy" "$out" >"$copy_log" 2>&1; then
   echo "❌ rendu Copier échoué" >&2
   sed -n '1,160p' "$copy_log" >&2
   exit 1

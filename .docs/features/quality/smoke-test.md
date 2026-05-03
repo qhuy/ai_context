@@ -48,6 +48,7 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-05-03 : étape `[7/28]` enrichie pour vérifier que le hook `features-for-path` injecte la fiche directe et une fiche `depends_on`, pas seulement la liste des features.
 - 2026-05-03 : smoke-test enrichi pour figer l'UX `ai-context.sh status` (prochaine action minimale) et `ai-context.sh brief <path>` (contexte feature exposé hors hooks Claude).
 - 2026-05-03 : smoke-test enrichi pour figer `ai-context.sh mission`, `repair`, `document-delta` et `ship-report` sur un scaffold sans git actif, afin de garantir une UX Codex/Claude utilisable dès le bootstrap.
+- 2026-05-03 : smoke-test enrichi pour rendre depuis une copie temporaire du workspace courant, couvrir le scope `product`, `check-product-links`, `product-status`, `product-portfolio`, `product-review` et l'indexation `product.initiative`.
 - v0.7.2 : ajout assertion sur escaping JSON (régression).
 - v0.9 : ajout assertion sur `AI_CONTEXT_FOCUS` graph + i18n FR/EN.
 - 2026-04-24 : ajout [18/27] — vérifie que le pre-commit `auto-progress.sh` bascule `spec → implement`, écrit le snapshot dans `.progress-history.jsonl`, crée la ligne `auto-progress` dans le worklog, et est idempotent (second commit sans re-bump). HANDOFF reçu depuis `workflow/conversational-skills` (chantier 4). Révélé au passage un bug fixé : `auto-progress.sh` ne créait pas le worklog si absent — correctif appliqué dans `.ai/scripts/` + `template/.ai/scripts/`, cross-ref tracée dans `core/template-engine` Historique.

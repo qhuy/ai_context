@@ -29,6 +29,7 @@ CANONICAL=(
   ".ai/rules/core.md"
   ".ai/rules/quality.md"
   ".ai/rules/workflow.md"
+  ".ai/rules/product.md"
 )
 
 fail=0

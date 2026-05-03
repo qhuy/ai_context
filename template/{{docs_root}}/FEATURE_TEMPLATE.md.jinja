@@ -1,6 +1,6 @@
 ---
 id: <feature-id-kebab-case>
-scope: <back | front | architecture | security>
+scope: <product | back | front | architecture | security>
 title: <Titre court de la feature>
 status: draft
 depends_on: []
@@ -8,6 +8,9 @@ touches: []
 # Optionnel : surfaces partagées utiles au reporting/review, non bloquantes
 # pour `check-feature-freshness --staged`.
 touches_shared: []
+# Optionnel : lien produit. Pour `scope: product`, décrit l'initiative.
+# Pour les autres scopes, relie la feature à une initiative product/<id>.
+product: {}
 # progress : état de reprise entre sessions (optionnel, auto-géré par `.ai/workflows/feature-update.md`)
 progress:
   phase: spec         # spec | implement | test | review | done
@@ -40,6 +43,8 @@ Description fonctionnelle depuis le point de vue utilisateur (ou du client de l'
 
 Dépendances déclarées dans le frontmatter `depends_on`. Décrire brièvement comment cette feature interagit avec chacune.
 
+Si cette feature sert une initiative produit, renseigner `product.initiative`. Si cette feature est une initiative `scope: product`, renseigner le pari, la métrique, la prochaine date de décision et les critères de cut.
+
 ## Historique / décisions
 
 Choix marquants, ADRs liées, décisions produit.
@@ -58,6 +63,7 @@ Choix marquants, ADRs liées, décisions produit.
 **Frontmatter optionnel (reprise entre sessions)** :
 
 - `touches_shared` : surfaces transverses liées à la feature (`tests/smoke-test.sh`, `CHANGELOG.md`, docs d'état). Ces chemins apparaissent dans les rapports mais ne déclenchent pas l'obligation de fiche/worklog dans `check-feature-freshness --staged`.
+- `product` : lien produit typé. Pour une initiative `scope: product`, utiliser `product.type: initiative`, `bet`, `success_metric`, `leading_indicator`, `decision_state`, `next_decision_date`, `kill_criteria`, `portfolio.*`. Pour une feature dev, utiliser `product.initiative`, `contribution`, `evidence`.
 - `progress.phase` : étape courante du cycle
 - `progress.step` : détail libre (humain)
 - `progress.blockers` : liste courte ; si non vide, apparaît dans la reprise feature.

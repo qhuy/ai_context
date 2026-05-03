@@ -2,7 +2,7 @@
 # build-feature-index.sh — Compile le maillage features en JSON (ai_context).
 #
 # Scanne .docs/features/*/*.md et extrait pour chaque feature :
-#   id, scope, status, touches[], touches_shared[], depends_on[], path (relatif au repo).
+#   id, scope, status, touches[], touches_shared[], depends_on[], product{}, path (relatif au repo).
 #
 # Parsing YAML :
 #   - si `yq` (v4) est disponible → parsing propre du frontmatter
@@ -68,6 +68,7 @@ feature_to_json() {
 
   local id scope status touches_json touches_shared_json deps_json
   local phase="" step="" blockers_json="[]" resume_hint="" updated=""
+  local product_json="{}"
 
   if [[ $has_yq -eq 1 ]]; then
     local fm
@@ -78,6 +79,7 @@ feature_to_json() {
     touches_json=$(echo "$fm" | yq -o=json -I=0 '.touches // []')
     touches_shared_json=$(echo "$fm" | yq -o=json -I=0 '.touches_shared // []')
     deps_json=$(echo "$fm" | yq -o=json -I=0 '.depends_on // []')
+    product_json=$(echo "$fm" | yq -o=json -I=0 '.product // {}')
     phase=$(echo "$fm" | yq -r '.progress.phase // ""')
     step=$(echo "$fm" | yq -r '.progress.step // ""')
     blockers_json=$(echo "$fm" | yq -o=json -I=0 '.progress.blockers // []')
@@ -90,6 +92,33 @@ feature_to_json() {
     touches_json=$(extract_list_awk "$file" "touches" | jq -R . | jq -s .)
     touches_shared_json=$(extract_list_awk "$file" "touches_shared" | jq -R . | jq -s .)
     deps_json=$(extract_list_awk "$file" "depends_on" | jq -R . | jq -s .)
+    product_type=$(awk '/^product:/{flag=1; next} flag && /^  type:/{sub(/^  type:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_initiative=$(awk '/^product:/{flag=1; next} flag && /^  initiative:/{sub(/^  initiative:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_contribution=$(awk '/^product:/{flag=1; next} flag && /^  contribution:/{sub(/^  contribution:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_evidence=$(awk '/^product:/{flag=1; next} flag && /^  evidence:/{sub(/^  evidence:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_bet=$(awk '/^product:/{flag=1; next} flag && /^  bet:/{sub(/^  bet:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_target_user=$(awk '/^product:/{flag=1; next} flag && /^  target_user:/{sub(/^  target_user:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_success_metric=$(awk '/^product:/{flag=1; next} flag && /^  success_metric:/{sub(/^  success_metric:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_leading_indicator=$(awk '/^product:/{flag=1; next} flag && /^  leading_indicator:/{sub(/^  leading_indicator:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_decision_state=$(awk '/^product:/{flag=1; next} flag && /^  decision_state:/{sub(/^  decision_state:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_next_decision_date=$(awk '/^product:/{flag=1; next} flag && /^  next_decision_date:/{sub(/^  next_decision_date:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_json=$(jq -n \
+      --arg type "$product_type" \
+      --arg initiative "$product_initiative" \
+      --arg contribution "$product_contribution" \
+      --arg evidence "$product_evidence" \
+      --arg bet "$product_bet" \
+      --arg target_user "$product_target_user" \
+      --arg success_metric "$product_success_metric" \
+      --arg leading_indicator "$product_leading_indicator" \
+      --arg decision_state "$product_decision_state" \
+      --arg next_decision_date "$product_next_decision_date" \
+      '{
+        type: $type, initiative: $initiative, contribution: $contribution, evidence: $evidence,
+        bet: $bet, target_user: $target_user, success_metric: $success_metric,
+        leading_indicator: $leading_indicator, decision_state: $decision_state,
+        next_decision_date: $next_decision_date
+      } | with_entries(select(.value != ""))')
     # progress.* : parsing best-effort en fallback awk (yq recommandé pour précision)
     phase=$(awk '/^progress:/{flag=1; next} flag && /^  phase:/{sub(/^  phase:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/["'"'"']//g; s/[[:space:]]+$//')
     step=$(awk '/^progress:/{flag=1; next} flag && /^  step:/{sub(/^  step:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
@@ -126,6 +155,7 @@ feature_to_json() {
     --argjson touches "$touches_json" \
     --argjson touches_shared "$touches_shared_json" \
     --argjson depends_on "$deps_json" \
+    --argjson product "$product_json" \
     --arg phase "$phase" \
     --arg step "$step" \
     --argjson blockers "$blockers_json" \
@@ -134,6 +164,7 @@ feature_to_json() {
     '{
       id: $id, scope: $scope, status: $status, path: $path,
       touches: $touches, touches_shared: $touches_shared, depends_on: $depends_on,
+      product: $product,
       progress: {
         phase: $phase, step: $step, blockers: $blockers,
         resume_hint: $resume_hint, updated: $updated

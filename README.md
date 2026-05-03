@@ -564,8 +564,8 @@ Côté Claude, demande une review du mesh via `/aic-review`. En maintenance avan
 
 | Profil | Scopes générés |
 |---|---|
-| `minimal` | core, quality, workflow |
-| `backend` | core, quality, workflow, back, architecture, security, handoff |
+| `minimal` | core, quality, workflow, product |
+| `backend` | core, quality, workflow, product, back, architecture, security, handoff |
 | `fullstack` | backend + front |
 | `custom` | minimal (tu ajoutes tes scopes à la main) |
 
@@ -744,8 +744,12 @@ Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et dist
 | `check-shims.sh` | Vérifie shims cohérents avec `.ai/index.md` |
 | `check-ai-references.sh` | Détecte les références cassées vers `.ai/` |
 | `check-features.sh` | Valide frontmatter + scope + `depends_on` + `touches` |
+| `check-product-links.sh` | Valide les liens `product.initiative`, initiatives product et signaux portfolio |
 | `check-commit-features.sh` | Conventional Commits + `feat:` exige feature touchée |
 | `check-feature-coverage.sh` | Détecte code orphelin (non couvert par `touches:`) |
+| `product-status.sh` | Vue COO des initiatives product et des features dev liées |
+| `product-portfolio.sh` | Arbitrage portefeuille : impact, confiance, coût, evidence, recommandation |
+| `product-review.sh` | Review décisionnelle d'une initiative `product/<id>` |
 | `resume-features.sh` | Buckets EN COURS / BLOQUÉES / STALE / À FAIRE |
 | `audit-features.sh` | Audit agent-agnostique (`discover <scope>`, dry-run par défaut) |
 | `migrate-features.sh` | Migration frontmatter (dry-run par défaut, `--apply` explicite) |
@@ -756,7 +760,7 @@ Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et dist
 | `auto-worklog-log.sh` | Hook `PostToolUse` : logue les éditions dans `.session-edits.log` |
 | `auto-worklog-flush.sh` | Hook `Stop` : flush log → worklog + bump `progress.updated` |
 | `aic-undo.sh` | Annule la dernière transition auto-progressée (lit `.progress-history.jsonl`, restaure le frontmatter, append au worklog, rebuild index). Headless ; le skill `/aic undo` s'appuie dessus. `--dry-run` par défaut, `--apply` pour exécuter. |
-| `ai-context.sh` | CLI UX : `mission "<objectif>"`, `status`, `brief <path>`, `document-delta`, `repair`, `ship-report`, puis routes `doctor` / `resume` / `audit` / `migrate` / `pr-report` / `review` / `measure` / `check` / `coverage` / `shims` / `index` / `reminder`. |
+| `ai-context.sh` | CLI UX : `mission "<objectif>"`, `status`, `brief <path>`, `document-delta`, `repair`, `ship-report`, `product-status`, `product-portfolio`, `product-review product/<id>`, puis routes `doctor` / `resume` / `audit` / `migrate` / `pr-report` / `review` / `measure` / `check` / `coverage` / `shims` / `index` / `reminder`. |
 
 Tous les scripts runtime lisent le dossier métier via `AI_CONTEXT_DOCS_ROOT` rendu depuis `docs_root` (`.docs` par défaut). Les entrées `touches:` sont matchées par un helper unique (`path_matches_touch`) pour garder la même sémantique entre `features-for-path`, auto-worklog, coverage et `pre-commit`. `touches_shared:` sert aux surfaces transverses visibles en review mais non bloquantes pour `check-feature-freshness --staged`.
 

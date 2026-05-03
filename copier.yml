@@ -23,6 +23,7 @@ _exclude:
   - "{% if 'architecture' not in scopes %}.ai/rules/architecture.md{% endif %}"
   - "{% if 'security' not in scopes %}.ai/rules/security.md{% endif %}"
   - "{% if 'handoff' not in scopes %}.ai/rules/handoff.md{% endif %}"
+  - "{% if 'product' not in scopes %}.ai/rules/product.md{% endif %}"
   # Cursor MDC scopés (auto-attached via globs) — uniquement si cursor agent + scope présent
   - "{% if 'cursor' not in agents or 'back' not in scopes %}.cursor/rules/back.mdc{% endif %}"
   - "{% if 'cursor' not in agents or 'front' not in scopes %}.cursor/rules/front.mdc{% endif %}"
@@ -38,6 +39,7 @@ _exclude:
   - "{% if 'front' not in scopes %}{{ docs_root }}/features/front{% endif %}"
   - "{% if 'architecture' not in scopes %}{{ docs_root }}/features/architecture{% endif %}"
   - "{% if 'security' not in scopes %}{{ docs_root }}/features/security{% endif %}"
+  - "{% if 'product' not in scopes %}{{ docs_root }}/features/product{% endif %}"
   # CI opt-in
   - "{% if adoption_mode == 'lite' or (not enable_ci_guard and adoption_mode != 'strict') %}.github/workflows{% endif %}"
   # Mode d'adoption
@@ -125,7 +127,7 @@ scope_profile:
   type: str
   default: fullstack
   choices:
-    minimal (core, quality, workflow): minimal
+    minimal (core, quality, workflow, product): minimal
     backend (+ back, architecture, security, handoff): backend
     fullstack (backend + front): fullstack
     custom (scaffold minimal, tu ajoutes à la main): custom
@@ -183,11 +185,11 @@ scopes:
   when: false
   default: >-
     {%- if scope_profile == 'minimal' -%}
-    ["core", "quality", "workflow"]
+    ["core", "quality", "workflow", "product"]
     {%- elif scope_profile == 'backend' -%}
-    ["core", "quality", "workflow", "back", "architecture", "security", "handoff"]
+    ["core", "quality", "workflow", "product", "back", "architecture", "security", "handoff"]
     {%- elif scope_profile == 'fullstack' -%}
-    ["core", "quality", "workflow", "back", "front", "architecture", "security", "handoff"]
+    ["core", "quality", "workflow", "product", "back", "front", "architecture", "security", "handoff"]
     {%- else -%}
-    ["core", "quality", "workflow"]
+    ["core", "quality", "workflow", "product"]
     {%- endif -%}

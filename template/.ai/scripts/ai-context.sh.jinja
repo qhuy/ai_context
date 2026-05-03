@@ -17,6 +17,7 @@
 #   repair       → plan de réparation non destructif du mesh
 #   document-delta → docs/features à vérifier depuis le delta courant
 #   ship-report  → synthèse de sortie avant commit/PR
+#   product-status / product-portfolio / product-review → pilotage produit
 #   resume       → bash .ai/scripts/resume-features.sh
 #   audit        → bash .ai/scripts/audit-features.sh
 #   migrate      → bash .ai/scripts/migrate-features.sh
@@ -52,6 +53,12 @@ Commandes :
   document-delta
                suggestions de documentation à partir du delta courant/staged
   ship-report  rapport de sortie : delta, docs, checks, commit proposé
+  product-status
+               vue COO des initiatives product et features dev liées
+  product-portfolio
+               arbitrage portefeuille : impact, confiance, coût, recommandation
+  product-review product/<id>
+               review décisionnelle d'une initiative product
   doctor       diagnostic non destructif (dépendances, hooks, index, checks)
   resume       buckets EN COURS / BLOQUÉES / STALE / À FAIRE
   audit        audit-features.sh (discover <scope>)
@@ -182,9 +189,10 @@ run_status() {
     fi
   fi
 
-  local check_features check_shims freshness coverage measure_total next_action
+  local check_features check_shims check_product freshness coverage measure_total next_action
   check_features=$(status_label bash "$script_dir/check-features.sh")
   check_shims=$(status_label bash "$script_dir/check-shims.sh")
+  check_product=$(status_label bash "$script_dir/check-product-links.sh")
   coverage=$(status_label bash "$script_dir/check-feature-coverage.sh")
   freshness="OK"
   if [[ "$staged" -gt 0 ]]; then
@@ -199,6 +207,8 @@ run_status() {
     next_action="Corriger les frontmatter: bash .ai/scripts/check-features.sh"
   elif [[ "$check_shims" != "OK" ]]; then
     next_action="Réparer les shims: bash .ai/scripts/check-shims.sh"
+  elif [[ "$check_product" != "OK" ]]; then
+    next_action="Relire les liens produit: bash .ai/scripts/ai-context.sh product-status"
   elif [[ "$freshness" != "OK" ]]; then
     next_action="Mettre à jour/stager les fiches feature: bash .ai/scripts/check-feature-freshness.sh --staged --strict"
   elif [[ "$coverage" != "OK" ]]; then
@@ -233,6 +243,7 @@ Runtime
 Checks
 - features          : $check_features
 - shims             : $check_shims
+- product links     : $check_product
 - freshness staged  : $freshness
 - coverage          : $coverage
 
@@ -332,9 +343,10 @@ run_repair() {
     bash "$script_dir/build-feature-index.sh" --write >/dev/null
   fi
 
-  local check_features check_shims coverage freshness staged
+  local check_features check_shims check_product coverage freshness staged
   check_features=$(status_label bash "$script_dir/check-features.sh")
   check_shims=$(status_label bash "$script_dir/check-shims.sh")
+  check_product=$(status_label bash "$script_dir/check-product-links.sh")
   coverage=$(status_label bash "$script_dir/check-feature-coverage.sh")
   staged="$(staged_count)"
   freshness="OK"
@@ -352,6 +364,7 @@ Mode :
 Checks :
 - features: $check_features
 - shims: $check_shims
+- product links: $check_product
 - coverage: $coverage
 - freshness staged: $freshness
 
@@ -359,9 +372,10 @@ Actions recommandées :
 EOF
   [[ "$check_features" != "OK" ]] && echo "- Corriger les frontmatter: \`bash .ai/scripts/check-features.sh\`"
   [[ "$check_shims" != "OK" ]] && echo "- Réparer les shims racine depuis \`.ai/index.md\`: \`bash .ai/scripts/check-shims.sh\`"
+  [[ "$check_product" != "OK" ]] && echo "- Corriger les liens produit: \`bash .ai/scripts/check-product-links.sh --strict\`"
   [[ "$coverage" != "OK" ]] && echo "- Ajouter/ajuster les \`touches:\` ou créer une fiche feature pour les orphelins."
   [[ "$freshness" != "OK" ]] && echo "- Stager la fiche/worklog de chaque feature impactée: \`bash .ai/scripts/check-feature-freshness.sh --staged --strict\`"
-  if [[ "$check_features$check_shims$coverage$freshness" == "OKOKOKOK" ]]; then
+  if [[ "$check_features$check_shims$check_product$coverage$freshness" == "OKOKOKOKOK" ]]; then
     echo "- Aucun correctif structurel détecté."
   fi
 
@@ -420,7 +434,7 @@ EOF
 
 run_ship_report() {
   cd "$repo_root"
-  local check_features check_shims coverage freshness measure_total staged modified commit_hint
+  local check_features check_shims check_product coverage freshness measure_total staged modified commit_hint
   staged="$(staged_count)"
   modified=0
   if inside_git_repo; then
@@ -428,6 +442,7 @@ run_ship_report() {
   fi
   check_features=$(status_label bash "$script_dir/check-features.sh")
   check_shims=$(status_label bash "$script_dir/check-shims.sh")
+  check_product=$(status_label bash "$script_dir/check-product-links.sh")
   coverage=$(status_label bash "$script_dir/check-feature-coverage.sh")
   freshness="OK"
   if [[ "$staged" -gt 0 ]]; then
@@ -452,6 +467,7 @@ Delta :
 Checks :
 - features: $check_features
 - shims: $check_shims
+- product links: $check_product
 - coverage: $coverage
 - freshness staged: $freshness
 
@@ -503,6 +519,9 @@ case "$cmd" in
   repair)     run_repair "$@" ;;
   document-delta) run_document_delta "$@" ;;
   ship-report) run_ship_report "$@" ;;
+  product-status) exec bash "$script_dir/product-status.sh" "$@" ;;
+  product-portfolio) exec bash "$script_dir/product-portfolio.sh" "$@" ;;
+  product-review) exec bash "$script_dir/product-review.sh" "$@" ;;
   doctor)     exec bash "$script_dir/doctor.sh" "$@" ;;
   resume)     exec bash "$script_dir/resume-features.sh" "$@" ;;
   audit)      exec bash "$script_dir/audit-features.sh" "$@" ;;

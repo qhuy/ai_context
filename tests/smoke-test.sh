@@ -8,18 +8,28 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 REPO="$PWD"
+SRC="/tmp/ai-context-smoke-src-$$"
 OUT="/tmp/ai-context-smoke-$$"
 
-trap 'rm -rf "$OUT"' EXIT
+trap 'rm -rf "$SRC" "$OUT"' EXIT
 
 echo "═══ smoke-test ═══"
 echo "repo  = $REPO"
+echo "src   = $SRC"
 echo "out   = $OUT"
 
 if ! command -v copier >/dev/null 2>&1; then
   echo "❌ copier introuvable. Installer : pip install --user copier" >&2
   exit 1
 fi
+
+rsync -a --delete \
+  --exclude='.git' \
+  --exclude='.ai/.feature-index.json' \
+  --exclude='.ai/.progress-history.jsonl' \
+  --exclude='.ai/.session-edits.log' \
+  --exclude='.ai/.session-edits.flushed' \
+  "$REPO/" "$SRC/"
 
 echo
 echo "[0a/28] tests unitaires (path_matches_touch)"
@@ -43,9 +53,9 @@ bash tests/unit/test-review-delta-shared.sh
 echo
 
 echo "[1/28] copier copy (profil par défaut)"
-copier copy --defaults --trust --vcs-ref=HEAD \
+copier copy --defaults --trust \
   --data project_name=smoke-project \
-  "$REPO" "$OUT"
+  "$SRC" "$OUT"
 
 echo
 echo "[2/28] check-shims"
@@ -130,6 +140,10 @@ if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "ship-repo
   echo "  ✗ ai-context.sh --help ne présente pas ship-report"
   exit 1
 fi
+if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "product-status"; then
+  echo "  ✗ ai-context.sh --help ne présente pas product-status"
+  exit 1
+fi
 if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh status ) | grep -q "Prochaine action minimale"; then
   echo "  ✗ ai-context.sh status ne produit pas un état actionnable"
   exit 1
@@ -152,6 +166,11 @@ fi
 ship_report_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh ship-report )
 if ! printf '%s' "$ship_report_out" | grep -q "## AI Context Ship Report"; then
   echo "  ✗ ai-context.sh ship-report ne produit pas de rapport"
+  exit 1
+fi
+product_status_empty=$( cd "$OUT" && bash .ai/scripts/ai-context.sh product-status )
+if ! printf '%s' "$product_status_empty" | grep -q "## Product Status"; then
+  echo "  ✗ ai-context.sh product-status ne produit pas de rapport"
   exit 1
 fi
 if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh shims ) >/dev/null 2>&1; then
@@ -199,7 +218,39 @@ echo "[7/28] features-for-path : silent si aucune feature, matche via touches:"
 if ! bash "$OUT/.ai/scripts/features-for-path.sh" src/foo.ts >/dev/null 2>&1; then
   echo "  ✓ aucune feature → exit 1 (attendu)"
 fi
-mkdir -p "$OUT/.docs/features/back" "$OUT/.docs/features/core"
+mkdir -p "$OUT/.docs/features/back" "$OUT/.docs/features/core" "$OUT/.docs/features/product"
+cat > "$OUT/.docs/features/product/activation-test.md" <<'FEAT'
+---
+id: activation-test
+scope: product
+title: Activation Test
+status: active
+depends_on: []
+touches: []
+product:
+  type: initiative
+  bet: "Une slice d'activation testable améliore le pilotage."
+  target_user: "Smoke users"
+  success_metric: "Activation test OK"
+  leading_indicator: "Signal smoke présent"
+  decision_state: commit
+  next_decision_date: 2026-05-17
+  kill_criteria:
+    - "Aucune feature dev liée"
+  portfolio:
+    appetite: small
+    confidence: high
+    expected_impact: medium
+    urgency: medium
+    strategic_fit: high
+progress:
+  phase: spec
+  step: "initiative product smoke"
+  blockers: []
+---
+
+# Activation Test
+FEAT
 cat > "$OUT/.docs/features/core/base.md" <<'FEAT'
 ---
 id: base
@@ -224,6 +275,10 @@ depends_on:
   - core/base
 touches:
   - src/foo.ts
+product:
+  initiative: product/activation-test
+  contribution: "Expose une feature dev liée au pilotage product."
+  evidence: "Smoke product-review voit back/sample"
 ---
 
 # Sample
@@ -258,6 +313,27 @@ if ! printf '%s' "$brief_ctx" | grep -q 'Contexte direct attendu'; then
   exit 1
 fi
 echo "  ✓ ai-context.sh brief expose le contexte feature"
+if ! ( cd "$OUT" && bash .ai/scripts/check-product-links.sh --strict ) >/dev/null 2>&1; then
+  echo "  ✗ check-product-links --strict échoue sur un product mesh sain"
+  ( cd "$OUT" && bash .ai/scripts/check-product-links.sh --strict )
+  exit 1
+fi
+product_status=$( cd "$OUT" && bash .ai/scripts/ai-context.sh product-status )
+if ! printf '%s' "$product_status" | grep -q "product/activation-test"; then
+  echo "  ✗ product-status ne liste pas l'initiative product"
+  exit 1
+fi
+product_portfolio=$( cd "$OUT" && bash .ai/scripts/ai-context.sh product-portfolio )
+if ! printf '%s' "$product_portfolio" | grep -q "Product Portfolio"; then
+  echo "  ✗ product-portfolio ne produit pas de rapport"
+  exit 1
+fi
+product_review=$( cd "$OUT" && bash .ai/scripts/ai-context.sh product-review product/activation-test )
+if ! printf '%s' "$product_review" | grep -q "Décision recommandée"; then
+  echo "  ✗ product-review ne produit pas de décision"
+  exit 1
+fi
+echo "  ✓ Product Portfolio Loop OK"
 
 echo
 echo "[8/28] build-feature-index : index JSON créé par features-for-path"
@@ -271,6 +347,11 @@ if ! jq -e '.features[] | select(.id == "sample" and .scope == "back")' "$idx" >
   exit 1
 fi
 echo "  ✓ index contient sample/back"
+if ! jq -e '.features[] | select(.id == "sample" and .product.initiative == "product/activation-test")' "$idx" >/dev/null; then
+  echo "  ✗ index ne contient pas product.initiative pour sample/back"
+  exit 1
+fi
+echo "  ✓ index expose product.initiative"
 if ! jq -e '.schema_version == "1"' "$idx" >/dev/null; then
   echo "  ✗ index manque schema_version: \"1\""
   exit 1
@@ -1003,10 +1084,10 @@ rm "$OUT/.docs/features/back/old_api.md" "$OUT/.docs/features/back/new_api.md"
 echo
 echo "[23/28] reminder i18n : commit_language=en génère un reminder EN"
 OUT_EN="/tmp/ai-context-smoke-en-$$"
-copier copy --defaults --trust --vcs-ref=HEAD \
+copier copy --defaults --trust \
   --data project_name=smoke-en \
   --data commit_language=en \
-  "$REPO" "$OUT_EN" >/dev/null
+  "$SRC" "$OUT_EN" >/dev/null
 if ! grep -q "Read \`.ai/index.md\` BEFORE" "$OUT_EN/.ai/reminder.md"; then
   echo "  ✗ reminder pas en anglais"
   cat "$OUT_EN/.ai/reminder.md"
@@ -1132,10 +1213,10 @@ echo "  ✓ matching exact/dossier/glob/** OK"
 echo
 echo "[27/28] docs_root=docs : scripts runtime suivent le dossier configuré"
 OUT_DOCS="/tmp/ai-context-smoke-docs-root-$$"
-copier copy --defaults --trust --vcs-ref=HEAD \
+copier copy --defaults --trust \
   --data project_name=smoke-docs-root \
   --data docs_root=docs \
-  "$REPO" "$OUT_DOCS" >/dev/null
+  "$SRC" "$OUT_DOCS" >/dev/null
 mkdir -p "$OUT_DOCS/docs/features/back" "$OUT_DOCS/src"
 cat > "$OUT_DOCS/docs/features/back/sample.md" <<'FEAT'
 ---
@@ -1171,10 +1252,10 @@ OUT_FULLSTACK="/tmp/ai-context-smoke-fullstack-$$"
 OUT_LITE="/tmp/ai-context-smoke-lite-$$"
 OUT_STRICT="/tmp/ai-context-smoke-strict-$$"
 
-copier copy --defaults --trust --vcs-ref=HEAD \
+copier copy --defaults --trust \
   --data project_name=smoke-dotnet \
   --data tech_profile=dotnet-clean-cqrs \
-  "$REPO" "$OUT_DOTNET" >/dev/null
+  "$SRC" "$OUT_DOTNET" >/dev/null
 if [[ ! -f "$OUT_DOTNET/.ai/rules/tech-dotnet.md" ]]; then
   echo "  ✗ tech-dotnet.md absent pour dotnet-clean-cqrs"
   rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK"
@@ -1196,10 +1277,10 @@ if ! grep -q "tech-dotnet.md" "$OUT_DOTNET/.ai/index.md"; then
   exit 1
 fi
 
-copier copy --defaults --trust --vcs-ref=HEAD \
+copier copy --defaults --trust \
   --data project_name=smoke-react \
   --data tech_profile=react-next \
-  "$REPO" "$OUT_REACT" >/dev/null
+  "$SRC" "$OUT_REACT" >/dev/null
 if [[ ! -f "$OUT_REACT/.ai/rules/tech-react.md" ]]; then
   echo "  ✗ tech-react.md absent pour react-next"
   rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK"
@@ -1223,11 +1304,11 @@ if ! grep -q "tech-react.md" "$OUT_REACT/.ai/index.md"; then
   exit 1
 fi
 
-copier copy --defaults --trust --vcs-ref=HEAD \
+copier copy --defaults --trust \
   --data project_name=smoke-fullstack \
   --data scope_profile=fullstack \
   --data tech_profile=fullstack-dotnet-react \
-  "$REPO" "$OUT_FULLSTACK" >/dev/null
+  "$SRC" "$OUT_FULLSTACK" >/dev/null
 for f in design-system-registry.md atomic-design-map.md; do
   if [[ ! -f "$OUT_FULLSTACK/docs/$f" ]]; then
     echo "  ✗ squelette docs/$f absent pour fullstack-dotnet-react"
@@ -1248,10 +1329,10 @@ for f in tech-dotnet.md tech-react.md stack-fullstack-dotnet-react.md; do
   fi
 done
 
-copier copy --defaults --trust --vcs-ref=HEAD \
+copier copy --defaults --trust \
   --data project_name=smoke-lite \
   --data adoption_mode=lite \
-  "$REPO" "$OUT_LITE" >/dev/null
+  "$SRC" "$OUT_LITE" >/dev/null
 if [[ -d "$OUT_LITE/.githooks" ]]; then
   echo "  ✗ mode lite ne doit pas générer .githooks"
   rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK" "$OUT_LITE" "$OUT_STRICT"
@@ -1263,11 +1344,11 @@ if [[ -d "$OUT_LITE/.github/workflows" ]]; then
   exit 1
 fi
 
-copier copy --defaults --trust --vcs-ref=HEAD \
+copier copy --defaults --trust \
   --data project_name=smoke-strict \
   --data adoption_mode=strict \
   --data enable_ci_guard=false \
-  "$REPO" "$OUT_STRICT" >/dev/null
+  "$SRC" "$OUT_STRICT" >/dev/null
 if [[ ! -d "$OUT_STRICT/.github/workflows" ]]; then
   echo "  ✗ mode strict doit conserver les workflows CI même avec enable_ci_guard=false"
   rm -rf "$OUT_DOTNET" "$OUT_REACT" "$OUT_FULLSTACK" "$OUT_LITE" "$OUT_STRICT"
@@ -1280,9 +1361,9 @@ echo "  ✓ profils dotnet/react/fullstack + modes adoption lite/strict OK"
 echo
 echo "[28b/28] combinaisons scope_profile × tech_profile (couverture matrice)"
 # Couvre 4 combinaisons additionnelles (au-delà des 4 déjà couvertes via fullstack×*) :
-#   minimal × generic        : aucun back/front/architecture/security
+#   minimal × generic        : product + aucun back/front/architecture/security
 #   backend × dotnet         : back+architecture+security (pas front), tech-dotnet
-#   minimal × react-next     : pas de scope métier, tech-react présent
+#   minimal × react-next     : product + pas de scope dev métier, tech-react présent
 #   custom × generic         : minimal scopes, pas de tech profile
 combos=(
   "minimal:generic"
@@ -1294,14 +1375,14 @@ for combo in "${combos[@]}"; do
   scope="${combo%%:*}"
   tech="${combo##*:}"
   combo_out="/tmp/ai-context-smoke-${scope}-${tech}-$$"
-  copier copy --defaults --trust --vcs-ref=HEAD \
+  copier copy --defaults --trust \
     --data project_name="smoke-${scope}-${tech}" \
     --data scope_profile="$scope" \
     --data tech_profile="$tech" \
-    "$REPO" "$combo_out" >/dev/null
+    "$SRC" "$combo_out" >/dev/null
 
-  # Tous les profils ont core+quality+workflow
-  for required in core.md quality.md workflow.md; do
+  # Tous les profils ont core+quality+workflow+product
+  for required in core.md quality.md workflow.md product.md; do
     if [[ ! -f "$combo_out/.ai/rules/$required" ]]; then
       echo "  ✗ $combo : $required absent (toujours requis)"
       rm -rf "$combo_out"
@@ -1317,7 +1398,7 @@ for combo in "${combos[@]}"; do
     exit 1
   fi
 
-  # minimal et custom : pas de scopes métier (back/front/architecture/security/handoff)
+  # minimal et custom : pas de scopes dev métier (back/front/architecture/security/handoff)
   if [[ "$scope" == "minimal" || "$scope" == "custom" ]]; then
     for forbidden in back.md front.md architecture.md security.md handoff.md; do
       if [[ -f "$combo_out/.ai/rules/$forbidden" ]]; then
@@ -1381,11 +1462,11 @@ echo "  ℹ couverture matrice : 8/16 combinaisons exercées (incluant les 4 via
 
 # Cursor MDC scopés : back.mdc et front.mdc rendus si cursor + scope présent
 combo_cursor="/tmp/ai-context-smoke-cursor-$$"
-copier copy --defaults --trust --vcs-ref=HEAD \
+copier copy --defaults --trust \
   --data project_name=smoke-cursor \
   --data scope_profile=fullstack \
   --data agents='["claude","cursor"]' \
-  "$REPO" "$combo_cursor" >/dev/null
+  "$SRC" "$combo_cursor" >/dev/null
 for mdc in protocol-reminder.mdc back.mdc front.mdc; do
   if [[ ! -f "$combo_cursor/.cursor/rules/$mdc" ]]; then
     echo "  ✗ .cursor/rules/$mdc absent (cursor + fullstack)"
@@ -1405,10 +1486,10 @@ rm -rf "$combo_cursor"
 
 # Sans cursor dans agents : pas de .cursor/ du tout
 combo_nocursor="/tmp/ai-context-smoke-nocursor-$$"
-copier copy --defaults --trust --vcs-ref=HEAD \
+copier copy --defaults --trust \
   --data project_name=smoke-nocursor \
   --data agents='["claude"]' \
-  "$REPO" "$combo_nocursor" >/dev/null
+  "$SRC" "$combo_nocursor" >/dev/null
 if [[ -d "$combo_nocursor/.cursor" ]]; then
   echo "  ✗ .cursor/ généré alors que cursor pas dans agents"
   rm -rf "$combo_nocursor"
@@ -1418,11 +1499,11 @@ rm -rf "$combo_nocursor"
 
 # cursor + minimal (sans back/front) : protocol-reminder oui, back/front MDC non
 combo_minimal="/tmp/ai-context-smoke-cursor-minimal-$$"
-copier copy --defaults --trust --vcs-ref=HEAD \
+copier copy --defaults --trust \
   --data project_name=smoke-cursor-minimal \
   --data scope_profile=minimal \
   --data agents='["claude","cursor"]' \
-  "$REPO" "$combo_minimal" >/dev/null
+  "$SRC" "$combo_minimal" >/dev/null
 if [[ ! -f "$combo_minimal/.cursor/rules/protocol-reminder.mdc" ]]; then
   echo "  ✗ protocol-reminder.mdc absent (cursor + minimal)"
   rm -rf "$combo_minimal"
@@ -1473,7 +1554,7 @@ EOF
   git -C "$UPD_OUT" add . >/dev/null
   git -C "$UPD_OUT" commit -m "test: scaffold v0.11.0" >/dev/null
 
-  # Update vers HEAD (apporte P0+P1+P2 + R1 + R2 working tree)
+  # Update vers HEAD (scénario Git réel, volontairement basé sur le repo tagué)
   update_log="/tmp/ai-context-copier-update-$$.log"
   if ! ( cd "$UPD_OUT" && copier update --defaults --trust --vcs-ref=HEAD -A >"$update_log" 2>&1 ); then
     echo "  ✗ copier update v0.11.0 → HEAD a échoué"
@@ -1523,10 +1604,10 @@ echo "[bonus] big-mesh : budget tokens + focus graph-aware"
 # l'inventaire et la section reverse_deps. Borne haute pragmatique : 30k chars
 # (~7500 tokens borne basse) — au-delà, le coût par tour devient sensible.
 OUT_BIG="/tmp/ai-context-smoke-big-$$"
-copier copy --defaults --trust --vcs-ref=HEAD \
+copier copy --defaults --trust \
   --data project_name=smoke-big \
   --data scope_profile=fullstack \
-  "$REPO" "$OUT_BIG" >/dev/null
+  "$SRC" "$OUT_BIG" >/dev/null
 mkdir -p "$OUT_BIG/.docs/features/back" "$OUT_BIG/.docs/features/front"
 for i in $(seq 1 30); do
   front_depends_on=" []"

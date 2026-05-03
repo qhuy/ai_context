@@ -40,7 +40,7 @@ Puis **identifier le scope primaire** et charger :
 | Scope | Rules | Features |
 |---|---|---|
 {% for scope in scopes -%}
-{% if scope in ['back', 'front', 'architecture', 'security'] -%}
+{% if scope in ['back', 'front', 'architecture', 'security', 'product'] -%}
 | `{{ scope }}` | [.ai/rules/{{ scope }}.md](rules/{{ scope }}.md) | [`{{ docs_root }}/features/{{ scope }}/`](../{{ docs_root }}/features/{{ scope }}/) |
 {% else -%}
 | `{{ scope }}` | [.ai/rules/{{ scope }}.md](rules/{{ scope }}.md) | — |
@@ -69,6 +69,7 @@ Puis **identifier le scope primaire** et charger :
 Toute feature DOIT avoir son fichier sous `{{ docs_root }}/features/<scope>/<id>.md`.
 
 - **Organisation par scope** — un front peut dépendre d'un back via `depends_on: ["back/<id>"]`, un back peut dépendre d'une security via `depends_on: ["security/<id>"]`, etc.
+- **Product Portfolio Loop** — les initiatives produit vivent sous `scope: product`; les features dev les relient via `product.initiative`, pas via `depends_on` sauf vraie dépendance technique.
 - **Frontmatter obligatoire** : `id`, `scope`, `title`, `status`, `depends_on`, `touches`. Squelette dans `{{ docs_root }}/FEATURE_TEMPLATE.md`.
 - **Enforcement** : `.githooks/commit-msg` bloque tout `feat:` qui ne touche aucun fichier `{{ docs_root }}/features/`. `.ai/scripts/check-features.sh` valide le maillage en CI.
 
