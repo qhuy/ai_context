@@ -9,3 +9,8 @@
 - Impact documentaire : `.ai/workflows/feature-new.md` reçoit un check anti fourre-tout sans changer la mécanique des skills intentionnels.
 - Changement porté par `workflow/feature-granularity`.
 - Validation associée : quality gate `workflow/feature-granularity` PASS.
+
+## 2026-05-04 — freshness
+- Impact documentaire : `feature-new` devient explicitement validable avant écriture, sans changer les autres skills intentionnels.
+- Changement porté par `workflow/feature-new-approval-step`.
+- Validation associée : `check-features.sh` et `check-feature-docs.sh workflow/feature-new-approval-step` PASS.

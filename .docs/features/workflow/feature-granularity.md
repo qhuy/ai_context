@@ -115,3 +115,4 @@ Aucune dépendance déclarée.
 2026-05-04 : cadrage initial pour expliciter la granularité anti fourre-tout.
 2026-05-04 : règle ajoutée aux procédures de création et au template, sans quality gate automatisée.
 2026-05-04 : feature clôturée après quality gate complète.
+2026-05-04 : impact documentaire revu pour `workflow/feature-new-approval-step` ; la règle anti fourre-tout reste inchangée.
