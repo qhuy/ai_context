@@ -52,6 +52,29 @@
         "type": ["string", "array", "object", "null"]
       }
     },
+    "doc": {
+      "description": "Niveau documentaire et modules conditionnels requis pour faire de la fiche la source de vérité de la feature.",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["brief", "standard", "full"]
+        },
+        "requires": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "auth": { "type": "boolean" },
+            "data": { "type": "boolean" },
+            "ux": { "type": "boolean" },
+            "api_contract": { "type": "boolean" },
+            "rollout": { "type": "boolean" },
+            "observability": { "type": "boolean" }
+          }
+        }
+      }
+    },
     "progress": {
       "type": "object",
       "additionalProperties": true,

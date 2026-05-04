@@ -36,6 +36,7 @@ copier copy gh:qhuy/ai_context ./mon-projet
 cd mon-projet
 bash .ai/scripts/check-shims.sh      # → ✅ PASS attendu
 bash .ai/scripts/check-features.sh   # → ⚠️ aucune feature (normal au départ)
+bash .ai/scripts/check-feature-docs.sh # → ⚠️ aucune feature (normal au départ)
 ```
 
 ## Après scaffold
@@ -58,4 +59,4 @@ Depuis le repo `ai_context` :
 bash tests/smoke-test.sh
 ```
 
-Ça génère un projet dans `/tmp/ai-context-smoke-*` et valide check-shims, pre-turn-reminder, check-features et check-commit-features.
+Ça génère un projet dans `/tmp/ai-context-smoke-*` et valide check-shims, pre-turn-reminder, check-features, check-feature-docs et check-commit-features.

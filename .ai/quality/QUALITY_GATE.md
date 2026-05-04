@@ -47,6 +47,7 @@ Cette règle est **systématique** — pas de seuil de complexité, pas de "trop
 
 - `bash .ai/scripts/check-feature-freshness.sh --staged --strict` vérifie qu'un changement staged sur du code couvert par `touches:` inclut aussi la fiche feature ou son worklog.
 - `bash .ai/scripts/check-feature-freshness.sh --warn` signale les features dont le code couvert est plus récent que la documentation.
+- `bash .ai/scripts/check-feature-docs.sh` signale les sections manquantes ou trop vides ; `--strict` est à utiliser avant DONE sur les features nouvelles ou risquées.
 - En CI, le mode `--warn` reste informatif pour éviter les faux positifs sur l'historique importé ; le blocage strict se fait au commit.
 
 ## Commits — Conventional Commits (BLOQUANT)

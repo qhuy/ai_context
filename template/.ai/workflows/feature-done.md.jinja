@@ -61,6 +61,7 @@ feat(<scope>): <titre court>
 ```bash
 bash .ai/scripts/build-feature-index.sh --write
 bash .ai/scripts/check-features.sh
+bash .ai/scripts/check-feature-docs.sh --strict <scope>/<id>
 ```
 
 Afficher à l'utilisateur la commande `git commit` prête, **sans l'exécuter** (l'utilisateur la lance).
@@ -68,6 +69,7 @@ Afficher à l'utilisateur la commande `git commit` prête, **sans l'exécuter** 
 ## NON-NEGOTIABLE RULES
 
 - Pas de `status: done` sans evidence build+tests. Jamais.
+- Pas de `status: done` sans `check-feature-docs.sh --strict <scope>/<id>` vert. Jamais.
 - Une feature `done` ne doit plus apparaître dans `.ai/workflows/feature-resume.md` (c'est le but du filtre par status v0.6).
 - Le worklog est **scellé** : aucune entrée ultérieure dans ce worklog. Si la feature doit repartir → `.ai/workflows/feature-update.md` la repasse en `status: active` + nouvelle phase (cas rare, à documenter explicitement dans le worklog).
 - Commit suggéré, **jamais exécuté** par la procédure lui-même.

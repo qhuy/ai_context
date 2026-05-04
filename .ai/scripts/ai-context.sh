@@ -28,6 +28,7 @@
 #   review       → bash .ai/scripts/review-delta.sh
 #   measure      → bash .ai/scripts/measure-context-size.sh
 #   check        → bash .ai/scripts/check-features.sh
+#   check-docs   → bash .ai/scripts/check-feature-docs.sh
 #   coverage     → bash .ai/scripts/check-feature-coverage.sh
 #   shims        → bash .ai/scripts/check-shims.sh
 #   index        → bash .ai/scripts/build-feature-index.sh
@@ -75,6 +76,7 @@ Commandes :
   review       synthèse review-friendly du delta courant
   measure      taille contexte injecté par les hooks
   check        check-features.sh (frontmatter + scope + depends_on + touches)
+  check-docs   check-feature-docs.sh (sections feature ; --strict <scope/id> avant DONE)
   coverage     check-feature-coverage.sh (orphelins)
   shims        check-shims.sh (cohérence shims racine ↔ .ai/index.md)
   index        build-feature-index.sh (rebuild .ai/.feature-index.json)
@@ -865,6 +867,7 @@ case "$cmd" in
   review)     exec bash "$script_dir/review-delta.sh" "$@" ;;
   measure)    exec bash "$script_dir/measure-context-size.sh" "$@" ;;
   check)      exec bash "$script_dir/check-features.sh" "$@" ;;
+  check-docs) exec bash "$script_dir/check-feature-docs.sh" "$@" ;;
   coverage)   exec bash "$script_dir/check-feature-coverage.sh" "$@" ;;
   shims)      exec bash "$script_dir/check-shims.sh" "$@" ;;
   index)      exec bash "$script_dir/build-feature-index.sh" "$@" ;;

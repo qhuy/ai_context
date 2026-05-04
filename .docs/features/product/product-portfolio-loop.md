@@ -103,3 +103,4 @@ initiative product -> refs externes -> features dev liées -> evidence -> décis
 - 2026-05-04 : passe first user experience. Ajout d'un parcours read-only `ai-context.sh first-run`, documentation dans README/README_AI_CONTEXT et smoke test dédié pour réduire la friction après scaffold.
 - 2026-05-04 : recadrage marché. Le scope product devient une couche de traceability/governance compatible BMAD, Spec Kit et tickets externes via `external_refs`, pas une roadmap autonome.
 - 2026-05-04 : lean Codex confirmé : la traceability product reste on-demand et n'augmente pas le Pack A ; le smoke continue de couvrir le rendu product sans imposer de chargement produit au démarrage.
+- 2026-05-04 : le nouveau template feature documente explicitement les décisions produit/fonctionnelles dans `Décisions`, `Périmètre`, `Validation` et les modules conditionnels. `external_refs` et les initiatives product restent des liens de traceability, pas des duplications de specs externes.

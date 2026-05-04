@@ -14,6 +14,17 @@ product: {}
 # Optionnel : références vers specs, stories, tickets ou artefacts externes
 # (Spec Kit, BMAD, Linear, Jira, GitHub, docs internes, etc.).
 external_refs: {}
+# Documentation feature. Le noyau reste compact ; les modules conditionnels
+# deviennent obligatoires quand doc.requires.* vaut true.
+doc:
+  level: standard       # brief | standard | full
+  requires:
+    auth: false
+    data: false
+    ux: false
+    api_contract: false
+    rollout: false
+    observability: false
 # progress : état de reprise entre sessions (optionnel, auto-géré par `.ai/workflows/feature-update.md`)
 progress:
   phase: spec         # spec | implement | test | review | done
@@ -28,9 +39,35 @@ progress:
 > Copier ce fichier vers `{{ docs_root }}/features/<scope>/<id>.md` pour chaque nouvelle feature.
 > Journal d'avancement append-only : `{{ docs_root }}/features/<scope>/<id>.worklog.md` (créé via `.ai/workflows/feature-new.md`).
 
+## Résumé
+
+Synthèse courte : ce que la feature fait, pour qui, et pourquoi elle compte.
+
 ## Objectif
 
 Pourquoi cette feature existe. Problème qu'elle résout.
+
+## Périmètre
+
+### Inclus
+
+- Ce que cette feature couvre explicitement.
+
+### Hors périmètre
+
+- Ce que cette feature ne couvre pas, même si cela semble proche.
+
+## Invariants
+
+- Ce qui doit rester vrai après chaque évolution.
+- Hypothèses métier ou techniques stables.
+- Comportements à ne pas casser.
+
+## Décisions
+
+- Décisions fonctionnelles validées.
+- Décisions techniques non évidentes.
+- Arbitrages et raisons.
 
 ## Comportement attendu
 
@@ -41,6 +78,65 @@ Description fonctionnelle depuis le point de vue utilisateur (ou du client de l'
 - Endpoints / interfaces / événements exposés
 - Types / schémas
 - Pré / post-conditions
+- Erreurs attendues et cas refusés
+
+## Validation
+
+- Tests unitaires / intégration / e2e attendus.
+- Cas limites à couvrir.
+- Preuve attendue pour considérer la feature terminée.
+
+## Droits / accès
+
+À renseigner si `doc.requires.auth: true`.
+
+- Acteurs / rôles concernés :
+- Permissions requises :
+- Données visibles / modifiables :
+- Cas refusés :
+- Réponse attendue en cas d'accès interdit :
+
+## Données
+
+À renseigner si `doc.requires.data: true`.
+
+- Modèles / tables / index :
+- Migrations :
+- Rétention / confidentialité :
+- Compatibilité / backfill :
+
+## UX
+
+À renseigner si `doc.requires.ux: true`.
+
+- Parcours utilisateur :
+- États écran :
+- Copies / messages :
+- Accessibilité :
+
+## Observabilité
+
+À renseigner si `doc.requires.observability: true`.
+
+- Logs :
+- Métriques :
+- Alertes :
+- Debug / support :
+
+## Déploiement / rollback
+
+À renseigner si `doc.requires.rollout: true`.
+
+- Feature flag :
+- Migration progressive :
+- Plan de rollback :
+- Vérifications post-déploiement :
+
+## Risques
+
+- Risques connus :
+- Décisions ouvertes :
+- Points à revalider :
 
 ## Cross-refs
 
@@ -68,6 +164,8 @@ Choix marquants, ADRs liées, décisions produit.
 - `touches_shared` : surfaces transverses liées à la feature (`tests/smoke-test.sh`, `CHANGELOG.md`, docs d'état). Ces chemins apparaissent dans les rapports mais ne déclenchent pas l'obligation de fiche/worklog dans `check-feature-freshness --staged`.
 - `product` : lien produit typé. Pour une initiative `scope: product`, utiliser `product.type: initiative`, `bet`, `success_metric`, `leading_indicator`, `decision_state`, `next_decision_date`, `kill_criteria`, `portfolio.*`. Pour une feature dev, utiliser `product.initiative`, `contribution`, `evidence`.
 - `external_refs` : index de références externes (`speckit`, `bmad_story`, `linear`, `jira`, `github`, etc.). Sert à relier sans copier les artefacts produits par d'autres workflows.
+- `doc.level` : `brief` pour petite évolution interne, `standard` par défaut, `full` pour feature à fort risque ou contrat stable.
+- `doc.requires.*` : active les modules documentaires conditionnels (`auth`, `data`, `ux`, `api_contract`, `rollout`, `observability`).
 - `progress.phase` : étape courante du cycle
 - `progress.step` : détail libre (humain)
 - `progress.blockers` : liste courte ; si non vide, apparaît dans la reprise feature.

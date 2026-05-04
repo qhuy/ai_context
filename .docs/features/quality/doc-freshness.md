@@ -55,3 +55,4 @@ Aucune dependance de feature declaree.
 - 2026-05-03 : simplification du controle staged. Le script pre-calcule les fiches/worklogs stages au lieu de rescanner tous les fichiers stages pour chaque feature candidate, ce qui evite un crash local silencieux sur gros commits dogfood.
 - 2026-04-29 : creation du filet de securite doc/code freshness pour completer `check-features.sh`, qui valide la structure mais pas la maintenance semantique.
 - 2026-05-04 : quality gate reformulée pour ne plus impliquer le chargement initial de `QUALITY_GATE.md`; elle reste bloquante avant DONE, en cohérence avec Pack A lean.
+- 2026-05-04 : ajout de `check-feature-docs.sh` pour compléter le filet sémantique côté fiche : sections noyau, modules conditionnels via `doc.requires.*`, warnings par défaut et strict avant DONE.

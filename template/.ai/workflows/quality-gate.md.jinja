@@ -14,6 +14,7 @@ Exécuter **dans cet ordre**, ne pas s'arrêter au premier fail :
 bash .ai/scripts/check-shims.sh
 bash .ai/scripts/check-ai-references.sh
 bash .ai/scripts/check-features.sh
+bash .ai/scripts/check-feature-docs.sh     # warnings par défaut ; --strict <scope/id> près de DONE
 bash .ai/scripts/check-feature-coverage.sh   # --warn (défaut)
 ```
 
@@ -40,6 +41,7 @@ Format markdown, même structure à chaque fois :
 | check-shims | ✅ / ❌ | <sortie courte> |
 | check-ai-references | ✅ / ❌ | <sortie> |
 | check-features | ✅ / ❌ | <sortie> |
+| check-feature-docs | ✅ / ⚠️ / ❌ | <sections manquantes ou strict OK> |
 | check-feature-coverage | ✅ / ⚠️ | <N orphelins> |
 | measure-context-size | ℹ️ | <chars total> |
 | feature.progress | ✅ / ❌ | phase=<X>, blockers=<N> |

@@ -67,3 +67,4 @@ Rendre visible la valeur du mesh dans les PRs via un rapport markdown simple: fe
 - 2026-05-03 : le wrapper expose aussi les rapports product (`product-status`, `product-portfolio`, `product-review`) ; `pr-report` reste inchangé mais la surface review/ship peut recommander ces checks quand le delta touche `scope: product`.
 - 2026-05-04 : `ai-context.sh first-run` ajouté au wrapper. Aucun changement de `pr-report.sh`, mais la surface CLI de sortie/review reste documentée dans cette fiche partagée.
 - 2026-05-04 : `ai-context.sh` ajoute `repair-copier-metadata` et `template-diff`; aucun changement de `pr-report.sh`, mais le smoke partagé et la surface CLI documentée sont étendus.
+- 2026-05-04 : `ai-context.sh` expose `check-docs` et le smoke partagé couvre `check-feature-docs.sh` (warning legacy, strict ciblé, wrapper). Aucun changement de `pr-report.sh`.

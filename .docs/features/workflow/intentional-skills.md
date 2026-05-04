@@ -82,3 +82,4 @@ Les primitives procédurales vivent sous `.ai/workflows/`. Elles restent disponi
 - 2026-05-04 : ajout de l'intention `first-run` pour guider le premier usage après scaffold sans obliger Claude/Codex à invoquer un skill procédural.
 - 2026-05-04 : ajout des intentions CLI `repair-copier-metadata` et `template-diff` pour rendre le cycle update Copier pilotable en langage naturel, sans nouveau skill utilisateur.
 - 2026-05-04 : lean Codex confirmé : `.ai/index.md` garde les intentions comme vocabulaire d'usage, mais ne charge plus quality gate, `.ai/agent/*` ni workflows au démarrage.
+- 2026-05-04 : `ai-context.sh check-docs` devient l'intention CLI pour vérifier la fiche "bible feature". Les workflows `feature-new`, `quality-gate` et `feature-done` documentent le strict ciblé avant DONE.

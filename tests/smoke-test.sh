@@ -148,6 +148,10 @@ if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "product-s
   echo "  ✗ ai-context.sh --help ne présente pas product-status"
   exit 1
 fi
+if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "check-docs"; then
+  echo "  ✗ ai-context.sh --help ne présente pas check-docs"
+  exit 1
+fi
 if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh status ) | grep -q "Prochaine action minimale"; then
   echo "  ✗ ai-context.sh status ne produit pas un état actionnable"
   exit 1
@@ -236,6 +240,110 @@ bash "$OUT/.ai/scripts/pre-turn-reminder.sh" --format=json | jq -e '.hookSpecifi
 echo
 echo "[4/28] check-features (attendu : aucune feature → warn mais PASS)"
 bash "$OUT/.ai/scripts/check-features.sh"
+if ! ( cd "$OUT" && bash .ai/scripts/check-feature-docs.sh --help ) | grep -q "check-feature-docs.sh"; then
+  echo "  ✗ check-feature-docs.sh --help invalide"
+  exit 1
+fi
+if ! ( cd "$OUT" && bash .ai/scripts/check-feature-docs.sh ) >/dev/null 2>&1; then
+  echo "  ✗ check-feature-docs.sh échoue sur scaffold sans feature"
+  exit 1
+fi
+cat > "$OUT/.docs/features/back/doc-incomplete.md" <<'FEAT'
+---
+id: doc-incomplete
+scope: back
+title: Doc incomplete
+status: draft
+depends_on: []
+touches: []
+doc:
+  level: standard
+  requires:
+    auth: true
+---
+
+# Doc incomplete
+
+## Objectif
+
+Tester le mode warning.
+FEAT
+doc_warn_out=$( cd "$OUT" && bash .ai/scripts/check-feature-docs.sh 2>&1 )
+if ! echo "$doc_warn_out" | grep -q "section 'Droits / accès' manquante"; then
+  echo "  ✗ check-feature-docs ne warn pas sur module auth manquant"
+  echo "$doc_warn_out"
+  exit 1
+fi
+if ( cd "$OUT" && bash .ai/scripts/check-feature-docs.sh --strict back/doc-incomplete ) >/dev/null 2>&1; then
+  echo "  ✗ check-feature-docs --strict accepte une fiche incomplète"
+  exit 1
+fi
+cat > "$OUT/.docs/features/back/doc-complete.md" <<'FEAT'
+---
+id: doc-complete
+scope: back
+title: Doc complete
+status: draft
+depends_on: []
+touches: []
+doc:
+  level: standard
+  requires:
+    auth: true
+    data: true
+    rollout: true
+---
+
+# Doc complete
+
+## Résumé
+Fiche complète de test.
+
+## Objectif
+Valider le check documentaire strict.
+
+## Périmètre
+Inclus : le check de documentation. Hors périmètre : runtime applicatif.
+
+## Invariants
+Le mode strict doit rester déterministe.
+
+## Décisions
+Le check documentaire reste séparé de check-features.
+
+## Comportement attendu
+Le script signale les sections manquantes et accepte une fiche complète.
+
+## Contrats
+Commande : bash .ai/scripts/check-feature-docs.sh --strict back/doc-complete.
+
+## Validation
+Smoke-test local avec cas incomplet puis complet.
+
+## Droits / accès
+Rôle requis : mainteneur du repo.
+
+## Données
+Aucune donnée applicative ; seulement fichiers markdown.
+
+## Déploiement / rollback
+Rollback par revert du commit template.
+
+## Historique / décisions
+Créé pour valider le nouveau modèle bible feature.
+FEAT
+rm "$OUT/.docs/features/back/doc-incomplete.md"
+if ! ( cd "$OUT" && bash .ai/scripts/check-feature-docs.sh --strict back/doc-complete ) >/dev/null 2>&1; then
+  echo "  ✗ check-feature-docs --strict refuse une fiche complète"
+  ( cd "$OUT" && bash .ai/scripts/check-feature-docs.sh --strict back/doc-complete )
+  exit 1
+fi
+if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh check-docs --strict back/doc-complete ) >/dev/null 2>&1; then
+  echo "  ✗ ai-context.sh check-docs ne route pas vers check-feature-docs"
+  exit 1
+fi
+rm "$OUT/.docs/features/back/doc-complete.md"
+echo "  ✓ check-feature-docs warning + strict OK"
 
 echo
 echo "[5/28] check-commit-features : Conventional Commits refusent un message invalide"

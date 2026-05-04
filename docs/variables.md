@@ -51,7 +51,7 @@ Les questions posées par `copier copy` et leurs effets.
 - `.ai/context-ignore.md`
 - `.ai/quality/QUALITY_GATE.md`
 - `.ai/rules/core.md`, `quality.md`, `workflow.md` (scopes minimum)
-- `.ai/scripts/pre-turn-reminder.sh`, `check-shims.sh`, `check-ai-references.sh`
+- `.ai/scripts/pre-turn-reminder.sh`, `check-shims.sh`, `check-ai-references.sh`, `check-feature-docs.sh`
 - `README_AI_CONTEXT.md`
 - `{{docs_root}}/.gitkeep`
 - `.copier-answers.yml` (tracking du template appliqué ; doit être versionné pour permettre `copier update --vcs-ref=HEAD`)

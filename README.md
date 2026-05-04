@@ -142,7 +142,7 @@ flowchart LR
     direction TB
     Build[build-feature-index.sh]
     Resume[resume-features.sh]
-    Check[check-features.sh<br/>check-feature-coverage.sh<br/>check-shims.sh]
+    Check[check-features.sh<br/>check-feature-docs.sh<br/>check-feature-coverage.sh<br/>check-shims.sh]
     Measure[measure-context-size.sh]
   end
 
@@ -150,7 +150,7 @@ flowchart LR
     direction TB
     CM[commit-msg<br/>→ check-commit-features]
     PC[post-checkout<br/>→ build-feature-index]
-    CI[GitHub Actions<br/>check-shims + check-features]
+    CI[GitHub Actions<br/>check-shims + check-features + check-feature-docs]
   end
 
   %% Tour Claude
@@ -270,6 +270,7 @@ git config core.hooksPath .githooks && chmod +x .githooks/*
 
 bash .ai/scripts/check-shims.sh        # ✅ shims OK
 bash .ai/scripts/check-features.sh     # ⚠️ aucune feature (normal au début)
+bash .ai/scripts/check-feature-docs.sh # ⚠️ sections manquantes sur legacy, bloquant avec --strict <scope/id>
 bash .ai/scripts/ai-context.sh first-run
 ```
 
@@ -403,6 +404,7 @@ chmod +x .githooks/*
 bash .ai/scripts/check-shims.sh
 bash .ai/scripts/check-ai-references.sh
 bash .ai/scripts/check-features.sh
+bash .ai/scripts/check-feature-docs.sh
 ```
 
 Stratégie recommandée en deux commits :
@@ -410,7 +412,7 @@ Stratégie recommandée en deux commits :
 1. `chore(ai): installer le runtime ai_context` — scripts, hooks, quality gate, presets techniques, README AI.
 2. `docs(ai): migrer les premières features vers le mesh` — quelques fiches `.docs/features/<scope>/*.md` avec `touches:`.
 
-Quand le mesh couvre suffisamment le projet, tu peux rendre `check-features.sh` et `check-feature-coverage.sh --strict` bloquants en CI.
+Quand le mesh couvre suffisamment le projet, tu peux rendre `check-features.sh`, `check-feature-docs.sh --strict <scope/id>` et `check-feature-coverage.sh --strict` bloquants sur les features concernées.
 
 ### 3. Mettre à jour vers une nouvelle version du template
 
@@ -654,6 +656,7 @@ mon-projet/
 │   │   ├── check-shims.sh
 │   │   ├── check-ai-references.sh
 │   │   ├── check-features.sh
+│   │   ├── check-feature-docs.sh
 │   │   ├── check-commit-features.sh
 │   │   ├── check-feature-coverage.sh
 │   │   ├── resume-features.sh     # v0.7 — reprise entre sessions
@@ -791,6 +794,7 @@ Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et dist
 | `check-shims.sh` | Vérifie shims cohérents avec `.ai/index.md` |
 | `check-ai-references.sh` | Détecte les références cassées vers `.ai/` |
 | `check-features.sh` | Valide frontmatter + scope + `depends_on` + `touches` |
+| `check-feature-docs.sh` | Vérifie les sections de la fiche "bible feature" ; warnings par défaut, `--strict <scope/id>` avant DONE |
 | `check-product-links.sh` | Valide les liens `product.initiative`, initiatives product et signaux de décision |
 | `check-commit-features.sh` | Conventional Commits + `feat:` exige feature touchée |
 | `check-feature-coverage.sh` | Détecte code orphelin (non couvert par `touches:`) |
@@ -835,7 +839,7 @@ Légende : ✅ pleinement actif · ⚠️ champ écrit mais non lu (placeholder 
 
 ## Schéma feature
 
-Le template fournit `.ai/schema/feature.schema.json` comme contrat de référence du frontmatter feature (`id`, `scope`, `title`, `status`, `depends_on`, `touches`, `progress.*`). `check-features.sh` reste en Bash mais aligne ses enums `status`/`progress.phase` sur ce schéma.
+Le template fournit `.ai/schema/feature.schema.json` comme contrat de référence du frontmatter feature (`id`, `scope`, `title`, `status`, `depends_on`, `touches`, `doc.*`, `progress.*`). `check-features.sh` reste en Bash mais aligne ses enums `status`/`progress.phase` sur ce schéma. `check-feature-docs.sh` complète le filet : il vérifie le noyau documentaire (`Résumé`, `Objectif`, `Périmètre`, `Invariants`, `Décisions`, `Comportement attendu`, `Contrats`, `Validation`, `Historique / décisions`) et les modules conditionnels activés par `doc.requires.*` (`Droits / accès`, `Données`, `UX`, `Observabilité`, `Déploiement / rollback`). Par défaut il avertit pour ne pas casser le legacy ; en `--strict <scope/id>`, il devient bloquant sur la feature ciblée.
 
 ---
 

@@ -75,6 +75,9 @@ jobs:
       - name: check-features
         run: bash .ai/scripts/check-features.sh
 
+      - name: check-feature-docs
+        run: bash .ai/scripts/check-feature-docs.sh
+
       - name: check-feature-freshness
         run: bash .ai/scripts/check-feature-freshness.sh --warn
 {%- if adoption_mode == 'strict' %}

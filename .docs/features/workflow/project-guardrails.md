@@ -85,3 +85,4 @@ La procédure cible spécifiquement ce qui n'est *pas* déjà dans le README —
 - **2026-05-04** — `first-run` mentionne `/aic-frame` et `.ai/guardrails.md` comme étape possible, sans réintroduire `/aic-project-guardrails` dans l'UX publique.
 - **2026-05-04** — La doc d'update ajoute `repair-copier-metadata` et `template-diff`; le cadrage projet reste séparé des métadonnées Copier, mais README_AI_CONTEXT est synchronisé sur la nouvelle surface CLI.
 - **2026-05-04** — Lean Codex : la procédure ne demande plus d'ajouter `.ai/guardrails.md` dans Pack A. Elle vérifie au contraire que les guardrails restent on-demand.
+- **2026-05-04** — Le template feature renforcé sépare les guardrails projet des décisions de feature : les non-goals/glossaire restent dans `.ai/guardrails.md`, tandis que les décisions fonctionnelles et techniques vivent dans la fiche feature concernée.

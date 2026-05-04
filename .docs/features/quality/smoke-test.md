@@ -52,6 +52,7 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-05-04 : smoke-test enrichi pour couvrir `ai-context.sh first-run` et éviter la régression où `mission "roadmap produit"` était classé `front` à cause du motif `ui` dans `produit`.
 - 2026-05-04 : smoke-test enrichi pour couvrir `ai-context.sh repair-copier-metadata` et `template-diff`, afin de figer la réparation de `.copier-answers.yml` et la preview externe du template.
 - 2026-05-04 : étape [19/28] remplacée côté contexte par une assertion Pack A lean : présence de `.ai/context-ignore.md`, budget Pack A, absence de quality gate / `.ai/agent/*` / skills / listings obligatoires dans Pack A.
+- 2026-05-04 : ajout de la couverture `check-feature-docs.sh` : aide CLI, warning non bloquant sur legacy, `--strict` bloquant sur section manquante, puis PASS strict quand la fiche contient le noyau minimal et les modules conditionnels requis.
 - v0.7.2 : ajout assertion sur escaping JSON (régression).
 - v0.9 : ajout assertion sur `AI_CONTEXT_FOCUS` graph + i18n FR/EN.
 - 2026-04-24 : ajout [18/27] — vérifie que le pre-commit `auto-progress.sh` bascule `spec → implement`, écrit le snapshot dans `.progress-history.jsonl`, crée la ligne `auto-progress` dans le worklog, et est idempotent (second commit sans re-bump). HANDOFF reçu depuis `workflow/conversational-skills` (chantier 4). Révélé au passage un bug fixé : `auto-progress.sh` ne créait pas le worklog si absent — correctif appliqué dans `.ai/scripts/` + `template/.ai/scripts/`, cross-ref tracée dans `core/template-engine` Historique.

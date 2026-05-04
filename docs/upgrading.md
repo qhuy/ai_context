@@ -68,6 +68,7 @@ Pour les projets existants, accepter en priorité les mises à jour de :
 - `.ai/context-ignore.md`
 - `.ai/rules/core.md`, `.ai/rules/workflow.md`, `.ai/rules/quality.md`
 - `.ai/scripts/check-shims.sh`
+- `.ai/scripts/check-feature-docs.sh`
 
 Après update, vérifier que Pack A ne charge plus au démarrage :
 
@@ -86,6 +87,7 @@ Check recommandé :
 ```bash
 bash .ai/scripts/check-shims.sh
 bash .ai/scripts/measure-context-size.sh
+bash .ai/scripts/check-feature-docs.sh
 ```
 
 ## Rebase "clean" (repartir d'un scaffold frais)

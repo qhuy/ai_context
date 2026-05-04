@@ -46,18 +46,19 @@ Exécuter :
 ```bash
 bash .ai/scripts/build-feature-index.sh --write
 bash .ai/scripts/check-features.sh
+bash .ai/scripts/check-feature-docs.sh <scope>/<id>
 ```
 Si rouge → corriger avant de rendre la main.
 
 ### Phase 5 — Output
 Afficher le chemin créé. Suggérer la suite :
-- Remplir la section **Objectif / Contrats** au fur et à mesure
+- Remplir les sections **Objectif / Contrats / Validation** au fur et à mesure
 - Mettre à jour `progress.*` via `.ai/workflows/feature-update.md` lors des changements d'intent pour sauver `progress.*`
 - Clôturer via `.ai/workflows/feature-done.md` à la fin pour clôturer
 
 ## NON-NEGOTIABLE RULES
 
-- Pas de `feat:` commit avant que la fiche existe et que `check-features.sh` passe.
+- Pas de `feat:` commit avant que la fiche existe et que `check-features.sh` + `check-feature-docs.sh <scope>/<id>` passent.
 - `id` DOIT être unique dans le scope (refus si collision).
 - `scope` DOIT matcher le dossier parent.
 - **Jamais** de worklog sans fiche, **jamais** de fiche sans worklog.
