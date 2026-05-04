@@ -21,7 +21,14 @@
 
 ### Phase 1 — Cadrage
 1. Demander (ou valider) : `scope`, `id`, `title`, `depends_on` (liste vide OK), `touches` (globs OK, vide accepté au début).
-2. **Check-before-create** : si `.docs/features/<scope>/<id>.md` existe → STOP, demander s'il faut l'éditer (rediriger vers `.ai/workflows/feature-update.md`).
+2. **Check anti fourre-tout** : valider que la fiche représente une intention livrable cohérente, pas un domaine métier générique.
+   - Plusieurs fiches peuvent partager un préfixe métier si elles couvrent des étapes ou livrables différents.
+   - Réutiliser une fiche existante seulement si le changement garde le même objectif, le même DONE et les mêmes validations.
+   - Créer une nouvelle fiche si le flux, l'acteur, l'API, le contrat, le modèle de données, le risque ou la validation diffère.
+   - Éviter les ids génériques ou extensibles (`passage`, `global`, `misc`, `common`). Si une vue globale est utile, créer une doc d'architecture ou d'overview non active hors `.docs/features/<scope>/`.
+   - Exemple OK : `passage_partner_polling`, `passage_client_grpc_retrieval`, `passage_webhook_restitution`, `partner_passage_storage_slimming`, `platform_passage_event_detail`.
+   - À éviter : `passage`, `global`, `misc`, `common`.
+3. **Check-before-create** : si `.docs/features/<scope>/<id>.md` existe → STOP, demander s'il faut l'éditer (rediriger vers `.ai/workflows/feature-update.md`).
 
 ### Phase 2 — Écriture fiche
 Copier `.docs/FEATURE_TEMPLATE.md` vers `.docs/features/<scope>/<id>.md`, remplir :

@@ -38,6 +38,8 @@ progress:
 
 > Copier ce fichier vers `.docs/features/<scope>/<id>.md` pour chaque nouvelle feature.
 > Journal d'avancement append-only : `.docs/features/<scope>/<id>.worklog.md` (créé via `.ai/workflows/feature-new.md`).
+> Granularité : une fiche décrit une intention livrable cohérente, pas un domaine métier générique.
+> Réutiliser une fiche seulement si objectif, DONE et validations restent les mêmes.
 
 ## Résumé
 
@@ -56,6 +58,16 @@ Pourquoi cette feature existe. Problème qu'elle résout.
 ### Hors périmètre
 
 - Ce que cette feature ne couvre pas, même si cela semble proche.
+- Les étapes, acteurs, APIs, contrats, modèles, risques ou validations proches mais distincts.
+
+### Granularité / nommage
+
+- Nommer par livrable ou étape du flux, pas par domaine extensible.
+- Plusieurs fiches peuvent partager un préfixe métier (`passage_*`) si elles couvrent des livrables différents.
+- Créer une nouvelle fiche si le flux, l'acteur, l'API, le contrat, le modèle de données, le risque ou la validation diffère.
+- Vue globale : utiliser une doc d'architecture ou d'overview non active, par exemple `docs/architecture/passage_flow.md`.
+- OK : `passage_partner_polling`, `passage_client_grpc_retrieval`, `passage_webhook_restitution`, `partner_passage_storage_slimming`, `platform_passage_event_detail`.
+- À éviter : `passage`, `global`, `misc`, `common`.
 
 ## Invariants
 
