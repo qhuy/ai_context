@@ -98,3 +98,8 @@
 ## 2026-05-04 — freshness
 - Impact transversal : le template Copier génère désormais `.agents/skills/` quand `codex` est sélectionné.
 - Validation associée : smoke-test complet PASS.
+
+## 2026-05-04 — freshness
+- Impact template : `template/.ai/workflows/feature-new.md.jinja` et `template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja` intègrent les règles feature-new récentes.
+- Changement porté par dogfood runtime sync et les features workflow associées.
+- Validation associée : `check-dogfood-drift.sh` PASS.

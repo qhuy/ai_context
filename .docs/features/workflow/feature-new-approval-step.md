@@ -8,6 +8,7 @@ depends_on:
 touches:
   - .ai/workflows/feature-new.md
   - .agents/skills/aic-feature-new/workflow.md
+  - template/.ai/workflows/feature-new.md.jinja
 touches_shared: []
 product: {}
 external_refs: {}
@@ -22,9 +23,9 @@ doc:
     observability: false
 progress:
   phase: review
-  step: "proposition validable ajoutée aux workflows feature-new"
+  step: "proposition validable dogfoodée dans le template"
   blockers: []
-  resume_hint: "Relire la formulation puis clôturer si les checks passent."
+  resume_hint: "Relire la propagation template/runtime puis clôturer si les checks passent."
   updated: "2026-05-04"
 ---
 
@@ -120,3 +121,4 @@ Rollback par revert documentaire des deux workflows modifiés.
 
 2026-05-04 : création pour ajouter une étape de proposition validable à `feature-new`.
 2026-05-04 : phase de proposition avant écriture ajoutée au workflow canonique et au skill.
+2026-05-04 : phase propagée au template Copier et dogfood runtime aligné.

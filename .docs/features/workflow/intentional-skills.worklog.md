@@ -14,3 +14,8 @@
 - Impact documentaire : `feature-new` devient explicitement validable avant écriture, sans changer les autres skills intentionnels.
 - Changement porté par `workflow/feature-new-approval-step`.
 - Validation associée : `check-features.sh` et `check-feature-docs.sh workflow/feature-new-approval-step` PASS.
+
+## 2026-05-04 — freshness
+- Impact template : `template/.ai/workflows/feature-new.md.jinja` propage la validation explicite avant écriture aux projets générés.
+- Changement porté par `workflow/feature-new-approval-step`.
+- Validation associée : `check-dogfood-drift.sh` PASS.

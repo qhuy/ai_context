@@ -10,3 +10,8 @@
 - Fichiers modifiés :
   - template/.claude/skills/aic-project-guardrails/SKILL.md.jinja
   - template/.claude/skills/aic-project-guardrails/workflow.md.jinja
+
+## 2026-05-04 — freshness
+- Impact template : `template/.ai/workflows/feature-new.md.jinja` reste compatible avec les skills Claude qui délèguent aux workflows canoniques.
+- Changement porté par dogfood runtime sync.
+- Validation associée : `check-dogfood-drift.sh` PASS.

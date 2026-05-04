@@ -12,3 +12,9 @@
 - Ajout d'une phase `Proposition avant écriture` avec synthèse des tâches, impacts, risques, validations et conseils.
 - Ajout d'une règle non négociable : pas d'écriture de fiche sans validation explicite.
 - Sortie clarifiée : le skill ne démarre pas le développement applicatif.
+
+## 2026-05-04 — dogfood
+- Fichiers modifiés :
+  - `template/.ai/workflows/feature-new.md.jinja`
+- La phase `Proposition avant écriture` est propagée au template Copier.
+- `bash .ai/scripts/dogfood-update.sh --apply` a confirmé que le runtime source reste aligné avec le rendu minimal.

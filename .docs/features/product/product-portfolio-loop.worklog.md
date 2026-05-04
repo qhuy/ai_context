@@ -9,3 +9,8 @@
 - Impact documentaire : `.docs/FEATURE_TEMPLATE.md` garde le lien product inchangé tout en précisant la granularité des features dev.
 - Changement porté par `workflow/feature-granularity`.
 - Validation associée : quality gate `workflow/feature-granularity` PASS.
+
+## 2026-05-04 — freshness
+- Impact template : `template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja` garde le contrat product inchangé après propagation de la granularité.
+- Changement porté par dogfood runtime sync.
+- Validation associée : `check-dogfood-drift.sh` PASS.

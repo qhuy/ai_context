@@ -21,16 +21,47 @@
 
 ### Phase 1 — Cadrage
 1. Demander (ou valider) : `scope`, `id`, `title`, `depends_on` (liste vide OK), `touches` (globs OK, vide accepté au début).
-2. **Check-before-create** : si `{{ docs_root }}/features/<scope>/<id>.md` existe → STOP, demander s'il faut l'éditer (rediriger vers `.ai/workflows/feature-update.md`).
+2. **Check anti fourre-tout** : valider que la fiche représente une intention livrable cohérente, pas un domaine métier générique.
+   - Plusieurs fiches peuvent partager un préfixe métier si elles couvrent des étapes ou livrables différents.
+   - Réutiliser une fiche existante seulement si le changement garde le même objectif, le même DONE et les mêmes validations.
+   - Créer une nouvelle fiche si le flux, l'acteur, l'API, le contrat, le modèle de données, le risque ou la validation diffère.
+   - Éviter les ids génériques ou extensibles (`passage`, `global`, `misc`, `common`). Si une vue globale est utile, créer une doc d'architecture ou d'overview non active hors `{{ docs_root }}/features/<scope>/`.
+   - Exemple OK : `passage_partner_polling`, `passage_client_grpc_retrieval`, `passage_webhook_restitution`, `partner_passage_storage_slimming`, `platform_passage_event_detail`.
+   - À éviter : `passage`, `global`, `misc`, `common`.
+3. **Check-before-create** : si `{{ docs_root }}/features/<scope>/<id>.md` existe → STOP, demander s'il faut l'éditer (rediriger vers `.ai/workflows/feature-update.md`).
 
-### Phase 2 — Écriture fiche
+### Phase 2 — Proposition avant écriture
+Présenter une synthèse courte et structurée, puis attendre validation explicite avant toute écriture.
+
+Format attendu :
+```md
+Proposition feature :
+- Cible : <scope>/<id> — <title>
+- Intention livrable : <objectif en 1 phrase>
+- Tâches à réaliser :
+  1. <tâche logique>
+  2. <tâche logique>
+- Impacts probables : <fichiers/surfaces/docs/checks concernés>
+- Risques / points d'attention : <risques ou "aucun identifié">
+- Validations prévues : <checks/tests/docs>
+- Conseils : <optionnel ; arbitrage ou découpage recommandé>
+
+Réponds `go` / `ok` / `oui` pour créer la fiche, ou corrige le cadrage.
+```
+
+Règles :
+- Si l'utilisateur corrige le scope, l'id, le titre, le périmètre ou les impacts → reprendre la Phase 1 puis reproposer.
+- Si la demande implique plusieurs livrables distincts → conseiller de splitter en plusieurs fiches avant de créer.
+- Ne pas créer la fiche, ne pas modifier de worklog et ne pas commencer le développement tant que la validation n'est pas explicite.
+
+### Phase 3 — Écriture fiche
 Copier `{{ docs_root }}/FEATURE_TEMPLATE.md` vers `{{ docs_root }}/features/<scope>/<id>.md`, remplir :
 - `id`, `scope`, `title`
 - `status: draft` (par défaut ; `active` si déjà en cours)
 - `depends_on`, `touches`
 - `progress.phase: spec`, `progress.updated: <YYYY-MM-DD>`, autres champs vides
 
-### Phase 3 — Worklog init
+### Phase 4 — Worklog init
 Créer `{{ docs_root }}/features/<scope>/<id>.worklog.md` avec :
 ```
 # Worklog — <scope>/<id>
@@ -41,7 +72,7 @@ Créer `{{ docs_root }}/features/<scope>/<id>.worklog.md` avec :
 - Intent initial : <titre>
 ```
 
-### Phase 4 — Validation
+### Phase 5 — Validation
 Exécuter :
 ```bash
 bash .ai/scripts/build-feature-index.sh --write
@@ -50,15 +81,17 @@ bash .ai/scripts/check-feature-docs.sh <scope>/<id>
 ```
 Si rouge → corriger avant de rendre la main.
 
-### Phase 5 — Output
+### Phase 6 — Output
 Afficher le chemin créé. Suggérer la suite :
 - Remplir les sections **Objectif / Contrats / Validation** au fur et à mesure
 - Mettre à jour `progress.*` via `.ai/workflows/feature-update.md` lors des changements d'intent pour sauver `progress.*`
 - Clôturer via `.ai/workflows/feature-done.md` à la fin pour clôturer
+- Ne pas démarrer le développement applicatif dans cette procédure ; attendre une demande explicite ou une validation séparée de la suite.
 
 ## NON-NEGOTIABLE RULES
 
 - Pas de `feat:` commit avant que la fiche existe et que `check-features.sh` + `check-feature-docs.sh <scope>/<id>` passent.
+- Pas d'écriture de fiche sans proposition validée explicitement par l'utilisateur.
 - `id` DOIT être unique dans le scope (refus si collision).
 - `scope` DOIT matcher le dossier parent.
 - **Jamais** de worklog sans fiche, **jamais** de fiche sans worklog.
