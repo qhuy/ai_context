@@ -55,9 +55,9 @@ product:
     strategic_fit: high
 progress:
   phase: implement
-  step: "CLI update Copier documentée sur les surfaces partagées"
+  step: "traceability product préservée hors Pack A"
   blockers: []
-  resume_hint: "valider smoke-test, check-product-links, dogfood drift et first-run sur rendu Copier"
+  resume_hint: "valider que le product loop reste on-demand et que smoke/check-product-links passent"
   updated: 2026-05-04
 ---
 
@@ -102,3 +102,4 @@ initiative product -> refs externes -> features dev liées -> evidence -> décis
 - 2026-05-03 : décision de ne pas copier BOS tel quel. Le besoin retenu est une boucle product adaptée au logiciel : initiatives product, lien typé vers features dev, evidence et décision suivante.
 - 2026-05-04 : passe first user experience. Ajout d'un parcours read-only `ai-context.sh first-run`, documentation dans README/README_AI_CONTEXT et smoke test dédié pour réduire la friction après scaffold.
 - 2026-05-04 : recadrage marché. Le scope product devient une couche de traceability/governance compatible BMAD, Spec Kit et tickets externes via `external_refs`, pas une roadmap autonome.
+- 2026-05-04 : lean Codex confirmé : la traceability product reste on-demand et n'augmente pas le Pack A ; le smoke continue de couvrir le rendu product sans imposer de chargement produit au démarrage.

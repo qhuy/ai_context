@@ -15,7 +15,7 @@
 
 ## MANDATORY READS
 
-- `.ai/index.md` (séquence canonique — pour vérifier l'état de la référence Pack A vers `guardrails.md`)
+- `.ai/index.md` (séquence canonique — pour vérifier que `guardrails.md` reste on-demand)
 - `.ai/guardrails.md` si présent (mode update)
 - `.copier-answers.yml` si présent (récupérer `project_name` et `project_description` comme contexte de cadrage)
 - `README.md` du projet (rapide scan — pour ne PAS dupliquer ce qui s'y trouve déjà)
@@ -103,22 +103,22 @@ Vocabulaire à utiliser tel quel :
 
 > Note : utiliser le `project_name` réel du projet courant, pas `{{ '{{' }} project_name {{ '}}' }}` littéral. Si non récupérable depuis `.copier-answers.yml`, demander à l'utilisateur.
 
-### Phase 6 — Auto-référence Pack A
+### Phase 6 — Référence on-demand
 
-Vérifier que `.ai/index.md` mentionne bien `guardrails.md` dans la séquence Pack A.
-- **Mention présente** → rien à faire.
-- **Mention absente** → proposer à l'utilisateur d'ajouter une ligne du type :
+Vérifier que `.ai/index.md` ne force pas `guardrails.md` dans Pack A.
+- **Mention dans Pack A** → proposer de la retirer et de garder `guardrails.md` on-demand.
+- **Aucune mention** → rien à faire.
+- **Besoin d'un pointeur** → proposer une ligne hors Pack A, section On Demand :
   ```
-  3. `.ai/guardrails.md` — non-goals + glossaire métier (si présent)
+  - `.ai/guardrails.md` : charger seulement pour cadrage produit, non-goals ou glossaire métier.
   ```
-  juste après l'étape `QUALITY_GATE.md`. Renuméroter les étapes suivantes.
 
 ### Phase 7 — Output
 
 Afficher :
 ```
 ✅ .ai/guardrails.md créé/mis à jour (N non-goals, M entrées glossaire)
-✅ référence Pack A vérifiée dans .ai/index.md
+✅ guardrails conservé hors Pack A
 
 Prochaine étape : commit `chore(workflow): cadre les guardrails projet (non-goals + glossaire)`
 ```
@@ -131,4 +131,4 @@ Prochaine étape : commit `chore(workflow): cadre les guardrails projet (non-goa
 - **Pas de section Vision / Users / Roadmap** dans le fichier généré (intentionnel — éviter doublon avec README).
 - **Pas de `feat:` commit** déclenché par cette procédure : c'est de la doc d'orientation, pas une feature applicative. Suggérer `chore(workflow):` ou `docs(workflow):`.
 - **Idempotent** : ré-invocation = mode update sans perte de contenu sauf confirmation explicite (`replace`).
-- **Pas d'injection runtime** : ne pas modifier `.ai/scripts/pre-turn-reminder.sh` ni `.ai/reminder.md` (le fichier est lu via Pack A en début de session, coût tokens nul à chaque tour).
+- **Pas d'injection runtime** : ne pas modifier `.ai/scripts/pre-turn-reminder.sh` ni `.ai/reminder.md`. `guardrails.md` est on-demand, pas Pack A.

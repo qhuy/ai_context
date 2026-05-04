@@ -11,10 +11,10 @@ touches:
   - template/.ai/workflows/**
 progress:
   phase: implement
-  step: "surface Claude publique limitée, procédures internes dans .ai/workflows"
+  step: "skills Claude maintenus hors contexte Codex obligatoire"
   blockers: []
-  resume_hint: "valider en usage réel que les 4 skills internes ne sont plus invoqués à la main ; après quoi passer en review"
-  updated: 2026-04-28
+  resume_hint: "valider que les workflows internes restent accessibles sans être chargés par défaut"
+  updated: 2026-05-04
 ---
 
 # Claude skills /aic*
@@ -70,3 +70,4 @@ Exposer côté Claude uniquement les intentions lisibles, et déplacer les étap
 - **2026-04-28** — Catalogue passe à **9 skills** (5 exposés + 4 internes). Ajout de `/aic-project-guardrails` (voir `workflow/project-guardrails`) qui cadre les non-goals + glossaire métier dans `.ai/guardrails.md` — comble le trou « contexte général projet » que ne couvraient ni les rules ni le feature mesh. Resynchronisation de la table avec la réalité : `/aic-feature-audit` était déjà exposé dans `README.md` (`_message_after_copy`) mais absent de cette fiche — ajouté pour cohérence.
 - **2026-05-03** — Refonte UX : ajout de `/aic-frame`, `/aic-status`, `/aic-review`, `/aic-ship` et repositionnement des skills `aic-feature-*` + `aic-quality-gate` comme primitives internes/fallback. Motivation : éviter une surface procédurale qui force l'utilisateur à connaître les étapes du mesh.
 - **2026-05-03** — Migration : suppression des skills procéduraux de `.claude/skills/` et déplacement des workflows sous `.ai/workflows/`. Objectif : ne plus exposer les primitives tout en conservant une procédure partagée Claude/Codex.
+- **2026-05-04** — Lean Codex : `.claude/skills/**` et `.ai/workflows/**` restent disponibles mais explicitement hors Pack A. `context-ignore.md` documente cette exclusion pour les agents non-Claude.

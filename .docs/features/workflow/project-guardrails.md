@@ -18,10 +18,10 @@ touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "README_AI_CONTEXT clarifie le cycle mission→ship"
+  step: "guardrails conservé hors Pack A"
   blockers: []
-  resume_hint: "vérifier que la procédure rendue apparaît dans .ai/workflows/ après copier copy ; valider qu'un cadrage /aic-frame peut produire .ai/guardrails.md conforme"
-  updated: 2026-05-03
+  resume_hint: "vérifier que project-guardrails reste on-demand dans index, workflow et smoke-test"
+  updated: 2026-05-04
 ---
 
 # Procédure project-guardrails
@@ -48,7 +48,7 @@ La procédure cible spécifiquement ce qui n'est *pas* déjà dans le README —
 3. **Glossaire** (optionnel) : « Y a-t-il du vocabulaire métier spécifique ? Acronymes ? » — si non, section omise.
 4. **Récapitulatif** + confirmation utilisateur.
 5. **Écriture** de `.ai/guardrails.md`.
-6. **Auto-référence** : si `.ai/index.md` ne référence pas encore `guardrails.md`, proposer d'ajouter la ligne dans Pack A.
+6. **Référence on-demand** : vérifier que `.ai/index.md` ne force pas `guardrails.md` dans Pack A ; proposer seulement un pointeur hors Pack A si utile.
 
 ### Livrable utilisateur
 
@@ -60,8 +60,8 @@ La procédure cible spécifiquement ce qui n'est *pas* déjà dans le README —
 ## Contrats
 
 - La procédure est conservée sous `.ai/workflows/`. La surface utilisateur recommandée est `/aic-frame`.
-- Référencé dans Pack A via `.ai/index.md` § *Séquence de chargement obligatoire* — étape « 3. `.ai/guardrails.md` *(si présent)* ».
-- Pas d'injection runtime dans `pre-turn-reminder.sh` → coût tokens nul après lecture initiale.
+- Non référencé dans Pack A. `.ai/guardrails.md` se charge seulement pour cadrage, non-goals ou glossaire métier.
+- Pas d'injection runtime dans `pre-turn-reminder.sh` → coût tokens nul par défaut.
 - Idempotent : ré-exécution = mode update sans perte de contenu.
 - Pas de `feat:` commit déclenché par cette procédure (livrable doc).
 - Vision / Users / Roadmap **explicitement absents** du fichier généré (délégué au README).
@@ -69,7 +69,7 @@ La procédure cible spécifiquement ce qui n'est *pas* déjà dans le README —
 ## Cross-refs
 
 - **`workflow/claude-skills`** : catalogue parent. La procédure n'est plus exposée comme skill Claude.
-- **`core/feature-mesh`** : intégration Pack A — `.ai/guardrails.md` rejoint la séquence canonique de lecture des agents.
+- **`core/feature-mesh`** : la procédure reste documentée sans ajouter de charge obligatoire au démarrage agent.
 
 ## Historique / décisions
 
@@ -84,3 +84,4 @@ La procédure cible spécifiquement ce qui n'est *pas* déjà dans le README —
 - **2026-05-03** — Le cadrage produit est désormais porté par `scope: product` dans le feature mesh ; les guardrails restent limités aux non-goals/glossaire et ne deviennent pas une roadmap parallèle.
 - **2026-05-04** — `first-run` mentionne `/aic-frame` et `.ai/guardrails.md` comme étape possible, sans réintroduire `/aic-project-guardrails` dans l'UX publique.
 - **2026-05-04** — La doc d'update ajoute `repair-copier-metadata` et `template-diff`; le cadrage projet reste séparé des métadonnées Copier, mais README_AI_CONTEXT est synchronisé sur la nouvelle surface CLI.
+- **2026-05-04** — Lean Codex : la procédure ne demande plus d'ajouter `.ai/guardrails.md` dans Pack A. Elle vérifie au contraire que les guardrails restent on-demand.

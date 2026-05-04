@@ -1,11 +1,15 @@
 # CLAUDE.md — ai_context
 
-> **Tu DOIS lire [`.ai/index.md`](.ai/index.md) EN PRIORITÉ** et suivre sa séquence de chargement.
+> **Tu DOIS lire [`.ai/index.md`](.ai/index.md) avant toute action.**
 
-Hard rules (non-négociables, voir `.ai/index.md` pour le détail) :
-- Un scope primaire par tâche ; cross-scope ⇒ HANDOFF explicite
-- Ne pas pré-charger les docs — charger uniquement ce qui est requis
-- Avant DONE : passer les checks qualité et mettre à jour `.docs/`
-- Messages de commit en français
+Shim lean. Les hooks/skills Claude restent disponibles via `.claude/`, mais ils ne
+sont pas du contexte obligatoire pour Codex ni pour les autres agents.
 
-Configuration Claude Code : voir `.claude/settings.json`.
+Hard rules :
+- Un scope primaire par tâche ; cross-scope ⇒ HANDOFF explicite.
+- Contexte juste-à-temps ; pas de catalogues, worklogs, full diffs par défaut.
+- Avant `feat:` : fiche feature sous `.docs/features/`.
+- Avant DONE : quality gate + docs impactées.
+- Commits en français.
+
+Configuration Claude Code : `.claude/settings.json`.

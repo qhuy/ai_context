@@ -17,10 +17,10 @@ touches:
   - template/.github/workflows/ai-context-check.yml.jinja
 progress:
   phase: implement
-  step: "staged freshness robuste par feature candidate"
+  step: "quality gate alignée sur Pack A lean"
   blockers: []
-  resume_hint: "verifier le mode --staged --strict pendant les commits multi-features"
-  updated: 2026-05-03
+  resume_hint: "vérifier check-feature-freshness --warn et staged strict avant commit"
+  updated: 2026-05-04
 ---
 
 # Fraicheur documentaire des features
@@ -54,3 +54,4 @@ Aucune dependance de feature declaree.
 - 2026-05-03 : introduction de `touches_shared` comme surface non bloquante pour la fraîcheur staged. Objectif : réduire le bruit sur les fichiers transverses (`tests/smoke-test.sh`, CHANGELOG, états projet) sans perdre la visibilité dans les rapports.
 - 2026-05-03 : simplification du controle staged. Le script pre-calcule les fiches/worklogs stages au lieu de rescanner tous les fichiers stages pour chaque feature candidate, ce qui evite un crash local silencieux sur gros commits dogfood.
 - 2026-04-29 : creation du filet de securite doc/code freshness pour completer `check-features.sh`, qui valide la structure mais pas la maintenance semantique.
+- 2026-05-04 : quality gate reformulée pour ne plus impliquer le chargement initial de `QUALITY_GATE.md`; elle reste bloquante avant DONE, en cohérence avec Pack A lean.

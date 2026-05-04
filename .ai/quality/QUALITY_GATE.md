@@ -71,6 +71,6 @@ Pas de "skip doc" implicite : si tu hésites entre `feat` et `refactor`, c'est p
 
 | Scope | Items bloquants |
 |---|---|
-| core | Pack A chargé, HANDOFF clair si cross-scope |
+| core | Pack A lean lu, HANDOFF clair si cross-scope |
 | quality | Evidence + feature mesh + Conventional Commits |
 | workflow | Commits fr, pas de full diff |

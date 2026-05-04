@@ -17,10 +17,10 @@ touches_shared:
   - README.md
 progress:
   phase: implement
-  step: "contrat de clôture de réponse ajouté"
+  step: "couche agent sortie du Pack A Codex"
   blockers: []
-  resume_hint: "vérifier check-features + mesure contexte après intégration"
-  updated: 2026-05-03
+  resume_hint: "vérifier check-shims, measure-context-size et smoke-test après changement Pack A"
+  updated: 2026-05-04
 ---
 
 # Couche comportementale agent légère
@@ -34,10 +34,10 @@ La couche doit améliorer la proactivité, l'écoute, le diagnostic, la capacit�
 ## Comportement attendu
 
 - Les règles comportementales vivent dans `template/.ai/agent/`, pas dans les shims racine.
-- `.ai/index.md` référence cette couche au début d'une session ou d'une tâche importante.
+- `.ai/index.md` déclare cette couche comme **on-demand** : elle n'est jamais chargée par défaut dans Pack A.
 - `.ai/reminder.md` reste inchangé pour ne pas augmenter l'injection à chaque tour.
 - Un skill Claude `/aic-diagnose` permet de produire un diagnostic stable quand une tâche ou feature est bloquée.
-- Codex n'a pas besoin de skill : il lit `AGENTS.md` puis `.ai/index.md`, charge `.ai/agent/*`, et applique le même format de diagnostic en langage naturel.
+- Codex n'a pas besoin de skill : il lit `AGENTS.md` puis `.ai/index.md`, et ne charge `.ai/agent/*` que si la tâche demande explicitement diagnostic, posture ou style.
 
 ## Contrats
 
@@ -49,7 +49,7 @@ La couche doit améliorer la proactivité, l'écoute, le diagnostic, la capacit�
   - `template/.claude/skills/aic-diagnose/SKILL.md.jinja`
   - `template/.claude/skills/aic-diagnose/workflow.md.jinja`
 - Message Copier : `/aic-diagnose` est listé parmi les commandes rares exposées.
-- Compatibilité Codex : `.ai/index.md` documente l'équivalent naturel de `/aic-diagnose`.
+- Compatibilité Codex : `.ai/index.md` garde l'équivalent naturel de `/aic-diagnose` hors Pack A obligatoire.
 - Mesure contexte : l'absence de modification de `template/.ai/reminder.md.jinja` garantit que `measure-context-size.sh` ne charge pas cette couche à chaque tour.
 - Clôture de tâche : `response-style.md` définit un format adaptatif compact/structuré pour livrer résultat, validations, risques, recommandation et prochaine action sans imposer un tableau systématique.
 
@@ -68,3 +68,4 @@ La couche doit améliorer la proactivité, l'écoute, le diagnostic, la capacit�
 - 2026-05-03 — `response-style.md` ajoute un contrat de clôture de tâche : format compact pour les petites réponses, format structuré avec tableau quand le périmètre/les checks/les risques le justifient, et recommandation assumée + prochaine action minimale.
 - 2026-05-03 — `.ai/index.md` documente le lien entre posture agent et initiatives product sans injecter cette couche dans le reminder.
 - 2026-05-04 — `.ai/index.md` recadre le product loop comme traceability/governance compatible artefacts externes (`external_refs`), sans augmenter le reminder.
+- 2026-05-04 — Lean Codex : `.ai/agent/*` sort du Pack A. La couche reste disponible on-demand pour diagnostic/posture/style, mais le démarrage ne charge plus les fichiers agent.

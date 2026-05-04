@@ -59,6 +59,35 @@ La commande infère `project_name`, `docs_root`, le profil de scopes, les agents
 
 Copier détecte les modifications locales. Il propose un **merge à 3 voies** (template ancien / template nouveau / version locale). Tu arbitres conflit par conflit.
 
+## Migration vers le contexte lean Codex
+
+Pour les projets existants, accepter en priorité les mises à jour de :
+
+- `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`
+- `.ai/index.md`
+- `.ai/context-ignore.md`
+- `.ai/rules/core.md`, `.ai/rules/workflow.md`, `.ai/rules/quality.md`
+- `.ai/scripts/check-shims.sh`
+
+Après update, vérifier que Pack A ne charge plus au démarrage :
+
+- `.ai/quality/QUALITY_GATE.md`
+- `.ai/agent/*`
+- catalogues docs, références, worklogs, changelogs, skills Claude
+- listings récursifs, caches générés, full diffs
+
+Les anciens fichiers locaux ou legacy restent possibles, mais doivent devenir des
+pointeurs concis chargés seulement si leurs globs matchent les fichiers touchés.
+La quality gate reste bloquante avant DONE ; elle est simplement déplacée du
+démarrage vers la sortie de tâche.
+
+Check recommandé :
+
+```bash
+bash .ai/scripts/check-shims.sh
+bash .ai/scripts/measure-context-size.sh
+```
+
 ## Rebase "clean" (repartir d'un scaffold frais)
 
 Si la dérive est trop grosse :

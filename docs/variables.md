@@ -48,6 +48,7 @@ Les questions posées par `copier copy` et leurs effets.
 - `AGENTS.md`
 - `.ai/index.md`
 - `.ai/reminder.md`
+- `.ai/context-ignore.md`
 - `.ai/quality/QUALITY_GATE.md`
 - `.ai/rules/core.md`, `quality.md`, `workflow.md` (scopes minimum)
 - `.ai/scripts/pre-turn-reminder.sh`, `check-shims.sh`, `check-ai-references.sh`

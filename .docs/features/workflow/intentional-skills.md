@@ -29,10 +29,10 @@ touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "workflow quotidien documenté de mission à ship-report"
+  step: "intentions préservées sans chargement Pack A large"
   blockers: []
-  resume_hint: "valider smoke-test et ajuster README si la table publique reste trop procédurale"
-  updated: 2026-05-03
+  resume_hint: "valider smoke-test et check-shims après toute évolution de .ai/index.md"
+  updated: 2026-05-04
 ---
 
 # Skills intentionnels
@@ -61,7 +61,7 @@ Les primitives procédurales vivent sous `.ai/workflows/`. Elles restent disponi
 
 ## Contrats
 
-- Aucun de ces skills ne doit masquer la séquence Pack A.
+- Aucun de ces skills ne doit élargir Pack A ; les procédures et skills restent on-demand.
 - `/aic-frame` ne code pas et ne crée pas de fiche sans confirmation.
 - `/aic-ship` ne commit/push jamais sans confirmation explicite.
 - Les équivalents Codex restent en langage naturel : "cadre cette feature", "montre le status", "review le delta", "prépare le ship".
@@ -81,3 +81,4 @@ Les primitives procédurales vivent sous `.ai/workflows/`. Elles restent disponi
 - 2026-05-03 : `ai-context.sh` ajoute les commandes intentionnelles `product-status`, `product-portfolio` et `product-review` pour piloter les initiatives sans nouveau skill obligatoire.
 - 2026-05-04 : ajout de l'intention `first-run` pour guider le premier usage après scaffold sans obliger Claude/Codex à invoquer un skill procédural.
 - 2026-05-04 : ajout des intentions CLI `repair-copier-metadata` et `template-diff` pour rendre le cycle update Copier pilotable en langage naturel, sans nouveau skill utilisateur.
+- 2026-05-04 : lean Codex confirmé : `.ai/index.md` garde les intentions comme vocabulaire d'usage, mais ne charge plus quality gate, `.ai/agent/*` ni workflows au démarrage.

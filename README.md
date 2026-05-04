@@ -280,7 +280,7 @@ Puis (recommandé) cadrer la première vraie tâche avant d'implémenter — obj
 /aic-frame
 ```
 
-Si le cadrage révèle des non-goals ou un glossaire durable, l'agent peut proposer de créer `.ai/guardrails.md` (chargé via Pack A à chaque session, coût tokens nul à chaque tour).
+Si le cadrage révèle des non-goals ou un glossaire durable, l'agent peut proposer de créer `.ai/guardrails.md` (chargé on-demand, jamais dans Pack A).
 
 Exemple pour un projet C# backend + React/Next :
 
@@ -631,6 +631,7 @@ mon-projet/
 ├── .github/copilot-instructions.md
 ├── .ai/
 │   ├── index.md                   # point d'entrée canonique
+│   ├── context-ignore.md          # exclusions de contexte Codex/on-demand
 │   ├── reminder.md                # hard rules (compressé v0.6)
 │   ├── config.yml                 # config runtime optionnelle (coverage/progress/context)
 │   ├── agent/
@@ -679,6 +680,26 @@ mon-projet/
 
 ---
 
+## Contexte lean Codex
+
+Pack A est volontairement petit : requête utilisateur, `.ai/index.md`,
+`git status --short`, puis fichiers proches trouvés par `rg` ciblé.
+
+Ne sont plus chargés au démarrage : `.ai/quality/QUALITY_GATE.md`,
+`.ai/agent/*`, skills Claude, catalogues, références, worklogs, changelogs,
+indexes générés, full diffs et larges listings récursifs. `.ai/context-ignore.md`
+sert de référence générée pour ces exclusions.
+
+La quality gate reste bloquante avant DONE ; elle est chargée près de la sortie,
+ou plus tôt seulement pour les tâches à risque (contrat, doc canonique, sécurité,
+DB).
+
+Quand un fichier cible est connu, le chemin court pour les agents non-hookés est
+`bash .ai/scripts/ai-context.sh brief <path>` (wrapper de
+`features-for-path.sh <path> --with-docs`). Cela remplace les listings larges de
+features et charge uniquement les fiches qui matchent le path, plus les
+dépendances utiles.
+
 ## Couche agent behavior
 
 La couche `.ai/agent/*` ajoute de la qualité comportementale sans grossir les shims ni le reminder :
@@ -687,7 +708,8 @@ La couche `.ai/agent/*` ajoute de la qualité comportementale sans grossir les s
 - `initiative-contract.md` : quand agir directement, quand proposer, quand demander confirmation.
 - `response-style.md` : réponses concrètes, persuasion non manipulatrice, récap de clôture adaptatif, recommandation et prochaine action.
 
-Chargement : `.ai/index.md` la référence dans le Pack A, à lire une fois en début de session ou pour une tâche importante. Elle n'est pas injectée à chaque tour par `pre-turn-reminder.sh`, donc son coût est visible seulement quand l'agent la charge explicitement.
+Chargement : `.ai/agent/*` est optionnel et on-demand. Elle n'est pas dans Pack A
+et n'est pas injectée à chaque tour par `pre-turn-reminder.sh`.
 
 Clôture attendue : l'agent termine les tâches significatives par un récap lisible, adapté à la taille du travail. Pour une petite tâche, le format compact suffit :
 
@@ -703,7 +725,7 @@ Pour une tâche plus large, une review ou une décision, le format structuré aj
 Compatibilité :
 
 - **Claude Code** peut utiliser `/aic-diagnose` pour produire un diagnostic stable.
-- **Codex** n'a pas besoin de skill Claude : il lit `AGENTS.md` → `.ai/index.md`, charge `.ai/agent/*`, puis applique le même contrat en langage naturel. Demande type : "diagnostique le blocage".
+- **Codex** n'a pas besoin de skill Claude : il lit `AGENTS.md` → `.ai/index.md`, puis charge `.ai/agent/*` seulement si la tâche demande explicitement du diagnostic/posture/style. Demande type : "diagnostique le blocage".
 
 Format attendu du diagnostic :
 
@@ -730,7 +752,7 @@ Prochaine action minimale :
 
 ## Skills `/aic-*`
 
-Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et distingue clairement surface utilisateur vs mécanismes internes. Les agents non-Claude consomment les mêmes contrats via `.ai/index.md`, `.ai/agent/*`, les scripts et le feature mesh.
+Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et distingue clairement surface utilisateur vs mécanismes internes. Les agents non-Claude consomment les mêmes contrats via `.ai/index.md`, les scripts, le feature mesh et `.ai/agent/*` seulement si utile.
 
 ### Exposés utilisateur (usage direct)
 

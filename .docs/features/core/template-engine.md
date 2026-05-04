@@ -39,6 +39,7 @@ Industrialiser la génération du contexte AI dans n'importe quel projet via `co
 - `agents` multiselect ∈ {claude, codex, cursor, gemini, copilot} → conditionne shims.
 - `docs_root` (default `.docs`) configure le dossier feature mesh.
 - `tech_profile` ∈ {generic, dotnet-clean-cqrs, react-next, fullstack-dotnet-react} → génère des règles stack optionnelles sans modifier les scopes métier.
+- `.ai/context-ignore.md` est rendu systématiquement pour guider la récupération de contexte Codex/on-demand.
 
 ## Cross-refs
 
@@ -85,3 +86,4 @@ Ce moteur produit le squelette consommé par `feature-mesh`, `feature-index-cach
 - 2026-05-03 : le template rend désormais le scope `product`, ses scripts read-only et son dossier features ; les profils Copier conservent core/quality/workflow/product comme socle.
 - 2026-05-04 : `template/.ai/scripts/ai-context.sh.jinja` expose `first-run`, un parcours read-only post-scaffold. `template/README_AI_CONTEXT.md.jinja` et le README racine pointent vers cette première action.
 - 2026-05-04 : retour projet post-upgrade intégré — documentation de `copier update --vcs-ref=HEAD`, ajout des commandes CLI non destructives `repair-copier-metadata` (recréation contrôlée de `.copier-answers.yml`) et `template-diff` (rendu `/tmp` pour prévisualiser l'update sur worktree sale). `.copier-answers.yml` est explicitement traité comme metadata à versionner.
+- 2026-05-04 : le template rend un Pack A lean pour Codex, ajoute `.ai/context-ignore.md` et met `check-shims.sh` en garde anti-bloat (taille Pack A + interdiction quality gate/agent docs/skills/listings en chargement obligatoire).

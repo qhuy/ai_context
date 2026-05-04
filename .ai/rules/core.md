@@ -1,11 +1,8 @@
 # Rules — core
 
-Règles transverses applicables à **tout scope**.
+Compléments transverses propres à ai_context.
 
-- Respecter la séquence de chargement de `.ai/index.md`.
-- Un scope primaire par tour. Cross-scope ⇒ HANDOFF.
-- Aucun pré-chargement de docs ; lecture juste-à-temps.
-- Pas de full diffs par défaut.
-- Messages de commit en français.
+Ne pas recopier les invariants de `.ai/index.md` ici. Ajouter seulement les
+contraintes locales qui changent une décision de code.
 
-> Enrichir ce fichier avec les règles transverses spécifiques à ai_context.
+> À compléter si le projet a des règles globales non couvertes par l'index.

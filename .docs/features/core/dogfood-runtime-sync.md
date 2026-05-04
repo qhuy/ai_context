@@ -18,10 +18,10 @@ touches:
   - .docs/FEATURE_TEMPLATE.md
 progress:
   phase: implement
-  step: "CLI UX mission→ship dogfoodée dans le runtime source"
+  step: "runtime dogfoodé sur Pack A lean"
   blockers: []
-  resume_hint: "vérifier shims, features, measure-context-size et smoke ciblé après sync"
-  updated: 2026-05-03
+  resume_hint: "vérifier check-shims, dogfood drift, measure-context-size et smoke-test complet"
+  updated: 2026-05-04
 ---
 
 # Synchronisation dogfooding du runtime
@@ -33,6 +33,7 @@ Faire consommer au repo source `ai_context` la même couche runtime que celle g�
 ## Comportement attendu
 
 - Le repo source dispose des mêmes fichiers `.ai/agent/*`, scripts runtime, skills Claude et shims racine qu'un projet scaffoldé en profil `minimal`.
+- Le repo source dogfoode `.ai/context-ignore.md` et le Pack A lean rendu par Copier.
 - Les caches locaux (`.ai/.feature-index.json`, `.ai/.progress-history.jsonl`) restent hors versioning.
 - Les adaptations spécifiques au repo source restent possibles quand elles sont plus strictes que le rendu downstream, notamment les workflows CI source.
 
@@ -68,3 +69,4 @@ Faire consommer au repo source `ai_context` la même couche runtime que celle g�
 - 2026-05-03 : dogfood adapté au développement local dirty : `check-dogfood-drift.sh`, `dogfood-update.sh` et le smoke rendent maintenant depuis une copie temporaire sans `.git`, afin de comparer le runtime au template courant avant commit.
 - 2026-05-04 : dogfooding de `ai-context.sh first-run` dans le runtime source et le template ; `check-dogfood-drift.sh` confirme l'alignement du rendu minimal.
 - 2026-05-04 : dogfooding de `repair-copier-metadata` et `template-diff` dans `.ai/scripts/ai-context.sh` + `README_AI_CONTEXT.md`; `check-dogfood-drift.sh` confirme l'alignement du rendu minimal.
+- 2026-05-04 : dogfooding du contexte lean Codex : `.ai/index.md` minimal, `.ai/context-ignore.md`, shims minces et `check-shims.sh` enrichi pour bloquer le retour de charges on-demand dans Pack A.

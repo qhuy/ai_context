@@ -1031,12 +1031,41 @@ for s in aic-quality-gate aic-project-guardrails; do
   fi
 done
 echo "  ✓ 6 skills publics + 8 workflows internes présents"
-# .ai/index.md référence .ai/guardrails.md dans Pack A
-if ! grep -q "guardrails.md" "$OUT/.ai/index.md"; then
-  echo "  ✗ .ai/index.md ne référence pas .ai/guardrails.md (Pack A)"
+# Lean context policy
+if [[ ! -f "$OUT/.ai/context-ignore.md" ]]; then
+  echo "  ✗ .ai/context-ignore.md absent"
   exit 1
 fi
-echo "  ✓ .ai/index.md référence guardrails.md (Pack A)"
+pack_a_words=$(awk '
+  /^## Pack A/ {capture=1; next}
+  /^## / && capture {exit}
+  capture {print}
+' "$OUT/.ai/index.md" | wc -w | tr -d ' ')
+if [[ "$pack_a_words" -gt 520 ]]; then
+  echo "  ✗ Pack A trop volumineux ($pack_a_words mots)"
+  exit 1
+fi
+if awk '
+  /^## Pack A/ {capture=1; next}
+  /^## / && capture {exit}
+  capture {print}
+' "$OUT/.ai/index.md" | grep -qE '\.ai/quality/QUALITY_GATE\.md|\.ai/agent/|guardrails\.md|ls .*features|docs/reference|\.claude/skills'; then
+  echo "  ✗ Pack A charge encore des fichiers on-demand"
+  exit 1
+fi
+if ! grep -q "features-for-path.sh <path> --with-docs" "$OUT/.ai/index.md"; then
+  echo "  ✗ .ai/index.md ne pointe pas vers features-for-path --with-docs"
+  exit 1
+fi
+if ! grep -q "Guardrails projet : charger \`.ai/guardrails.md\` seulement" "$OUT/.ai/index.md"; then
+  echo "  ✗ .ai/guardrails.md n'est pas explicitement on-demand"
+  exit 1
+fi
+if ! grep -q "Agent guidance : \`.ai/agent/\\*\` est optionnel" "$OUT/.ai/index.md"; then
+  echo "  ✗ .ai/agent/* n'est pas explicitement optionnel"
+  exit 1
+fi
+echo "  ✓ Pack A lean + exclusions Codex générées"
 
 echo
 echo "[20/28] check-feature-coverage --strict : exit 1 si orphelins"

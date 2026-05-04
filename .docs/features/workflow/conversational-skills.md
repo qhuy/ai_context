@@ -15,10 +15,10 @@ touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "UX zéro skill quotidien + surface intentionnelle en fallback"
+  step: "UX zéro skill quotidien alignée avec Pack A lean"
   blockers: []
-  resume_hint: "écrire assertion smoke-test (auto-progression via pre-commit + /aic undo) puis rouvrir workflow/claude-skills pour acter réduction 6→2 skills exposés"
-  updated: 2026-04-28
+  resume_hint: "valider que les shims restent minces et que check-shims bloque le bloat"
+  updated: 2026-05-04
 ---
 
 # Auto-progression invisible (+ skill `/aic` en override)
@@ -121,6 +121,7 @@ Les primitives procédurales :
 - **Restent comme procédures internes** sous `.ai/workflows/`.
 - Sont consommables par Claude et Codex sans être exposées comme skills Claude.
 - La surface recommandée est `/aic-frame`, `/aic-status`, `/aic-diagnose`, `/aic-review`, `/aic-ship`.
+- Ne sont pas chargées par défaut dans Pack A ; elles sont appelées juste-à-temps.
 
 ## Cross-refs
 

@@ -11,9 +11,9 @@ touches:
   - tests/**
 progress:
   phase: review
-  step: "smoke couvre la robustesse update Copier"
+  step: "smoke couvre Pack A lean et exclusions Codex"
   blockers: []
-  resume_hint: "relancer tests/smoke-test.sh après stabilisation des commandes update"
+  resume_hint: "relancer tests/smoke-test.sh après toute évolution du Pack A ou de check-shims"
   updated: 2026-05-04
 ---
 
@@ -51,6 +51,7 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-05-03 : smoke-test enrichi pour rendre depuis une copie temporaire du workspace courant, couvrir le scope `product`, `check-product-links`, `product-status`, `product-portfolio`, `product-review` et l'indexation `product.initiative`.
 - 2026-05-04 : smoke-test enrichi pour couvrir `ai-context.sh first-run` et éviter la régression où `mission "roadmap produit"` était classé `front` à cause du motif `ui` dans `produit`.
 - 2026-05-04 : smoke-test enrichi pour couvrir `ai-context.sh repair-copier-metadata` et `template-diff`, afin de figer la réparation de `.copier-answers.yml` et la preview externe du template.
+- 2026-05-04 : étape [19/28] remplacée côté contexte par une assertion Pack A lean : présence de `.ai/context-ignore.md`, budget Pack A, absence de quality gate / `.ai/agent/*` / skills / listings obligatoires dans Pack A.
 - v0.7.2 : ajout assertion sur escaping JSON (régression).
 - v0.9 : ajout assertion sur `AI_CONTEXT_FOCUS` graph + i18n FR/EN.
 - 2026-04-24 : ajout [18/27] — vérifie que le pre-commit `auto-progress.sh` bascule `spec → implement`, écrit le snapshot dans `.progress-history.jsonl`, crée la ligne `auto-progress` dans le worklog, et est idempotent (second commit sans re-bump). HANDOFF reçu depuis `workflow/conversational-skills` (chantier 4). Révélé au passage un bug fixé : `auto-progress.sh` ne créait pas le worklog si absent — correctif appliqué dans `.ai/scripts/` + `template/.ai/scripts/`, cross-ref tracée dans `core/template-engine` Historique.
@@ -68,5 +69,5 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-04-27 : étape [28/28] enrichie pour valider `adoption_mode=lite` (pas de `.githooks`/workflows) et `adoption_mode=strict` (workflows conservés même avec `enable_ci_guard=false`).
 - 2026-04-27 : libellé [28/28] clarifié dans `tests/smoke-test.sh` pour refléter le périmètre réel (`tech_profile` + `adoption_mode`) et améliorer le diagnostic CI.
 - 2026-04-28 : étape [11/28] enrichie pour exiger `depends_on` et `touches` comme clés frontmatter obligatoires (acceptent `[]`), aligné sur `feature.schema.json`. Étape [12/28] enrichie avec `audit-features.sh --help` (annonce du périmètre MVP) et un cas `src/with space/file.ts` pour valider la robustesse aux chemins avec espaces. Étape [2/28] enrichie avec `pr-report.sh --format=json` (sortie JSON valide), `--include-docs` (lève les exclusions par défaut), assertion `docs_excluded ≥ 1` quand un README est touché. Étape [2/28] enrichie avec wrapper `ai-context.sh` (`--help` liste les commandes ; routage vers `shims` ; rejet d'une commande inconnue).
-- **2026-04-28** : extension de [19/28] — la liste de skills attendue passe de 8 à **9** avec l'ajout de `aic-project-guardrails` (cf. `workflow/project-guardrails`). Nouvelle assertion : `.ai/index.md` doit référencer `guardrails.md` dans Pack A. Le compteur affiché dans le message de succès passe à « 9 skills aic-* présents ».
+- **2026-04-28** : extension historique de [19/28] pour `aic-project-guardrails`. Cette attente est obsolète depuis le lean context : `guardrails.md` ne doit plus être forcé dans Pack A.
 - 2026-05-03 : étape [28c/28] rendue compatible Copier 9.14 : le sous-projet d'upgrade est initialisé comme dépôt git-tracké propre, l'answers file local est explicite si Copier ne le matérialise pas, le fichier custom est versionné hors template, et l'échec de `copier update` n'est plus masqué par `|| true`. Le bonus big-mesh relie seulement une partie des features front aux back pour que `AI_CONTEXT_FOCUS=back` teste une vraie réduction au lieu d'un graphe entièrement connexe.
