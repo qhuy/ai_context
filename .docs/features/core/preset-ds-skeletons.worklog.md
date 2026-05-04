@@ -32,3 +32,7 @@
 - Fichiers modifiés :
   - copier.yml
   - template/.ai/scripts/doctor.sh.jinja
+
+## 2026-05-04 — freshness
+- Impact indirect : `copier.yml` ajoute l'exclusion conditionnelle `.agents` sans modifier les squelettes DS.
+- Validation associée : smoke-test complet PASS.

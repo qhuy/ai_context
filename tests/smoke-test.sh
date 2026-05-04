@@ -1120,10 +1120,36 @@ for s in aic aic-frame aic-status aic-diagnose aic-review aic-ship; do
     echo "  ✗ $s frontmatter 'name' incorrect"
     exit 1
   fi
+  if [[ ! -f "$OUT/.agents/skills/$s/SKILL.md" ]]; then
+    echo "  ✗ .agents/skills/$s/SKILL.md absent"
+    exit 1
+  fi
+  if [[ ! -f "$OUT/.agents/skills/$s/workflow.md" ]]; then
+    echo "  ✗ .agents/skills/$s/workflow.md absent"
+    exit 1
+  fi
+  if ! grep -q "^name: $s$" "$OUT/.agents/skills/$s/SKILL.md"; then
+    echo "  ✗ .agents/skills/$s frontmatter 'name' incorrect"
+    exit 1
+  fi
 done
 for s in feature-new feature-resume feature-update feature-handoff feature-audit quality-gate feature-done project-guardrails; do
   if [[ ! -f "$OUT/.ai/workflows/$s.md" ]]; then
     echo "  ✗ .ai/workflows/$s.md absent"
+    exit 1
+  fi
+done
+for s in aic-feature-new aic-feature-resume aic-feature-update aic-feature-handoff aic-feature-done aic-quality-gate; do
+  if [[ ! -f "$OUT/.agents/skills/$s/SKILL.md" ]]; then
+    echo "  ✗ .agents/skills/$s/SKILL.md absent"
+    exit 1
+  fi
+  if [[ ! -f "$OUT/.agents/skills/$s/workflow.md" ]]; then
+    echo "  ✗ .agents/skills/$s/workflow.md absent"
+    exit 1
+  fi
+  if ! grep -q "^name: $s$" "$OUT/.agents/skills/$s/SKILL.md"; then
+    echo "  ✗ .agents/skills/$s frontmatter 'name' incorrect"
     exit 1
   fi
 done
@@ -1138,7 +1164,7 @@ for s in aic-quality-gate aic-project-guardrails; do
     exit 1
   fi
 done
-echo "  ✓ 6 skills publics + 8 workflows internes présents"
+echo "  ✓ skills Claude publics + skills Codex + 8 workflows internes présents"
 # Lean context policy
 if [[ ! -f "$OUT/.ai/context-ignore.md" ]]; then
   echo "  ✗ .ai/context-ignore.md absent"

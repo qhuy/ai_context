@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Installation Codex : quand `codex` est sélectionné dans `agents`, le template génère désormais `.agents/skills/` avec les wrappers `aic-*`, `aic-feature-*` et `aic-quality-gate`. Les wrappers restent minces et délèguent aux workflows canoniques `.ai/workflows/*`.
+
 ## v0.12.0 — 2026-05-04 « Agent UX, product traceability & robust updates »
 
 ### Nouveau

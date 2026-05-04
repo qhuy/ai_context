@@ -21,3 +21,7 @@
 - Fichiers modifiés :
   - copier.yml
   - tests/smoke-test.sh
+
+## 2026-05-04 — freshness
+- Impact indirect : `copier.yml` évolue pour les skills Codex, sans changer la procédure project-guardrails.
+- Validation associée : smoke-test complet PASS.

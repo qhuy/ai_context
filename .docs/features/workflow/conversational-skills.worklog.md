@@ -47,3 +47,7 @@
 - Fichiers modifiés :
   - copier.yml
   - tests/smoke-test.sh
+
+## 2026-05-04 — freshness
+- Impact indirect : le wrapper Codex `aic` reprend la sémantique conversationnelle de l'override `/aic`.
+- Validation associée : smoke-test complet PASS.

@@ -94,3 +94,7 @@
   - rendre le cycle install → customize → update plus robuste après retour projet réel ;
   - documenter `copier update --vcs-ref=HEAD` ;
   - fournir un repair explicite des métadonnées Copier et une preview externe du template sans toucher au worktree courant.
+
+## 2026-05-04 — freshness
+- Impact transversal : le template Copier génère désormais `.agents/skills/` quand `codex` est sélectionné.
+- Validation associée : smoke-test complet PASS.

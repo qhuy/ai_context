@@ -669,6 +669,8 @@ mon-projet/
 ├── .claude/
 │   ├── settings.json              # hooks Claude Code
 │   └── skills/aic-*/              # skills Claude /aic-* (dont /aic-diagnose)
+├── .agents/
+│   └── skills/aic-*/              # skills Codex locaux (si agent codex sélectionné)
 ├── .githooks/
 │   ├── commit-msg                 # Conventional Commits + feat: mesh
 │   ├── pre-commit                 # auto-progression agent-agnostic
@@ -755,7 +757,7 @@ Prochaine action minimale :
 
 ## Skills `/aic-*`
 
-Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et distingue clairement surface utilisateur vs mécanismes internes. Les agents non-Claude consomment les mêmes contrats via `.ai/index.md`, les scripts, le feature mesh et `.ai/agent/*` seulement si utile.
+Le template embarque des skills Claude Code (`.claude/skills`) et des skills Codex locaux (`.agents/skills`, générés quand `codex` est sélectionné dans `agents`). Dans les deux cas, les skills restent des wrappers minces : la source procédurale partagée vit sous `.ai/workflows/`, avec les scripts runtime et le feature mesh.
 
 ### Exposés utilisateur (usage direct)
 
@@ -767,6 +769,19 @@ Le template embarque des skills Claude Code (`SKILL.md` + `workflow.md`) et dist
 | `/aic-diagnose` | Diagnostic du bottleneck principal. Équivalent Codex : "diagnostique le blocage" |
 | `/aic-review` | Avant review/PR — risques du delta, features impactées, doc/freshness, checks |
 | `/aic-ship` | Avant commit/push — quality gate, evidence, commit proposé, confirmation obligatoire |
+
+### Skills Codex procéduraux
+
+Codex reçoit aussi des wrappers directs pour les procédures feature :
+
+| Skill | Backend canonique |
+|---|---|
+| `aic-feature-new` | `.ai/workflows/feature-new.md` |
+| `aic-feature-resume` | `.ai/workflows/feature-resume.md` |
+| `aic-feature-update` | `.ai/workflows/feature-update.md` |
+| `aic-feature-handoff` | `.ai/workflows/feature-handoff.md` |
+| `aic-feature-done` | `.ai/workflows/feature-done.md` |
+| `aic-quality-gate` | `.ai/workflows/quality-gate.md` |
 
 ### Procédures internes agent-agnostic
 

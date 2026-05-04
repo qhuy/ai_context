@@ -14,6 +14,7 @@ _exclude:
   # Shims conditionnels selon les agents choisis
   - "{% if 'claude' not in agents %}CLAUDE.md{% endif %}"
   - "{% if 'claude' not in agents %}.claude{% endif %}"
+  - "{% if 'codex' not in agents %}.agents{% endif %}"
   - "{% if 'cursor' not in agents %}.cursor{% endif %}"
   - "{% if 'gemini' not in agents %}GEMINI.md{% endif %}"
   - "{% if 'copilot' not in agents %}.github/copilot-instructions.md{% endif %}"
@@ -98,9 +99,11 @@ _message_after_copy: |
     /aic-review             → quels risques dans le delta courant ? doc, features, checks
     /aic-ship               → est-ce prêt à commit/PR ? gate + freshness + commit proposé
 
-  Les primitives procédurales vivent sous .ai/workflows/ et ne sont plus exposées
-  comme skills Claude. Claude et Codex consomment les mêmes procédures internes,
-  mais l'UX recommandée reste intentionnelle : frame, status, diagnose, review, ship.
+  Si Codex est sélectionné, les wrappers locaux sont générés sous .agents/skills/.
+  Les primitives procédurales restent canoniques sous .ai/workflows/ ; Codex reçoit
+  aussi des skills minces aic-feature-* / aic-quality-gate qui pointent vers ces
+  workflows. Claude garde une surface plus intentionnelle : frame, status, diagnose,
+  review, ship.
 
   Env vars utiles :
     AI_CONTEXT_DEBUG=1            → logs debug des hooks
