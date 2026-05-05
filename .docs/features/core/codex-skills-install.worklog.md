@@ -26,3 +26,6 @@
 
 ### Commit suggéré
 feat(core): installer les skills Codex par défaut
+## 2026-05-05 — freshness
+- Impact documentaire : README et smoke-test mentionnent le nouvel overlay projet sans changer les wrappers Codex.
+- Validation associée : smoke-test PASS.

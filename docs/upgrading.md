@@ -59,6 +59,26 @@ La commande infère `project_name`, `docs_root`, le profil de scopes, les agents
 
 Copier détecte les modifications locales. Il propose un **merge à 3 voies** (template ancien / template nouveau / version locale). Tu arbitres conflit par conflit.
 
+## Overlay projet stable
+
+Les règles locales propres au repo doivent vivre sous `.ai/project/**`. Ce dossier est project-owned : le template ne le scaffold pas par défaut et `copier update` ne doit ni le supprimer ni l'écraser.
+
+Entrée unique :
+
+```text
+.ai/project/index.md
+```
+
+L'index principal lit `.ai/project/index.md` seulement s'il existe. Ne pas charger récursivement `.ai/project/**` ; l'index projet décide quels fichiers locaux lire selon la tâche.
+
+Migration recommandée :
+
+- créer `.ai/project/index.md` si le repo a des règles locales ;
+- déplacer les règles métier depuis d'anciens fichiers gérés par le template, par exemple `.ai/rules/<scope>.md` ou `.ai/workflow/L1_*`, vers `.ai/project/**` ;
+- laisser dans les fichiers upstream-managed uniquement les règles génériques et, si nécessaire, un pointeur court vers l'overlay.
+
+Voir aussi `.ai/OWNERSHIP.md` dans les repos générés.
+
 ## Migration vers le contexte lean Codex
 
 Pour les projets existants, accepter en priorité les mises à jour de :

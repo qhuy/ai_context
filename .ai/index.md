@@ -32,6 +32,10 @@ Si le scope est incertain, utiliser cette table puis charger **un seul** fichier
 | `workflow` | Routage ou procédure si le flux est ambigu |
 | `product` | Initiative, roadmap, décision produit, traceability |
 
+## Project Overlay
+
+Si `.ai/project/index.md` existe, le lire maintenant. Ne pas précharger le reste de `.ai/project/**` : ce fichier projet décide seul quelles règles locales charger.
+
 ## On Demand
 
 - Feature docs : charger seulement si l'intent ou les paths matchent une feature ; si un path est connu, préférer `bash .ai/scripts/features-for-path.sh <path> --with-docs` avant tout listing de dossiers.

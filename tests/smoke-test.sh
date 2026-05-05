@@ -52,6 +52,10 @@ echo "[0e/28] tests unitaires (review delta + touches_shared)"
 bash tests/unit/test-review-delta-shared.sh
 echo
 
+echo "[0f/28] tests unitaires (project overlay)"
+bash tests/unit/test-project-overlay.sh
+echo
+
 echo "[1/28] copier copy (profil par défaut)"
 copier copy --defaults --trust \
   --data project_name=smoke-project \
@@ -80,6 +84,16 @@ if grep -q "mapfile" "$OUT/.ai/scripts/pr-report.sh"; then
   exit 1
 fi
 echo "  ✓ pr-report.sh compatible Bash 3.2 (sans mapfile)"
+if [[ -e "$OUT/.ai/project" ]]; then
+  echo "  ✗ .ai/project ne doit pas être généré par défaut"
+  exit 1
+fi
+echo "  ✓ overlay projet absent par défaut"
+if ! grep -q "Project Overlay" "$OUT/.ai/index.md"; then
+  echo "  ✗ .ai/index.md ne mentionne pas Project Overlay"
+  exit 1
+fi
+echo "  ✓ .ai/index.md mentionne Project Overlay"
 if ! ( cd "$OUT" && bash .ai/scripts/review-delta.sh --help ) | grep -q "Review Delta"; then
   echo "  ✗ review-delta.sh --help invalide"
   exit 1

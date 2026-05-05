@@ -10,7 +10,7 @@ Ce projet a été scaffoldé depuis le template [`ai_context`](https://github.co
    git config core.hooksPath .githooks
    chmod +x .githooks/*
    ```
-3. Enrichir les fichiers `.ai/rules/<scope>.md` avec les règles spécifiques à ai_context.
+3. Si le projet a des règles locales durables, créer `.ai/project/index.md` puis y référencer uniquement les fichiers projet utiles. Garder `.ai/rules/<scope>.md` pour les règles génériques de scope.
 4. **Cadrer avant d'implémenter** (recommandé) : dans Claude Code, lancer `/aic-frame` pour produire objectif, plan, spécificités métier/technique, validation et non-goals éventuels. Peut créer `.ai/guardrails.md` si le cadrage projet le justifie.
 5. Vérifier l'intégrité :
    ```bash
@@ -57,6 +57,8 @@ copier update --vcs-ref=HEAD
 ```
 
 Les réponses déjà données sont relues depuis `.copier-answers.yml`. Tu contrôles le diff appliqué.
+
+`.ai/project/**` est réservé au projet : `copier update` ne doit ni supprimer ni écraser ce dossier. Voir `.ai/OWNERSHIP.md` et l'exemple `.ai/templates/project-overlay/README.md`.
 
 `--vcs-ref=HEAD` évite que Copier choisisse le dernier tag publié si le HEAD GitHub est plus récent.
 

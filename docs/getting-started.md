@@ -47,7 +47,7 @@ bash .ai/scripts/check-feature-docs.sh # → ⚠️ aucune feature (normal au d�
    git config core.hooksPath .githooks
    chmod +x .githooks/*
    ```
-3. **Enrichir `.ai/rules/<scope>.md`** avec les règles propres au projet (le template donne un squelette).
+3. **Créer `.ai/project/index.md` si besoin** pour les règles propres au projet. Garder `.ai/rules/<scope>.md` pour les règles génériques de scope.
 4. **Première feature** : créer `.docs/features/<scope>/<id>.md` à partir de `.docs/FEATURE_TEMPLATE.md`.
 5. **Activer le hook Claude** : ouvrir Claude Code, commande `/hooks`, valider (UserPromptSubmit + PreToolUse).
 

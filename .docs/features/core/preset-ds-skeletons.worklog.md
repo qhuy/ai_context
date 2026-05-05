@@ -36,3 +36,6 @@
 ## 2026-05-04 — freshness
 - Impact indirect : `copier.yml` ajoute l'exclusion conditionnelle `.agents` sans modifier les squelettes DS.
 - Validation associée : smoke-test complet PASS.
+## 2026-05-05 — freshness
+- Impact transversal : `copier.yml` change hors logique DS, avec conservation des exclusions/presets existants.
+- Validation associée : smoke-test matrice Copier PASS.

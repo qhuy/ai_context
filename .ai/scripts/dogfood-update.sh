@@ -85,6 +85,7 @@ run_rsync "$out/.ai/" ".ai/" \
   --exclude='.progress-history.jsonl' \
   --exclude='.session-edits.log' \
   --exclude='.session-edits.flushed' \
+  --exclude='project' \
   --exclude='scripts/dogfood-update.sh' \
   --exclude='scripts/check-dogfood-drift.sh'
 run_rsync "$out/.claude/settings.json" ".claude/settings.json"

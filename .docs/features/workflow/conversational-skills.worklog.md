@@ -51,3 +51,6 @@
 ## 2026-05-04 — freshness
 - Impact indirect : le wrapper Codex `aic` reprend la sémantique conversationnelle de l'override `/aic`.
 - Validation associée : smoke-test complet PASS.
+## 2026-05-05 — freshness
+- Impact transversal : le message post-copy guide les règles locales vers `.ai/project/index.md` sans ajouter de skill obligatoire.
+- Validation associée : smoke-test PASS.

@@ -25,3 +25,6 @@
 ## 2026-05-04 — freshness
 - Impact indirect : `copier.yml` évolue pour les skills Codex, sans changer la procédure project-guardrails.
 - Validation associée : smoke-test complet PASS.
+## 2026-05-05 — freshness
+- Impact transversal : l'overlay projet clarifie la migration des règles locales et garde les guardrails génériques on-demand.
+- Validation associée : `check-shims.sh` et smoke-test PASS.

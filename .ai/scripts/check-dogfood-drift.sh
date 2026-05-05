@@ -89,7 +89,7 @@ compare_tree() {
 
 is_ignored_runtime_extra() {
   case "$1" in
-    .feature-index.json|.progress-history.jsonl|.session-edits.log|.session-edits.flushed|scripts/dogfood-update.sh|scripts/check-dogfood-drift.sh)
+    .feature-index.json|.progress-history.jsonl|.session-edits.log|.session-edits.flushed|scripts/dogfood-update.sh|scripts/check-dogfood-drift.sh|project|project/*)
       return 0
       ;;
   esac

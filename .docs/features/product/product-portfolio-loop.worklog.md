@@ -14,3 +14,6 @@
 - Impact template : `template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja` garde le contrat product inchangé après propagation de la granularité.
 - Changement porté par dogfood runtime sync.
 - Validation associée : `check-dogfood-drift.sh` PASS.
+## 2026-05-05 — freshness
+- Impact transversal : l'overlay projet stable touche l'index et les messages template déjà couverts par cette feature produit.
+- Validation associée : `check-features.sh`, `check-shims.sh`, `check-dogfood-drift.sh` PASS.

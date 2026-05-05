@@ -19,3 +19,6 @@
 - Impact template : `template/.ai/workflows/feature-new.md.jinja` propage la validation explicite avant écriture aux projets générés.
 - Changement porté par `workflow/feature-new-approval-step`.
 - Validation associée : `check-dogfood-drift.sh` PASS.
+## 2026-05-05 — freshness
+- Impact transversal : les messages de démarrage orientent les règles locales vers `.ai/project/index.md`.
+- Validation associée : smoke-test PASS.

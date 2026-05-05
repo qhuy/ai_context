@@ -47,11 +47,13 @@ Les questions posées par `copier copy` et leurs effets.
 
 - `AGENTS.md`
 - `.ai/index.md`
+- `.ai/OWNERSHIP.md`
 - `.ai/reminder.md`
 - `.ai/context-ignore.md`
 - `.ai/quality/QUALITY_GATE.md`
 - `.ai/rules/core.md`, `quality.md`, `workflow.md` (scopes minimum)
 - `.ai/scripts/pre-turn-reminder.sh`, `check-shims.sh`, `check-ai-references.sh`, `check-feature-docs.sh`
+- `.ai/templates/project-overlay/README.md` (exemple, pas un overlay actif)
 - `README_AI_CONTEXT.md`
 - `{{docs_root}}/.gitkeep`
 - `.copier-answers.yml` (tracking du template appliqué ; doit être versionné pour permettre `copier update --vcs-ref=HEAD`)

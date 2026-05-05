@@ -9,3 +9,6 @@
 ## 2026-05-04 — freshness
 - Impact indirect : les nouveaux wrappers Codex restent on-demand et ne changent pas le Pack A.
 - Validation associée : check-shims et smoke-test complet PASS.
+## 2026-05-05 — freshness
+- Impact transversal : l'index principal ajoute le chargement optionnel `.ai/project/index.md` sans élargir Pack A.
+- Validation associée : `check-shims.sh` PASS.

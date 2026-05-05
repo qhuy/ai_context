@@ -1,5 +1,9 @@
 # Worklog — core/template-engine
 
+## 2026-05-05 — freshness
+- Impact template : ajout de `_skip_if_exists` pour `.ai/project/**`, de l'ownership template et de l'exemple `.ai/templates/project-overlay/README.md`.
+- Validation associée : smoke-test et `check-dogfood-drift.sh` PASS.
+
 
 ## 2026-04-24 11:34 — auto
 - Fichiers modifiés :

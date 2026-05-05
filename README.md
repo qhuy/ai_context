@@ -636,6 +636,9 @@ mon-projet/
 │   ├── context-ignore.md          # exclusions de contexte Codex/on-demand
 │   ├── reminder.md                # hard rules (compressé v0.6)
 │   ├── config.yml                 # config runtime optionnelle (coverage/progress/context)
+│   ├── OWNERSHIP.md               # séparation template-managed / project-owned
+│   ├── project/                   # optionnel, project-owned, jamais scaffoldé par défaut
+│   │   └── index.md               # entrée overlay locale si elle existe
 │   ├── agent/
 │   │   ├── posture.md             # posture, écoute, diagnostic, prise de position
 │   │   ├── initiative-contract.md # agir / proposer / demander confirmation
@@ -704,6 +707,17 @@ Quand un fichier cible est connu, le chemin court pour les agents non-hookés es
 `features-for-path.sh <path> --with-docs`). Cela remplace les listings larges de
 features et charge uniquement les fiches qui matchent le path, plus les
 dépendances utiles.
+
+## Project Overlay
+
+Les repos consommateurs peuvent créer `.ai/project/index.md` pour leurs règles locales stables. L'index principal le charge seulement s'il existe, après les règles générales et avant les règles de scope. Aucun agent ne doit précharger récursivement `.ai/project/**` : l'index projet décide quels fichiers locaux lire.
+
+Ownership :
+
+- upstream-managed : `.ai/index.md`, `.ai/rules/**`, `.ai/workflows/**`, `.ai/scripts/**`, `.ai/templates/**`.
+- project-owned : `.ai/project/**`, les docs métier du repo, et les adaptations locales assumées des shims comme `AGENTS.md`.
+
+`copier update` ne doit ni supprimer ni écraser `.ai/project/**`. Pour migrer d'anciennes règles locales stockées dans des fichiers template comme `.ai/rules/<scope>.md` ou des fichiers legacy de type `.ai/workflow/L1_*`, déplacer la partie métier vers `.ai/project/**` et garder seulement un pointeur court côté fichier géré.
 
 ## Couche agent behavior
 
