@@ -107,3 +107,9 @@
   - template/.ai/scripts/_lib.sh.jinja
   - template/.ai/scripts/features-for-path.sh.jinja
   - tests/unit/test-matcher-multi-level.sh
+
+## 2026-05-07 01:16 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja
+  - tests/unit/test-matcher-multi-level.sh
