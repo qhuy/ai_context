@@ -44,3 +44,6 @@
 - Impact indirect : `copier.yml` expose la nouvelle commande `/aic-document-feature` sans toucher aux squelettes design-system.
 - Aucun changement sur les presets DS ni sur les fichiers générés associés.
 - Validation associée : smoke-test PASS.
+## 2026-05-06 — freshness
+- Intent : tracer l'impact Copier indirect pendant la canonisation de la surface `aic`.
+- Validation : couvert par `check-features` et `tests/smoke-test.sh`.

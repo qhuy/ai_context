@@ -108,7 +108,7 @@ _message_after_copy: |
   Les primitives procédurales restent canoniques sous .ai/workflows/ ; Codex reçoit
   aussi des skills minces aic-feature-* / aic-quality-gate qui pointent vers ces
   workflows. Claude garde une surface plus intentionnelle : frame, status, diagnose,
-  review, ship.
+  document-feature, review, ship.
 
   Env vars utiles :
     AI_CONTEXT_DEBUG=1            → logs debug des hooks

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Breaking : la surface CLI publique devient `aic.sh frame/status/diagnose/document-feature/review/ship`, alignée avec les skills `aic-*`. Les anciens verbes publics de cadrage, brief, document delta et ship report sont supprimés au lieu d'être conservés en aliases.
+- `aic-document-feature` est intégré explicitement à la surface utilisateur canonique, côté Claude et Codex.
 - Installation Codex : quand `codex` est sélectionné dans `agents`, le template génère désormais `.agents/skills/` avec les wrappers `aic-*`, `aic-feature-*` et `aic-quality-gate`. Les wrappers restent minces et délèguent aux workflows canoniques `.ai/workflows/*`.
 
 ## v0.12.0 — 2026-05-04 « Agent UX, product traceability & robust updates »

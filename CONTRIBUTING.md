@@ -36,7 +36,7 @@ Le repo contient **deux** copies de chaque script runtime :
 **Règle** : si une correction touche un script qui existe des deux côtés, applique-la des deux côtés dans le même chantier. Une divergence accidentelle est un bug.
 
 Cas spéciaux :
-- Les scripts `audit-features`, `doctor`, `migrate-features`, `pr-report`, `ai-context` n'existent pour l'instant que côté template — la synchronisation dogfoodée est une piste P1 (voir `PROJECT_STATE.md`).
+- Les scripts `audit-features`, `doctor`, `migrate-features`, `pr-report`, `aic` n'existent pour l'instant que côté template — la synchronisation dogfoodée est une piste P1 (voir `PROJECT_STATE.md`).
 - Le template peut contenir des constructs Jinja (`{{ project_name }}`, `{% raw %}${#arr[@]}{% endraw %}`) absents côté runtime. Ne supprime pas ces blocs sans comprendre ce qu'ils protègent.
 
 ## Ajouter un script runtime
@@ -47,7 +47,7 @@ Cas spéciaux :
 4. Compatibilité Bash 3.2 (macOS) — voir section dédiée.
 5. Ajoute au moins une assertion dans `tests/smoke-test.sh`.
 6. Documente dans le tableau « Scripts runtime » du `README.md`.
-7. Si le script est utile depuis le wrapper, ajoute une route dans `template/.ai/scripts/ai-context.sh.jinja`.
+7. Si le script est utile depuis la surface `aic`, ajoute une route dans `template/.ai/scripts/aic.sh.jinja`.
 
 ## Ajouter un skill Claude
 

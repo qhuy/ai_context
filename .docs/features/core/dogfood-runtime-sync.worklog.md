@@ -28,3 +28,6 @@
 - Impact couvert : runtime `.ai/workflows/**`, `.claude/skills/**`, `.agents/skills/**` et `README_AI_CONTEXT.md` synchronisés.
 - Aucun changement sur le contrat source-only de dogfood.
 - Validation associée : `check-dogfood-drift.sh`, `check-shims.sh`, smoke-test PASS.
+## 2026-05-06 — freshness
+- Intent : documenter l'impact du renommage runtime `ai-context.sh` -> `aic.sh` sur les surfaces dogfoodées.
+- Validation : couvert par `check-shims`, `check-features` et `tests/smoke-test.sh`.

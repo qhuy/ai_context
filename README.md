@@ -271,7 +271,7 @@ git config core.hooksPath .githooks && chmod +x .githooks/*
 bash .ai/scripts/check-shims.sh        # ✅ shims OK
 bash .ai/scripts/check-features.sh     # ⚠️ aucune feature (normal au début)
 bash .ai/scripts/check-feature-docs.sh # ⚠️ sections manquantes sur legacy, bloquant avec --strict <scope/id>
-bash .ai/scripts/ai-context.sh first-run
+bash .ai/scripts/aic.sh frame "première tâche"
 ```
 
 Puis (recommandé) cadrer la première vraie tâche avant d'implémenter — objectif, non-goals, spécificités métier/technique, plan et validation :
@@ -428,15 +428,15 @@ Les réponses précédentes sont relues depuis `.copier-answers.yml`. Un diff es
 Si `.copier-answers.yml` est absent ou incomplet :
 
 ```bash
-bash .ai/scripts/ai-context.sh repair-copier-metadata
+bash .ai/scripts/aic.sh repair-copier-metadata
 # relire la proposition, puis :
-bash .ai/scripts/ai-context.sh repair-copier-metadata --apply
+bash .ai/scripts/aic.sh repair-copier-metadata --apply
 ```
 
 Si le worktree est sale ou si tu veux estimer l'update sans toucher au projet :
 
 ```bash
-bash .ai/scripts/ai-context.sh template-diff
+bash .ai/scripts/aic.sh template-diff
 ```
 
 Voir [docs/upgrading.md](docs/upgrading.md) pour les variantes `--src-path`, `--commit` et `--vcs-ref`.
@@ -703,7 +703,7 @@ ou plus tôt seulement pour les tâches à risque (contrat, doc canonique, sécu
 DB).
 
 Quand un fichier cible est connu, le chemin court pour les agents non-hookés est
-`bash .ai/scripts/ai-context.sh brief <path>` (wrapper de
+`bash .ai/scripts/aic.sh document-feature <path>` (wrapper de
 `features-for-path.sh <path> --with-docs`). Cela remplace les listings larges de
 features et charge uniquement les fiches qui matchent le path, plus les
 dépendances utiles.
@@ -842,7 +842,7 @@ Codex reçoit aussi des wrappers directs pour les procédures feature :
 | `auto-worklog-log.sh` | Hook `PostToolUse` : logue les éditions dans `.session-edits.log` |
 | `auto-worklog-flush.sh` | Hook `Stop` : flush log → worklog + bump `progress.updated` |
 | `aic-undo.sh` | Annule la dernière transition auto-progressée (lit `.progress-history.jsonl`, restaure le frontmatter, append au worklog, rebuild index). Headless ; le skill `/aic undo` s'appuie dessus. `--dry-run` par défaut, `--apply` pour exécuter. |
-| `ai-context.sh` | CLI UX : `first-run`, `mission "<objectif>"`, `status`, `brief <path>`, `document-delta`, `repair`, `repair-copier-metadata`, `template-diff`, `ship-report`, `product-status`, `product-portfolio`, `product-review product/<id>`, puis routes `doctor` / `resume` / `audit` / `migrate` / `pr-report` / `review` / `measure` / `check` / `coverage` / `shims` / `index` / `reminder`. |
+| `aic.sh` | CLI aic : `frame "<objectif>"`, `status`, `diagnose`, `document-feature [path]`, `review`, `ship`, puis maintenance `repair`, `product-status`, `product-portfolio`, `product-review product/<id>`, `doctor`, `resume`, `audit`, `migrate`, `pr-report`, `measure`, `check`, `check-docs`, `coverage`, `shims`, `index`, `reminder`, `repair-copier-metadata`, `template-diff`. |
 
 Tous les scripts runtime lisent le dossier métier via `AI_CONTEXT_DOCS_ROOT` rendu depuis `docs_root` (`.docs` par défaut). Les entrées `touches:` sont matchées par un helper unique (`path_matches_touch`) pour garder la même sémantique entre `features-for-path`, auto-worklog, coverage et `pre-commit`. `touches_shared:` sert aux surfaces transverses visibles en review mais non bloquantes pour `check-feature-freshness --staged`.
 

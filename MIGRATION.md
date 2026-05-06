@@ -14,6 +14,29 @@ Guide pour adopter le template sur un projet déjà mature (code, docs, éventue
 
 ---
 
+## Migration de surface `aic` (v0.13+)
+
+La surface utilisateur canonique est désormais `aic` / `aic-*`. Les anciens
+verbes publics ne sont pas conservés en aliases : corrige les scripts, docs
+internes et habitudes d'équipe en une fois.
+
+| Ancien chemin public | Nouveau chemin |
+|---|---|
+| `bash .ai/scripts/ai-context.sh first-run` | `bash .ai/scripts/aic.sh frame "<objectif>"` |
+| `bash .ai/scripts/ai-context.sh mission "<objectif>"` | `bash .ai/scripts/aic.sh frame "<objectif>"` |
+| `bash .ai/scripts/ai-context.sh brief <path>` | `bash .ai/scripts/aic.sh document-feature <path>` |
+| `bash .ai/scripts/ai-context.sh document-delta` | `bash .ai/scripts/aic.sh document-feature` |
+| `bash .ai/scripts/ai-context.sh ship-report` | `bash .ai/scripts/aic.sh ship` |
+| `bash .ai/scripts/ai-context.sh status` | `bash .ai/scripts/aic.sh status` |
+| `bash .ai/scripts/ai-context.sh review` | `bash .ai/scripts/aic.sh review` |
+
+Les commandes de maintenance non duplicatives restent sous `aic.sh` :
+`doctor`, `check`, `check-docs`, `coverage`, `shims`, `repair`,
+`repair-copier-metadata`, `template-diff`, `product-status`,
+`product-portfolio`, `product-review`.
+
+---
+
 ## Étape 1 — Preview en dry-run
 
 Scaffold dans un dossier temporaire pour voir ce que produit le template **sans toucher au projet**.
@@ -170,17 +193,20 @@ Dans Claude Code : `/hooks` → désactive les entrées ajoutées.
 - Surveille `measure-context-size.sh` en CI (ou en dev) pour éviter la dérive tokens.
 - Relis `CHANGELOG.md` à chaque `copier update` — les breaking notes y sont explicites.
 
-## Utiliser les skills `/aic-*` (v0.7+)
+## Utiliser la surface `aic-*`
 
-Une fois le mesh bootstrappé, utilise les skills Claude pour encadrer les gestes récurrents :
+Une fois le mesh bootstrappé, utilise les skills Claude/Codex pour encadrer les gestes récurrents :
 
 | Skill | Quand |
 |---|---|
-| `/aic-feature-new` | Avant tout `feat:` — crée fiche + worklog init |
-| `/aic-feature-resume` | Début de session — scanne EN COURS / BLOQUÉES / STALE, charge le contexte |
-| `/aic-feature-update` | À chaque pause, blocker, ou switch de contexte (worklog append-only) |
-| `/aic-feature-handoff` | Quand le travail bascule de scope ou de session |
-| `/aic-quality-gate` | Avant commit `feat:` ou PR — verdict go/no-go factuel |
-| `/aic-feature-done` | Clôture : evidence + status done + commit suggéré |
+| `/aic` | Override conversationnel, correction d'état, undo |
+| `/aic-frame` | Avant action : cadrage, scope, plan, validation |
+| `/aic-status` | Début/reprise de session : état, blockers, stale, delta |
+| `/aic-diagnose` | Quand le blocage réel est incertain |
+| `/aic-document-feature` | Créer, auditer, mettre à jour, handoff ou done-check d'une fiche |
+| `/aic-review` | Avant review/PR : risques du delta, doc, checks |
+| `/aic-ship` | Avant commit/push : quality gate, evidence, commit proposé |
 
-La règle d'or : **toujours** `/aic-feature-update` avant de quitter une session. Le coût est minime, la reprise via `/aic-feature-resume` devient déterministe au lieu de narrative.
+Les primitives procédurales existent encore comme workflows internes sous
+`.ai/workflows/` et, côté Codex, comme skills locaux minces quand utiles. La
+surface utilisateur reste les commandes ci-dessus.

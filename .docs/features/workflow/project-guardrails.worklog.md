@@ -33,3 +33,6 @@
 - Impact indirect : `README_AI_CONTEXT.md`, son template et `copier.yml` mentionnent le nouveau skill documentaire sans changer la procédure guardrails.
 - Les règles projet restent dans `.ai/project/**` et chargées via `.ai/project/index.md` seulement.
 - Validation associée : `check-ai-references.sh`, smoke-test PASS.
+## 2026-05-06 — freshness
+- Intent : tracer l'impact des messages README/Copier sur le cadrage `aic-frame` et les guardrails on-demand.
+- Validation : couvert par `check-shims` et `tests/smoke-test.sh`.

@@ -1,38 +1,14 @@
 #!/bin/bash
-# ai-context.sh — CLI unifié pour les scripts .ai/scripts/*.
+# aic.sh — surface canonique aic pour agents hookés et non-hookés.
 #
-# But : offrir une surface stable (`ai-context <verbe>`) sans casser l'invocation
-# directe `bash .ai/scripts/<script>.sh`. Les commandes UX composent les
-# scripts existants ; les autres sous-commandes restent des routes directes.
+# But : exposer une taxonomie unique alignée avec les skills publics :
+# frame / status / diagnose / document-feature / review / ship.
+# Les commandes techniques restent disponibles pour maintenance, sans remplacer
+# la surface utilisateur aic-*.
 #
 # Usage :
-#   bash .ai/scripts/ai-context.sh <command> [args...]
-#   bash .ai/scripts/ai-context.sh --help
-#
-# Sous-commandes (toutes les options du script cible sont passées telles quelles) :
-#   doctor       → bash .ai/scripts/doctor.sh
-#   first-run    → parcours guidé après scaffold
-#   status       → état humain actionnable du mesh courant
-#   brief <path> → contexte feature juste-à-temps pour un fichier
-#   mission      → cadrage léger avant une tâche importante
-#   repair       → plan de réparation non destructif du mesh
-#   repair-copier-metadata → recrée .copier-answers.yml si absent
-#   template-diff → preview externe du template sans toucher au repo
-#   document-delta → docs/features à vérifier depuis le delta courant
-#   ship-report  → synthèse de sortie avant commit/PR
-#   product-status / product-portfolio / product-review → traceability produit
-#   resume       → bash .ai/scripts/resume-features.sh
-#   audit        → bash .ai/scripts/audit-features.sh
-#   migrate      → bash .ai/scripts/migrate-features.sh
-#   pr-report    → bash .ai/scripts/pr-report.sh
-#   review       → bash .ai/scripts/review-delta.sh
-#   measure      → bash .ai/scripts/measure-context-size.sh
-#   check        → bash .ai/scripts/check-features.sh
-#   check-docs   → bash .ai/scripts/check-feature-docs.sh
-#   coverage     → bash .ai/scripts/check-feature-coverage.sh
-#   shims        → bash .ai/scripts/check-shims.sh
-#   index        → bash .ai/scripts/build-feature-index.sh
-#   reminder     → bash .ai/scripts/pre-turn-reminder.sh
+#   bash .ai/scripts/aic.sh <command> [args...]
+#   bash .ai/scripts/aic.sh --help
 #
 # Exit codes : ceux du script ciblé.
 
@@ -43,25 +19,25 @@ repo_root="$(cd "$script_dir/../.." && pwd)"
 
 print_help() {
   cat <<'HELP'
-Usage: bash .ai/scripts/ai-context.sh <command> [args...]
+Usage: bash .ai/scripts/aic.sh <command> [args...]
 
-CLI ai_context — commandes intentionnelles + accès aux scripts dédiés.
+CLI aic — surface canonique alignée avec les skills aic-*.
 
-Commandes :
-  first-run    parcours guidé 10 minutes après scaffold
+Commandes utilisateur :
+  frame "<objectif>"
+               cadrage avant action : scope, docs à lire, plan, validation
   status       état actionnable : features, delta, hooks, checks, prochaine action
-  brief <path> contexte juste-à-temps avant d'éditer un fichier (Codex-friendly)
-  mission "<objectif>"
-               cadrage léger : scope probable, docs à lire, plan, validations
+  diagnose ["symptôme"]
+               diagnostic court du goulot probable et prochaine action
+  document-feature [path]
+               sans path : docs/features à vérifier depuis le delta courant ;
+               avec path : contexte feature juste-à-temps pour ce fichier
+  review       synthèse review-friendly du delta courant
+  ship         rapport de sortie : delta, docs, checks, commit proposé
+
+Commandes maintenance :
   repair [--apply]
                plan de réparation du mesh ; --apply reconstruit seulement l'index
-  repair-copier-metadata [--apply] [--src-path <src>] [--commit <ref>]
-               recrée .copier-answers.yml si absent ou incomplet
-  template-diff [--src-path <src>] [--vcs-ref <ref>]
-               rend le template dans /tmp et liste les écarts sans toucher au repo
-  document-delta
-               suggestions de documentation à partir du delta courant/staged
-  ship-report  rapport de sortie : delta, docs, checks, commit proposé
   product-status
                vue des initiatives product et features dev liées
   product-portfolio
@@ -73,7 +49,6 @@ Commandes :
   audit        audit-features.sh (discover <scope>)
   migrate      migration frontmatter (--apply explicite)
   pr-report    rapport markdown/json d'impact feature depuis un diff git
-  review       synthèse review-friendly du delta courant
   measure      taille contexte injecté par les hooks
   check        check-features.sh (frontmatter + scope + depends_on + touches)
   check-docs   check-feature-docs.sh (sections feature ; --strict <scope/id> avant DONE)
@@ -81,8 +56,12 @@ Commandes :
   shims        check-shims.sh (cohérence shims racine ↔ .ai/index.md)
   index        build-feature-index.sh (rebuild .ai/.feature-index.json)
   reminder     pre-turn-reminder.sh (sortie text ou json)
+  repair-copier-metadata [--apply] [--src-path <src>] [--commit <ref>]
+               recrée .copier-answers.yml si absent ou incomplet
+  template-diff [--src-path <src>] [--vcs-ref <ref>]
+               rend le template dans /tmp et liste les écarts sans toucher au repo
 
-Aliases : --help, -h, help
+Help : --help, -h, help
 HELP
 }
 
@@ -214,13 +193,13 @@ infer_scope_from_text() {
   text="$(printf '%s' "$*" | LC_ALL=C tr '[:upper:]' '[:lower:]')"
   case "$text" in
     *product*|*produit*|*roadmap*|*portfolio*|*initiative*|*priorit*) echo "product" ;;
+    *core*|*noyau*|*runtime*|*template*|*copier*|*scaffold*|*aic*) echo "core" ;;
     *front*|*ui*|*ux*|*react*|*vue*|*css*|*page*|*écran*|*ecran*) echo "front" ;;
     *back*|*api*|*server*|*serveur*|*database*|*db*|*sql*|*endpoint*) echo "back" ;;
-    *archi*|*architecture*|*design*|*adr*) echo "architecture" ;;
+    *archi*|*architecture*|*design*) echo "architecture" ;;
     *security*|*sécurité*|*securite*|*auth*|*permission*|*droit*) echo "security" ;;
     *test*|*qualit*|*qa*|*ci*|*smoke*) echo "quality" ;;
-    *workflow*|*agent*|*skill*|*hook*|*claude*|*codex*) echo "workflow" ;;
-    *template*|*copier*|*scaffold*|*runtime*) echo "core" ;;
+    *workflow*|*agent*|*skill*|*hook*|*claude*|*codex*|*cadrage*|*frame*) echo "workflow" ;;
     *) echo "à confirmer" ;;
   esac
 }
@@ -240,11 +219,18 @@ print_active_feature_hints() {
   fi
 }
 
-run_first_run() {
+run_frame() {
   cd "$repo_root"
-  local project_name docs_root hooks_line claude_line product_line first_dev_scope
+  local objective scope docs_scope docs_root hooks_line claude_line product_line first_dev_scope doc_feature_scope hints
 
-  project_name="$(basename "$repo_root")"
+  objective="$*"
+  [[ -n "$objective" ]] || objective="cadrer la prochaine tâche"
+  scope="$(infer_scope_from_text "$objective")"
+  docs_scope=""
+  if [[ "$scope" != "à confirmer" && -f ".ai/rules/$scope.md" ]]; then
+    docs_scope="- \`.ai/rules/$scope.md\`"
+  fi
+
   docs_root=".docs"
   if [[ -f ".ai/config.yml" ]]; then
     docs_root="$(awk -F': *' '/^docs_root:/{print $2; exit}' .ai/config.yml 2>/dev/null | tr -d '"' || true)"
@@ -266,52 +252,64 @@ run_first_run() {
     product_line="Créer une initiative product dans \`$docs_root/features/product/<id>.md\` si la tâche porte un pari produit."
   fi
 
-  first_dev_scope="back"
+  first_dev_scope="core"
   [[ -d "$docs_root/features/front" ]] && first_dev_scope="front"
   [[ -d "$docs_root/features/back" ]] && first_dev_scope="back"
+  doc_feature_scope="$first_dev_scope"
+  if [[ "$scope" != "à confirmer" && -d "$docs_root/features/$scope" ]]; then
+    doc_feature_scope="$scope"
+  fi
 
   cat <<EOF
-## First Run
+## AIC Frame
 
-But :
-- Passer de "template installé" à "première tâche pilotable" en 10 minutes.
+Objectif :
+- $objective
 
-1. Activer les garde-fous locaux
-   - \`$hooks_line\`
-   - $claude_line
+Position recommandée :
+- Utiliser la surface \`aic\` comme langage public unique.
+- Cadrer avant écriture, puis créer ou mettre à jour la fiche feature avant tout \`feat:\`.
 
-2. Vérifier que le scaffold est sain
-   - \`bash .ai/scripts/ai-context.sh status\`
-   - \`bash .ai/scripts/ai-context.sh doctor\`
+Scope primaire probable :
+- $scope
 
-3. Cadrer la première vraie tâche
-   - Claude : \`/aic-frame\`
-   - Codex/autres : \`bash .ai/scripts/ai-context.sh mission "<objectif>"\`
+Docs à lire maintenant :
+- \`.ai/index.md\`
+$docs_scope
 
-4. Créer la première trace de travail
-   - $product_line
-   - Créer la première feature dev dans \`$docs_root/features/$first_dev_scope/<id>.md\` depuis \`$docs_root/FEATURE_TEMPLATE.md\`.
-   - Si elle sert une initiative product, ajouter :
+Features actives candidates :
+EOF
+  if [[ "$scope" != "à confirmer" ]]; then
+    hints="$(print_active_feature_hints 6 "$scope")"
+  else
+    hints="$(print_active_feature_hints 6)"
+  fi
+  if [[ -n "$hints" ]]; then
+    printf '%s\n' "$hints"
+  else
+    echo "- _(aucune feature active/draft détectée)_"
+  fi
 
-\`\`\`yaml
-product:
-  initiative: product/<id>
-  contribution: ""
-  evidence: ""
-external_refs:
-  speckit: ""
-  bmad_story: ""
-\`\`\`
+  cat <<EOF
 
-5. Avant d'éditer un fichier
-   - \`bash .ai/scripts/ai-context.sh brief <path>\`
+Garde-fous locaux :
+- \`$hooks_line\`
+- $claude_line
 
-6. Avant commit ou PR
-   - \`bash .ai/scripts/ai-context.sh document-delta\`
-   - \`bash .ai/scripts/ai-context.sh ship-report\`
+Plan recommandé :
+1. Reformuler le résultat attendu, les non-goals et le goulot probable.
+2. Confirmer le scope primaire ; si plusieurs scopes sont nécessaires, préparer un HANDOFF.
+3. Charger uniquement les règles et fiches liées au scope ou aux fichiers ciblés.
+4. Documenter la feature dans \`$docs_root/features/$doc_feature_scope/<id>.md\` si le changement ajoute/modifie du comportement.
+5. Lancer les checks adaptés avant sortie.
+
+Validation :
+- Acceptance : comportement observable nommé avant écriture.
+- Checks : \`bash .ai/scripts/aic.sh review\`, puis \`bash .ai/scripts/aic.sh ship\`.
+- Doc impact : fiche feature \`$docs_root/features/$doc_feature_scope/<id>.md\` si comportement modifié ; $product_line
 
 Prochaine action minimale :
-- Lancer \`bash .ai/scripts/ai-context.sh mission "<première tâche>"\`, puis créer la fiche feature proposée avant le premier commit.
+- Si le cadrage est clair, créer ou mettre à jour la fiche feature ; sinon lancer \`bash .ai/scripts/aic.sh diagnose "$objective"\`.
 EOF
 }
 
@@ -376,21 +374,21 @@ run_status() {
   measure_total=$(bash "$script_dir/measure-context-size.sh" 2>/dev/null | awk '/total[[:space:]]+chars=/{print $2 " " $3}' | head -1)
   [[ -n "$measure_total" ]] || measure_total="n/a"
 
-  next_action="Travailler normalement ; avant commit, lance: bash .ai/scripts/ai-context.sh review"
+  next_action="Travailler normalement ; avant commit, lance: bash .ai/scripts/aic.sh review"
   if [[ "$check_features" != "OK" ]]; then
     next_action="Corriger les frontmatter: bash .ai/scripts/check-features.sh"
   elif [[ "$check_shims" != "OK" ]]; then
     next_action="Réparer les shims: bash .ai/scripts/check-shims.sh"
   elif [[ "$check_product" != "OK" ]]; then
-    next_action="Relire les liens produit: bash .ai/scripts/ai-context.sh product-status"
+    next_action="Relire les liens produit: bash .ai/scripts/aic.sh product-status"
   elif [[ "$freshness" != "OK" ]]; then
     next_action="Mettre à jour/stager les fiches feature: bash .ai/scripts/check-feature-freshness.sh --staged --strict"
   elif [[ "$coverage" != "OK" ]]; then
     next_action="Relier les fichiers orphelins à des touches: bash .ai/scripts/check-feature-coverage.sh"
   elif [[ "$staged" -gt 0 ]]; then
-    next_action="Relire le delta staged: bash .ai/scripts/ai-context.sh review --staged"
+    next_action="Relire le delta staged: bash .ai/scripts/aic.sh review --staged"
   elif [[ "$modified" -gt 0 ]]; then
-    next_action="Stager les docs avec le code, puis lancer: bash .ai/scripts/ai-context.sh review"
+    next_action="Stager les docs avec le code, puis lancer: bash .ai/scripts/aic.sh review"
   elif [[ "$active" -eq 0 && "$draft" -eq 0 ]]; then
     next_action="Créer ou cadrer la première feature: /aic-frame ou .ai/workflows/feature-new.md"
   fi
@@ -426,36 +424,26 @@ Prochaine action minimale
 EOF
 }
 
-run_brief() {
-  local target="${1:-}"
-  if [[ -z "$target" ]]; then
-    echo "Usage: bash .ai/scripts/ai-context.sh brief <path>" >&2
-    exit 2
-  fi
-  shift || true
-  exec bash "$script_dir/features-for-path.sh" --with-docs "$target" "$@"
-}
-
-run_mission() {
+run_diagnose() {
   cd "$repo_root"
-  local objective="$*"
-  local scope docs_scope
-  if [[ -z "$objective" ]]; then
-    echo "Usage: bash .ai/scripts/ai-context.sh mission \"<objectif>\"" >&2
-    exit 2
-  fi
+  local symptom scope docs_scope
+  symptom="$*"
+  [[ -n "$symptom" ]] || symptom="blocage non précisé"
 
-  scope="$(infer_scope_from_text "$objective")"
+  scope="$(infer_scope_from_text "$symptom")"
   docs_scope=""
   if [[ "$scope" != "à confirmer" && -f ".ai/rules/$scope.md" ]]; then
     docs_scope="- \`.ai/rules/$scope.md\`"
   fi
 
   cat <<EOF
-## Mission Brief
+## AIC Diagnose
 
-Objectif :
-- $objective
+Symptôme :
+- $symptom
+
+Goulot probable :
+- À confirmer par les données locales avant d'éditer.
 
 Scope primaire probable :
 - $scope
@@ -479,16 +467,11 @@ EOF
   cat <<'EOF'
 
 Diagnostic initial :
-- Confirmer le scope primaire avant d'éditer.
-- Identifier les fichiers touchés puis lancer `brief <path>` avant modification.
-- Si plusieurs scopes sont nécessaires, produire un HANDOFF explicite au lieu de mélanger les règles.
-
-Plan recommandé :
-1. Reformuler le résultat attendu et les non-goals.
-2. Charger uniquement les règles du scope primaire et les features liées aux fichiers visés.
-3. Implémenter le plus petit changement cohérent.
-4. Mettre à jour la fiche feature/worklog avec l'intention, les fichiers et les validations.
-5. Lancer `ai-context.sh ship-report` puis les checks qualité.
+- Vérifier si la demande est une feature, un bug, une dette, une doc drift ou un symptôme.
+- Ne pas valider l'auto-diagnostic sans preuve locale.
+- Si le vrai problème est documentaire, utiliser `document-feature`.
+- Si le vrai problème est dans le delta, utiliser `review`.
+- Si la sortie est proche, utiliser `ship`.
 
 Questions de validation :
 - Quel est le comportement observable attendu ?
@@ -496,7 +479,59 @@ Questions de validation :
 - Quel test ou preuve rend la tâche terminée ?
 
 Prochaine action minimale :
-- Choisir le premier fichier à toucher puis lancer `bash .ai/scripts/ai-context.sh brief <path>`.
+- Nommer le premier fichier ou la première fiche concernée, puis relancer `bash .ai/scripts/aic.sh document-feature <path>`.
+EOF
+}
+
+run_document_feature() {
+  cd "$repo_root"
+  local target="${1:-}"
+  if [[ -n "$target" ]]; then
+    shift || true
+    exec bash "$script_dir/features-for-path.sh" --with-docs "$target" "$@"
+  fi
+
+  cat <<'EOF'
+## AIC Document Feature
+
+Objectif :
+- Identifier les fiches `.docs/features/**` à mettre à jour avant commit.
+
+Delta courant :
+EOF
+  if inside_git_repo; then
+    if [[ "$(staged_count)" -gt 0 ]]; then
+      echo "- mode: staged"
+    else
+      echo "- mode: worktree"
+    fi
+    changed="$(changed_files_for_report)"
+    if [[ -n "$changed" ]]; then
+      printf '%s\n' "$changed" | sed 's/^/- /'
+    else
+      echo "- _(aucun fichier modifié)_"
+    fi
+  else
+    echo "- _(git indisponible dans ce dossier)_"
+  fi
+
+  echo
+  echo "Analyse feature :"
+  if inside_git_repo; then
+    args="$(review_args_for_current_delta)"
+    if [[ -n "$args" ]]; then
+      bash "$script_dir/review-delta.sh" "$args" | sed 's/^/> /' || true
+    else
+      bash "$script_dir/review-delta.sh" | sed 's/^/> /' || true
+    fi
+  else
+    echo "- Git indisponible ; utiliser \`bash .ai/scripts/aic.sh document-feature <path>\` fichier par fichier."
+  fi
+
+  cat <<'EOF'
+
+Prochaine action minimale :
+- Mettre à jour puis stager la fiche feature ou son worklog pour chaque feature directe impactée.
 EOF
 }
 
@@ -507,7 +542,7 @@ run_repair() {
     case "$arg" in
       --apply) apply="yes" ;;
       -h|--help)
-        echo "Usage: bash .ai/scripts/ai-context.sh repair [--apply]"
+        echo "Usage: bash .ai/scripts/aic.sh repair [--apply]"
         exit 0
         ;;
       *)
@@ -560,57 +595,11 @@ EOF
   cat <<'EOF'
 
 Prochaine action minimale :
-- Lancer `bash .ai/scripts/ai-context.sh document-delta` pour vérifier la documentation du delta courant.
+- Lancer `bash .ai/scripts/aic.sh document-feature` pour vérifier la documentation du delta courant.
 EOF
 }
 
-run_document_delta() {
-  cd "$repo_root"
-  cat <<'EOF'
-## Document Delta
-
-Objectif :
-- Identifier les fiches `.docs/features/**` à mettre à jour avant commit.
-
-Delta courant :
-EOF
-  if inside_git_repo; then
-    if [[ "$(staged_count)" -gt 0 ]]; then
-      echo "- mode: staged"
-    else
-      echo "- mode: worktree"
-    fi
-    changed="$(changed_files_for_report)"
-    if [[ -n "$changed" ]]; then
-      printf '%s\n' "$changed" | sed 's/^/- /'
-    else
-      echo "- _(aucun fichier modifié)_"
-    fi
-  else
-    echo "- _(git indisponible dans ce dossier)_"
-  fi
-
-  echo
-  echo "Analyse feature :"
-  if inside_git_repo; then
-    args="$(review_args_for_current_delta)"
-    if [[ -n "$args" ]]; then
-      bash "$script_dir/review-delta.sh" "$args" | sed 's/^/> /' || true
-    else
-      bash "$script_dir/review-delta.sh" | sed 's/^/> /' || true
-    fi
-  else
-    echo "- Impossible de lire un delta git ; utiliser \`brief <path>\` fichier par fichier."
-  fi
-
-  cat <<'EOF'
-
-Prochaine action minimale :
-- Mettre à jour puis stager la fiche feature ou son worklog pour chaque feature directe impactée.
-EOF
-}
-
-run_ship_report() {
+run_ship() {
   cd "$repo_root"
   local check_features check_shims check_product coverage freshness measure_total staged modified commit_hint
   staged="$(staged_count)"
@@ -635,7 +624,7 @@ run_ship_report() {
   fi
 
   cat <<EOF
-## AI Context Ship Report
+## AIC Ship
 
 Delta :
 - fichiers modifiés: $modified
@@ -692,7 +681,7 @@ run_repair_copier_metadata() {
       --src-path) src_path="${2:?--src-path requiert une valeur}"; shift 2 ;;
       --commit|--vcs-ref) commit_ref="${2:?--commit requiert une valeur}"; shift 2 ;;
       -h|--help)
-        echo "Usage: bash .ai/scripts/ai-context.sh repair-copier-metadata [--apply] [--src-path <src>] [--commit <ref>]"
+        echo "Usage: bash .ai/scripts/aic.sh repair-copier-metadata [--apply] [--src-path <src>] [--commit <ref>]"
         exit 0
         ;;
       *)
@@ -747,7 +736,7 @@ EOF
 
 Prochaine action minimale :
 - Relire la metadata ci-dessus puis relancer avec `--apply` si elle correspond au scaffold réel.
-- Ensuite tester sans downgrade : `copier update --vcs-ref=HEAD --dry-run` ou `bash .ai/scripts/ai-context.sh template-diff`.
+- Ensuite tester sans downgrade : `copier update --vcs-ref=HEAD --dry-run` ou `bash .ai/scripts/aic.sh template-diff`.
 EOF
   fi
   rm -f "$tmp_answers"
@@ -762,7 +751,7 @@ run_template_diff() {
       --src-path) src_path="${2:?--src-path requiert une valeur}"; shift 2 ;;
       --vcs-ref|--commit) vcs_ref="${2:?--vcs-ref requiert une valeur}"; shift 2 ;;
       -h|--help)
-        echo "Usage: bash .ai/scripts/ai-context.sh template-diff [--src-path <src>] [--vcs-ref <ref>]"
+        echo "Usage: bash .ai/scripts/aic.sh template-diff [--src-path <src>] [--vcs-ref <ref>]"
         exit 0
         ;;
       *)
@@ -847,15 +836,14 @@ esac
 shift
 
 case "$cmd" in
-  first-run)  run_first_run "$@" ;;
+  frame)      run_frame "$@" ;;
   status)     run_status "$@" ;;
-  brief)      run_brief "$@" ;;
-  mission)    run_mission "$@" ;;
+  diagnose)   run_diagnose "$@" ;;
+  document-feature) run_document_feature "$@" ;;
   repair)     run_repair "$@" ;;
   repair-copier-metadata) run_repair_copier_metadata "$@" ;;
   template-diff) run_template_diff "$@" ;;
-  document-delta) run_document_delta "$@" ;;
-  ship-report) run_ship_report "$@" ;;
+  ship)       run_ship "$@" ;;
   product-status) exec bash "$script_dir/product-status.sh" "$@" ;;
   product-portfolio) exec bash "$script_dir/product-portfolio.sh" "$@" ;;
   product-review) exec bash "$script_dir/product-review.sh" "$@" ;;

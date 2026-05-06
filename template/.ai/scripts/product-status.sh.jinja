@@ -77,4 +77,4 @@ jq -r '
 
 echo
 echo "## Prochaine action minimale"
-echo "- Lancer \`bash .ai/scripts/ai-context.sh product-portfolio\` pour comparer les initiatives."
+echo "- Lancer \`bash .ai/scripts/aic.sh product-portfolio\` pour comparer les initiatives."

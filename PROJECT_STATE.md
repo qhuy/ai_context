@@ -32,6 +32,7 @@
 - `template/.ai/scripts/migrate-features.sh` — migration frontmatter (`schema_version`, status legacy, champs manquants) en dry-run/apply.
 - `template/.ai/scripts/pr-report.sh` — rapport markdown/json d'impact features depuis un diff git.
 - `template/.ai/scripts/review-delta.sh` — synthèse review-friendly du delta courant (fichiers, features, risques, checks).
+- `template/.ai/scripts/aic.sh` — surface CLI canonique alignée avec les skills `aic-*`.
 - `.ai/scripts/dogfood-update.sh` + `check-dogfood-drift.sh` — scripts source-only pour appliquer / contrôler le runtime rendu dans ce repo sans utiliser `copier update` sur le repo mainteneur.
 - Le drift dogfood contrôle aussi les fichiers destination-only ; `dogfood-update.sh --apply` supprime le runtime obsolète sauf caches et scripts source-only explicitement exclus.
 - CI : `yq` versionnée et `shellcheck` sur `.ai/scripts/*.sh` dans les workflows de garde.
@@ -40,7 +41,7 @@
 - `template/{{docs_root}}/features/<scope>/` = maillage feature par scope (back, front, architecture, security).
 - `template/.githooks/commit-msg` + `post-checkout` — enforcement Conventional Commits et rebuild index au switch de branche.
 - `template/.claude/settings.json.jinja` — hooks UserPromptSubmit / PreToolUse / PostToolUse / Stop.
-- `template/.claude/skills/aic-*/` — skills Claude publics uniquement : `aic`, `aic-frame`, `aic-status`, `aic-diagnose`, `aic-review`, `aic-ship`.
+- `template/.claude/skills/aic-*/` — skills Claude publics uniquement : `aic`, `aic-frame`, `aic-status`, `aic-diagnose`, `aic-document-feature`, `aic-review`, `aic-ship`.
 - `template/.ai/workflows/` — procédures internes agent-agnostic partagées par Claude et Codex : `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `quality-gate`, `feature-done`, `project-guardrails`.
 - `tests/smoke-test.sh` — 28 assertions end-to-end.
 
@@ -57,7 +58,7 @@
 - **Documentation** — README avec mermaid + FAQ + use cases, MIGRATION.md progressif, skills self-contained.
 - **Guardrails projet** — `.ai/guardrails.md` cadre les non-goals + glossaire métier (référencé via Pack A, coût tokens nul à chaque tour). Le point d'entrée recommandé est `/aic-frame`; la procédure interne vit dans `.ai/workflows/project-guardrails.md`.
 - **Skills intentionnels** — `/aic-frame` cadre avant implémentation (plan, métier, technique, validation), `/aic-status` reprend, `/aic-review` relit le delta, `/aic-ship` prépare la sortie. Les skills procéduraux restent en backend.
-- **UX CLI agent-agnostic** — `ai-context.sh first-run/status/brief/mission/document-delta/repair/ship-report/review` couvre le cycle courant pour Claude, Codex et agents non-hookés.
+- **Surface aic canonique** — `aic.sh frame/status/diagnose/document-feature/review/ship` couvre le cycle utilisateur pour Codex et agents non-hookés, en miroir des skills Claude/Codex `aic-*`. Les commandes techniques restent en maintenance.
 - **Traceability produit** — scope `product`, champs `product.*` / `external_refs` et commandes `product-status`, `product-portfolio`, `product-review`.
 - **Upgrade robuste** — `repair-copier-metadata` recrée `.copier-answers.yml` en dry-run, `template-diff` prévisualise un rendu `/tmp` sur worktree sale, et la doc recommande `copier update --vcs-ref=HEAD`.
 

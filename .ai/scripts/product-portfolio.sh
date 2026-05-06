@@ -72,4 +72,4 @@ jq -r '
 
 echo
 echo "## Prochaine action minimale"
-echo "- Lancer \`bash .ai/scripts/ai-context.sh product-review product/<id>\` sur l'initiative recommandée."
+echo "- Lancer \`bash .ai/scripts/aic.sh product-review product/<id>\` sur l'initiative recommandée."

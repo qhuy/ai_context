@@ -33,3 +33,6 @@
 - Impact couvert : wrappers runtime/template, workflow canonique, README, `copier.yml` et smoke-test.
 - Aucun changement sur les autres skills intentionnels.
 - Validation associée : `check-dogfood-drift.sh`, `check-shims.sh`, `check-ai-references.sh`, smoke-test PASS.
+## 2026-05-06 — freshness
+- Intent : documenter l'ajout de `aic-document-feature` dans la surface intentionnelle et le remplacement des anciens verbes CLI.
+- Validation : couvert par `check-features` et `tests/smoke-test.sh`.

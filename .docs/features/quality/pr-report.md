@@ -9,10 +9,10 @@ depends_on:
 touches:
   - .ai/scripts/pr-report.sh
   - .ai/scripts/review-delta.sh
-  - .ai/scripts/ai-context.sh
+  - .ai/scripts/aic.sh
   - template/.ai/scripts/pr-report.sh.jinja
   - template/.ai/scripts/review-delta.sh.jinja
-  - template/.ai/scripts/ai-context.sh.jinja
+  - template/.ai/scripts/aic.sh.jinja
   - tests/unit/test-review-delta-shared.sh
 touches_shared:
   - README.md
@@ -21,9 +21,9 @@ touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "ai-context expose mission/document-delta/repair/ship-report"
+  step: "aic expose frame/document-feature/review/ship"
   blockers: []
-  resume_hint: "ajouter une intégration CI (commentaire PR automatique) — passer en review une fois le wrapper ai-context-bot stabilisé"
+  resume_hint: "ajouter une intégration CI (commentaire PR automatique) — passer en review une fois la surface aic stabilisée"
   updated: 2026-04-28
 ---
 

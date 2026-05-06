@@ -17,3 +17,6 @@
 - Impact indirect : le nouveau skill documente les fiches feature sans modifier la posture agent ni le Pack A.
 - `legacy` y est traité comme scope custom seulement si le repo l'active.
 - Validation associée : `check-shims.sh`, smoke-test PASS.
+## 2026-05-06 — freshness
+- Intent : tracer l'impact Copier indirect sur la couche comportementale et `aic-diagnose`.
+- Validation : couvert par `check-shims`, `measure-context-size` et `tests/smoke-test.sh`.

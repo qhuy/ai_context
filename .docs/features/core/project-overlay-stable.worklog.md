@@ -13,3 +13,6 @@
 - Impact indirect : README, template README et `copier.yml` mentionnent le nouveau skill tout en conservant `.ai/project/index.md` optionnel.
 - `legacy` reste documenté comme scope custom activable par projet, pas comme scope template.
 - Validation associée : `check-ai-references.sh`, smoke-test PASS.
+## 2026-05-06 — freshness
+- Intent : tracer l'impact documentaire indirect sur README, Copier, upgrading et smoke pendant la canonisation `aic`.
+- Validation : couvert par `check-shims`, `check-ai-references` et `tests/smoke-test.sh`.

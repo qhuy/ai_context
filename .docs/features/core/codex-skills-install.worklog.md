@@ -43,3 +43,6 @@ feat(core): installer les skills Codex par défaut
 - Impact couvert : README, template Codex et smoke-test référencent le nouveau wrapper.
 - Aucun changement sur le mécanisme d'installation Codex hors ajout du skill.
 - Validation associée : `check-dogfood-drift.sh`, `check-shims.sh`, `check-ai-references.sh`, smoke-test PASS.
+## 2026-05-06 — freshness
+- Intent : tracer l'alignement README/CHANGELOG/smoke autour de la surface Codex `aic-*`, incluant `aic-document-feature`.
+- Validation : couvert par `check-features` et `tests/smoke-test.sh`.

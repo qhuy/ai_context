@@ -22,13 +22,13 @@ Pourquoi `--vcs-ref=HEAD` : Copier cible souvent le dernier tag publié par déf
 Sur un worktree sale, `copier update` refuse de démarrer. C'est sain pour éviter les merges implicites, mais pénible pour estimer l'effort. Utilise plutôt :
 
 ```bash
-bash .ai/scripts/ai-context.sh template-diff
+bash .ai/scripts/aic.sh template-diff
 ```
 
 La commande rend le template dans `/tmp`, liste les fichiers template à ajouter ou modifier, et ne modifie pas le projet courant. Tu peux cibler une source ou une ref précise :
 
 ```bash
-bash .ai/scripts/ai-context.sh template-diff --src-path gh:qhuy/ai_context --vcs-ref HEAD
+bash .ai/scripts/aic.sh template-diff --src-path gh:qhuy/ai_context --vcs-ref HEAD
 ```
 
 ## Réparer `.copier-answers.yml`
@@ -38,19 +38,19 @@ Si le projet a été scaffoldé sans `.copier-answers.yml`, Copier ne connaît p
 Preview :
 
 ```bash
-bash .ai/scripts/ai-context.sh repair-copier-metadata
+bash .ai/scripts/aic.sh repair-copier-metadata
 ```
 
 Écriture explicite :
 
 ```bash
-bash .ai/scripts/ai-context.sh repair-copier-metadata --apply
+bash .ai/scripts/aic.sh repair-copier-metadata --apply
 ```
 
 Si le projet vient d'une source ou d'un tag précis :
 
 ```bash
-bash .ai/scripts/ai-context.sh repair-copier-metadata --src-path gh:qhuy/ai_context --commit v0.11.0 --apply
+bash .ai/scripts/aic.sh repair-copier-metadata --src-path gh:qhuy/ai_context --commit v0.11.0 --apply
 ```
 
 La commande infère `project_name`, `docs_root`, le profil de scopes, les agents et le mode d'adoption depuis les fichiers présents. Relis le YAML proposé avant `--apply` si le projet a été fortement customisé.

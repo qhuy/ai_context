@@ -27,3 +27,6 @@
 ## 2026-05-06 — update
 - Étape [19/28] étendue pour vérifier `aic-document-feature` côté Claude/Codex et le workflow interne `document-feature`.
 - Validation prévue : `bash tests/smoke-test.sh`.
+## 2026-05-06 — freshness
+- Intent : documenter les assertions smoke ajoutées pour `aic.sh` et l'absence de l'ancien wrapper rendu.
+- Validation : `bash tests/smoke-test.sh` PASS.

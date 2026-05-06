@@ -137,113 +137,110 @@ if [[ "$inc_count" -ne 0 ]]; then
 fi
 echo "  ✓ pr-report.sh format=json + exclusions par défaut + --include-docs OK"
 rm -rf "$OUT/.git" "$OUT/README.md" "$OUT/src/sample.ts"
-# Wrapper ai-context.sh : --help liste les sous-commandes ; routage vers shims.
-if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "Commandes :"; then
-  echo "  ✗ ai-context.sh --help ne liste pas les commandes"
+# Wrapper aic.sh : --help liste la surface canonique ; routage vers scripts.
+aic_help=$( cd "$OUT" && bash .ai/scripts/aic.sh --help )
+if ! printf '%s' "$aic_help" | grep -q "Commandes utilisateur :"; then
+  echo "  ✗ aic.sh --help ne liste pas les commandes"
   exit 1
 fi
-if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "brief <path>"; then
-  echo "  ✗ ai-context.sh --help ne présente pas brief <path>"
+for expected in 'frame "<objectif>"' "status" 'diagnose ["symptôme"]' "document-feature [path]" "review" "ship" "product-status" "check-docs"; do
+  if ! printf '%s' "$aic_help" | grep -Fq "$expected"; then
+    echo "  ✗ aic.sh --help ne présente pas $expected"
+    exit 1
+  fi
+done
+for legacy in "first-run" 'mission "<objectif>"' "brief <path>" "document-delta" "ship-report"; do
+  if printf '%s' "$aic_help" | grep -Fq "$legacy"; then
+    echo "  ✗ aic.sh --help expose encore l'ancien nom $legacy"
+    exit 1
+  fi
+  if grep -Fq "$legacy" "$OUT/README_AI_CONTEXT.md"; then
+    echo "  ✗ README_AI_CONTEXT.md expose encore l'ancien nom $legacy"
+    exit 1
+  fi
+done
+if [[ -e "$OUT/.ai/scripts/ai-context.sh" ]]; then
+  echo "  ✗ ancien script .ai/scripts/ai-context.sh encore rendu"
   exit 1
 fi
-if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "first-run"; then
-  echo "  ✗ ai-context.sh --help ne présente pas first-run"
+if ! ( cd "$OUT" && bash .ai/scripts/aic.sh status ) | grep -q "Prochaine action minimale"; then
+  echo "  ✗ aic.sh status ne produit pas un état actionnable"
   exit 1
 fi
-if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q 'mission "<objectif>"'; then
-  echo "  ✗ ai-context.sh --help ne présente pas mission"
+frame_out=$( cd "$OUT" && bash .ai/scripts/aic.sh frame "préparer une feature back" )
+if ! printf '%s' "$frame_out" | grep -q "## AIC Frame"; then
+  echo "  ✗ aic.sh frame ne produit pas de cadrage"
   exit 1
 fi
-if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "ship-report"; then
-  echo "  ✗ ai-context.sh --help ne présente pas ship-report"
+if ! printf '%s' "$frame_out" | grep -q "Prochaine action minimale"; then
+  echo "  ✗ aic.sh frame ne propose pas de prochaine action"
   exit 1
 fi
-if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "product-status"; then
-  echo "  ✗ ai-context.sh --help ne présente pas product-status"
+diagnose_out=$( cd "$OUT" && bash .ai/scripts/aic.sh diagnose "ça bloque sur la reprise" )
+if ! printf '%s' "$diagnose_out" | grep -q "## AIC Diagnose"; then
+  echo "  ✗ aic.sh diagnose ne produit pas de diagnostic"
   exit 1
 fi
-if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh --help ) | grep -q "check-docs"; then
-  echo "  ✗ ai-context.sh --help ne présente pas check-docs"
+frame_product_out=$( cd "$OUT" && bash .ai/scripts/aic.sh frame "prioriser la roadmap produit" )
+if ! printf '%s' "$frame_product_out" | grep -q "Scope primaire probable :"; then
+  echo "  ✗ aic.sh frame product ne produit pas de scope"
   exit 1
 fi
-if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh status ) | grep -q "Prochaine action minimale"; then
-  echo "  ✗ ai-context.sh status ne produit pas un état actionnable"
+if ! printf '%s' "$frame_product_out" | grep -A1 "Scope primaire probable :" | grep -q "product"; then
+  echo "  ✗ aic.sh frame classe mal une demande produit"
   exit 1
 fi
-first_run_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh first-run )
-if ! printf '%s' "$first_run_out" | grep -q "## First Run"; then
-  echo "  ✗ ai-context.sh first-run ne produit pas de parcours de démarrage"
-  exit 1
-fi
-if ! printf '%s' "$first_run_out" | grep -q "première tâche"; then
-  echo "  ✗ ai-context.sh first-run ne propose pas de prochaine action"
-  exit 1
-fi
-mission_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh mission "préparer une feature back" )
-if ! printf '%s' "$mission_out" | grep -q "## Mission Brief"; then
-  echo "  ✗ ai-context.sh mission ne produit pas de brief"
-  exit 1
-fi
-mission_product_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh mission "prioriser la roadmap produit" )
-if ! printf '%s' "$mission_product_out" | grep -q "Scope primaire probable :"; then
-  echo "  ✗ ai-context.sh mission product ne produit pas de scope"
-  exit 1
-fi
-if ! printf '%s' "$mission_product_out" | grep -A1 "Scope primaire probable :" | grep -q "product"; then
-  echo "  ✗ ai-context.sh mission classe mal une demande produit"
-  exit 1
-fi
-repair_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh repair )
+repair_out=$( cd "$OUT" && bash .ai/scripts/aic.sh repair )
 if ! printf '%s' "$repair_out" | grep -q "## Repair Plan"; then
-  echo "  ✗ ai-context.sh repair ne produit pas de plan"
+  echo "  ✗ aic.sh repair ne produit pas de plan"
   exit 1
 fi
-repair_copier_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh repair-copier-metadata )
+repair_copier_out=$( cd "$OUT" && bash .ai/scripts/aic.sh repair-copier-metadata )
 if ! printf '%s' "$repair_copier_out" | grep -q "## Copier Metadata Repair"; then
-  echo "  ✗ ai-context.sh repair-copier-metadata ne produit pas de plan"
+  echo "  ✗ aic.sh repair-copier-metadata ne produit pas de plan"
   exit 1
 fi
 if ! printf '%s' "$repair_copier_out" | grep -q "_src_path:"; then
-  echo "  ✗ ai-context.sh repair-copier-metadata ne propose pas _src_path"
+  echo "  ✗ aic.sh repair-copier-metadata ne propose pas _src_path"
   exit 1
 fi
-template_diff_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh template-diff --src-path "$REPO" --vcs-ref HEAD )
+template_diff_out=$( cd "$OUT" && bash .ai/scripts/aic.sh template-diff --src-path "$REPO" --vcs-ref HEAD )
 if ! printf '%s' "$template_diff_out" | grep -q "## Template Diff"; then
-  echo "  ✗ ai-context.sh template-diff ne produit pas de rapport"
+  echo "  ✗ aic.sh template-diff ne produit pas de rapport"
   exit 1
 fi
 if ! printf '%s' "$template_diff_out" | grep -q "repo courant modifié: non"; then
-  echo "  ✗ ai-context.sh template-diff ne garantit pas la preview externe"
+  echo "  ✗ aic.sh template-diff ne garantit pas la preview externe"
   exit 1
 fi
-document_delta_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh document-delta )
-if ! printf '%s' "$document_delta_out" | grep -q "## Document Delta"; then
-  echo "  ✗ ai-context.sh document-delta ne produit pas de rapport"
+document_feature_out=$( cd "$OUT" && bash .ai/scripts/aic.sh document-feature )
+if ! printf '%s' "$document_feature_out" | grep -q "## AIC Document Feature"; then
+  echo "  ✗ aic.sh document-feature ne produit pas de rapport"
   exit 1
 fi
-ship_report_out=$( cd "$OUT" && bash .ai/scripts/ai-context.sh ship-report )
-if ! printf '%s' "$ship_report_out" | grep -q "## AI Context Ship Report"; then
-  echo "  ✗ ai-context.sh ship-report ne produit pas de rapport"
+ship_out=$( cd "$OUT" && bash .ai/scripts/aic.sh ship )
+if ! printf '%s' "$ship_out" | grep -q "## AIC Ship"; then
+  echo "  ✗ aic.sh ship ne produit pas de rapport"
   exit 1
 fi
-product_status_empty=$( cd "$OUT" && bash .ai/scripts/ai-context.sh product-status )
+product_status_empty=$( cd "$OUT" && bash .ai/scripts/aic.sh product-status )
 if ! printf '%s' "$product_status_empty" | grep -q "## Product Status"; then
-  echo "  ✗ ai-context.sh product-status ne produit pas de rapport"
+  echo "  ✗ aic.sh product-status ne produit pas de rapport"
   exit 1
 fi
-if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh shims ) >/dev/null 2>&1; then
-  echo "  ✗ ai-context.sh shims (alias check-shims) échoue"
+if ! ( cd "$OUT" && bash .ai/scripts/aic.sh shims ) >/dev/null 2>&1; then
+  echo "  ✗ aic.sh shims (alias check-shims) échoue"
   exit 1
 fi
-if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh review --help ) | grep -q "Review Delta"; then
-  echo "  ✗ ai-context.sh review ne route pas vers review-delta"
+if ! ( cd "$OUT" && bash .ai/scripts/aic.sh review --help ) | grep -q "Review Delta"; then
+  echo "  ✗ aic.sh review ne route pas vers review-delta"
   exit 1
 fi
-if ( cd "$OUT" && bash .ai/scripts/ai-context.sh inexistant ) >/dev/null 2>&1; then
-  echo "  ✗ ai-context.sh accepte une commande inconnue"
+if ( cd "$OUT" && bash .ai/scripts/aic.sh inexistant ) >/dev/null 2>&1; then
+  echo "  ✗ aic.sh accepte une commande inconnue"
   exit 1
 fi
-echo "  ✓ ai-context.sh wrapper OK"
+echo "  ✓ aic.sh wrapper OK"
 
 echo
 echo "[3/28] pre-turn-reminder (text + json)"
@@ -352,8 +349,8 @@ if ! ( cd "$OUT" && bash .ai/scripts/check-feature-docs.sh --strict back/doc-com
   ( cd "$OUT" && bash .ai/scripts/check-feature-docs.sh --strict back/doc-complete )
   exit 1
 fi
-if ! ( cd "$OUT" && bash .ai/scripts/ai-context.sh check-docs --strict back/doc-complete ) >/dev/null 2>&1; then
-  echo "  ✗ ai-context.sh check-docs ne route pas vers check-feature-docs"
+if ! ( cd "$OUT" && bash .ai/scripts/aic.sh check-docs --strict back/doc-complete ) >/dev/null 2>&1; then
+  echo "  ✗ aic.sh check-docs ne route pas vers check-feature-docs"
   exit 1
 fi
 rm "$OUT/.docs/features/back/doc-complete.md"
@@ -475,28 +472,28 @@ if ! printf '%s' "$hook_ctx" | grep -q 'Contexte partagé attendu'; then
   exit 1
 fi
 echo "  ✓ hook injecte fiche directe + depends_on"
-brief_ctx=$( cd "$OUT" && bash .ai/scripts/ai-context.sh brief src/foo.ts )
-if ! printf '%s' "$brief_ctx" | grep -q 'Contexte direct attendu'; then
-  echo "  ✗ ai-context.sh brief n'expose pas le contexte feature"
+document_feature_ctx=$( cd "$OUT" && bash .ai/scripts/aic.sh document-feature src/foo.ts )
+if ! printf '%s' "$document_feature_ctx" | grep -q 'Contexte direct attendu'; then
+  echo "  ✗ aic.sh document-feature <path> n'expose pas le contexte feature"
   exit 1
 fi
-echo "  ✓ ai-context.sh brief expose le contexte feature"
+echo "  ✓ aic.sh document-feature <path> expose le contexte feature"
 if ! ( cd "$OUT" && bash .ai/scripts/check-product-links.sh --strict ) >/dev/null 2>&1; then
   echo "  ✗ check-product-links --strict échoue sur un product mesh sain"
   ( cd "$OUT" && bash .ai/scripts/check-product-links.sh --strict )
   exit 1
 fi
-product_status=$( cd "$OUT" && bash .ai/scripts/ai-context.sh product-status )
+product_status=$( cd "$OUT" && bash .ai/scripts/aic.sh product-status )
 if ! printf '%s' "$product_status" | grep -q "product/activation-test"; then
   echo "  ✗ product-status ne liste pas l'initiative product"
   exit 1
 fi
-product_portfolio=$( cd "$OUT" && bash .ai/scripts/ai-context.sh product-portfolio )
+product_portfolio=$( cd "$OUT" && bash .ai/scripts/aic.sh product-portfolio )
 if ! printf '%s' "$product_portfolio" | grep -q "Product Traceability"; then
   echo "  ✗ product-portfolio ne produit pas de rapport"
   exit 1
 fi
-product_review=$( cd "$OUT" && bash .ai/scripts/ai-context.sh product-review product/activation-test )
+product_review=$( cd "$OUT" && bash .ai/scripts/aic.sh product-review product/activation-test )
 if ! printf '%s' "$product_review" | grep -q "Décision recommandée"; then
   echo "  ✗ product-review ne produit pas de décision"
   exit 1

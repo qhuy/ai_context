@@ -20,7 +20,7 @@ Ce projet a été scaffoldé depuis le template [`ai_context`](https://github.co
    ```
 6. Lancer le parcours de démarrage :
    ```bash
-   bash .ai/scripts/ai-context.sh first-run
+   bash .ai/scripts/aic.sh frame "première tâche"
    ```
 
 ## Agents activés
@@ -70,15 +70,15 @@ Les réponses déjà données sont relues depuis `.copier-answers.yml`. Tu contr
 Si `.copier-answers.yml` manque ou ne contient pas `_src_path` / `_commit` :
 
 ```bash
-bash .ai/scripts/ai-context.sh repair-copier-metadata
+bash .ai/scripts/aic.sh repair-copier-metadata
 # relire la proposition, puis :
-bash .ai/scripts/ai-context.sh repair-copier-metadata --apply
+bash .ai/scripts/aic.sh repair-copier-metadata --apply
 ```
 
 Pour prévisualiser une update sans toucher au repo courant, même si le worktree est sale :
 
 ```bash
-bash .ai/scripts/ai-context.sh template-diff
+bash .ai/scripts/aic.sh template-diff
 ```
 
 ## Runtime
@@ -92,21 +92,21 @@ bash .ai/scripts/ai-context.sh template-diff
 
 | Intention | Commande |
 |---|---|
-| Démarrer après scaffold | `bash .ai/scripts/ai-context.sh first-run` |
-| Cadrer une mission | `bash .ai/scripts/ai-context.sh mission "<objectif>"` |
-| Voir où j'en suis | `bash .ai/scripts/ai-context.sh status` |
-| Préparer une édition avec Codex | `bash .ai/scripts/ai-context.sh brief <path>` |
-| Vérifier les docs du delta | `bash .ai/scripts/ai-context.sh document-delta` |
+| Cadrer avant action | Claude : `/aic-frame` ; CLI : `bash .ai/scripts/aic.sh frame "<objectif>"` |
+| Voir où j'en suis | `bash .ai/scripts/aic.sh status` |
+| Diagnostiquer un blocage | Claude : `/aic-diagnose` ; CLI : `bash .ai/scripts/aic.sh diagnose "<symptôme>"` |
+| Préparer une édition avec Codex | `bash .ai/scripts/aic.sh document-feature <path>` |
+| Vérifier les docs du delta | `bash .ai/scripts/aic.sh document-feature` |
 | Documenter une feature | Claude : `/aic-document-feature` ; Codex : skill local `aic-document-feature` ou langage naturel |
-| Réparer le mesh | `bash .ai/scripts/ai-context.sh repair` |
-| Réparer les métadonnées Copier | `bash .ai/scripts/ai-context.sh repair-copier-metadata` |
-| Prévisualiser le template | `bash .ai/scripts/ai-context.sh template-diff` |
-| Relire mon delta | `bash .ai/scripts/ai-context.sh review` |
-| Préparer le ship | `bash .ai/scripts/ai-context.sh ship-report` |
-| Tracer les initiatives produit | `bash .ai/scripts/ai-context.sh product-status` puis `bash .ai/scripts/ai-context.sh product-portfolio` |
-| Vérifier avant commit | `bash .ai/scripts/ai-context.sh doctor` puis `bash .ai/scripts/ai-context.sh check` |
+| Réparer le mesh | `bash .ai/scripts/aic.sh repair` |
+| Réparer les métadonnées Copier | `bash .ai/scripts/aic.sh repair-copier-metadata` |
+| Prévisualiser le template | `bash .ai/scripts/aic.sh template-diff` |
+| Relire mon delta | `bash .ai/scripts/aic.sh review` |
+| Préparer le ship | `bash .ai/scripts/aic.sh ship` |
+| Tracer les initiatives produit | `bash .ai/scripts/aic.sh product-status` puis `bash .ai/scripts/aic.sh product-portfolio` |
+| Vérifier avant commit | `bash .ai/scripts/aic.sh doctor` puis `bash .ai/scripts/aic.sh check` |
 
-Claude reçoit le contexte feature automatiquement via hooks. Codex et les autres agents peuvent cadrer avec `mission`, obtenir le même contexte juste-à-temps avec `brief <path>` avant d'éditer, puis vérifier la sortie avec `document-delta` et `ship-report`.
+Claude reçoit le contexte feature automatiquement via hooks. Codex et les autres agents peuvent cadrer avec `frame`, obtenir le même contexte juste-à-temps avec `document-feature <path>` avant d'éditer, puis vérifier la sortie avec `document-feature` et `ship`.
 
 ## Checks
 
