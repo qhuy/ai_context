@@ -67,7 +67,7 @@ Restaurer la sémantique de `progress.updated` comme « date du dernier change r
 
 ### Granularité / nommage
 
-Cette fiche couvre **uniquement** le hook Stop / auto-worklog-flush. Le filtre de transition de phase est dans une fiche distincte (Phase 2 #4) car il touche un autre script (`auto-progress.sh`).
+Cette fiche couvre l'idempotence auto-worklog côté Stop, avec **implémentation préférée dans le logger PostToolUse** (`auto-worklog-log.sh`, option a) et **option alternative dans le flush Stop** (`auto-worklog-flush.sh`, option b). Titre `stop-hook-idempotence` conservé : objectif final = idempotence visible côté Stop, peu importe où le filtrage est appliqué en amont. Le filtre de transition de phase est dans une fiche distincte (`workflow/auto-progress-file-filter`, Phase 2 #4) car il touche un autre script (`auto-progress.sh`).
 
 ## Invariants
 
