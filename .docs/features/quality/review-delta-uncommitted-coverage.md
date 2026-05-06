@@ -66,11 +66,14 @@ Cette fiche couvre l'outil de review pre-commit ; pas la pertinence d'injection 
 
 ## Décisions
 
-Ouvertes, à arbitrer en phase implement :
+Tranchées post cross-check Codex 2026-05-07 :
 
-- **Approche A** : étendre `review-delta.sh` pour gérer `HEAD..working tree` par défaut, avec flag `--committed-only` pour l'ancien comportement. Un seul outil cohérent.
-- **Approche B** : créer un script séparé `review-delta-uncommitted.sh` et l'invoquer en plus dans `aic-review`. Plus simple à versionner mais double surface.
-- Approche A préférée par défaut (un seul outil cohérent) ; à confirmer après lecture détaillée du code actuel.
+- **Approche A confirmée** : étendre `review-delta.sh` pour couvrir committed + uncommitted par défaut. Flag `--committed-only` préserve l'ancien comportement. Approche B (script séparé) rejetée : un seul outil cohérent, blast radius limité.
+- **Compat parsabilité** : la nouvelle section uncommitted s'**ajoute** au format de sortie sans modifier la portion existante. Un consommateur qui parsait l'ancienne sortie peut ignorer la nouvelle section sans casser.
+- **Source de vérité uncommitted** = `git status --short --untracked-files=all`. Pas `git diff HEAD` qui rate les untracked. `git status` est la liste canonique des paths.
+- **Libellé section committed** : « Delta committed reference » (pas « Delta committed (HEAD~1..HEAD) »). Ne pas figer la base de comparaison comme contrat.
+- **Features impactées** : garder `features_matching_path` direct (déjà utilisé par `review-delta.sh`). **Ne pas migrer** vers `features-for-path.sh` — évite mélange avec Phase 2 #2. Mode best-effort, warning si matcher incertain.
+- **Tests** : unit-test dédié `tests/unit/test-review-delta-uncommitted.sh`, 5 cas. Pas de gonflement de `smoke-test.sh`.
 
 ## Comportement attendu
 
