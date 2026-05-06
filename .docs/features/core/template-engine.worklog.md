@@ -117,3 +117,7 @@
 - Impact couvert : templates skill/workflow et README template synchronisés avec le rendu runtime.
 - Aucun changement sur le moteur Copier/Jinja lui-même.
 - Validation associée : `check-dogfood-drift.sh`, smoke-test PASS.
+
+## 2026-05-06 — freshness README
+- Intent : verifier que le README simplifié conserve les informations Copier critiques : scaffold, migration, update, profils et modes d'adoption.
+- Validation : `check-ai-references`, `check-features`.

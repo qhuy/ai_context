@@ -46,3 +46,7 @@ feat(core): installer les skills Codex par défaut
 ## 2026-05-06 — freshness
 - Intent : tracer l'alignement README/CHANGELOG/smoke autour de la surface Codex `aic-*`, incluant `aic-document-feature`.
 - Validation : couvert par `check-features` et `tests/smoke-test.sh`.
+
+## 2026-05-06 — freshness README
+- Intent : verifier que le README repositionné décrit correctement les skills Codex locaux `aic-*`.
+- Validation : `check-ai-references`, `check-features`.

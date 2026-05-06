@@ -11,3 +11,7 @@
 - Décision : `aic-document-feature` est expose comme intention officielle ; `diagnose` evite le faux positif `adr` sur `cadrage`.
 - Validation : `bash -n`, `aic.sh --help`, `aic.sh frame`, `aic.sh diagnose`, `aic.sh document-feature`, `check-shims`, `check-ai-references`, `check-features`, `check-feature-docs core/aic-surface-canonical`, `check-feature-coverage`, `measure-context-size`, `tests/smoke-test.sh`.
 - Next : relire le delta puis commit dedie du sous-chantier si le scope convient.
+
+## 2026-05-06 — freshness README
+- Intent : verifier que la réécriture README conserve la surface canonique `aic` sans réintroduire d'ancien alias public.
+- Validation : `check-ai-references`, `check-feature-docs product/readme-positioning`.
