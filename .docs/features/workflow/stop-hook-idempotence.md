@@ -49,10 +49,12 @@ Restaurer la sémantique de `progress.updated` comme « date du dernier change r
 
 ### Inclus
 
-- Lire le code actuel de `auto-worklog-flush.sh` et identifier le point de décision « écrire ou pas ».
-- Définir le critère « tour sans édit structurel » : zéro fichier édité dans le tour ne matche un `touches:` direct de la feature ciblée. Pareil que le filtre de `workflow/auto-progress-file-filter`, mais appliqué à l'écriture worklog plutôt qu'à la transition de phase.
-- Implémenter le no-op : si aucun édit structurel, ne pas écrire dans le worklog. Idem pour le bump `progress.updated`.
-- Tests reproductibles : tour purement conversationnel → no-op ; tour avec lecture seule → no-op ; tour avec édit `.md` seul → no-op ; tour avec édit fichier source → write+bump.
+- Filtrer **après** `features_matching_path` les fichiers par extension structurelle. Deux options de placement :
+  - (a) dans `auto-worklog-log.sh` : ne pas alimenter `.ai/.session-edits.log` pour les fichiers non-structurels (préféré, court-circuite le flush sans toucher la logique).
+  - (b) dans `auto-worklog-flush.sh` : filtrer la liste avant `printf` (plus tardif mais plus localisé).
+- Définir la liste « non-structurelle » : par défaut `.md`, `.txt`, `.lock`. À discuter pour `.json`, `.yml`.
+- Tests reproductibles : édit fiche feature seule → no-op ; édit README seul (s'il est dans `touches:` d'une fiche) → no-op ; édit fichier source structurel → write+bump ; édit mix structurel+non-structurel → write+bump (au moins un fichier passe, conservateur).
+- Tests de non-régression : tour conversationnel → toujours no-op (déjà le cas) ; tour lecture seule → toujours no-op (déjà le cas) ; tour avec édit hors `touches:` direct → toujours no-op (déjà le cas).
 - Documentation du comportement dans le workflow associé.
 
 ### Hors périmètre
