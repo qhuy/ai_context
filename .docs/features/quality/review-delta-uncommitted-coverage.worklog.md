@@ -9,3 +9,13 @@
 - Décision Phase 2 : positionnée en #1 selon convergence Claude/Codex round 2 (egress > injection sur faux feu vert), avant `quality/features-for-path-ranking-and-matcher-correctness`.
 - Approche par défaut envisagée : étendre `review-delta.sh` pour couvrir `HEAD..working tree` avec sections committed/uncommitted séparées dans la sortie.
 - Next : à reprendre dans un turn dédié pour passer en `status: active`, lire le code complet de `review-delta.sh`, arbitrer A vs B, implémenter, ajouter test reproductible.
+
+## 2026-05-07 — cross-check Codex pre-implémentation
+- Avant de coder, Codex challengé sur 5 choix d'implémentation. 4 corrections actées :
+  1. **Approche A confirmée** + compat parsabilité stricte (section uncommitted s'ajoute en suffixe, format committed inchangé, `--committed-only` restaure l'ancien comportement).
+  2. **Source de vérité uncommitted** = `git status --short --untracked-files=all`. Pas `git diff HEAD` qui rate les untracked.
+  3. **Libellé section** : « Delta committed reference », pas « Delta committed (HEAD~1..HEAD) ». Ne pas figer la base comme contrat.
+  4. **Features impactées** : garder `features_matching_path` direct (déjà utilisé). Pas de migration vers `features-for-path.sh` dans ce scope (évite mélange Phase 2 #1 + #2). Mode best-effort, warning sans fail hard.
+  5. **Tests** : unit-test dédié `tests/unit/test-review-delta-uncommitted.sh`, 5 cas (tracked modifié, staged, untracked, deletion, `--committed-only`).
+- Fiche mise à jour : phase=implement, step et resume_hint alignés. Décisions tranchées remplacent les questions ouvertes. Comportement attendu, Contrats, Validation, Risques reformulés.
+- Next : implémenter dans un turn dédié (ce turn ou le suivant), avec code dans `review-delta.sh` et test dans `tests/unit/`.
