@@ -14,7 +14,7 @@ progress:
   step: "skills Claude maintenus hors contexte Codex obligatoire"
   blockers: []
   resume_hint: "valider que les workflows internes restent accessibles sans être chargés par défaut"
-  updated: 2026-05-04
+  updated: 2026-05-06
 ---
 
 # Claude skills /aic*
@@ -48,7 +48,7 @@ Exposer côté Claude uniquement les intentions lisibles, et déplacer les étap
 | `feature-audit` | Rétro-doc / re-sync d'une fiche vs code réel | Backend ponctuel de `/aic-review` ou maintenance mesh |
 | `document-feature` | Documentation complète d'une fiche feature | Backend de `/aic-document-feature`, partagé avec Codex |
 | `quality-gate` | Check go/no-go déterministe | Backend de `/aic-ship` |
-| `feature-done` | Clôture (evidence + status done) | `/aic force done` ou auto-progression V2 (pas encore implémentée) |
+| `feature-done` | Clôture (quality gate + evidence + status done) | `/aic done`, `/aic force done` ou auto-progression V2 (pas encore implémentée) |
 | `project-guardrails` | Non-goals + glossaire métier | `/aic-frame` quand un cadrage projet est nécessaire |
 
 ## Contrats
@@ -75,3 +75,4 @@ Exposer côté Claude uniquement les intentions lisibles, et déplacer les étap
 - **2026-05-04** — Lean Codex : `.claude/skills/**` et `.ai/workflows/**` restent disponibles mais explicitement hors Pack A. `context-ignore.md` documente cette exclusion pour les agents non-Claude.
 - **2026-05-04** — Les workflows internes référencent désormais `check-feature-docs.sh` et son strict ciblé. La surface skill publique ne change pas : l'usage reste intentionnel via `/aic-frame`, `/aic-review` et `/aic-ship`.
 - **2026-05-06** — Ajout de `/aic-document-feature` comme skill public Claude. Il pointe vers `.ai/workflows/document-feature.md` et reste générique, avec `legacy` documenté comme scope custom non scaffoldé.
+- **2026-05-06** — Alignement sécurité : `/aic done` et `/aic force done` délèguent à `feature-done` au lieu de patcher directement `status: done`, afin de préserver quality gate, build/tests et docs strictes.

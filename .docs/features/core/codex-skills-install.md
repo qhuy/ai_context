@@ -29,7 +29,7 @@ progress:
   step: ""
   blockers: []
   resume_hint: "feature clôturée le 2026-05-04"
-  updated: "2026-05-04"
+  updated: 2026-05-06
 ---
 
 # Installer les skills Codex avec ai_context
@@ -48,6 +48,7 @@ Réduire la friction d'usage dans Codex : les workflows `.ai/workflows/*` resten
 
 - Ajouter une arborescence template `.agents/skills/`.
 - Couvrir les gestes Codex équivalents aux workflows existants.
+- Étiqueter les primitives procédurales comme internes/fallback pour préserver l'UX intentionnelle.
 - Adapter les tests smoke pour vérifier leur présence.
 - Documenter le comportement attendu.
 
@@ -61,6 +62,7 @@ Réduire la friction d'usage dans Codex : les workflows `.ai/workflows/*` resten
 
 - `.ai/workflows/*` reste la source procédurale partagée.
 - Les skills Codex doivent être des wrappers minces et alignés avec les workflows existants.
+- Les wrappers `aic-feature-*` et `aic-quality-gate` restent disponibles uniquement comme fallback explicite ; l'usage recommandé passe par `aic-frame`, `aic-status`, `aic-review`, `aic-ship`, `aic-document-feature` ou le langage naturel.
 - L'installation Claude existante sous `.claude/skills` doit rester intacte.
 
 ## Décisions
@@ -106,7 +108,7 @@ Déploiement par release du template Copier. Rollback : retirer `codex` de `agen
 ## Risques
 
 - Divergence entre wrappers Claude, wrappers Codex et workflows `.ai/workflows`.
-- Surface de skills trop large si des procédures internes sont exposées par erreur.
+- Surface de skills trop large si des procédures internes sont perçues comme UX principale.
 
 ## Cross-refs
 
@@ -118,3 +120,4 @@ Aucune dépendance déclarée.
 - 2026-05-04 : ajout des wrappers `.agents/skills` conditionnés par l'agent `codex`.
 - 2026-05-06 : alignement dogfood local : les skills Codex rendus sont synchronisés dans `.agents/skills/` et contrôlés par `check-dogfood-drift.sh`.
 - 2026-05-06 : ajout du wrapper Codex `aic-document-feature`, aligné avec le workflow partagé `.ai/workflows/document-feature.md`.
+- 2026-05-06 : les primitives Codex `aic-feature-*` et `aic-quality-gate` sont conservées mais marquées `Primitive interne/fallback` dans leurs descriptions.

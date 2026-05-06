@@ -26,7 +26,7 @@ progress:
   step: "proposition validable dogfoodée dans le template"
   blockers: []
   resume_hint: "Relire la propagation template/runtime puis clôturer si les checks passent."
-  updated: "2026-05-04"
+  updated: 2026-05-06
 ---
 
 # Validation explicite avant création et développement feature

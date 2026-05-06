@@ -90,7 +90,8 @@ Zero-arg, dump des buckets EN COURS / BLOQUÉES / STALE. Conservé tel quel (zé
 |---|---|
 | Bump `progress.updated`, append worklog | **Applique silencieusement** (déjà le cas via auto-worklog) |
 | Bump `progress.phase`, `progress.step` | **Applique + rapporte** dans la ligne d'état |
-| Bascule `status: draft → active`, `active → done` | **Applique + rapporte** explicitement |
+| Bascule `status: draft → active` | **Applique + rapporte** explicitement |
+| Bascule `active → done` | **Passe par `feature-done`** : quality gate, build/tests et docs strictes obligatoires |
 | Édition de fichiers code | **Applique** (mode normal Claude Code) |
 | Création d'une fiche feature | **Annonce avant** (« je crée `workflow/X` »), pas de question si intent clair |
 | `git commit` | **Propose + attend "go"** (irréversible) |
@@ -173,3 +174,4 @@ Le skill `/aic` (mode override) reste Claude-only — acceptable : c'est un mode
 - **2026-04-27** — Intégration incrémentale de `.ai/config.yml` dans `resume-features.sh` : le seuil STALE devient configurable via `progress.stale_after_days` (fallback 14j). Smoke-test enrichi pour valider l'override (`stale_after_days: 0` ⇒ bucket STALE inclut `back/inprog`).
 - **2026-04-28** — `_message_after_copy` étendu pour exposer `/aic-project-guardrails` comme étape recommandée post-scaffold (étape 4 dans la liste numérotée + entrée dans la table « Commandes exposées »). N'invalide pas la philosophie « 0 skill par défaut au quotidien » : ce nouveau skill est explicitement positionné comme **1-2 fois dans la vie d'un projet** (bootstrap + révisions ponctuelles), pas un geste récurrent. Voir `workflow/project-guardrails`.
 - **2026-05-03** — Audit post-commits : `template/AGENTS.md.jinja` redevient un shim mince. Les détails runtime multi-agents sont conservés dans `.ai/index.md` et les docs, pour préserver l'UX zéro skill sans casser `check-shims`.
+- **2026-05-06** — Resserage `/aic done` : l'override ne patche plus directement `status: done`. Il délègue à `.ai/workflows/feature-done.md` et conserve l'evidence obligatoire (quality gate, build/tests, docs strictes).

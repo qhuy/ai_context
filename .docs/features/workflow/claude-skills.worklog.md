@@ -20,3 +20,14 @@
 - Ajout du skill public Claude `/aic-document-feature`.
 - Le wrapper reste mince (`SKILL.md` + `workflow.md`) et délègue à `.ai/workflows/document-feature.md`.
 - Validation prévue : `check-dogfood-drift.sh`, `check-shims.sh`, `check-features.sh`, smoke-test.
+
+## 2026-05-06 21:57 — update
+- Intent : aligner le catalogue public avec les garde-fous DONE.
+- Changement : `/aic done` et `/aic force done` passent par `feature-done` avec quality gate et evidence.
+- Validation : incluse dans la passe `workflow/intentional-skills`.
+
+## 2026-05-06 22:46 — auto
+- Fichiers modifiés :
+  - template/.claude/skills/aic-frame/workflow.md.jinja
+  - template/.claude/skills/aic-ship/SKILL.md.jinja
+  - template/.claude/skills/aic-status/SKILL.md.jinja

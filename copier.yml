@@ -106,9 +106,9 @@ _message_after_copy: |
 
   Si Codex est sélectionné, les wrappers locaux sont générés sous .agents/skills/.
   Les primitives procédurales restent canoniques sous .ai/workflows/ ; Codex reçoit
-  aussi des skills minces aic-feature-* / aic-quality-gate qui pointent vers ces
-  workflows. Claude garde une surface plus intentionnelle : frame, status, diagnose,
-  document-feature, review, ship.
+  aussi des skills minces aic-feature-* / aic-quality-gate, marqués internes/fallback,
+  qui pointent vers ces workflows. Claude garde une surface plus intentionnelle :
+  frame, status, diagnose, document-feature, review, ship.
 
   Env vars utiles :
     AI_CONTEXT_DEBUG=1            → logs debug des hooks

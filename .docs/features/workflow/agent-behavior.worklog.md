@@ -20,3 +20,8 @@
 ## 2026-05-06 — freshness
 - Intent : tracer l'impact Copier indirect sur la couche comportementale et `aic-diagnose`.
 - Validation : couvert par `check-shims`, `measure-context-size` et `tests/smoke-test.sh`.
+
+## 2026-05-06 22:50 — freshness
+- Impact indirect : `copier.yml` mis à jour pendant le durcissement post-cross-check (round 4 workflow/intentional-skills).
+- Aucun changement sur la posture agent ni le Pack A.
+- Validation associée : `check-feature-freshness.sh` (staged) PASS attendu.

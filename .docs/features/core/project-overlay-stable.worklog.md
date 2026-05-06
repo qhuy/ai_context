@@ -20,3 +20,8 @@
 ## 2026-05-06 — freshness README
 - Intent : verifier que le README conserve la règle `.ai/project/index.md` comme overlay project-owned et on-demand.
 - Validation : `check-ai-references`, `check-features`.
+
+## 2026-05-06 22:50 — freshness
+- Impact indirect : `copier.yml` mis à jour pendant le durcissement post-cross-check (round 4 workflow/intentional-skills).
+- Aucun changement sur le contrat `.ai/project/**` ni sur l'overlay projet.
+- Validation associée : `check-feature-freshness.sh` (staged) PASS attendu.

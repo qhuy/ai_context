@@ -47,3 +47,8 @@
 ## 2026-05-06 — freshness
 - Intent : tracer l'impact Copier indirect pendant la canonisation de la surface `aic`.
 - Validation : couvert par `check-features` et `tests/smoke-test.sh`.
+
+## 2026-05-06 22:50 — freshness
+- Impact indirect : `copier.yml` ajoute la mention « internes/fallback » des wrappers Codex pendant le durcissement post-cross-check (round 4 workflow/intentional-skills).
+- Aucun changement sur les squelettes DS ni sur les fichiers générés associés.
+- Validation associée : `check-feature-freshness.sh` (staged) PASS attendu.

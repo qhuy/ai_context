@@ -4,7 +4,7 @@
 
 **Contexte** : depuis `workflow/conversational-skills` v3, le système est en auto-progression par défaut. L'humain prompte librement sans préfixe ; le hook `Stop` bascule les phases et le worklog se remplit tout seul. `/aic` n'est utile QUE quand ce comportement automatique doit être corrigé ou forcé.
 
-**Skill chain** : aucune — `/aic` est terminal (action ou undo, puis STOP).
+**Skill chain** : aucune pour les overrides simples. Exception : une demande `done` délègue à `.ai/workflows/feature-done.md` et STOP si l'evidence manque.
 
 ## MODES
 
@@ -32,7 +32,7 @@ Exemples valides :
 - `/aic marque ça en blocked, j'attends la spec backend` → met `progress.blockers`
 - `/aic je rouvre feature-mesh pour ajouter status stable` → réouverture + phase
 - `/aic handoff vers quality` → émet HANDOFF vers autre scope
-- `/aic force done` → passe `status: done` sans attendre l'inférence evidence
+- `/aic force done` → demande une clôture via `.ai/workflows/feature-done.md` avec evidence obligatoire
 
 1. **Résoudre la cible** :
    - Si un `<scope>/<id>` est cité explicitement → l'utiliser.
@@ -47,7 +47,7 @@ Exemples valides :
    | « blocked / bloqué / j'attends » | ajouter entrée `progress.blockers` + mettre à jour `resume_hint` |
    | « rouvre / réouvre » | `status: active` + phase régressive |
    | « handoff vers X » | émettre HANDOFF formel + update fiche cible |
-   | « done / livré / fini » | forcer `status: done` (skippe l'inférence evidence) |
+   | « done / livré / fini » | lancer `.ai/workflows/feature-done.md` ; NO-GO si evidence build/tests/docs absente |
    | « archive / deprecated » | bump `status` correspondant |
 
 3. **Afficher un plan** (1-3 lignes) :
@@ -62,9 +62,8 @@ Exemples valides :
 4. **Attendre confirmation "go"** (ou variante : "ok", "oui", "y").
 5. Sur confirmation :
    - Snapshot dans `.ai/.progress-history.jsonl` (même format que le hook Stop).
-   - Patcher le frontmatter via awk (même pattern que `auto-progress.sh`).
-   - Appender au worklog une ligne `## <ts> — /aic override` décrivant l'action humaine.
-   - Rebuild l'index.
+  - Pour les intents hors `done` : patcher le frontmatter via awk (même pattern que `auto-progress.sh`), appender au worklog une ligne `## <ts> — /aic override`, puis rebuild l'index.
+  - Pour `done` : appliquer `.ai/workflows/feature-done.md` ; ne jamais modifier `status` directement.
 6. **Rapporter** dans la ligne d'état finale.
 
 ## NON-NEGOTIABLE RULES
@@ -74,6 +73,7 @@ Exemples valides :
 - **Ne jamais éditer le worklog à la main** — toujours par append conforme au format existant (`## <ts> — <source>`).
 - Si la phrase est ambiguë ou ne matche aucun intent du tableau → demander reformulation plutôt que deviner.
 - `/aic` ne doit jamais contourner les hard rules de `core/feature-mesh` : si `<scope>/<id>` n'existe pas, création explicite demandée.
+- `/aic done` ne doit jamais contourner les hard rules de DONE : quality gate, build/tests et docs strictes restent obligatoires.
 - Ne pas confondre `/aic undo` (annule une transition auto) avec `git revert` (annule un commit) — si l'utilisateur veut l'un pour l'autre, clarifier.
 
 ## TROUBLESHOOTING

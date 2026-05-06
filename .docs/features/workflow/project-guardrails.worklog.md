@@ -36,3 +36,8 @@
 ## 2026-05-06 — freshness
 - Intent : tracer l'impact des messages README/Copier sur le cadrage `aic-frame` et les guardrails on-demand.
 - Validation : couvert par `check-shims` et `tests/smoke-test.sh`.
+
+## 2026-05-06 22:50 — freshness
+- Impact indirect : `copier.yml` mis à jour pendant le durcissement post-cross-check (round 4 workflow/intentional-skills).
+- Aucun changement sur la procédure project-guardrails ni sur `.ai/guardrails.md`.
+- Validation associée : `check-feature-freshness.sh` (staged) PASS attendu.

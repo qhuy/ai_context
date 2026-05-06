@@ -50,3 +50,42 @@ feat(core): installer les skills Codex par défaut
 ## 2026-05-06 — freshness README
 - Intent : verifier que le README repositionné décrit correctement les skills Codex locaux `aic-*`.
 - Validation : `check-ai-references`, `check-features`.
+
+## 2026-05-06 21:57 — update
+- Intent : réduire l'ambiguïté UX des primitives Codex.
+- Changement : descriptions `aic-feature-*` et `aic-quality-gate` marquées `Primitive interne/fallback` dans `.agents/skills/**` et `template/.agents/skills/**`.
+- Décision : conserver les wrappers pour les appels explicites, mais recommander la surface intentionnelle (`aic-frame/status/review/ship/document-feature`) et le langage naturel.
+- Validation : dogfood drift et smoke-test à lancer.
+
+## 2026-05-06 22:46 — auto
+- Fichiers modifiés :
+  - .agents/skills/aic-feature-done/SKILL.md
+  - .agents/skills/aic-feature-done/workflow.md
+  - .agents/skills/aic-feature-handoff/SKILL.md
+  - .agents/skills/aic-feature-handoff/workflow.md
+  - .agents/skills/aic-feature-new/SKILL.md
+  - .agents/skills/aic-feature-new/workflow.md
+  - .agents/skills/aic-feature-resume/SKILL.md
+  - .agents/skills/aic-feature-resume/workflow.md
+  - .agents/skills/aic-feature-update/SKILL.md
+  - .agents/skills/aic-feature-update/workflow.md
+  - .agents/skills/aic-frame/workflow.md
+  - .agents/skills/aic-quality-gate/SKILL.md
+  - .agents/skills/aic-quality-gate/workflow.md
+  - .agents/skills/aic-ship/SKILL.md
+  - .agents/skills/aic-status/SKILL.md
+  - template/.agents/skills/aic-feature-done/SKILL.md.jinja
+  - template/.agents/skills/aic-feature-done/workflow.md.jinja
+  - template/.agents/skills/aic-feature-handoff/SKILL.md.jinja
+  - template/.agents/skills/aic-feature-handoff/workflow.md.jinja
+  - template/.agents/skills/aic-feature-new/SKILL.md.jinja
+  - template/.agents/skills/aic-feature-new/workflow.md.jinja
+  - template/.agents/skills/aic-feature-resume/SKILL.md.jinja
+  - template/.agents/skills/aic-feature-resume/workflow.md.jinja
+  - template/.agents/skills/aic-feature-update/SKILL.md.jinja
+  - template/.agents/skills/aic-feature-update/workflow.md.jinja
+  - template/.agents/skills/aic-frame/workflow.md.jinja
+  - template/.agents/skills/aic-quality-gate/SKILL.md.jinja
+  - template/.agents/skills/aic-quality-gate/workflow.md.jinja
+  - template/.agents/skills/aic-ship/SKILL.md.jinja
+  - template/.agents/skills/aic-status/SKILL.md.jinja

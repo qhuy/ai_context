@@ -11,13 +11,21 @@
 
 Si l'intention est trop vague, poser une seule question bloquante. Ne pas lancer un questionnaire.
 
-## MANDATORY READS
+## CONTEXT LOADING
+
+Mandatory :
 
 1. `.ai/index.md`
-2. `.ai/agent/posture.md`, `.ai/agent/initiative-contract.md`, `.ai/agent/response-style.md`
-3. `.ai/quality/QUALITY_GATE.md`
-4. `.ai/rules/<scope>.md` si le scope est identifiable
-5. `.docs/features/<scope>/<id>.md` si la feature existe
+2. `.ai/rules/<scope>.md` si le scope est identifiable et utile au cadrage
+3. `.docs/features/<scope>/<id>.md` si la feature existe
+
+On-demand selon règle déterministe :
+
+- `.ai/quality/QUALITY_GATE.md` si :
+  - `progress.phase` ∈ {review, done} de la feature ciblée, OU
+  - intention nommée par l'utilisateur : ship, done, review, quality-gate, OU
+  - change touchant : contrat (API, schema), sécurité, CI, doc canonique.
+- `.ai/agent/posture.md`, `.ai/agent/initiative-contract.md`, `.ai/agent/response-style.md` seulement si la demande porte explicitement sur posture, diagnostic ou style de réponse.
 
 Ne pas précharger le reste.
 

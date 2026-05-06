@@ -62,3 +62,8 @@
 ## 2026-05-06 — freshness
 - Intent : tracer l'impact Copier indirect sur la surface conversationnelle `aic` et l'absence d'alias legacy.
 - Validation : couvert par `check-features` et `tests/smoke-test.sh`.
+
+## 2026-05-06 21:57 — update
+- Intent : sécuriser l'override `/aic done`.
+- Décision : `done` ne patch plus directement `status: done`; l'override délègue à `.ai/workflows/feature-done.md`.
+- Validation : incluse dans la passe `workflow/intentional-skills`.

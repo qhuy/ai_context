@@ -22,3 +22,7 @@
 ## 2026-05-06 — freshness
 - Impact indirect : le wrapper Codex `aic-feature-new` a été resynchronisé depuis le rendu Copier minimal.
 - Aucun changement du contrat d'approbation avant écriture ; la source de vérité reste `.ai/workflows/feature-new.md`.
+
+## 2026-05-06 22:46 — auto
+- Fichiers modifiés :
+  - .agents/skills/aic-feature-new/workflow.md

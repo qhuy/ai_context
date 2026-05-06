@@ -25,7 +25,7 @@ progress:
   step: ""
   blockers: []
   resume_hint: "feature clôturée le 2026-05-04"
-  updated: "2026-05-04"
+  updated: 2026-05-06
 ---
 
 # Granularité anti fourre-tout des fiches feature

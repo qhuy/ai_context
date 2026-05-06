@@ -32,3 +32,8 @@
 - Fichiers/surfaces : `.docs/features/product/product-portfolio-loop.md`.
 - Décision : la surface commune Claude/Codex product passe par `aic.sh product-*`, sans ancien wrapper.
 - Validation : prévue via `check-feature-docs product/product-portfolio-loop` et `check-ai-references`.
+
+## 2026-05-06 22:50 — freshness
+- Impact indirect : `copier.yml` mis à jour pendant le durcissement post-cross-check (round 4 workflow/intentional-skills).
+- Aucun changement sur le contrat initiative/roadmap/traceability produit.
+- Validation associée : `check-feature-freshness.sh` (staged) PASS attendu.

@@ -127,3 +127,24 @@
 - Fichiers/surfaces : `template/.ai/scripts/aic.sh.jinja`, `template/.ai/scripts/review-delta.sh.jinja`, `template/.ai/scripts/check-feature-freshness.sh.jinja`.
 - Décision : même comportement staged que le runtime source pour éviter une régression au prochain scaffold/update.
 - Validation : prévue via `bash -n` et checks AIC.
+
+## 2026-05-06 22:46 — auto
+- Fichiers modifiés :
+  - template/.agents/skills/aic-feature-done/SKILL.md.jinja
+  - template/.agents/skills/aic-feature-done/workflow.md.jinja
+  - template/.agents/skills/aic-feature-handoff/SKILL.md.jinja
+  - template/.agents/skills/aic-feature-handoff/workflow.md.jinja
+  - template/.agents/skills/aic-feature-new/SKILL.md.jinja
+  - template/.agents/skills/aic-feature-new/workflow.md.jinja
+  - template/.agents/skills/aic-feature-resume/SKILL.md.jinja
+  - template/.agents/skills/aic-feature-resume/workflow.md.jinja
+  - template/.agents/skills/aic-feature-update/SKILL.md.jinja
+  - template/.agents/skills/aic-feature-update/workflow.md.jinja
+  - template/.agents/skills/aic-frame/workflow.md.jinja
+  - template/.agents/skills/aic-quality-gate/SKILL.md.jinja
+  - template/.agents/skills/aic-quality-gate/workflow.md.jinja
+  - template/.agents/skills/aic-ship/SKILL.md.jinja
+  - template/.agents/skills/aic-status/SKILL.md.jinja
+  - template/.claude/skills/aic-frame/workflow.md.jinja
+  - template/.claude/skills/aic-ship/SKILL.md.jinja
+  - template/.claude/skills/aic-status/SKILL.md.jinja

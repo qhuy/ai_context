@@ -44,3 +44,29 @@
 - Validation : `dogfood-update.sh` dry-run PASS, `check-dogfood-drift.sh` PASS, `check-shims.sh` PASS, `check-features.sh` PASS, `measure-context-size.sh` à 2627 chars.
 - Décision : pas de `dogfood-update.sh --apply` nécessaire, le runtime source est déjà aligné avec le rendu Copier minimal ; les écarts `*.jinja` vs fichiers rendus sont des substitutions attendues (`{{ docs_root }}`, raw Jinja, variables projet).
 - Dette hors scope primaire : `workflow/intentional-skills` reste à remettre au format documentaire strict (`Résumé`, `Périmètre`, `Invariants`, `Décisions`, `Validation`).
+
+## 2026-05-06 21:57 — dogfood skills
+- Impact runtime/template : workflows `aic` et `aic-frame`, wrappers Codex procéduraux, templates `.agents/.claude` et message Copier.
+- Décision : garder runtime et template synchronisés pendant le resserrage de la surface skills.
+- Validation : `check-dogfood-drift.sh` et `dogfood-update.sh` dry-run à relancer après édition.
+
+## 2026-05-06 22:46 — auto
+- Fichiers modifiés :
+  - .agents/skills/aic-feature-done/SKILL.md
+  - .agents/skills/aic-feature-done/workflow.md
+  - .agents/skills/aic-feature-handoff/SKILL.md
+  - .agents/skills/aic-feature-handoff/workflow.md
+  - .agents/skills/aic-feature-new/SKILL.md
+  - .agents/skills/aic-feature-new/workflow.md
+  - .agents/skills/aic-feature-resume/SKILL.md
+  - .agents/skills/aic-feature-resume/workflow.md
+  - .agents/skills/aic-feature-update/SKILL.md
+  - .agents/skills/aic-feature-update/workflow.md
+  - .agents/skills/aic-frame/workflow.md
+  - .agents/skills/aic-quality-gate/SKILL.md
+  - .agents/skills/aic-quality-gate/workflow.md
+  - .agents/skills/aic-ship/SKILL.md
+  - .agents/skills/aic-status/SKILL.md
+  - .claude/skills/aic-frame/workflow.md
+  - .claude/skills/aic-ship/SKILL.md
+  - .claude/skills/aic-status/SKILL.md
