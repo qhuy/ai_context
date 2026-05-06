@@ -23,9 +23,9 @@ doc:
     observability: false
 progress:
   phase: implement
-  step: "draft cadré (contrat 4 niveaux), à reprendre pour implémentation"
+  step: "5 choix d'implémentation tranchés post cross-check Codex, prêt à coder"
   blockers: []
-  resume_hint: "lire features-for-path.sh + _lib.sh, implémenter Option B (matcher correct multi-niveaux + ranking) et tests reproductibles"
+  resume_hint: "implémenter A2 (regex path-aware) dans path_matches_touch, whitelist B2 élargie, ranking C3+3 précisions, D2 additionalContext, étendre test-path-matches-touch.sh + nouveau test-matcher-multi-level.sh"
   updated: 2026-05-07
 ---
 
@@ -75,27 +75,77 @@ Cette fiche couvre un seul outil (`features-for-path.sh`) et son matcher (`_lib.
 
 ## Décisions
 
-Ouvertes, à arbitrer en phase implement :
+Tranchées post cross-check Codex 2026-05-07 (cross-check Phase 2 #2) :
 
-### Matcher (option A/B/C, Codex round 3)
+### 1. Matcher : A2 regex path-aware
 
-- **Option A** — Insérer un fix matcher avant ranking en fiche séparée. *Rejetée par Codex* : crée une fiche de plomberie redondante.
-- **Option B** *(préférée)* — Intégrer le fix matcher comme prérequis interne du ranking. Acceptance bloque : « ranking impossible à déclarer livré tant que matcher incorrect ». Un seul livrable cohérent.
-- **Option C** — Borner officiellement les patterns supportés à `prefix/**` simple, refuser `src/**/*.ts` jusqu'au fix profond. *Rejetée par Codex* : documente une faiblesse au lieu de corriger.
+Conversion glob → regex Bash POSIX (compatible 3.2) **path-aware**, dans `path_matches_touch` ([_lib.sh:131](.ai/scripts/_lib.sh:131)) :
 
-Choix par défaut : **B**. À confirmer après lecture détaillée du code.
+- `*` → `[^/]*` (n'absorbe pas `/`, fixe le bug overmatch `app/*/page.tsx` qui matchait `app/a/b/page.tsx`).
+- `?` → `[^/]`.
+- `**` → multi-segments, **uniquement comme segment complet** (entre `/` ou en début/fin).
+- `**/` (et `/**` final) : zéro segment accepté.
+- `[abc]` conservé tel quel si bien formé. Bracket mal formé → unsupported.
+- Pattern entièrement ancré (`^pattern$`).
+- A1 (extension branche spéciale par décomposition) **rejetée** par Codex : laisse le bug `*` qui matche `/` non corrigé.
+- A3 (helper externe) rejetée : pas de dépendance ajoutée.
 
-### Ranking
+### 2. Whitelist patterns supportés (B2 élargie)
 
-- Critère de spécificité : longueur du préfixe non-glob (plus long = plus spécifique) en premier ordre, puis nombre de wildcards (moins = plus spécifique) en départage.
-- Top-K par défaut : 3 (configurable via `AI_CONTEXT_FEATURES_TOP_K`).
-- Comportement quand >K matches : tronquer + signaler dans la sortie le nombre de features omises.
+Supportés (déjà documentés/testés ailleurs) :
+
+- exact file (`src/auth/login.ts`) ;
+- dossier préfixe sans glob (`src/`) ;
+- intra-segment : `*`, `?`, `[abc]` (ex : `src/*.ts`, `lib/[ab].js`) ;
+- `prefix/**`, `glob-prefix/**` (ex : `aic-*/**`) ;
+- `prefix/**/suffix`, `**/suffix`.
+
+Unsupported (politique 3 niveaux) :
+
+- `**` hors segment complet (ex : `foo**bar`, `foo/**bar`) ;
+- bracket `[` mal formé ;
+- formes chaînées non explicitement supportées (ex : 2+ `/**/` chaînés).
+
+### 3. Ranking C3 + précisions Codex
+
+- Scorer **par meilleur `touches:` matchant** (pas par feature abstraite).
+- Hiérarchie : exact file > dossier non-glob > glob.
+- Pour les globs : longueur du préfixe non-glob décroissante, puis nombre de wildcards croissant (`**` plus général que `*`).
+- Tie-break stable par `scope/id` (ordre lexicographique) pour reproductibilité.
+- Top-K = 3 par défaut, configurable via `AI_CONTEXT_FEATURES_TOP_K`.
+
+### 4. Truncation D2 — sortie additionalContext
+
+- Si N matches > K : top-K + ligne « N features omises » dans la **sortie principale** (additionalContext consommée par le hook).
+- **Pas** en stderr. Stderr réservé aux warnings matcher/pattern unsupported.
+- Top-K s'applique aux matches **directs** (`touches:`). Les `depends_on` ajoutés ensuite restent bornés par `AI_CONTEXT_FEATURE_DOC_MAX_CHARS` / `_PER_DOC_CHARS`.
+
+### 5. Tests E1 + extension de l'existant
+
+- Nouveau `tests/unit/test-matcher-multi-level.sh` : acceptance bloquante.
+- Étendre `tests/unit/test-path-matches-touch.sh` (existant) pour le no-overmatch.
+- Brancher dans `tests/smoke-test.sh` si delivery gate doit le couvrir.
+
+Cas test minimum :
+
+- `src/**/*.ts` matche `src/foo.ts` ET `src/a/b/foo.ts` (zéro segment accepté).
+- `app/*/page.tsx` matche `app/x/page.tsx` mais **NE matche PAS** `app/a/b/page.tsx`.
+- `foo-*/**` matche profond.
+- `**/x.ts` matche profond (`a/b/x.ts` ET `x.ts`).
+- pattern unsupported observable en best-effort, fail en strict.
+- ranking top-K stable + ligne « N omises ».
+
+### Q1 résolu — policy unique
+
+Variable interne unique `_FEATURES_MATCHING_POLICY=silent|warn|strict`. Pas 2 booléens conflictuels. Wrapper `features-for-path.sh` mappe `--strict` ou `AI_CONTEXT_FEATURES_STRICT=1` → `strict`. Hooks Claude → `warn`. Callers historiques → `silent`. Défaut `warn`.
+
+### Q2 résolu — review-delta best-effort
+
+`review-delta.sh` reste best-effort par défaut. Strict uniquement sur appel explicite. **Note ouverte** : si Niveau 4 (checks/CI strict) reste dans le contrat, il faut un caller strict réel (`check-features.sh` ou doctor) qui passe explicitement le flag — sinon le contrat est documentaire seulement.
 
 ### Bash 3.2
 
-- Critère P1 confirmé en local (`/bin/bash 3.2.57 arm64-darwin25` sur la machine de dev).
-- Les patterns `prefix/**` simples ont déjà une branche spéciale (`_lib.sh:118-121`).
-- Les patterns multi-niveaux (`src/**/*.ts`, `foo-*/**`) restent contaminés. Approche : étendre la branche spéciale ou utiliser une stratégie de regex Bash POSIX compatible 3.2.
+Critère P1 confirmé. La conversion regex POSIX A2 est compatible bash 3.2 (`[[ "$path" =~ ^pattern$ ]]` depuis bash 3.0).
 
 ## Comportement attendu
 
