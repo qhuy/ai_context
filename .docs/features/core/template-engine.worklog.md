@@ -174,3 +174,8 @@
 - Note Jinja : tous les `${#var}` protégés par `{% raw %}` pour éviter `{#` interprété
   comme début de commentaire Jinja.
 - Validation : check-dogfood-drift PASS, copier copy direct PASS.
+
+## 2026-05-07 01:00 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/_lib.sh.jinja
+  - template/.ai/scripts/features-for-path.sh.jinja

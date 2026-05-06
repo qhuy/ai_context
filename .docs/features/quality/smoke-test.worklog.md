@@ -47,3 +47,8 @@
 - Impact indirect : ajout d'un nouveau test unit `tests/unit/test-matcher-multi-level.sh` autonome (livraison Phase 2 #2). Extension de `test-path-matches-touch.sh` (8 cas no-overmatch ajoutés).
 - Aucun changement sur `tests/smoke-test.sh` ni sur la matrice smoke.
 - Validation associée : 49 cas test unit PASS, smoke-test PASS.
+
+## 2026-05-07 01:00 — auto
+- Fichiers modifiés :
+  - tests/unit/test-matcher-multi-level.sh
+  - tests/unit/test-path-matches-touch.sh

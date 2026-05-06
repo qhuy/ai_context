@@ -26,3 +26,8 @@
   `_score_touch_pattern`. Refactor `path_matches_touch` (regex path-aware).
 - Compat ascendante : `features_matching_path` à 3 colonnes inchangée.
 - Validation : check-features PASS, 28 tests path-matches PASS, 21 tests multi-level PASS.
+
+## 2026-05-07 01:00 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja

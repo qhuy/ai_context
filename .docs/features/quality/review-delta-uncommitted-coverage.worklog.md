@@ -87,3 +87,8 @@
   correct sur globs multi-niveaux.
 - Aucun changement sur `review-delta.sh` lui-même.
 - Validation : test-review-delta-uncommitted (8 cas) PASS, smoke-test PASS.
+
+## 2026-05-07 01:00 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja

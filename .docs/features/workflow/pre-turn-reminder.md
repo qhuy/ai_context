@@ -15,7 +15,7 @@ progress:
   step: "features-for-path injecte fiches directes + depends_on avant écriture"
   blockers: []
   resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-05-03
+  updated: 2026-05-07
 ---
 
 # Pre-turn reminder

@@ -137,6 +137,7 @@ load_feature_context() {
 target_path=""
 mode="cli"
 with_docs=0
+strict_flag=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --with-docs|--docs)
@@ -147,8 +148,12 @@ while [[ $# -gt 0 ]]; do
       AI_CONTEXT_INJECT_FEATURE_DOCS=0
       shift
       ;;
+    --strict)
+      strict_flag=1
+      shift
+      ;;
     -*)
-      echo "Usage : $0 [--with-docs] [--no-docs] <path>" >&2
+      echo "Usage : $0 [--with-docs] [--no-docs] [--strict] <path>" >&2
       exit 2
       ;;
     *)
@@ -157,6 +162,12 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+# Mappe --strict ou env var vers _FEATURES_MATCHING_POLICY (Niveau 2 wrapper :
+# best-effort par défaut, strict opt-in).
+if [[ "$strict_flag" == "1" || "${AI_CONTEXT_FEATURES_STRICT:-0}" == "1" ]]; then
+  export _FEATURES_MATCHING_POLICY=strict
+fi
 
 if [[ -n "$target_path" ]]; then
   mode="cli"
@@ -194,6 +205,11 @@ if [[ -f "$index_file" ]]; then
   ranked_lines=""
   declare_feature_key_seen=""
   best_per_feature=""
+  ranked_rc=0
+
+  # Capture la sortie ET le code retour de features_matching_path_ranked
+  # (rc=2 si pattern unsupported en mode strict, propagé par le matcher).
+  ranked_output=$(features_matching_path_ranked "$index_file" "$rel_path"); ranked_rc=$?
 
   while IFS=$'\t' read -r scope id fpath touch; do
     [[ -z "$scope" ]] && continue
@@ -201,7 +217,7 @@ if [[ -f "$index_file" ]]; then
     IFS=$'\t' read -r tier plen wcs <<< "$score_line"
     # ligne intermédiaire : tier\tplen\twcs\tscope\tid\tfpath\ttouch
     best_per_feature+="$tier"$'\t'"$plen"$'\t'"$wcs"$'\t'"$scope"$'\t'"$id"$'\t'"$fpath"$'\t'"$touch"$'\n'
-  done < <(features_matching_path_ranked "$index_file" "$rel_path")
+  done <<< "$ranked_output"
 
   if [[ -n "$best_per_feature" ]]; then
     # Garde le meilleur score par feature (scope/id) : tri sur score puis dédup par scope/id.
@@ -254,6 +270,11 @@ if [[ "$mode" == "hook" ]]; then
   }'
 else
   if [[ -z "$matches" ]]; then
+    # Mode strict : pattern unsupported propagé via ranked_rc → exit ≠ 0.
+    if [[ "${_FEATURES_MATCHING_POLICY:-warn}" == "strict" && "${ranked_rc:-0}" -eq 2 ]]; then
+      echo "Pattern unsupported détecté en mode strict pour '$rel_path'." >&2
+      exit 2
+    fi
     echo "Aucune feature ne référence '$rel_path' via touches:."
     exit 1
   fi
@@ -262,5 +283,11 @@ else
   if [[ "$with_docs" == "1" ]]; then
     load_feature_context
     printf '%s' "$feature_context"
+  fi
+  # En mode strict, exit ≠ 0 même si des matches existent, pour signaler
+  # le pattern cassé au caller (CI/doctor).
+  if [[ "${_FEATURES_MATCHING_POLICY:-warn}" == "strict" && "${ranked_rc:-0}" -eq 2 ]]; then
+    echo "Pattern unsupported détecté en mode strict (au moins un touches: cassé)." >&2
+    exit 2
   fi
 fi

@@ -107,6 +107,100 @@ else
   failures+=("bracket mal formé : attendu unsupported. rc=$rc, output='$output'")
 fi
 
+# ─── Bracket négatif [!...] (sémantique glob → conversion POSIX [^...]) ───
+if path_matches_touch "lib/c.js" "lib/[!ab].js"; then
+  pass=$((pass + 1))
+else
+  fail=$((fail + 1))
+  failures+=("[!ab] négation : 'lib/c.js' devrait matcher 'lib/[!ab].js'")
+fi
+if ! path_matches_touch "lib/a.js" "lib/[!ab].js" 2>/dev/null; then
+  pass=$((pass + 1))
+else
+  fail=$((fail + 1))
+  failures+=("[!ab] négation : 'lib/a.js' ne devrait PAS matcher 'lib/[!ab].js'")
+fi
+if ! path_matches_touch "lib/b.js" "lib/[!ab].js" 2>/dev/null; then
+  pass=$((pass + 1))
+else
+  fail=$((fail + 1))
+  failures+=("[!ab] négation : 'lib/b.js' ne devrait PAS matcher 'lib/[!ab].js'")
+fi
+
+# ─── Brackets vides [], [!], [^] → unsupported ───
+for bad_pattern in 'lib/[].js' 'lib/[!].js' 'lib/[^].js' 'foo\\bar.js'; do
+  output=$(_FEATURES_MATCHING_POLICY=warn path_matches_touch "any" "$bad_pattern" 2>&1)
+  rc=$?
+  if [[ $rc -eq 1 && "$output" == *"pattern non supporté"* ]]; then
+    pass=$((pass + 1))
+  else
+    fail=$((fail + 1))
+    failures+=("brackets/escape vide : '$bad_pattern' attendu unsupported. rc=$rc, output='$output'")
+  fi
+done
+
+# ─── Propagation strict via features_matching_path(_ranked) ───
+# Crée un index temporaire avec une feature au touches: cassé.
+tmp_dir=$(mktemp -d 2>/dev/null || mktemp -d -t 'strict-test')
+cat > "$tmp_dir/index.json" <<'JSONEOF'
+{"features":[{"scope":"foo","id":"bar","path":"foo.md","touches":["foo**bar"],"depends_on":[],"touches_shared":[]}]}
+JSONEOF
+
+# strict : propagation rc=2 attendue depuis features_matching_path
+_FEATURES_MATCHING_POLICY=strict features_matching_path "$tmp_dir/index.json" "any" >/dev/null 2>&1
+rc=$?
+if [[ $rc -eq 2 ]]; then
+  pass=$((pass + 1))
+else
+  fail=$((fail + 1))
+  failures+=("propagation strict via features_matching_path : attendu rc=2, obtenu rc=$rc")
+fi
+
+# strict : propagation rc=2 attendue depuis features_matching_path_ranked
+_FEATURES_MATCHING_POLICY=strict features_matching_path_ranked "$tmp_dir/index.json" "any" >/dev/null 2>&1
+rc=$?
+if [[ $rc -eq 2 ]]; then
+  pass=$((pass + 1))
+else
+  fail=$((fail + 1))
+  failures+=("propagation strict via features_matching_path_ranked : attendu rc=2, obtenu rc=$rc")
+fi
+
+# warn : pas de propagation (rc=0 même si pattern unsupported)
+_FEATURES_MATCHING_POLICY=warn features_matching_path "$tmp_dir/index.json" "any" >/dev/null 2>&1
+rc=$?
+if [[ $rc -eq 0 ]]; then
+  pass=$((pass + 1))
+else
+  fail=$((fail + 1))
+  failures+=("warn : ne doit pas propager rc=2, obtenu rc=$rc")
+fi
+
+rm -rf "$tmp_dir"
+
+# ─── Wrapper features-for-path.sh : --strict accepté en argument ───
+# Vérification minimale : --strict ne fait pas exit 2 (usage error) ; il est
+# bien parsé. Pas de fail hard sur path commun (aucun touches: cassé chargé
+# dans l'index réel).
+output=$(bash "$(cd "$(dirname "$0")/../.." && pwd)/.ai/scripts/features-for-path.sh" --strict src/foo.ts 2>&1)
+rc=$?
+if [[ $rc -ne 2 ]]; then
+  pass=$((pass + 1))
+else
+  fail=$((fail + 1))
+  failures+=("wrapper --strict mal parsé (usage error). rc=$rc, output='$output'")
+fi
+
+# AI_CONTEXT_FEATURES_STRICT=1 accepté en env var (même check minimal).
+output=$(AI_CONTEXT_FEATURES_STRICT=1 bash "$(cd "$(dirname "$0")/../.." && pwd)/.ai/scripts/features-for-path.sh" src/foo.ts 2>&1)
+rc=$?
+if [[ $rc -ne 2 ]]; then
+  pass=$((pass + 1))
+else
+  fail=$((fail + 1))
+  failures+=("wrapper env var strict mal interprétée. rc=$rc, output='$output'")
+fi
+
 # ─── Rapport ───
 total=$((pass + fail))
 echo "═══ test-matcher-multi-level ═══"

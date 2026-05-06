@@ -94,3 +94,8 @@
 - **Parité template** : `_lib.sh.jinja` + `features-for-path.sh.jinja`. Bug Jinja corrigé : tous les `${#var}` protégés par `{% raw %}` (sinon `{#` interprété comme début de commentaire Jinja, `Missing end of comment tag`).
 - **Validation** : check-shims, check-features, check-dogfood-drift, smoke-test, 49 cas test unit ALL PASS.
 - Phase bumpée implement → review.
+
+## 2026-05-07 01:00 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - .ai/scripts/features-for-path.sh

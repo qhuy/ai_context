@@ -42,3 +42,8 @@
 - Impact indirect : ajout/extension de tests unit (`test-matcher-multi-level.sh` nouveau, `test-path-matches-touch.sh` étendu) pendant la livraison Phase 2 #2.
 - Aucun changement sur le contrat overlay projet ni sur `.ai/project/**`.
 - Validation associée : 49 cas test unit PASS.
+
+## 2026-05-07 01:00 — auto
+- Fichiers modifiés :
+  - tests/unit/test-matcher-multi-level.sh
+  - tests/unit/test-path-matches-touch.sh

@@ -93,3 +93,8 @@
 - Impact indirect : `_lib.sh` et `features-for-path.sh` (runtime + templates) étendus
   pour matcher path-aware + ranking (livraison Phase 2 #2).
 - Validation : check-dogfood-drift PASS.
+
+## 2026-05-07 01:00 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - .ai/scripts/features-for-path.sh

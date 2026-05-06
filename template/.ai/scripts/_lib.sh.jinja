@@ -158,6 +158,12 @@ _glob_pattern_supported() {
   close=$(printf '%s' "$pattern" | tr -cd ']' | wc -c | tr -d '[:space:]')
   [[ "$open" -ne "$close" ]] && return 1
 
+  # Brackets vides ou contenant uniquement la négation : unsupported.
+  [[ "$pattern" == *'[]'* || "$pattern" == *'[!]'* || "$pattern" == *'[^]'* ]] && return 1
+
+  # Backslash glob escape non supporté (sémantique ambiguë avec regex).
+  [[ "$pattern" == *'\\'* ]] && return 1
+
   return 0
 }
 
@@ -213,7 +219,13 @@ _glob_to_regex() {
         i=$((i + 1))
         continue
       fi
-      result+="${pattern:$i:$((j - i + 1))}"
+      # Convertir [!abc] (négation glob) → [^abc] (négation POSIX ERE).
+      local content="${pattern:$((i + 1)):$((j - i - 1))}"
+      if [[ "${content:0:1}" == '!' ]]; then
+        result+='[^'"${content:1}"']'
+      else
+        result+="${pattern:$i:$((j - i + 1))}"
+      fi
       i=$((j + 1))
       continue
     fi
@@ -275,16 +287,29 @@ path_matches_touch() {
 features_matching_path() {
   local index_file="$1"
   local rel_path="$2"
+  local strict_seen=0
+  local raw_output=""
 
   [[ -f "$index_file" ]] || return 0
 
+  # Note : while ... done | awk crée un subshell qui ne propage pas strict_seen.
+  # On stocke d'abord, puis on dédup.
   while IFS=$'\t' read -r scope id feature_path touch; do
     [[ -z "$scope" || -z "$touch" ]] && continue
-    if path_matches_touch "$rel_path" "$touch"; then
-      printf '%s\t%s\t%s\n' "$scope" "$id" "$feature_path"
-    fi
-  done < <(jq -r '.features[] | . as $f | ($f.touches // [])[] | [$f.scope, $f.id, $f.path, .] | @tsv' "$index_file" 2>/dev/null) \
-    | awk '!seen[$0]++'
+    path_matches_touch "$rel_path" "$touch"
+    local rc=$?
+    case "$rc" in
+      0) raw_output+="$scope"$'\t'"$id"$'\t'"$feature_path"$'\n' ;;
+      2) strict_seen=1 ;;  # pattern unsupported en mode strict, propager après
+      *) ;;
+    esac
+  done < <(jq -r '.features[] | . as $f | ($f.touches // [])[] | [$f.scope, $f.id, $f.path, .] | @tsv' "$index_file" 2>/dev/null)
+
+  printf '%s' "$raw_output" | awk '!seen[$0]++'
+
+  # En mode strict, propager exit ≠ 0 si au moins un pattern unsupported.
+  [[ "$strict_seen" -eq 1 ]] && return 2
+  return 0
 }
 
 # features_matching_path_ranked <index> <path>
@@ -295,16 +320,26 @@ features_matching_path() {
 features_matching_path_ranked() {
   local index_file="$1"
   local rel_path="$2"
+  local strict_seen=0
+  local raw_output=""
 
   [[ -f "$index_file" ]] || return 0
 
   while IFS=$'\t' read -r scope id feature_path touch; do
     [[ -z "$scope" || -z "$touch" ]] && continue
-    if path_matches_touch "$rel_path" "$touch"; then
-      printf '%s\t%s\t%s\t%s\n' "$scope" "$id" "$feature_path" "$touch"
-    fi
-  done < <(jq -r '.features[] | . as $f | ($f.touches // [])[] | [$f.scope, $f.id, $f.path, .] | @tsv' "$index_file" 2>/dev/null) \
-    | awk '!seen[$0]++'
+    path_matches_touch "$rel_path" "$touch"
+    local rc=$?
+    case "$rc" in
+      0) raw_output+="$scope"$'\t'"$id"$'\t'"$feature_path"$'\t'"$touch"$'\n' ;;
+      2) strict_seen=1 ;;
+      *) ;;
+    esac
+  done < <(jq -r '.features[] | . as $f | ($f.touches // [])[] | [$f.scope, $f.id, $f.path, .] | @tsv' "$index_file" 2>/dev/null)
+
+  printf '%s' "$raw_output" | awk '!seen[$0]++'
+
+  [[ "$strict_seen" -eq 1 ]] && return 2
+  return 0
 }
 
 # _score_touch_pattern <touch>
