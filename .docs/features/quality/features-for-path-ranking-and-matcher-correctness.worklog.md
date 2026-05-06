@@ -67,3 +67,15 @@
 ## 2026-05-07 00:11 — auto-progress
 - Bascule phase : spec → implement (édits réels détectés sur 1 fichier(s))
 - Annulable via /aic undo (snapshot dans .ai/.progress-history.jsonl)
+
+## 2026-05-07 — cross-check Codex pre-implémentation (5 choix tranchés)
+- Avant de coder, 5 choix + 2 questions ouvertes envoyés à Codex. Verdict initial : pas « go » tel quel, A/B/Q1 à durcir.
+- **Choix 1 — Matcher** : Codex a rejeté A1. Bug critique : globs `*` en bash matchent `/` (`app/*/page.tsx` matchait `app/a/b/page.tsx`). A2 retenu : conversion glob → regex POSIX path-aware (`*` → `[^/]*`, `?` → `[^/]`, `**` → multi-segments comme segment complet, `[abc]` si bien formé, ancrage `^...$`).
+- **Choix 2 — Whitelist B2 élargie** : exact file, dossier préfixe, `*`/`?`/`[abc]` intra-segment, `prefix/**`, `glob-prefix/**` (`aic-*/**`), `prefix/**/suffix`, `**/suffix`. Unsupported : `**` hors segment complet, bracket mal formé, chaînes non explicites.
+- **Choix 3 — Ranking** : C3 + 3 précisions Codex : scorer par meilleur `touches:` matchant ; hiérarchie exact > dossier > glob ; tie-break `scope/id`. `**` plus général que `*`.
+- **Choix 4 — Truncation** : D2 + précision : « N omises » dans additionalContext (sortie hook), pas stderr. Top-K sur matches directs ; depends_on bornés par budgets docs.
+- **Choix 5 — Tests** : E1 + extension `tests/unit/test-path-matches-touch.sh` (existant) pour le no-overmatch. Cas minimum définis.
+- **Q1 résolu** : policy unique `_FEATURES_MATCHING_POLICY=silent|warn|strict`. Défaut `warn`.
+- **Q2 résolu** : `review-delta.sh` best-effort par défaut. Note ouverte sur Niveau 4 strict.
+- Section Décisions de la fiche reformulée (commit `166a3de`).
+- Next : implémenter dans un turn dédié — `path_matches_touch` regex path-aware, ranking dans `features-for-path.sh`, tests étendus, parité template.
