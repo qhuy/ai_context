@@ -179,3 +179,8 @@
 - Fichiers modifiés :
   - template/.ai/scripts/_lib.sh.jinja
   - template/.ai/scripts/features-for-path.sh.jinja
+
+## 2026-05-07 01:10 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/_lib.sh.jinja
+  - template/.ai/scripts/features-for-path.sh.jinja

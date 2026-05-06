@@ -162,7 +162,10 @@ _glob_pattern_supported() {
   [[ "$pattern" == *'[]'* || "$pattern" == *'[!]'* || "$pattern" == *'[^]'* ]] && return 1
 
   # Backslash glob escape non supporté (sémantique ambiguë avec regex).
-  [[ "$pattern" == *'\\'* ]] && return 1
+  # Note bash : *'\\'* matcherait DEUX backslashes (single-quote literal).
+  # Pour matcher UN seul backslash, on utilise *\\* (échappement glob bash :
+  # \\ dans un glob non-quoté représente un backslash littéral).
+  [[ "$pattern" == *\\* ]] && return 1
 
   return 0
 }

@@ -128,7 +128,7 @@ else
 fi
 
 # ─── Brackets vides [], [!], [^] → unsupported ───
-for bad_pattern in 'lib/[].js' 'lib/[!].js' 'lib/[^].js' 'foo\\bar.js'; do
+for bad_pattern in 'lib/[].js' 'lib/[!].js' 'lib/[^].js'; do
   output=$(_FEATURES_MATCHING_POLICY=warn path_matches_touch "any" "$bad_pattern" 2>&1)
   rc=$?
   if [[ $rc -eq 1 && "$output" == *"pattern non supporté"* ]]; then
@@ -138,6 +138,18 @@ for bad_pattern in 'lib/[].js' 'lib/[!].js' 'lib/[^].js' 'foo\\bar.js'; do
     failures+=("brackets/escape vide : '$bad_pattern' attendu unsupported. rc=$rc, output='$output'")
   fi
 done
+
+# ─── Single backslash glob escape → unsupported (cas vrai single-\) ───
+# Use printf pour construire un pattern avec UN seul backslash litéral.
+single_bs_pattern=$(printf 'foo\\bar.js')  # 1 backslash, pas 2
+output=$(_FEATURES_MATCHING_POLICY=warn path_matches_touch "any" "$single_bs_pattern" 2>&1)
+rc=$?
+if [[ $rc -eq 1 && "$output" == *"pattern non supporté"* ]]; then
+  pass=$((pass + 1))
+else
+  fail=$((fail + 1))
+  failures+=("single backslash : 'foo\\bar.js' attendu unsupported. rc=$rc, output='$output'")
+fi
 
 # ─── Propagation strict via features_matching_path(_ranked) ───
 # Crée un index temporaire avec une feature au touches: cassé.

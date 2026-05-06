@@ -98,3 +98,8 @@
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - .ai/scripts/features-for-path.sh
+
+## 2026-05-07 01:10 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - .ai/scripts/features-for-path.sh
