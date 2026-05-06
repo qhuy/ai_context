@@ -104,18 +104,46 @@ Choix par défaut : **B**. À confirmer après lecture détaillée du code.
 1. Matcher le path contre tous les `touches:` des features actives, en respectant correctement `**` multi-niveaux.
 2. Trier les features matchées par spécificité décroissante.
 3. Renvoyer top-K features (3 par défaut), avec mention du nombre de features omises si troncature.
-4. Sur pattern non supporté par le matcher :
-   - **Mode strict** (CLI direct, doctor, check) → erreur sur stderr + exit ≠ 0.
-   - **Mode hook** (PreToolUse, PostToolUse via `auto-worklog-log.sh`) → warning sur stderr + exit 0 pour ne jamais bloquer une édition.
-   - Détection : flag `--strict` explicite OU env var `AI_CONTEXT_FEATURES_STRICT=1`. Par défaut : mode hook (best-effort).
+4. Sur pattern non supporté par le matcher : **best-effort par défaut** (warning stderr + exit 0). **Mode strict opt-in** (flag `--strict` ou env var `AI_CONTEXT_FEATURES_STRICT=1`) → erreur stderr + exit ≠ 0. Aucun `bash features-for-path.sh <path>` sans flag ne déclenche de fail hard.
 
 ## Contrats
 
-- Sortie JSON ou markdown stable consommable par `aic.sh` et le hook PreToolUse Claude.
-- **Contrat dual exit code** :
-  - Mode strict : exit 0 sur succès, exit ≠ 0 sur pattern non supporté ou erreur. Cible : doctor, audit CI, debug humain.
-  - Mode hook (défaut) : exit 0 toujours sauf erreur catastrophique (jq absent, index corrompu). Cible : `.claude/settings.json` PreToolUse Write|Edit|MultiEdit ([settings.json:31](.claude/settings.json:31)), `auto-worklog-log.sh` ([ligne 36](.ai/scripts/auto-worklog-log.sh:36)), `aic.sh` (selon contexte), `measure-context-size.sh`.
-  - Justification : un pattern cassé dans une fiche feature ne doit JAMAIS bloquer l'agent en édition. Le warning permet de tracer + fixer dans un turn dédié.
+Le périmètre couvre **deux niveaux de code** (matcher + wrapper) consommés par **quatre familles de callers**. Chaque famille a son contrat propre.
+
+### Niveau 1 — Matcher `_lib.sh::features_matching_path`
+
+Fonction interne ([_lib.sh:130](.ai/scripts/_lib.sh:130)). Lit l'index, retourne les features dont un `touches:` direct couvre le path.
+
+- Comportement par défaut : silent no-match si pattern non supporté (compatibilité ascendante).
+- Mode strict (à introduire) : variable interne `_FEATURES_MATCHING_STRICT=1` → log warning ou erreur sur stderr selon caller. Le code retour de la fonction reste informatif ; chaque caller décide de propager ou pas.
+- Justification : la fonction seule ne décide pas de la politique exit, c'est le wrapper/caller qui le fait.
+
+### Niveau 2 — Wrapper `features-for-path.sh`
+
+Script CLI ([features-for-path.sh](.ai/scripts/features-for-path.sh)). Wrappe le matcher.
+
+- Défaut : best-effort. `bash features-for-path.sh <path>` sans flag → warning stderr + exit 0 sur pattern cassé.
+- Strict opt-in : flag `--strict` ou env var `AI_CONTEXT_FEATURES_STRICT=1` → erreur stderr + exit ≠ 0.
+- Toujours exit ≠ 0 sur erreur catastrophique (jq absent, index corrompu, path manquant). Indépendant du mode.
+
+### Niveau 3 — Hooks Claude (best-effort imposé)
+
+Consommateurs : `.claude/settings.json` PreToolUse Write|Edit|MultiEdit ([settings.json:31](.claude/settings.json:31)), PostToolUse Write|Edit|MultiEdit via `auto-worklog-log.sh` ([auto-worklog-log.sh:36](.ai/scripts/auto-worklog-log.sh:36)).
+
+- Mode forcé : best-effort. Le hook **ne doit jamais** passer `--strict` ni mettre `AI_CONTEXT_FEATURES_STRICT=1`.
+- Justification : un pattern cassé dans une fiche feature ne doit JAMAIS bloquer une édition. Hook PreToolUse exit 2 bloque l'opération côté Claude SDK.
+
+### Niveau 4 — Checks / CI / doctor (strict requis)
+
+Consommateurs directs de `features_matching_path` ou de `features-for-path.sh` qui doivent fail-hard sur pattern cassé : `check-feature-freshness.sh` (pre-commit + CI), `pr-report.sh` (CI), `review-delta.sh` (sortie utilisateur, mais mérite strict pour traçabilité).
+
+- Ces consommateurs passent explicitement `--strict` ou exportent `AI_CONTEXT_FEATURES_STRICT=1`.
+- Un pattern cassé en CI doit casser le build pour forcer le fix avant merge.
+- À discuter en phase implement : `review-delta.sh` reste-t-il en best-effort (compat utilisateur) ou bascule strict ?
+
+### Sortie et compatibilité
+
+- Sortie JSON ou markdown stable consommable par `aic.sh`, hooks Claude, et checks.
 - Variables d'env : `AI_CONTEXT_FEATURES_TOP_K` (défaut 3), `AI_CONTEXT_FEATURES_STRICT` (défaut 0), `AI_CONTEXT_FEATURE_DOC_MAX_CHARS` (existant), `AI_CONTEXT_FEATURE_DOC_PER_DOC_CHARS` (existant).
 - Compatibilité ascendante : aucune feature actuellement déclarée ne doit régresser. Rebuild de l'index puis comparaison avant/après sur 100 paths types pour détecter les régressions.
 

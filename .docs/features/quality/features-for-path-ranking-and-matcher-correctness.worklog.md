@@ -26,3 +26,14 @@
   - Mode hook (défaut) : warning stderr + exit 0 toujours. Un pattern cassé dans une fiche ne doit JAMAIS bloquer l'agent.
   - Détection : flag `--strict` ou env var `AI_CONTEXT_FEATURES_STRICT=1`.
 - Sections impactées : Invariants, Comportement attendu (point 4), Contrats (nouvelle sous-section dual exit code), Historique.
+
+## 2026-05-07 — re-review Codex : contrat à 4 niveaux
+- Codex re-review du commit `84cfbe9` : contrat dual encore trop étroit, mélange `features-for-path.sh` et `_lib.sh::features_matching_path`. 5 consommateurs directs de la fonction (pas du script) confirmés en local : `auto-worklog-log.sh`, `check-feature-freshness.sh`, `pr-report.sh`, `review-delta.sh`, `features-for-path.sh` lui-même.
+- Ambiguïté résiduelle : "CLI direct = strict" contredisait "défaut = best-effort".
+- Fix : section "Contrats" reformulée en 4 niveaux explicites :
+  - Niveau 1 : matcher `_lib.sh::features_matching_path` (fonction interne, ne décide pas de la politique exit).
+  - Niveau 2 : wrapper `features-for-path.sh` (best-effort par défaut, strict opt-in via `--strict` ou env var).
+  - Niveau 3 : hooks Claude (best-effort imposé, jamais `--strict`).
+  - Niveau 4 : checks/CI/doctor (strict requis, passent explicitement `--strict`).
+- Décision tranchée : `bash features-for-path.sh <path>` sans flag = best-effort. Pas d'auto-détection CLI/hook qui pourrait mal classer. Strict = opt-in pur.
+- Question ouverte (à arbitrer en phase implement) : `review-delta.sh` reste-t-il en best-effort (compat utilisateur) ou bascule strict pour traçabilité ?
