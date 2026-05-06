@@ -18,3 +18,7 @@
   - `template/.ai/workflows/feature-new.md.jinja`
 - La phase `Proposition avant écriture` est propagée au template Copier.
 - `bash .ai/scripts/dogfood-update.sh --apply` a confirmé que le runtime source reste aligné avec le rendu minimal.
+
+## 2026-05-06 — freshness
+- Impact indirect : le wrapper Codex `aic-feature-new` a été resynchronisé depuis le rendu Copier minimal.
+- Aucun changement du contrat d'approbation avant écriture ; la source de vérité reste `.ai/workflows/feature-new.md`.

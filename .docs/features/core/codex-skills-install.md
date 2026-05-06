@@ -5,7 +5,10 @@ title: Installer les skills Codex avec ai_context
 status: done
 depends_on: []
 touches:
+  - .agents/skills/**
   - template/.agents/skills/**
+  - .ai/scripts/dogfood-update.sh
+  - .ai/scripts/check-dogfood-drift.sh
   - tests/smoke-test.sh
   - README.md
   - CHANGELOG.md
@@ -113,3 +116,4 @@ Aucune dépendance déclarée.
 
 - 2026-05-04 : décision d'ajouter les skills Codex par défaut à l'installation.
 - 2026-05-04 : ajout des wrappers `.agents/skills` conditionnés par l'agent `codex`.
+- 2026-05-06 : alignement dogfood local : les skills Codex rendus sont synchronisés dans `.agents/skills/` et contrôlés par `check-dogfood-drift.sh`.

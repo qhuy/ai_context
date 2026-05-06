@@ -29,3 +29,7 @@ feat(core): installer les skills Codex par défaut
 ## 2026-05-05 — freshness
 - Impact documentaire : README et smoke-test mentionnent le nouvel overlay projet sans changer les wrappers Codex.
 - Validation associée : smoke-test PASS.
+
+## 2026-05-06 — alignement dogfood Codex/Claude
+- Intent : aligner la surface de skills disponible localement pour Codex avec les skills intentionnels déjà présents côté Claude.
+- Changement prévu : synchroniser `.agents/**` depuis le rendu Copier minimal et faire échouer `check-dogfood-drift.sh` en cas de divergence.

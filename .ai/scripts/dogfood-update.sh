@@ -39,7 +39,7 @@ fi
 
 src_copy="$(mktemp -d /tmp/ai-context-dogfood-src-XXXXXX)"
 out="$(mktemp -d /tmp/ai-context-dogfood-XXXXXX)"
-copy_log="$(mktemp /tmp/ai-context-dogfood-copy-XXXXXX.log)"
+copy_log="$(mktemp /tmp/ai-context-dogfood-copy.log.XXXXXX)"
 trap 'rm -rf "$src_copy" "$out"; rm -f "$copy_log"' EXIT
 
 rsync -a --delete \
@@ -90,6 +90,7 @@ run_rsync "$out/.ai/" ".ai/" \
   --exclude='scripts/check-dogfood-drift.sh'
 run_rsync "$out/.claude/settings.json" ".claude/settings.json"
 run_rsync "$out/.claude/skills/" ".claude/skills/"
+run_rsync "$out/.agents/" ".agents/"
 run_rsync "$out/.githooks/" ".githooks/"
 run_rsync "$out/AGENTS.md" "AGENTS.md"
 run_rsync "$out/CLAUDE.md" "CLAUDE.md"

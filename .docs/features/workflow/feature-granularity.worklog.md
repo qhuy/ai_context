@@ -35,3 +35,7 @@
 docs(workflow): formaliser la granularité des fiches feature
 
 (Respecte Conventional Commits — fr.)
+
+## 2026-05-06 — freshness
+- Impact indirect : le wrapper Codex `aic-feature-new` a été resynchronisé depuis le rendu Copier minimal.
+- Aucun changement de règle de granularité ; la procédure canonique reste `.ai/workflows/feature-new.md`.

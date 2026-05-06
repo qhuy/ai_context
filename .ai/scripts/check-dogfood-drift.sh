@@ -21,7 +21,7 @@ fi
 
 src_copy="$(mktemp -d /tmp/ai-context-dogfood-src-XXXXXX)"
 out="$(mktemp -d /tmp/ai-context-dogfood-drift-XXXXXX)"
-copy_log="$(mktemp /tmp/ai-context-dogfood-drift-copy-XXXXXX.log)"
+copy_log="$(mktemp /tmp/ai-context-dogfood-drift-copy.log.XXXXXX)"
 trap 'rm -rf "$src_copy" "$out"; rm -f "$copy_log"' EXIT
 
 rsync -a --delete \
@@ -101,6 +101,7 @@ echo "═══ check-dogfood-drift ═══"
 compare_tree ".ai" "$out/.ai" ".ai"
 compare_file ".claude/settings.json" "$out/.claude/settings.json" ".claude/settings.json"
 compare_tree ".claude/skills" "$out/.claude/skills" ".claude/skills"
+compare_tree ".agents" "$out/.agents" ".agents"
 compare_tree ".githooks" "$out/.githooks" ".githooks"
 compare_file "AGENTS.md" "$out/AGENTS.md" "AGENTS.md"
 compare_file "CLAUDE.md" "$out/CLAUDE.md" "CLAUDE.md"
