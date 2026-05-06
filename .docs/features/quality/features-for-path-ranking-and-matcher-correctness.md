@@ -71,7 +71,7 @@ Cette fiche couvre un seul outil (`features-for-path.sh`) et son matcher (`_lib.
 - Pack A reste lean : pas d'élargissement.
 - Le script reste agent-agnostic (Bash, pas de dépendance hookée Claude).
 - Comportement déterministe : sortie reproductible pour un même path et un même état du mesh.
-- Erreur claire si un pattern non supporté est utilisé (pas de silent no-op).
+- Erreur claire si un pattern non supporté est utilisé (pas de silent no-op). **Comportement dual** : exit ≠ 0 en mode CLI/check, warning stderr + exit 0 en mode hook PreToolUse/PostToolUse pour ne jamais bloquer une édition.
 
 ## Décisions
 
@@ -104,12 +104,19 @@ Choix par défaut : **B**. À confirmer après lecture détaillée du code.
 1. Matcher le path contre tous les `touches:` des features actives, en respectant correctement `**` multi-niveaux.
 2. Trier les features matchées par spécificité décroissante.
 3. Renvoyer top-K features (3 par défaut), avec mention du nombre de features omises si troncature.
-4. Erreur claire et code retour ≠ 0 si un pattern n'est pas supporté par le matcher (pas de silent no-op).
+4. Sur pattern non supporté par le matcher :
+   - **Mode strict** (CLI direct, doctor, check) → erreur sur stderr + exit ≠ 0.
+   - **Mode hook** (PreToolUse, PostToolUse via `auto-worklog-log.sh`) → warning sur stderr + exit 0 pour ne jamais bloquer une édition.
+   - Détection : flag `--strict` explicite OU env var `AI_CONTEXT_FEATURES_STRICT=1`. Par défaut : mode hook (best-effort).
 
 ## Contrats
 
 - Sortie JSON ou markdown stable consommable par `aic.sh` et le hook PreToolUse Claude.
-- Variables d'env : `AI_CONTEXT_FEATURES_TOP_K` (défaut 3), `AI_CONTEXT_FEATURE_DOC_MAX_CHARS` (existant), `AI_CONTEXT_FEATURE_DOC_PER_DOC_CHARS` (existant).
+- **Contrat dual exit code** :
+  - Mode strict : exit 0 sur succès, exit ≠ 0 sur pattern non supporté ou erreur. Cible : doctor, audit CI, debug humain.
+  - Mode hook (défaut) : exit 0 toujours sauf erreur catastrophique (jq absent, index corrompu). Cible : `.claude/settings.json` PreToolUse Write|Edit|MultiEdit ([settings.json:31](.claude/settings.json:31)), `auto-worklog-log.sh` ([ligne 36](.ai/scripts/auto-worklog-log.sh:36)), `aic.sh` (selon contexte), `measure-context-size.sh`.
+  - Justification : un pattern cassé dans une fiche feature ne doit JAMAIS bloquer l'agent en édition. Le warning permet de tracer + fixer dans un turn dédié.
+- Variables d'env : `AI_CONTEXT_FEATURES_TOP_K` (défaut 3), `AI_CONTEXT_FEATURES_STRICT` (défaut 0), `AI_CONTEXT_FEATURE_DOC_MAX_CHARS` (existant), `AI_CONTEXT_FEATURE_DOC_PER_DOC_CHARS` (existant).
 - Compatibilité ascendante : aucune feature actuellement déclarée ne doit régresser. Rebuild de l'index puis comparaison avant/après sur 100 paths types pour détecter les régressions.
 
 ## Validation
@@ -134,3 +141,4 @@ Choix par défaut : **B**. À confirmer après lecture détaillée du code.
 ## Historique / décisions
 
 - 2026-05-06 : création en draft suite au cross-check Claude/Codex (4 rounds) sur `workflow/intentional-skills`. Bug bash 3.2 confirmé en local : `_lib.sh:82-84` (`enable_globstar()` no-op sur 3.2) + branche spéciale partielle `_lib.sh:118-121` (couvre `prefix/**` simple, pas multi-niveaux). Choix Option B : un seul livrable cohérent ranking+correctness, acceptance bloque livraison sur matcher correct.
+- 2026-05-07 (post-review Codex) : **contrat dual exit code** ajouté. Le draft initial demandait « erreur claire + code retour ≠ 0 » sans distinguer les consommateurs. Risque pointé par Codex : `features-for-path.sh` est consommé par le hook PreToolUse Claude ([settings.json:31](.claude/settings.json:31)), et un exit ≠ 0 sur pattern cassé peut bloquer toute édition de l'agent. Fix : détection mode strict / mode hook (best-effort par défaut). Cible 5 consommateurs identifiés : `aic.sh`, `auto-worklog-log.sh`, `measure-context-size.sh`, hook PreToolUse, hook PostToolUse via `auto-worklog-log.sh`.
