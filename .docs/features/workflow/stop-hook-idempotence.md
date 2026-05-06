@@ -23,9 +23,9 @@ doc:
     observability: false
 progress:
   phase: spec
-  step: "draft cadré, à reprendre pour implémentation"
+  step: "draft cadré (diagnostic corrigé post-review Codex), à reprendre pour implémentation"
   blockers: []
-  resume_hint: "lire auto-worklog-flush.sh, définir le critère « tour sans édit structurel », implémenter le no-op + tests reproductibles"
+  resume_hint: "filtrer les fichiers déjà matchés par features_matching_path par extension structurelle, dans auto-worklog-log.sh ou auto-worklog-flush.sh"
   updated: 2026-05-06
 ---
 
@@ -33,13 +33,17 @@ progress:
 
 ## Résumé
 
-Aujourd'hui, le hook Stop côté Claude (via `auto-worklog-flush.sh`) écrit une entrée `## YYYY-MM-DD HH:MM — auto` dans le worklog de la feature concernée à chaque fin de tour, même si le tour était purement conversationnel ou en lecture seule. Conséquence : `progress.updated` est bumpé sur des tours sans changement réel, le worklog se remplit de bruit, et l'historique perd sa valeur de signal pour `aic-status` et la reprise.
+**Diagnostic corrigé post-review Codex 2026-05-06** :
 
-Cette fiche couvre l'idempotence : si zéro fichier matchant un `touches:` direct n'a été édité dans le tour, ne pas écrire dans le worklog ni bumper `progress.updated`.
+Le hook Stop ([auto-worklog-flush.sh:23](.ai/scripts/auto-worklog-flush.sh:23)) est déjà idempotent sur tour conversationnel ou lecture seule : il exit early si `.ai/.session-edits.log` est vide, et le log n'est alimenté que par PostToolUse Write/Edit/MultiEdit ([auto-worklog-log.sh:36](.ai/scripts/auto-worklog-log.sh:36)) sur fichiers matchant un `touches:` direct via `features_matching_path` ([_lib.sh:130](.ai/scripts/_lib.sh:130)).
+
+Le **vrai bruit** vient des édits **non-structurels** qui passent ce filtre car listés dans `touches:` direct : édit d'une fiche feature elle-même (`.docs/features/<scope>/<id>.md`), édit d'un README listé dans `touches:`, édit d'un fichier `.md` de doc, parfois fichiers de tests. Sur ces édits, `auto-worklog-log.sh` enregistre, puis `auto-worklog-flush.sh` écrit dans le worklog et bumpe `progress.updated`. Conséquence : worklog peuplé d'entrées `auto` qui tracent des modifications documentaires plutôt que des changes structurels.
+
+Cette fiche couvre le filtrage par extension structurelle, **après** `features_matching_path` (donc sans toucher au matcher), pour rendre le hook idempotent sur édit non-structurel matchant `touches:`.
 
 ## Objectif
 
-Restaurer la sémantique de `progress.updated` comme « date du dernier change réel » et alléger les worklogs en supprimant les entrées vides. Sans toucher au contrat append-only ni au mécanisme global d'auto-worklog.
+Restaurer la sémantique de `progress.updated` comme « date du dernier change réel » (de code structurel) et alléger les worklogs des entrées tracées sur édits documentaires. Sans toucher au contrat append-only, au matcher `features_matching_path`, ni au mécanisme global d'auto-worklog.
 
 ## Périmètre
 
@@ -81,13 +85,16 @@ Ouvertes, à arbitrer en phase implement :
 
 ## Comportement attendu
 
-`auto-worklog-flush.sh` invoqué par le hook Stop :
+Option (a) recommandée : filtrer dans `auto-worklog-log.sh` ([ligne ~36, après `features_matching_path`](.ai/scripts/auto-worklog-log.sh:36)).
 
-1. Récupérer la liste des fichiers édités dans le tour.
-2. Récupérer la feature ciblée (par scope primaire ou par matching le plus spécifique).
-3. Pour chaque fichier, vérifier qu'il matche un `touches:` direct (pas `touches_shared:`) ET n'a pas une extension exclue.
-4. Si au moins un fichier passe le filtre → écrire l'entrée worklog + bumper `progress.updated`.
-5. Si zéro fichier passe → no-op silencieux. `progress.updated` reste à sa valeur précédente.
+1. Le hook PostToolUse Write/Edit/MultiEdit reçoit `tool_input.file_path`.
+2. `features_matching_path` retourne les features dont un `touches:` direct couvre ce path.
+3. **Nouveau** : si l'extension du fichier ∈ liste « non-structurelle » (par défaut `.md`, `.txt`, `.lock`), ne pas alimenter `.ai/.session-edits.log`.
+4. Conséquence : `auto-worklog-flush.sh` exit déjà early (log vide), aucun changement à faire dans flush.
+
+Cas de régression à préserver :
+- Tour conversationnel/lecture seule : zéro PostToolUse Write/Edit → log vide → flush exit 0. Inchangé.
+- Édit hors `touches:` direct : `features_matching_path` retourne vide → log vide → flush exit 0. Inchangé.
 
 ## Contrats
 
@@ -97,11 +104,18 @@ Ouvertes, à arbitrer en phase implement :
 
 ## Validation
 
-- Test reproductible 1 : tour purement conversationnel (zéro édit) → no-op, worklog inchangé, `progress.updated` inchangé.
-- Test reproductible 2 : tour avec lecture seule (Read uniquement) → no-op.
-- Test reproductible 3 : tour avec édit `.md` seul (fiche feature, README) → no-op (extension non structurelle).
-- Test reproductible 4 : tour avec édit fichier source matchant `touches:` direct → write+bump.
-- Test reproductible 5 : tour avec édit fichier `touches_shared:` seul → no-op.
+Tests de non-régression (déjà passants aujourd'hui, à protéger) :
+
+- Test 1 : tour purement conversationnel (zéro Write/Edit) → no-op. Déjà le cas.
+- Test 2 : tour avec lecture seule (Read uniquement) → no-op. Déjà le cas.
+- Test 3 : édit fichier hors `touches:` direct → no-op. Déjà le cas.
+
+Tests cibles du fix (à passer après livraison) :
+
+- Test 4 : édit fiche feature `.md` seule (matche `touches:` direct mais extension non-structurelle) → no-op. **Aujourd'hui : write+bump (bruit confirmé en local sur ce repo).**
+- Test 5 : édit README seul (s'il est dans `touches:` d'une feature) → no-op.
+- Test 6 : édit fichier source `.sh` matchant `touches:` direct → write+bump. Comportement attendu inchangé.
+- Test 7 : édit mix structurel+non-structurel matchant `touches:` direct → write+bump (au moins un fichier passe, conservateur).
 - `bash tests/smoke-test.sh` PASS après intégration.
 
 ## Risques
@@ -122,4 +136,5 @@ Ouvertes, à arbitrer en phase implement :
 
 ## Historique / décisions
 
-- 2026-05-06 : création en draft suite au cross-check Claude/Codex (4 rounds) sur `workflow/intentional-skills`. Bug de signal : `progress.updated` est bumpé même sur tours conversationnels, ce qui dilue sa valeur. Fix : no-op si zéro édit structurel. Indépendant de #1–#4 mais bénéficie du matcher correct (#2). Codex round 2 a explicitement noté que ce fix est utile mais pas le plus dangereux ; placé en #5 par ordre d'impact agent (egress > injection > falsification d'état > hygiène signal).
+- 2026-05-06 : création en draft suite au cross-check Claude/Codex (4 rounds) sur `workflow/intentional-skills`. Bug de signal supposé : `progress.updated` bumpé même sur tours conversationnels.
+- 2026-05-06 (post-review Codex) : **diagnostic corrigé**. Le hook Stop est déjà idempotent sur tours conversationnels/lecture seule (early exit `[[ ! -s log_file ]]`). Le vrai bruit vient des édits **non-structurels** matchant `touches:` direct (fiche feature elle-même, README, fichier `.md` de doc). Fix recadré : filtrage par extension structurelle après `features_matching_path`, dans `auto-worklog-log.sh`. Indépendant de #1–#4. Bénéficie du matcher correct (#2) mais pas bloqué par lui.
