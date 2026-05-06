@@ -7,8 +7,8 @@
 #   bash .ai/scripts/review-delta.sh [--committed-only]
 #
 # Par défaut : Delta committed reference (--staged si index non vide,
-# sinon HEAD~1...HEAD) + Delta uncommitted (git status --short
-# --untracked-files=all).
+# sinon HEAD~1...HEAD) + Delta uncommitted (git status --porcelain=v1
+# -z --untracked-files=all).
 # Avec --committed-only : seule la section committed est produite
 # (compat ascendante stricte).
 
@@ -47,7 +47,7 @@ Produit un rapport Markdown court :
   - Delta uncommitted (working tree + index + untracked) : ajouté par
     défaut, omis avec --committed-only
 
-Source de vérité uncommitted : git status --short --untracked-files=all
+Source de vérité uncommitted : git status --porcelain=v1 -z --untracked-files=all
 (couvre tracked modifié + staged + untracked + deletions/renames).
 USAGE
       exit 0

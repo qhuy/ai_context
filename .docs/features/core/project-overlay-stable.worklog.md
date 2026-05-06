@@ -33,3 +33,7 @@
 ## 2026-05-06 23:57 — auto
 - Fichiers modifiés :
   - tests/unit/test-review-delta-uncommitted.sh
+
+## 2026-05-07 00:06 — auto
+- Fichiers modifiés :
+  - tests/unit/test-review-delta-uncommitted.sh

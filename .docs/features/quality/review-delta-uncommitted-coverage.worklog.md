@@ -67,3 +67,11 @@
 **Validation**
 - 8 cas PASS dans `tests/unit/test-review-delta-uncommitted.sh` (5 originaux + rename + path tricky + path avec espaces + cas 7 avec capture exit code).
 - check-features, check-dogfood-drift PASS.
+
+## 2026-05-07 00:06 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - .ai/scripts/review-delta.sh
+  - template/.ai/scripts/_lib.sh.jinja
+  - template/.ai/scripts/review-delta.sh.jinja
+  - tests/unit/test-review-delta-uncommitted.sh

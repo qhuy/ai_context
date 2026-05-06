@@ -79,3 +79,8 @@
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - .ai/scripts/review-delta.sh
+
+## 2026-05-07 00:06 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - .ai/scripts/review-delta.sh

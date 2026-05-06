@@ -22,7 +22,7 @@ progress:
   step: "runtime dogfoodé incluant les skills Codex"
   blockers: []
   resume_hint: "vérifier check-shims, dogfood drift, measure-context-size et smoke-test complet"
-  updated: 2026-05-06
+  updated: 2026-05-07
 ---
 
 # Synchronisation dogfooding du runtime

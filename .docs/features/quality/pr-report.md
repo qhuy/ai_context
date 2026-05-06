@@ -24,7 +24,7 @@ progress:
   step: "aic expose frame/document-feature/review/ship"
   blockers: []
   resume_hint: "ajouter une intégration CI (commentaire PR automatique) — passer en review une fois la surface aic stabilisée"
-  updated: 2026-05-06
+  updated: 2026-05-07
 ---
 
 # PR report

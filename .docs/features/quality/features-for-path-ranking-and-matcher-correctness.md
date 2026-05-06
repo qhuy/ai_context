@@ -22,7 +22,7 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: spec
+  phase: implement
   step: "draft cadré (contrat 4 niveaux), à reprendre pour implémentation"
   blockers: []
   resume_hint: "lire features-for-path.sh + _lib.sh, implémenter Option B (matcher correct multi-niveaux + ranking) et tests reproductibles"
