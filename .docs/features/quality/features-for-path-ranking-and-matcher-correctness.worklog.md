@@ -79,3 +79,18 @@
 - **Q2 résolu** : `review-delta.sh` best-effort par défaut. Note ouverte sur Niveau 4 strict.
 - Section Décisions de la fiche reformulée (commit `166a3de`).
 - Next : implémenter dans un turn dédié — `path_matches_touch` regex path-aware, ranking dans `features-for-path.sh`, tests étendus, parité template.
+
+## 2026-05-07 — implémentation livrée
+- **Matcher A2** : `path_matches_touch` réécrit dans `_lib.sh`. 3 helpers internes ajoutés :
+  - `_glob_pattern_supported` : whitelist B2 (vérifie `**` segment complet + brackets équilibrés).
+  - `_glob_to_regex` : conversion glob path-aware → regex POSIX ancrée. `*` → `[^/]*`, `?` → `[^/]`, `/**/` → `(/[^/]+)*/`, `**/` en début → `([^/]+/)*`, `/**` en fin → `(/.*)?`, brackets conservés, métacaractères regex échappés.
+  - Politique unique `_FEATURES_MATCHING_POLICY=silent|warn|strict`. Défaut `warn`.
+- **Bug `*` qui matche `/` corrigé** : `app/*/page.tsx` ne matche plus `app/a/b/page.tsx`. Test no-overmatch dans `test-path-matches-touch.sh`.
+- **Ranking** : `features-for-path.sh` étendu. Récupère matches via nouveau `features_matching_path_ranked` (4 colonnes scope/id/path/touch). Score chaque match via `_score_touch_pattern` (tier exact/dossier/glob, longueur préfixe non-glob, nb wildcards pondéré ** vs *). Tri stable scope/id, top-K (`AI_CONTEXT_FEATURES_TOP_K=3` par défaut) + ligne « N omises » dans la sortie principale.
+- **Compat ascendante stricte** : `features_matching_path` à 3 colonnes inchangée. Les callers historiques (auto-worklog-log, check-feature-freshness, pr-report, review-delta) ne sont pas cassés.
+- **Tests** :
+  - `test-path-matches-touch.sh` : 20 cas existants + 8 nouveaux no-overmatch = 28 PASS.
+  - `test-matcher-multi-level.sh` (nouveau) : 21 cas (ranking, whitelist B2, politiques silent/warn/strict, bracket mal formé) PASS.
+- **Parité template** : `_lib.sh.jinja` + `features-for-path.sh.jinja`. Bug Jinja corrigé : tous les `${#var}` protégés par `{% raw %}` (sinon `{#` interprété comme début de commentaire Jinja, `Missing end of comment tag`).
+- **Validation** : check-shims, check-features, check-dogfood-drift, smoke-test, 49 cas test unit ALL PASS.
+- Phase bumpée implement → review.

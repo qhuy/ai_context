@@ -80,3 +80,10 @@
 - Fichiers modifiés :
   - .ai/scripts/review-delta.sh
   - template/.ai/scripts/review-delta.sh.jinja
+
+## 2026-05-07 — freshness
+- Impact indirect : `_lib.sh::path_matches_touch` refactoré (regex path-aware) bénéficie
+  à `review-delta.sh` qui utilise `features_matching_path`. Le matcher est maintenant
+  correct sur globs multi-niveaux.
+- Aucun changement sur `review-delta.sh` lui-même.
+- Validation : test-review-delta-uncommitted (8 cas) PASS, smoke-test PASS.

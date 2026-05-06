@@ -7,9 +7,13 @@ depends_on: []
 touches:
   - .ai/scripts/features-for-path.sh
   - .ai/scripts/_lib.sh
-  - tests/smoke-test.sh
+  - template/.ai/scripts/features-for-path.sh.jinja
+  - template/.ai/scripts/_lib.sh.jinja
+  - tests/unit/test-path-matches-touch.sh
+  - tests/unit/test-matcher-multi-level.sh
 touches_shared:
   - .claude/settings.json
+  - tests/smoke-test.sh
 product: {}
 external_refs: {}
 doc:
@@ -22,10 +26,10 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: implement
-  step: "5 choix d'implémentation tranchés post cross-check Codex, prêt à coder"
+  phase: review
+  step: "implémentation livrée, 49 cas test PASS, prêt à commit"
   blockers: []
-  resume_hint: "implémenter A2 (regex path-aware) dans path_matches_touch, whitelist B2 élargie, ranking C3+3 précisions, D2 additionalContext, étendre test-path-matches-touch.sh + nouveau test-matcher-multi-level.sh"
+  resume_hint: "commit feat(quality) puis valider en utilisation réelle"
   updated: 2026-05-07
 ---
 

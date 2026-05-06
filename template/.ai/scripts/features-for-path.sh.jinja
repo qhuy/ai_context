@@ -182,18 +182,54 @@ log_debug "mode=$mode rel_path=$rel_path"
 start_ts=$(date +%s 2>/dev/null || echo 0)
 ensure_index
 
-# ─── Lookup dans l'index ───
+# ─── Lookup dans l'index avec ranking par spécificité ───
 matches=""
-if [[ -f "$index_file" ]]; then
-  while IFS=$'\t' read -r scope id path; do
-    [[ -z "$scope" ]] && continue
-    matches+="  • ${scope}/${id} (${path})"$'\n'
-    add_feature_key "${scope}/${id}"
-  done < <(features_matching_path "$index_file" "$rel_path")
+omitted_count=0
+top_k="${AI_CONTEXT_FEATURES_TOP_K:-3}"
+[[ "$top_k" =~ ^[0-9]+$ ]] || top_k=3
 
-  if [[ -n "$matches" ]]; then
-    matches=$(printf '%s' "$matches" | awk '!seen[$0]++')
-    matches="${matches}"$'\n'
+if [[ -f "$index_file" ]]; then
+  # Récupère matches enrichis (scope, id, feature_path, touch_matched), score chaque
+  # touch, garde le meilleur par feature, trie globalement, top-K.
+  ranked_lines=""
+  declare_feature_key_seen=""
+  best_per_feature=""
+
+  while IFS=$'\t' read -r scope id fpath touch; do
+    [[ -z "$scope" ]] && continue
+    score_line=$(_score_touch_pattern "$touch")
+    IFS=$'\t' read -r tier plen wcs <<< "$score_line"
+    # ligne intermédiaire : tier\tplen\twcs\tscope\tid\tfpath\ttouch
+    best_per_feature+="$tier"$'\t'"$plen"$'\t'"$wcs"$'\t'"$scope"$'\t'"$id"$'\t'"$fpath"$'\t'"$touch"$'\n'
+  done < <(features_matching_path_ranked "$index_file" "$rel_path")
+
+  if [[ -n "$best_per_feature" ]]; then
+    # Garde le meilleur score par feature (scope/id) : tri sur score puis dédup par scope/id.
+    # Tri : tier desc, plen desc, wcs asc, scope/id asc (tie-break stable).
+    ranked_lines=$(printf '%s' "$best_per_feature" \
+      | sort -t$'\t' -k1,1nr -k2,2nr -k3,3n -k4,4 -k5,5 \
+      | awk -F'\t' '!seen[$4 "/" $5]++')
+
+    # Compte total avant top-K
+    total_count=$(printf '%s' "$ranked_lines" | grep -c '^' || true)
+    [[ -z "$total_count" ]] && total_count=0
+
+    # Top-K
+    kept_lines=$(printf '%s' "$ranked_lines" | head -n "$top_k")
+    if [[ "$total_count" -gt "$top_k" ]]; then
+      omitted_count=$((total_count - top_k))
+    fi
+
+    # Construit la sortie matches + add_feature_key sur chaque feature gardée
+    while IFS=$'\t' read -r tier plen wcs scope id fpath touch; do
+      [[ -z "$scope" ]] && continue
+      matches+="  • ${scope}/${id} (${fpath})"$'\n'
+      add_feature_key "${scope}/${id}"
+    done <<< "$kept_lines"
+
+    if [[ "$omitted_count" -gt 0 ]]; then
+      matches+="  • _(${omitted_count} feature(s) supplémentaire(s) omise(s) par ranking top-${top_k})_"$'\n'
+    fi
   fi
 fi
 

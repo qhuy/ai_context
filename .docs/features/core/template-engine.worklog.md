@@ -166,3 +166,11 @@
 ## 2026-05-07 00:11 — auto
 - Fichiers modifiés :
   - template/.ai/scripts/review-delta.sh.jinja
+
+## 2026-05-07 — freshness
+- Impact template : `template/.ai/scripts/_lib.sh.jinja` et
+  `template/.ai/scripts/features-for-path.sh.jinja` étendus pour parité runtime
+  (livraison `quality/features-for-path-ranking-and-matcher-correctness`).
+- Note Jinja : tous les `${#var}` protégés par `{% raw %}` pour éviter `{#` interprété
+  comme début de commentaire Jinja.
+- Validation : check-dogfood-drift PASS, copier copy direct PASS.

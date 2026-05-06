@@ -74,6 +74,16 @@ assert_no_match "path identique au préfixe non-glob"    "src"                  
 # ─── Cas Windows-friendly (séparateurs / uniquement) ───
 assert_match    "chemin avec underscores et tirets"     "src/auth-v2_alpha/x.ts" "src/auth-v2_alpha/**"
 
+# ─── No-overmatch (fix Phase 2 #2 : * ne doit pas absorber /) ───
+assert_match    "no-overmatch app/*/page.tsx un segment"   "app/x/page.tsx"        "app/*/page.tsx"
+assert_no_match "no-overmatch app/*/page.tsx multi seg"    "app/a/b/page.tsx"      "app/*/page.tsx"
+assert_no_match "no-overmatch app/*.tsx ne traverse pas /" "app/sub/page.tsx"      "app/*.tsx"
+assert_match    "src/**/*.ts zéro segment intermediaire"   "src/foo.ts"            "src/**/*.ts"
+assert_match    "**/x.ts a la racine"                      "x.ts"                  "**/x.ts"
+assert_match    "**/x.ts profond"                          "a/b/c/x.ts"            "**/x.ts"
+assert_match    "foo-*/** profond"                         "foo-bar/baz/qux.ts"    "foo-*/**"
+assert_no_match "foo-*/** ne déborde pas"                  "foobar/x.ts"           "foo-*/**"
+
 # ─── Rapport ───
 total=$((pass + fail))
 echo "═══ test-path-matches-touch ═══"

@@ -54,3 +54,9 @@
 - Fichiers modifiés :
   - .ai/scripts/review-delta.sh
   - template/.ai/scripts/review-delta.sh.jinja
+
+## 2026-05-07 — freshness
+- Impact indirect : refactor de `_lib.sh::path_matches_touch` (regex path-aware,
+  no-overmatch) bénéficie à `pr-report.sh` qui utilise `features_matching_path`.
+- Aucun changement sur `pr-report.sh` lui-même. Compat ascendante préservée.
+- Validation : smoke-test PASS.

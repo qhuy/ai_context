@@ -122,31 +122,153 @@ is_valid_phase() {
   return 1
 }
 
-# Matching canonique pour les entrées `touches:`.
-# Supporte :
+# _glob_pattern_supported <pattern>
+#   — retourne 0 si le pattern est dans la whitelist B2 supportée.
+#   Whitelist (cf. quality/features-for-path-ranking-and-matcher-correctness) :
+#     - exact file (src/auth/login.ts)
+#     - dossier préfixe sans glob (src/)
+#     - intra-segment : * ? [abc] (ex : src/*.ts, lib/[ab].js)
+#     - prefix/**, glob-prefix/** (aic-*/**)
+#     - prefix/**/suffix, **/suffix
+#   Unsupported (déclenchent la politique 3 niveaux) :
+#     - ** hors segment complet (foo**bar, foo/**bar, foo**/bar)
+#     - bracket [ mal formé (déséquilibre)
+_glob_pattern_supported() {
+  local pattern="$1"
+  [[ -z "$pattern" ]] && return 0
+
+  # ** doit être un segment complet : caractère avant/après doit être / ou bord.
+  local p="$pattern"
+  while [[ "$p" == *'**'* ]]; do
+    local before="${p%%\*\**}"
+    local after_start=$(( ${#before} + 2 ))
+    local after="${p:$after_start}"
+    if [[ -n "$before" && "${before: -1}" != "/" ]]; then
+      return 1
+    fi
+    if [[ -n "$after" && "${after:0:1}" != "/" ]]; then
+      return 1
+    fi
+    p="$after"
+  done
+
+  # Brackets équilibrés (best-effort : count [ vs ]).
+  local open close
+  open=$(printf '%s' "$pattern" | tr -cd '[' | wc -c | tr -d '[:space:]')
+  close=$(printf '%s' "$pattern" | tr -cd ']' | wc -c | tr -d '[:space:]')
+  [[ "$open" -ne "$close" ]] && return 1
+
+  return 0
+}
+
+# _glob_to_regex <pattern>
+#   — convertit un glob (path-aware) en regex POSIX ancrée (^pattern$).
+#   * → [^/]* (n'absorbe pas /)
+#   ? → [^/]
+#   /**/ → (/[^/]+)*/  (zéro ou plus de segments suivis de /)
+#   **/ en début → ([^/]+/)*  (zéro ou plus de segments suivis de /)
+#   /** en fin → (/.*)?  (zéro ou un slash suivi de n'importe quoi)
+#   [abc] → conservé tel quel
+#   . + ^ $ ( ) { } | \ → échappés
+_glob_to_regex() {
+  local pattern="$1"
+  local result=""
+  local i=0
+  local len=${#pattern}
+
+  while [[ $i -lt $len ]]; do
+    local rest="${pattern:$i}"
+    if [[ "${rest:0:4}" == '/**/' ]]; then
+      result+='(/[^/]+)*/'
+      i=$((i + 4))
+      continue
+    fi
+    if [[ $i -eq 0 && "${rest:0:3}" == '**/' ]]; then
+      result+='([^/]+/)*'
+      i=$((i + 3))
+      continue
+    fi
+    if [[ "${rest:0:3}" == '/**' && $((i + 3)) -eq $len ]]; then
+      result+='(/.*)?'
+      i=$((i + 3))
+      continue
+    fi
+    if [[ "${rest:0:1}" == '*' ]]; then
+      result+='[^/]*'
+      i=$((i + 1))
+      continue
+    fi
+    if [[ "${rest:0:1}" == '?' ]]; then
+      result+='[^/]'
+      i=$((i + 1))
+      continue
+    fi
+    if [[ "${rest:0:1}" == '[' ]]; then
+      local j=$((i + 1))
+      while [[ $j -lt $len && "${pattern:$j:1}" != ']' ]]; do
+        j=$((j + 1))
+      done
+      if [[ $j -ge $len ]]; then
+        result+='\['
+        i=$((i + 1))
+        continue
+      fi
+      result+="${pattern:$i:$((j - i + 1))}"
+      i=$((j + 1))
+      continue
+    fi
+    local ch="${rest:0:1}"
+    case "$ch" in
+      .|+|\^|\$|\(|\)|\{|\}|\|) result+='\'"$ch" ;;
+      \\) result+='\\\\' ;;
+      *) result+="$ch" ;;
+    esac
+    i=$((i + 1))
+  done
+
+  printf '^%s$\n' "$result"
+}
+
+# Matching canonique pour les entrées `touches:` (path-aware, whitelist B2).
+# Politique sur pattern non supporté : pilotée par _FEATURES_MATCHING_POLICY
+# (silent | warn | strict). Défaut : warn.
+#   - silent : retourne 1 (no-match) sans message.
+#   - warn   : message stderr "[features-matcher] pattern non supporté : $touch", retourne 1.
+#   - strict : message stderr et retourne 2 (caller doit propager exit ≠ 0).
+# Supporte (whitelist B2) :
 #   - fichier exact : src/foo.ts
 #   - dossier      : src/auth couvre src/auth/service.ts
-#   - glob bash    : src/**/*.ts, app/*/page.tsx, lib/[ab].js
-#   - suffixe /**  : src/auth/** couvre src/auth et ses descendants
+#   - glob bash path-aware : src/*.ts, app/*/page.tsx, lib/[ab].js
+#   - **/, /**, /**/  : src/**/*.ts, **/x.ts, foo-*/**
 path_matches_touch() {
   local path="$1"
   local touch="$2"
   local normalized="${touch%/}"
+  local policy="${_FEATURES_MATCHING_POLICY:-warn}"
 
   [[ -z "$path" || -z "$touch" ]] && return 1
   [[ "$path" == "$touch" ]] && return 0
-  # shellcheck disable=SC2053
-  [[ "$path" == $touch ]] && return 0
 
-  if [[ "${touch: -3}" == "/**" ]]; then
-    local prefix="${touch%/**}"
-    [[ "$path" == "$prefix" || "$path" == "$prefix"/* ]] && return 0
+  # Pattern non supporté → politique 3 niveaux.
+  if ! _glob_pattern_supported "$touch"; then
+    case "$policy" in
+      silent) ;;
+      strict) printf '[features-matcher] pattern non supporté : %s\n' "$touch" >&2; return 2 ;;
+      *)      printf '[features-matcher] pattern non supporté : %s\n' "$touch" >&2 ;;
+    esac
+    return 1
   fi
 
+  # Sans glob : exact ou prefix dossier.
   if [[ "$touch" != *[\*\?\[]* ]]; then
-    [[ "$path" == "$normalized"/* ]] && return 0
+    [[ "$path" == "$normalized" || "$path" == "$normalized"/* ]] && return 0
+    return 1
   fi
 
+  # Avec glob : conversion regex path-aware + match POSIX.
+  local regex
+  regex=$(_glob_to_regex "$touch")
+  [[ "$path" =~ $regex ]] && return 0
   return 1
 }
 
@@ -163,6 +285,65 @@ features_matching_path() {
     fi
   done < <(jq -r '.features[] | . as $f | ($f.touches // [])[] | [$f.scope, $f.id, $f.path, .] | @tsv' "$index_file" 2>/dev/null) \
     | awk '!seen[$0]++'
+}
+
+# features_matching_path_ranked <index> <path>
+#   — comme features_matching_path mais retourne 4 colonnes :
+#   scope\tid\tfeature_path\ttouch_matched. Le caller peut scorer chaque match
+#   par specificity du `touch_matched` pour le ranking.
+#   Compat ascendante : features_matching_path à 3 colonnes reste inchangée.
+features_matching_path_ranked() {
+  local index_file="$1"
+  local rel_path="$2"
+
+  [[ -f "$index_file" ]] || return 0
+
+  while IFS=$'\t' read -r scope id feature_path touch; do
+    [[ -z "$scope" || -z "$touch" ]] && continue
+    if path_matches_touch "$rel_path" "$touch"; then
+      printf '%s\t%s\t%s\t%s\n' "$scope" "$id" "$feature_path" "$touch"
+    fi
+  done < <(jq -r '.features[] | . as $f | ($f.touches // [])[] | [$f.scope, $f.id, $f.path, .] | @tsv' "$index_file" 2>/dev/null) \
+    | awk '!seen[$0]++'
+}
+
+# _score_touch_pattern <touch>
+#   — score numérique pour ranking (plus haut = plus spécifique).
+#   Format sortie : "tier prefix_len wildcards" (tab-separated, à trier décroissant
+#   sur tier puis prefix_len puis ascendant sur wildcards).
+#   tier : 3=exact (avec extension), 2=dossier sans glob, 1=glob.
+#   prefix_len : longueur du préfixe non-glob.
+#   wildcards : nombre de wildcards pondéré (** compte 2, * compte 1).
+_score_touch_pattern() {
+  local touch="$1"
+  local tier prefix_len wildcards
+
+  if [[ "$touch" != *[\*\?\[]* ]]; then
+    # Pas de glob → tier 3 si extension (fichier), 2 sinon (dossier).
+    if [[ "$touch" == *.* && "$touch" != */ ]]; then
+      tier=3
+    else
+      tier=2
+    fi
+    prefix_len=${#touch}
+    wildcards=0
+  else
+    tier=1
+    local i=0
+    while [[ $i -lt ${#touch} ]]; do
+      local ch="${touch:$i:1}"
+      [[ "$ch" == "*" || "$ch" == "?" || "$ch" == "[" ]] && break
+      i=$((i + 1))
+    done
+    prefix_len=$i
+    local no_dstar="${touch//\*\*/}"
+    local doublestar_count=$(( (${#touch} - ${#no_dstar}) / 2 ))
+    local no_star="${no_dstar//\*/}"
+    local star_count=$(( ${#no_dstar} - ${#no_star} ))
+    wildcards=$((doublestar_count * 2 + star_count))
+  fi
+
+  printf '%d\t%d\t%d\n' "$tier" "$prefix_len" "$wildcards"
 }
 
 features_matching_shared_path() {

@@ -19,3 +19,10 @@
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-05-07 — freshness
+- Impact direct : 3 nouvelles fonctions dans `.ai/scripts/_lib.sh` (et template) :
+  `_glob_pattern_supported`, `_glob_to_regex`, `features_matching_path_ranked`,
+  `_score_touch_pattern`. Refactor `path_matches_touch` (regex path-aware).
+- Compat ascendante : `features_matching_path` à 3 colonnes inchangée.
+- Validation : check-features PASS, 28 tests path-matches PASS, 21 tests multi-level PASS.

@@ -88,3 +88,8 @@
 ## 2026-05-07 00:11 — auto
 - Fichiers modifiés :
   - .ai/scripts/review-delta.sh
+
+## 2026-05-07 — freshness
+- Impact indirect : `_lib.sh` et `features-for-path.sh` (runtime + templates) étendus
+  pour matcher path-aware + ranking (livraison Phase 2 #2).
+- Validation : check-dogfood-drift PASS.
