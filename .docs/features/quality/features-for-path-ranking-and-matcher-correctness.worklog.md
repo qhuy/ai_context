@@ -51,3 +51,11 @@
 ## 2026-05-06 23:55 — auto-progress
 - Bascule phase : spec → implement (édits réels détectés sur 1 fichier(s))
 - Annulable via /aic undo (snapshot dans .ai/.progress-history.jsonl)
+
+## 2026-05-06 23:57 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+
+## 2026-05-07 00:04 — auto-progress
+- Bascule phase : spec → implement (édits réels détectés sur 1 fichier(s))
+- Annulable via /aic undo (snapshot dans .ai/.progress-history.jsonl)

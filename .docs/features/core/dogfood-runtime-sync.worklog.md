@@ -74,3 +74,8 @@
 ## 2026-05-07 — freshness
 - Impact indirect : `_lib.sh` et `review-delta.sh` (runtime + templates) étendus pendant l'implémentation de `quality/review-delta-uncommitted-coverage`.
 - Aucun changement sur le dogfood-update.sh ni la sémantique de drift. `check-dogfood-drift` PASS.
+
+## 2026-05-06 23:57 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - .ai/scripts/review-delta.sh

@@ -152,3 +152,8 @@
 ## 2026-05-07 — freshness
 - Impact template : `template/.ai/scripts/_lib.sh.jinja` et `template/.ai/scripts/review-delta.sh.jinja` étendus pour parité runtime (livraison `quality/review-delta-uncommitted-coverage`).
 - Aucun changement de profil, agents, scopes ou variables Copier. `check-dogfood-drift` PASS.
+
+## 2026-05-06 23:57 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/_lib.sh.jinja
+  - template/.ai/scripts/review-delta.sh.jinja

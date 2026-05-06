@@ -29,3 +29,7 @@
 ## 2026-05-07 — freshness
 - Impact indirect : `tests/unit/test-review-delta-uncommitted.sh` ajouté pendant l'implémentation de `quality/review-delta-uncommitted-coverage`. Aucun changement sur le contrat overlay projet ni sur `.ai/project/**`.
 - Validation associée : `bash tests/unit/test-review-delta-uncommitted.sh` (6 cas) PASS.
+
+## 2026-05-06 23:57 — auto
+- Fichiers modifiés :
+  - tests/unit/test-review-delta-uncommitted.sh

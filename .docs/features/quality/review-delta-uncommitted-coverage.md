@@ -29,7 +29,7 @@ progress:
   step: "implémentation livrée + 6 tests PASS, prêt à commit"
   blockers: []
   resume_hint: "commit feat(quality) puis valider en utilisation réelle sur un commit suivant"
-  updated: 2026-05-07
+  updated: 2026-05-06
 ---
 
 # Couvrir le delta uncommitted dans review-delta.sh
@@ -73,10 +73,10 @@ Cette fiche couvre l'outil de review pre-commit ; pas la pertinence d'injection 
 Tranchées post cross-check Codex 2026-05-07 :
 
 - **Approche A confirmée** : étendre `review-delta.sh` pour couvrir committed + uncommitted par défaut. Flag `--committed-only` préserve l'ancien comportement. Approche B (script séparé) rejetée : un seul outil cohérent, blast radius limité.
-- **Compat parsabilité** : la nouvelle section uncommitted s'**ajoute** au format de sortie sans modifier la portion existante. Un consommateur qui parsait l'ancienne sortie peut ignorer la nouvelle section sans casser.
-- **Source de vérité uncommitted** = `git status --short --untracked-files=all`. Pas `git diff HEAD` qui rate les untracked. `git status` est la liste canonique des paths.
+- **Compat parsabilité stricte** : la portion committed conserve **exactement** son format original (titres `### Fichiers`, `### Features directes`, etc.). La nouvelle section `### Delta uncommitted` est ajoutée **après** `### Checks recommandés` (suffixe). Avec `--committed-only`, le rapport est byte-identique à l'ancien (modulo ligne metadata d'introduction). Un consommateur qui parsait l'ancien format continue de fonctionner.
+- **Source de vérité uncommitted** = `git status --porcelain=v1 -z --untracked-files=all`. Format -z (NUL-terminé) robuste sur paths quotés (espaces, caractères spéciaux, fichiers nommés `a -> b.txt`). Pas `git diff HEAD` qui rate les untracked, ni `--short` non-zéro qui casse sur paths tricky.
 - **Libellé section committed** : « Delta committed reference » (pas « Delta committed (HEAD~1..HEAD) »). Ne pas figer la base de comparaison comme contrat.
-- **Features impactées** : garder `features_matching_path` direct (déjà utilisé par `review-delta.sh`). **Ne pas migrer** vers `features-for-path.sh` — évite mélange avec Phase 2 #2. Mode best-effort, warning si matcher incertain.
+- **Features impactées** : garder `features_matching_path` direct (déjà utilisé par `review-delta.sh`). **Ne pas migrer** vers `features-for-path.sh` — évite mélange avec Phase 2 #2. Mode best-effort (`2>/dev/null || true` neutralise les erreurs). **Pas de warning émis** par le matcher tant que Phase 2 #2 n'est pas livrée — la fiche ne le promet pas dans #1.
 - **Tests** : unit-test dédié `tests/unit/test-review-delta-uncommitted.sh`, 5 cas. Pas de gonflement de `smoke-test.sh`.
 
 ## Comportement attendu

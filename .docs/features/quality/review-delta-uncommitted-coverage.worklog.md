@@ -39,3 +39,31 @@
 - Validation : check-shims, check-features, check-dogfood-drift, smoke-test, test-unit ALL PASS.
 - Cross-touch : freshness ajoutées sur core/dogfood-runtime-sync, core/feature-index-cache, core/template-engine, quality/pr-report.
 - Phase bumpée implement → review. Prêt à commit `feat(quality): couvrir le delta uncommitted dans review-delta.sh`.
+
+## 2026-05-06 23:57 — auto
+- Fichiers modifiés :
+  - .ai/scripts/review-delta.sh
+
+## 2026-05-07 — corrections post-review Codex (3 findings)
+- Codex post-review du commit `c2f6146` : 3 findings sérieux + 2 corrections actées.
+
+**Finding 1 — parsing `git status --short` trop fragile**
+- `${line:3}` cassait sur paths quotés (espaces, fichiers nommés `a -> b.txt`).
+- Fix : `collect_uncommitted_paths` réécrit avec `git status --porcelain=v1 -z --untracked-files=all`. Format NUL-terminé, paths non quotés. Gestion explicite des renames/copies (R/C en X) qui ont 2 records consécutifs (`new\0old\0`) — on retourne `new` et on consomme `old` via lookahead.
+- Tests : 2 cas ajoutés au test unit (cas 6 path contenant ` -> ` ; cas 6b path avec espaces). Tous PASS.
+
+**Finding 2 — compat parsabilité pas stricte (heading downgrade)**
+- Le commit `c2f6146` avait introduit `### Delta committed reference` et descendu `### Fichiers` → `#### Fichiers`. Rupture de compat heading.
+- Fix : retour aux `###` originaux. Section `### Delta uncommitted` placée **après** `### Checks recommandés` (suffixe). Une ligne metadata « Section _Delta uncommitted_ ajoutée en suffixe » indique la présence de la section. Avec `--committed-only`, sortie byte-identique à l'ancien format.
+
+**Finding 3 — test cas 6 (devenu cas 7) pouvait passer sur script cassé**
+- L'ancien test grep-ait l'absence de `Delta uncommitted` sans vérifier le code retour. Si `review-delta.sh` échouait (exit ≠ 0) et sortait vide, le grep échouait → test passait à tort.
+- Fix : capture du code retour via `if ! output=$(bash ...)`. Faux positif éliminé. Vérification additionnelle de la présence du titre `## Review Delta` pour s'assurer qu'on a bien un rapport, pas une sortie vide.
+
+**Corrections actées**
+- Texte « warning si matcher incertain » retiré des Décisions/Risques : aucun warning n'est émis dans #1, à reformuler explicitement quand Phase 2 #2 livre.
+- Phase de `quality/features-for-path-ranking-and-matcher-correctness` remise à `spec` (faux positif auto-progress lors du commit `c2f6146`).
+
+**Validation**
+- 8 cas PASS dans `tests/unit/test-review-delta-uncommitted.sh` (5 originaux + rename + path tricky + path avec espaces + cas 7 avec capture exit code).
+- check-features, check-dogfood-drift PASS.

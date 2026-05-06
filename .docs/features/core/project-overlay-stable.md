@@ -32,7 +32,7 @@ progress:
   step: "implémentation overlay projet"
   blockers: []
   resume_hint: "Vérifier que .ai/project reste project-owned, optionnel et ignoré par les checks de drift."
-  updated: "2026-05-05"
+  updated: 2026-05-06
 ---
 
 # Overlay projet stable

@@ -90,16 +90,33 @@ else
   fail "cas 5: src/renamed.txt manquant : $output"
 fi
 
-# Cas 6 : --committed-only de review-delta.sh n'affiche pas la section uncommitted
-# (Test E2E sur le repo source : on ne lance pas review-delta.sh dans le tmp
-# car il dépend de l'index feature. On teste directement la sortie sur le
-# repo réel avec --committed-only et vérifie l'absence de la section.)
-cd "$repo_root"
-output=$(bash .ai/scripts/review-delta.sh --committed-only 2>/dev/null)
-if printf '%s' "$output" | grep -Fq "Delta uncommitted"; then
-  fail "cas 6: --committed-only ne devrait pas produire la section uncommitted"
+# Cas 6 : path tricky avec espaces et ` -> ` (porcelain -z robuste)
+echo "tricky" > "src/a -> b.txt"
+echo "spaces" > "src/with spaces.txt"
+output=$(collect_uncommitted_paths)
+if printf '%s\n' "$output" | grep -Fxq "src/a -> b.txt"; then
+  pass "cas 6: path contenant ' -> ' visible (porcelain -z)"
 else
-  pass "cas 6: --committed-only n'affiche pas la section uncommitted"
+  fail "cas 6: 'src/a -> b.txt' manquant : $output"
+fi
+if printf '%s\n' "$output" | grep -Fxq "src/with spaces.txt"; then
+  pass "cas 6b: path avec espaces visible"
+else
+  fail "cas 6b: 'src/with spaces.txt' manquant : $output"
+fi
+
+# Cas 7 : --committed-only de review-delta.sh n'affiche pas la section uncommitted
+# E2E sur le repo source. Capture du code retour pour éviter le faux positif
+# si le script échoue (Codex finding 3).
+cd "$repo_root"
+if ! output=$(bash .ai/scripts/review-delta.sh --committed-only 2>&1); then
+  fail "cas 7: review-delta.sh --committed-only a échoué (exit ≠ 0). Sortie : $output"
+elif printf '%s' "$output" | grep -Fq "Delta uncommitted"; then
+  fail "cas 7: --committed-only ne devrait pas produire la section uncommitted"
+elif ! printf '%s' "$output" | grep -Fq "## Review Delta"; then
+  fail "cas 7: sortie ne contient pas le titre principal '## Review Delta' : $output"
+else
+  pass "cas 7: --committed-only produit le rapport sans section uncommitted (exit 0)"
 fi
 
 if [[ "$failures" -gt 0 ]]; then
@@ -109,4 +126,4 @@ if [[ "$failures" -gt 0 ]]; then
 fi
 
 echo
-echo "✅ tous les cas PASS (6 cas testés)"
+echo "✅ tous les cas PASS (8 cas testés : 5 + rename + path tricky + --committed-only avec exit code)"

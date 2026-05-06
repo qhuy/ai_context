@@ -39,3 +39,8 @@
 ## 2026-05-07 — freshness
 - Impact indirect : `review-delta.sh` (qui partage des helpers avec `pr-report.sh`) étendu pour couvrir le delta uncommitted. Aucun changement sur `pr-report.sh` lui-même.
 - Validation associée : smoke-test PASS.
+
+## 2026-05-06 23:57 — auto
+- Fichiers modifiés :
+  - .ai/scripts/review-delta.sh
+  - template/.ai/scripts/review-delta.sh.jinja

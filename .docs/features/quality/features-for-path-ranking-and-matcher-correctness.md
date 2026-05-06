@@ -23,10 +23,10 @@ doc:
     observability: false
 progress:
   phase: implement
-  step: "draft cadré, à reprendre pour implémentation"
+  step: "draft cadré (contrat 4 niveaux), à reprendre pour implémentation"
   blockers: []
-  resume_hint: "lire features-for-path.sh + _lib.sh, choisir entre fix matcher (A/B) ou borner patterns (C), implémenter ranking top-K"
-  updated: 2026-05-06
+  resume_hint: "lire features-for-path.sh + _lib.sh, implémenter Option B (matcher correct multi-niveaux + ranking) et tests reproductibles"
+  updated: 2026-05-07
 ---
 
 # Ranker features-for-path et corriger le matcher globstar bash 3.2

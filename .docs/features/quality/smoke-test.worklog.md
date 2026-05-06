@@ -34,3 +34,7 @@
 ## 2026-05-07 — freshness
 - Impact indirect : ajout d'un nouveau test unit `tests/unit/test-review-delta-uncommitted.sh` autonome (livraison `quality/review-delta-uncommitted-coverage`). Aucun changement sur `tests/smoke-test.sh` ni sur la matrice smoke.
 - Validation associée : smoke-test PASS et nouveau test unit PASS.
+
+## 2026-05-06 23:57 — auto
+- Fichiers modifiés :
+  - tests/unit/test-review-delta-uncommitted.sh

@@ -198,8 +198,6 @@ fi
 
 echo "## Review Delta"
 echo
-echo "### Delta committed reference"
-echo
 if [[ "$mode" == "staged" ]]; then
   echo "- Mode: staged"
 else
@@ -207,21 +205,24 @@ else
   echo "- Head: \`$head_ref\`"
 fi
 echo "- Fichiers modifiés: ${#changed_files[@]}"
+if $include_uncommitted; then
+  echo "- Section _Delta uncommitted_ ajoutée en suffixe (utiliser \`--committed-only\` pour l'omettre)."
+fi
 echo
 
-echo "#### Fichiers"
+echo "### Fichiers"
 print_unique_list "${changed_files[@]+"${changed_files[@]}"}"
 echo
 
-echo "#### Features directes"
+echo "### Features directes"
 print_unique_list "${direct_keys[@]+"${direct_keys[@]}"}"
 echo
 
-echo "#### Features liées (shared)"
+echo "### Features liées (shared)"
 print_unique_list "${related_keys[@]+"${related_keys[@]}"}"
 echo
 
-echo "#### Risques détectés"
+echo "### Risques détectés"
 risks=()
 for x in ${uncovered[@]+"${uncovered[@]}"}; do risks+=("non couvert par touches: $x"); done
 for x in ${shared_only[@]+"${shared_only[@]}"}; do risks+=("couvert seulement via touches_shared: $x"); done
@@ -230,10 +231,19 @@ for x in ${missing_docs[@]+"${missing_docs[@]}"}; do risks+=("doc/worklog manqua
 print_unique_list "${risks[@]+"${risks[@]}"}"
 echo
 
+echo "### Checks recommandés"
+if [[ "$mode" == "staged" ]]; then
+  echo "- \`bash .ai/scripts/check-feature-freshness.sh --staged --strict\`"
+fi
+echo "- \`bash .ai/scripts/check-features.sh\`"
+echo "- \`bash .ai/scripts/check-shims.sh\`"
+echo "- \`bash .ai/scripts/measure-context-size.sh\`"
+
 if $include_uncommitted; then
+  echo
   echo "### Delta uncommitted (working tree + index + untracked)"
   echo
-  echo "- Source: \`git status --short --untracked-files=all\`"
+  echo "- Source: \`git status --porcelain=v1 -z --untracked-files=all\`"
   echo "- Fichiers uncommitted: ${#uncommitted_files[@]}"
   echo
   echo "#### Fichiers (uncommitted)"
@@ -244,13 +254,4 @@ if $include_uncommitted; then
   echo
   echo "#### Features liées (uncommitted, shared, best-effort)"
   print_unique_list "${uncommitted_related_keys[@]+"${uncommitted_related_keys[@]}"}"
-  echo
 fi
-
-echo "### Checks recommandés"
-if [[ "$mode" == "staged" ]]; then
-  echo "- \`bash .ai/scripts/check-feature-freshness.sh --staged --strict\`"
-fi
-echo "- \`bash .ai/scripts/check-features.sh\`"
-echo "- \`bash .ai/scripts/check-shims.sh\`"
-echo "- \`bash .ai/scripts/measure-context-size.sh\`"

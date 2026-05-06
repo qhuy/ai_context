@@ -85,19 +85,25 @@ enable_globstar() {
 
 # collect_uncommitted_paths
 #   — liste les paths uncommitted (tracked modifié + staged + untracked + deletions/renames).
-#   Source canonique : `git status --short --untracked-files=all`.
-#   Couvre ce que `git diff HEAD` rate (notamment untracked).
-#   Pour les renames "old -> new", retourne le path nouveau (état actuel).
+#   Source canonique : `git status --porcelain=v1 -z --untracked-files=all`.
+#   Format -z : records NUL-terminés, path non quoté ("a -> b.txt", espaces, etc. OK).
+#   Pour les renames/copies (R/C en X), Git émet `XY new\0old\0` : on retourne new
+#   et on consomme old en lookahead.
 #   Sortie : un path par ligne, déduplication via sort -u.
 collect_uncommitted_paths() {
-  git status --short --untracked-files=all 2>/dev/null | while IFS= read -r line; do
-    [[ -z "$line" ]] && continue
-    local rest="${line:3}"
-    case "$rest" in
-      *' -> '*) printf '%s\n' "${rest##* -> }" ;;
-      *) printf '%s\n' "$rest" ;;
+  local field status path consume_old=0
+  while IFS= read -r -d '' field; do
+    if [[ $consume_old -eq 1 ]]; then
+      consume_old=0
+      continue
+    fi
+    status="${field:0:2}"
+    path="${field:3}"
+    case "${status:0:1}" in
+      R|C) consume_old=1 ;;
     esac
-  done | sort -u
+    [[ -n "$path" ]] && printf '%s\n' "$path"
+  done < <(git status --porcelain=v1 -z --untracked-files=all 2>/dev/null) | sort -u
 }
 
 is_valid_status() {
