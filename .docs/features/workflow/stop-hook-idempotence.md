@@ -5,11 +5,12 @@ title: Rendre le hook Stop idempotent sur tour sans édit structurel
 status: draft
 depends_on: []
 touches:
+  - .ai/scripts/auto-worklog-log.sh
   - .ai/scripts/auto-worklog-flush.sh
-  - .claude/settings.json
   - tests/smoke-test.sh
 touches_shared:
   - .ai/scripts/auto-progress.sh
+  - .claude/settings.json
 product: {}
 external_refs: {}
 doc:

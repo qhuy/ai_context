@@ -21,3 +21,9 @@
 - Le **vrai bruit** vient des édits non-structurels (extensions `.md`, `.txt`, `.lock`) qui passent `features_matching_path` car listées dans `touches:` direct (fiche feature elle-même, README, doc).
 - Fiche reformulée : Résumé, Objectif, Périmètre, Comportement attendu, Validation, Historique. Périmètre maintenant clair : filtrage par extension après `features_matching_path`, dans `auto-worklog-log.sh` (option a) ou `auto-worklog-flush.sh` (option b). Préférence (a).
 - Tests reformulés : 3 tests de non-régression (déjà passants) + 4 tests cibles du fix.
+
+## 2026-05-07 — fix mesh touches (re-review Codex)
+- Codex re-review du commit `fc5eeeb` : `touches:` ne couvrait pas le fichier principal de l'implémentation recommandée (option a = `auto-worklog-log.sh`).
+- Correction : `touches:` couvre maintenant `auto-worklog-log.sh` (option a, préférée) et `auto-worklog-flush.sh` (option b, alternative). `tests/smoke-test.sh` conservé.
+- `.claude/settings.json` déplacé de `touches:` vers `touches_shared:` car la fiche y fait référence (cite ligne 43) mais ne le modifie pas.
+- Titre `stop-hook-idempotence` conservé : l'objectif final reste l'idempotence du Stop, même si l'implémentation préférée vit en amont dans le PostToolUse logger. Renommage évité pour ne pas casser l'id.
