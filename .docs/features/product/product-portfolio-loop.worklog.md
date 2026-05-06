@@ -26,3 +26,9 @@
 - Impact indirect : `README_AI_CONTEXT.md`, `copier.yml`, le template README et le smoke-test évoluent pour exposer `/aic-document-feature`.
 - Aucun changement sur le contrat initiative/roadmap/traceability produit.
 - Validation associée : smoke-test PASS.
+
+## 2026-05-06 — retours review
+- Intent : aligner le contrat product avec la migration publique `aic`.
+- Fichiers/surfaces : `.docs/features/product/product-portfolio-loop.md`.
+- Décision : la surface commune Claude/Codex product passe par `aic.sh product-*`, sans ancien wrapper.
+- Validation : prévue via `check-feature-docs product/product-portfolio-loop` et `check-ai-references`.

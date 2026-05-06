@@ -121,3 +121,9 @@
 ## 2026-05-06 — freshness README
 - Intent : verifier que le README simplifié conserve les informations Copier critiques : scaffold, migration, update, profils et modes d'adoption.
 - Validation : `check-ai-references`, `check-features`.
+
+## 2026-05-06 — retours review
+- Intent : synchroniser les corrections runtime dans les templates Copier.
+- Fichiers/surfaces : `template/.ai/scripts/aic.sh.jinja`, `template/.ai/scripts/review-delta.sh.jinja`, `template/.ai/scripts/check-feature-freshness.sh.jinja`.
+- Décision : même comportement staged que le runtime source pour éviter une régression au prochain scaffold/update.
+- Validation : prévue via `bash -n` et checks AIC.

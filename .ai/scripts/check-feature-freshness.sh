@@ -80,7 +80,7 @@ staged_has_doc_for_feature() {
 
 run_staged_check() {
   local staged
-  staged=$(git diff --cached --name-only --diff-filter=AM 2>/dev/null || true)
+  staged=$(git diff --cached --name-only --no-renames 2>/dev/null || true)
   if [[ -z "$staged" ]]; then
     echo "═══ check-feature-freshness (staged) ═══"
     echo "  aucun fichier stage"

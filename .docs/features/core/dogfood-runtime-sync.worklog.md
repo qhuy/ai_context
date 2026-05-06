@@ -31,3 +31,9 @@
 ## 2026-05-06 — freshness
 - Intent : documenter l'impact du renommage runtime `ai-context.sh` -> `aic.sh` sur les surfaces dogfoodées.
 - Validation : couvert par `check-shims`, `check-features` et `tests/smoke-test.sh`.
+
+## 2026-05-06 — retours review
+- Intent : garder le runtime dogfoodé aligné avec les corrections staged-delta et surface `aic`.
+- Fichiers/surfaces : `.ai/scripts/aic.sh`, `.ai/scripts/review-delta.sh`, `.ai/scripts/check-feature-freshness.sh`.
+- Décision : les suppressions et renommages staged restent visibles dans les rapports et contrôles du runtime source.
+- Validation : prévue via `bash -n`, `check-shims`, `check-feature-freshness --staged --strict`.

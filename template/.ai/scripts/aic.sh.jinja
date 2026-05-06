@@ -176,7 +176,7 @@ changed_files_for_report() {
     return 0
   fi
   if [[ "$(staged_count)" -gt 0 ]]; then
-    git diff --cached --name-only --diff-filter=AM 2>/dev/null || true
+    git diff --cached --name-only --no-renames 2>/dev/null || true
   else
     git status --porcelain 2>/dev/null | sed 's/^...//' | sort -u
   fi
@@ -601,7 +601,7 @@ EOF
 
 run_ship() {
   cd "$repo_root"
-  local check_features check_shims check_product coverage freshness measure_total staged modified commit_hint
+  local check_features check_shims check_product coverage freshness measure_total staged modified commit_hint staged_paths
   staged="$(staged_count)"
   modified=0
   if inside_git_repo; then
@@ -619,8 +619,13 @@ run_ship() {
   [[ -n "$measure_total" ]] || measure_total="n/a"
 
   commit_hint="chore: mettre à jour ai context"
-  if inside_git_repo && git diff --cached --name-only 2>/dev/null | grep -q '^\.docs/features/'; then
-    commit_hint="feat: mettre à jour le contexte IA"
+  if inside_git_repo; then
+    staged_paths="$(git diff --cached --name-only --no-renames 2>/dev/null || true)"
+  else
+    staged_paths=""
+  fi
+  if [[ -n "$staged_paths" ]] && ! printf '%s\n' "$staged_paths" | grep -Evq '^(README\.md|README_AI_CONTEXT\.md|CHANGELOG\.md|MIGRATION\.md|CONTRIBUTING\.md|PROJECT_STATE\.md|AUDIT_[^/]+\.md|docs/|\.docs/features/|template/README\.md\.jinja|template/README_AI_CONTEXT\.md\.jinja|template/\{\{docs_root\}\}/)'; then
+    commit_hint="docs: mettre à jour la documentation ai context"
   fi
 
   cat <<EOF

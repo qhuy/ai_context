@@ -29,3 +29,9 @@
 - Fichiers modifiés :
   - CHANGELOG.md
   - PROJECT_STATE.md
+
+## 2026-05-06 — retours review
+- Intent : fiabiliser les rapports staged utilisés par `aic review` et `aic ship`.
+- Fichiers/surfaces : `.ai/scripts/review-delta.sh`, `template/.ai/scripts/review-delta.sh.jinja`, `.ai/scripts/aic.sh`, `template/.ai/scripts/aic.sh.jinja`.
+- Décision : remplacer le filtre staged `--diff-filter=AM` par une lecture sans renommage implicite pour exposer suppressions et chemins renommés.
+- Validation : prévue via `review-delta --staged`, `aic ship` et checks qualité.

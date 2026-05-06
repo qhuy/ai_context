@@ -68,7 +68,7 @@ changed_files=()
 if [[ "$mode" == "staged" ]]; then
   while IFS= read -r f; do
     [[ -n "$f" ]] && changed_files+=("$f")
-  done < <(git diff --cached --name-only --diff-filter=AM 2>/dev/null || true)
+  done < <(git diff --cached --name-only --no-renames 2>/dev/null || true)
 else
   while IFS= read -r f; do
     [[ -n "$f" ]] && changed_files+=("$f")

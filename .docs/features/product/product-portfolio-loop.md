@@ -90,7 +90,7 @@ initiative product -> refs externes -> features dev liées -> evidence -> décis
 - Pas de reminder : la couche produit est lue juste-à-temps.
 - Pas de roadmap parallèle : `.docs/features/product/*.md` reste un index d'initiatives et de décisions.
 - Interop : BMAD, Spec Kit, Linear, Jira, GitHub et autres sources restent propriétaires de leurs artefacts ; `external_refs` ne fait que les relier.
-- Compatible Claude/Codex : la surface commune passe par `ai-context.sh product-*`.
+- Compatible Claude/Codex : la surface commune passe par `aic.sh product-*`.
 
 ## Cross-refs
 

@@ -15,3 +15,10 @@
 ## 2026-05-06 — freshness README
 - Intent : verifier que la réécriture README conserve la surface canonique `aic` sans réintroduire d'ancien alias public.
 - Validation : `check-ai-references`, `check-feature-docs product/readme-positioning`.
+
+## 2026-05-06 — retours review
+- Intent : traiter les retours review sur la migration canonique `aic`.
+- Fichiers/surfaces : `.ai/scripts/aic.sh`, `template/.ai/scripts/aic.sh.jinja`, contrat product `aic.sh product-*`.
+- Décision : `aic ship` ne filtre plus les suppressions/renommages staged via `--diff-filter=AM`, le hint ne déduit plus `feat:` d'une fiche seule, et le contrat produit ne mentionne plus l'ancien wrapper.
+- Validation : prévue via `bash -n`, `check-*`, `aic ship` et smoke ciblé.
+- Next : commit dédié `fix:` après quality gate.
