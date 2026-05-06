@@ -19,3 +19,23 @@
   5. **Tests** : unit-test dédié `tests/unit/test-review-delta-uncommitted.sh`, 5 cas (tracked modifié, staged, untracked, deletion, `--committed-only`).
 - Fiche mise à jour : phase=implement, step et resume_hint alignés. Décisions tranchées remplacent les questions ouvertes. Comportement attendu, Contrats, Validation, Risques reformulés.
 - Next : implémenter dans un turn dédié (ce turn ou le suivant), avec code dans `review-delta.sh` et test dans `tests/unit/`.
+
+## 2026-05-07 — implémentation livrée
+- Fonction `collect_uncommitted_paths` extraite dans `.ai/scripts/_lib.sh` (réutilisable + testable, parité template).
+- `review-delta.sh` étendu :
+  - Flag `--committed-only` (compat ascendante stricte).
+  - Variable `include_uncommitted` qui contrôle la section ajoutée.
+  - Section « Delta committed reference » regroupe l'ancien rapport sous des sous-titres `####`.
+  - Nouvelle section « Delta uncommitted (working tree + index + untracked) » avec source `git status --short --untracked-files=all`, fichiers uncommitted, features directes (best-effort), features liées (best-effort).
+  - Pas de fail hard sur matcher dans ce scope (best-effort confirmé).
+- Parité template appliquée : `_lib.sh.jinja` et `review-delta.sh.jinja`. `check-dogfood-drift` PASS.
+- Test unit `tests/unit/test-review-delta-uncommitted.sh` créé. 6 cas testés :
+  1. tracked modifié non commité visible
+  2. fichier staged visible
+  3. fichier untracked visible
+  4. fichier supprimé visible avec son chemin
+  5. rename → chemin nouveau retourné
+  6. `--committed-only` n'affiche pas la section uncommitted
+- Validation : check-shims, check-features, check-dogfood-drift, smoke-test, test-unit ALL PASS.
+- Cross-touch : freshness ajoutées sur core/dogfood-runtime-sync, core/feature-index-cache, core/template-engine, quality/pr-report.
+- Phase bumpée implement → review. Prêt à commit `feat(quality): couvrir le delta uncommitted dans review-delta.sh`.

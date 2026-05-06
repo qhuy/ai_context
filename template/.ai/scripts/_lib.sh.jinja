@@ -83,6 +83,23 @@ enable_globstar() {
   shopt -s globstar 2>/dev/null || true
 }
 
+# collect_uncommitted_paths
+#   — liste les paths uncommitted (tracked modifié + staged + untracked + deletions/renames).
+#   Source canonique : `git status --short --untracked-files=all`.
+#   Couvre ce que `git diff HEAD` rate (notamment untracked).
+#   Pour les renames "old -> new", retourne le path nouveau (état actuel).
+#   Sortie : un path par ligne, déduplication via sort -u.
+collect_uncommitted_paths() {
+  git status --short --untracked-files=all 2>/dev/null | while IFS= read -r line; do
+    [[ -z "$line" ]] && continue
+    local rest="${line:3}"
+    case "$rest" in
+      *' -> '*) printf '%s\n' "${rest##* -> }" ;;
+      *) printf '%s\n' "$rest" ;;
+    esac
+  done | sort -u
+}
+
 is_valid_status() {
   local s="$1"
   for valid in $STATUS_ENUM; do

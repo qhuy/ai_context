@@ -35,3 +35,7 @@
 - Fichiers/surfaces : `.ai/scripts/review-delta.sh`, `template/.ai/scripts/review-delta.sh.jinja`, `.ai/scripts/aic.sh`, `template/.ai/scripts/aic.sh.jinja`.
 - Décision : remplacer le filtre staged `--diff-filter=AM` par une lecture sans renommage implicite pour exposer suppressions et chemins renommés.
 - Validation : prévue via `review-delta --staged`, `aic ship` et checks qualité.
+
+## 2026-05-07 — freshness
+- Impact indirect : `review-delta.sh` (qui partage des helpers avec `pr-report.sh`) étendu pour couvrir le delta uncommitted. Aucun changement sur `pr-report.sh` lui-même.
+- Validation associée : smoke-test PASS.

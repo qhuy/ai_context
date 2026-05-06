@@ -25,3 +25,7 @@
 - Impact indirect : `copier.yml` mis à jour pendant le durcissement post-cross-check (round 4 workflow/intentional-skills).
 - Aucun changement sur le contrat `.ai/project/**` ni sur l'overlay projet.
 - Validation associée : `check-feature-freshness.sh` (staged) PASS attendu.
+
+## 2026-05-07 — freshness
+- Impact indirect : `tests/unit/test-review-delta-uncommitted.sh` ajouté pendant l'implémentation de `quality/review-delta-uncommitted-coverage`. Aucun changement sur le contrat overlay projet ni sur `.ai/project/**`.
+- Validation associée : `bash tests/unit/test-review-delta-uncommitted.sh` (6 cas) PASS.

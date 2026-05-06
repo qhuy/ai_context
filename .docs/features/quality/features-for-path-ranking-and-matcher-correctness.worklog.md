@@ -47,3 +47,7 @@
   - Niveau 1 matcher reformulé : le matcher **expose** les patterns non supportés (via stderr ou variable de sortie) et **n'impose pas** de politique exit. 3 politiques disponibles aux callers : silent compat opt-in (`_FEATURES_MATCHING_SILENT=1`), warn+exit 0 (défaut), error+exit≠0 (via `_FEATURES_MATCHING_STRICT=1`).
   - Validation : ajout de 2 tests d'acceptance — best-effort (pattern non supporté observable sur stderr sans bloquer) et strict (erreur + exit ≠ 0 avec flag).
 - Justification ajoutée : « la fonction seule ne décide pas de la politique exit, c'est le wrapper/caller qui le fait. Mais elle doit toujours rendre l'info disponible (sauf en mode silent explicite), sinon un wrapper best-effort ne peut pas afficher de warning sans dupliquer la détection. »
+
+## 2026-05-06 23:55 — auto-progress
+- Bascule phase : spec → implement (édits réels détectés sur 1 fichier(s))
+- Annulable via /aic undo (snapshot dans .ai/.progress-history.jsonl)

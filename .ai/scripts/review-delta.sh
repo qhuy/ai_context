@@ -4,8 +4,13 @@
 # Usage :
 #   bash .ai/scripts/review-delta.sh [--staged]
 #   bash .ai/scripts/review-delta.sh [--base=<ref>] [--head=<ref>]
+#   bash .ai/scripts/review-delta.sh [--committed-only]
 #
-# Par défaut : --staged si des fichiers sont stage, sinon HEAD~1...HEAD.
+# Par défaut : Delta committed reference (--staged si index non vide,
+# sinon HEAD~1...HEAD) + Delta uncommitted (git status --short
+# --untracked-files=all).
+# Avec --committed-only : seule la section committed est produite
+# (compat ascendante stricte).
 
 set -euo pipefail
 
@@ -21,24 +26,29 @@ cd "$repo_root"
 mode="auto"
 base_ref="HEAD~1"
 head_ref="HEAD"
+include_uncommitted=true
 
 for arg in "$@"; do
   case "$arg" in
     --staged) mode="staged" ;;
     --base=*) mode="refs"; base_ref="${arg#--base=}" ;;
     --head=*) mode="refs"; head_ref="${arg#--head=}" ;;
+    --committed-only) include_uncommitted=false ;;
     -h|--help)
       cat <<'USAGE'
 Usage: bash .ai/scripts/review-delta.sh [--staged]
        bash .ai/scripts/review-delta.sh [--base=<ref>] [--head=<ref>]
+       bash .ai/scripts/review-delta.sh [--committed-only]
 
 Review Delta:
 Produit un rapport Markdown court :
-  - fichiers modifiés
-  - features directes (`touches`)
-  - features liées (`touches_shared`)
-  - risques détectés
-  - checks recommandés
+  - Delta committed reference : fichiers + features (touches/shared) +
+    risques + checks
+  - Delta uncommitted (working tree + index + untracked) : ajouté par
+    défaut, omis avec --committed-only
+
+Source de vérité uncommitted : git status --short --untracked-files=all
+(couvre tracked modifié + staged + untracked + deletions/renames).
 USAGE
       exit 0
       ;;
@@ -48,6 +58,8 @@ USAGE
       ;;
   esac
 done
+
+# Source canonique uncommitted : `_lib.sh::collect_uncommitted_paths` (git status).
 
 index_file=".ai/.feature-index.json"
 bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
@@ -161,7 +173,32 @@ print_unique_list() {
   done
 }
 
+uncommitted_files=()
+uncommitted_direct_keys=()
+uncommitted_related_keys=()
+if $include_uncommitted; then
+  while IFS= read -r f; do
+    [[ -n "$f" ]] && uncommitted_files+=("$f")
+  done < <(collect_uncommitted_paths)
+
+  for f in ${uncommitted_files[@]+"${uncommitted_files[@]}"}; do
+    is_feature_doc_path "$f" && continue
+    direct="$(features_matching_path "$index_file" "$f" 2>/dev/null || true)"
+    shared="$(features_matching_shared_path "$index_file" "$f" 2>/dev/null || true)"
+    while IFS=$'\t' read -r scope id _path; do
+      [[ -n "$scope" && -n "$id" ]] || continue
+      uncommitted_direct_keys+=("$scope/$id")
+    done <<< "$direct"
+    while IFS=$'\t' read -r scope id _path; do
+      [[ -n "$scope" && -n "$id" ]] || continue
+      uncommitted_related_keys+=("$scope/$id")
+    done <<< "$shared"
+  done
+fi
+
 echo "## Review Delta"
+echo
+echo "### Delta committed reference"
 echo
 if [[ "$mode" == "staged" ]]; then
   echo "- Mode: staged"
@@ -172,19 +209,19 @@ fi
 echo "- Fichiers modifiés: ${#changed_files[@]}"
 echo
 
-echo "### Fichiers"
+echo "#### Fichiers"
 print_unique_list "${changed_files[@]+"${changed_files[@]}"}"
 echo
 
-echo "### Features directes"
+echo "#### Features directes"
 print_unique_list "${direct_keys[@]+"${direct_keys[@]}"}"
 echo
 
-echo "### Features liées (shared)"
+echo "#### Features liées (shared)"
 print_unique_list "${related_keys[@]+"${related_keys[@]}"}"
 echo
 
-echo "### Risques détectés"
+echo "#### Risques détectés"
 risks=()
 for x in ${uncovered[@]+"${uncovered[@]}"}; do risks+=("non couvert par touches: $x"); done
 for x in ${shared_only[@]+"${shared_only[@]}"}; do risks+=("couvert seulement via touches_shared: $x"); done
@@ -192,6 +229,23 @@ for x in ${multi_covered[@]+"${multi_covered[@]}"}; do risks+=("multi-couvert: $
 for x in ${missing_docs[@]+"${missing_docs[@]}"}; do risks+=("doc/worklog manquant en staged: $x"); done
 print_unique_list "${risks[@]+"${risks[@]}"}"
 echo
+
+if $include_uncommitted; then
+  echo "### Delta uncommitted (working tree + index + untracked)"
+  echo
+  echo "- Source: \`git status --short --untracked-files=all\`"
+  echo "- Fichiers uncommitted: ${#uncommitted_files[@]}"
+  echo
+  echo "#### Fichiers (uncommitted)"
+  print_unique_list "${uncommitted_files[@]+"${uncommitted_files[@]}"}"
+  echo
+  echo "#### Features directes (uncommitted, best-effort)"
+  print_unique_list "${uncommitted_direct_keys[@]+"${uncommitted_direct_keys[@]}"}"
+  echo
+  echo "#### Features liées (uncommitted, shared, best-effort)"
+  print_unique_list "${uncommitted_related_keys[@]+"${uncommitted_related_keys[@]}"}"
+  echo
+fi
 
 echo "### Checks recommandés"
 if [[ "$mode" == "staged" ]]; then

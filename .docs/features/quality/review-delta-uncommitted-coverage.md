@@ -6,9 +6,13 @@ status: draft
 depends_on: []
 touches:
   - .ai/scripts/review-delta.sh
-  - tests/smoke-test.sh
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/review-delta.sh.jinja
+  - template/.ai/scripts/_lib.sh.jinja
+  - tests/unit/test-review-delta-uncommitted.sh
 touches_shared:
   - .ai/scripts/aic.sh
+  - tests/smoke-test.sh
 product: {}
 external_refs: {}
 doc:
@@ -21,10 +25,10 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: implement
-  step: "approche tranchée post cross-check Codex, prêt à coder"
+  phase: review
+  step: "implémentation livrée + 6 tests PASS, prêt à commit"
   blockers: []
-  resume_hint: "implémenter Approche A : git status --untracked-files=all comme source uncommitted, libellé section non figé HEAD~1..HEAD, garder features_matching_path direct, ajouter tests/unit dédié"
+  resume_hint: "commit feat(quality) puis valider en utilisation réelle sur un commit suivant"
   updated: 2026-05-07
 ---
 
@@ -123,3 +127,4 @@ Plus :
 
 - 2026-05-06 : création en draft suite au cross-check Claude/Codex (4 rounds) sur `workflow/intentional-skills`. Bug confirmé en local (`bash .ai/scripts/review-delta.sh` sort 1 fichier `HEAD~1..HEAD` alors que `git status --short` montre 30+ uncommitted). Ordre Phase 2 fixé : cette fiche en #1, avant `quality/features-for-path-ranking-and-matcher-correctness` (#2).
 - 2026-05-07 : cross-check Codex pre-implémentation. 4 corrections actées : (1) Approche A confirmée + compat parsabilité stricte ; (2) source de vérité uncommitted = `git status --short --untracked-files=all`, pas `git diff HEAD` qui rate les untracked ; (3) libellé section « Delta committed reference », ne pas figer `HEAD~1..HEAD` comme contrat ; (4) garder `features_matching_path` direct, ne pas migrer vers `features-for-path.sh` (évite mélange avec Phase 2 #2). Tests : unit-test dédié `tests/unit/test-review-delta-uncommitted.sh`, 5 cas. Phase bumpée spec → implement.
+- 2026-05-07 : **implémentation livrée**. `collect_uncommitted_paths` extrait dans `_lib.sh` (réutilisable, testable). `review-delta.sh` étendu : flag `--committed-only`, section « Delta committed reference » + nouvelle section « Delta uncommitted (working tree + index + untracked) », sous-titres `####` pour la portion committed afin de structurer sans casser le format. Parité template appliquée (`_lib.sh.jinja` + `review-delta.sh.jinja`). Test unit `tests/unit/test-review-delta-uncommitted.sh` couvre 6 cas (les 5 demandés + rename). Validation : check-shims, check-features, check-dogfood-drift, smoke-test, test-unit PASS. Phase bumpée implement → review.
