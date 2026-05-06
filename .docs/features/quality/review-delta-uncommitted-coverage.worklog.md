@@ -75,3 +75,8 @@
   - template/.ai/scripts/_lib.sh.jinja
   - template/.ai/scripts/review-delta.sh.jinja
   - tests/unit/test-review-delta-uncommitted.sh
+
+## 2026-05-07 00:11 — auto
+- Fichiers modifiés :
+  - .ai/scripts/review-delta.sh
+  - template/.ai/scripts/review-delta.sh.jinja

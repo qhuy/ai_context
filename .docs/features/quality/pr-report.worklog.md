@@ -49,3 +49,8 @@
 - Fichiers modifiés :
   - .ai/scripts/review-delta.sh
   - template/.ai/scripts/review-delta.sh.jinja
+
+## 2026-05-07 00:11 — auto
+- Fichiers modifiés :
+  - .ai/scripts/review-delta.sh
+  - template/.ai/scripts/review-delta.sh.jinja
