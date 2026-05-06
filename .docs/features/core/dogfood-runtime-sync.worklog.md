@@ -37,3 +37,10 @@
 - Fichiers/surfaces : `.ai/scripts/aic.sh`, `.ai/scripts/review-delta.sh`, `.ai/scripts/check-feature-freshness.sh`.
 - Décision : les suppressions et renommages staged restent visibles dans les rapports et contrôles du runtime source.
 - Validation : prévue via `bash -n`, `check-shims`, `check-feature-freshness --staged --strict`.
+
+## 2026-05-06 21:46 — dogfood skills
+- Audit skills relu côté runtime dogfoodé : wrappers Codex/Claude minces, workflows canoniques sous `.ai/workflows/`, Pack A toujours lean.
+- Derniers commits vérifiés : surfaces runtime/template touchées (`aic.sh`, `review-delta.sh`, `check-feature-freshness.sh`, `document-feature`, skills Claude/Codex, `README_AI_CONTEXT.md`).
+- Validation : `dogfood-update.sh` dry-run PASS, `check-dogfood-drift.sh` PASS, `check-shims.sh` PASS, `check-features.sh` PASS, `measure-context-size.sh` à 2627 chars.
+- Décision : pas de `dogfood-update.sh --apply` nécessaire, le runtime source est déjà aligné avec le rendu Copier minimal ; les écarts `*.jinja` vs fichiers rendus sont des substitutions attendues (`{{ docs_root }}`, raw Jinja, variables projet).
+- Dette hors scope primaire : `workflow/intentional-skills` reste à remettre au format documentaire strict (`Résumé`, `Périmètre`, `Invariants`, `Décisions`, `Validation`).
