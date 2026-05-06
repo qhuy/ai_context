@@ -39,3 +39,8 @@
 ## 2026-05-05 — freshness
 - Impact transversal : `copier.yml` change hors logique DS, avec conservation des exclusions/presets existants.
 - Validation associée : smoke-test matrice Copier PASS.
+
+## 2026-05-06 — freshness
+- Impact indirect : `copier.yml` expose la nouvelle commande `/aic-document-feature` sans toucher aux squelettes design-system.
+- Aucun changement sur les presets DS ni sur les fichiers générés associés.
+- Validation associée : smoke-test PASS.

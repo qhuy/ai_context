@@ -33,6 +33,7 @@ Exposer côté Claude uniquement les intentions lisibles, et déplacer les étap
 | `/aic-frame` | Cadrage : objectif, position, métier, technique, plan, validation | Avant une feature ou une décision insuffisamment cadrée |
 | `/aic-status` | État actionnable : en cours, blockers, stale, delta, prochaine reprise | Début de session ou reprise après interruption |
 | `/aic-diagnose` | Diagnostic du bottleneck principal | Quand ça bloque, quand la demande est floue ou contradictoire |
+| `/aic-document-feature` | Documentation feature : init/update/audit/handoff/done-check | Quand la fiche feature doit être créée, alignée ou vérifiée sans implémenter |
 | `/aic-review` | Review du delta courant : risques, features, doc, checks | Avant review humaine, PR ou correction de findings |
 | `/aic-ship` | Gate de sortie : freshness, quality gate, evidence, commit proposé | Avant commit, PR ou push |
 
@@ -45,6 +46,7 @@ Exposer côté Claude uniquement les intentions lisibles, et déplacer les étap
 | `feature-update` | Bump `progress` (phase/step/blockers/resume_hint) | `/aic` sur intent « blocked / pause / j'attends » |
 | `feature-handoff` | Passation inter-scope | `/aic handoff vers X` ou détection auto cross-scope |
 | `feature-audit` | Rétro-doc / re-sync d'une fiche vs code réel | Backend ponctuel de `/aic-review` ou maintenance mesh |
+| `document-feature` | Documentation complète d'une fiche feature | Backend de `/aic-document-feature`, partagé avec Codex |
 | `quality-gate` | Check go/no-go déterministe | Backend de `/aic-ship` |
 | `feature-done` | Clôture (evidence + status done) | `/aic force done` ou auto-progression V2 (pas encore implémentée) |
 | `project-guardrails` | Non-goals + glossaire métier | `/aic-frame` quand un cadrage projet est nécessaire |
@@ -72,3 +74,4 @@ Exposer côté Claude uniquement les intentions lisibles, et déplacer les étap
 - **2026-05-03** — Migration : suppression des skills procéduraux de `.claude/skills/` et déplacement des workflows sous `.ai/workflows/`. Objectif : ne plus exposer les primitives tout en conservant une procédure partagée Claude/Codex.
 - **2026-05-04** — Lean Codex : `.claude/skills/**` et `.ai/workflows/**` restent disponibles mais explicitement hors Pack A. `context-ignore.md` documente cette exclusion pour les agents non-Claude.
 - **2026-05-04** — Les workflows internes référencent désormais `check-feature-docs.sh` et son strict ciblé. La surface skill publique ne change pas : l'usage reste intentionnel via `/aic-frame`, `/aic-review` et `/aic-ship`.
+- **2026-05-06** — Ajout de `/aic-document-feature` comme skill public Claude. Il pointe vers `.ai/workflows/document-feature.md` et reste générique, avec `legacy` documenté comme scope custom non scaffoldé.

@@ -22,3 +22,14 @@
 ## 2026-05-05 — freshness
 - Impact transversal : les messages de démarrage orientent les règles locales vers `.ai/project/index.md`.
 - Validation associée : smoke-test PASS.
+
+## 2026-05-06 — update
+- Intent : ajouter `/aic-document-feature` comme intention explicite de documentation feature.
+- Fichiers/surfaces : `.claude/skills/aic-document-feature/**`, `.agents/skills/aic-document-feature/**`, `.ai/workflows/document-feature.md`, README et smoke-test.
+- Décision : `legacy` reste un scope custom documenté dans le workflow, non scaffoldé par défaut.
+- Validation : dogfood + checks ciblés prévus.
+
+## 2026-05-06 — freshness commit
+- Impact couvert : wrappers runtime/template, workflow canonique, README, `copier.yml` et smoke-test.
+- Aucun changement sur les autres skills intentionnels.
+- Validation associée : `check-dogfood-drift.sh`, `check-shims.sh`, `check-ai-references.sh`, smoke-test PASS.

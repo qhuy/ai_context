@@ -100,6 +100,7 @@ _message_after_copy: |
     /aic-frame              → cadrage avant implémentation : plan + métier + technique + validation
     /aic-status             → où en est-on ? features en cours, blockers, stale, delta
     /aic-diagnose           → pourquoi ça bloque ? bottleneck principal + prochaine action
+    /aic-document-feature   → documenter, auditer ou préparer une fiche feature
     /aic-review             → quels risques dans le delta courant ? doc, features, checks
     /aic-ship               → est-ce prêt à commit/PR ? gate + freshness + commit proposé
 

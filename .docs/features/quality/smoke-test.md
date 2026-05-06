@@ -44,7 +44,8 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-05-03 : ajout des tests unitaires `[0c]` et `[0d]` dans le smoke-test : freshness multi-feature et drift dogfood destination-only.
 - 2026-05-03 : ajout du test unitaire `[0e]` pour vérifier que `touches_shared` ne bloque pas `check-feature-freshness --staged` mais reste visible dans `review-delta.sh`.
 - 2026-05-03 : l'assertion skills attend désormais les skills intentionnels `/aic-frame`, `/aic-status`, `/aic-review`, `/aic-ship` en plus des primitives historiques conservées.
-- 2026-05-03 : l'assertion skills vérifie désormais 6 skills Claude publics et 8 workflows internes `.ai/workflows/`, et bloque la réapparition des anciens skills procéduraux exposés.
+- 2026-05-03 : l'assertion skills vérifiait alors 6 skills Claude publics et 8 workflows internes `.ai/workflows/`, et bloquait la réapparition des anciens skills procéduraux exposés.
+- 2026-05-06 : l'assertion skills vérifie aussi `/aic-document-feature` côté Claude/Codex et le neuvième workflow interne `document-feature`.
 - 2026-05-03 : étape `[7/28]` enrichie pour vérifier que le hook `features-for-path` injecte la fiche directe et une fiche `depends_on`, pas seulement la liste des features.
 - 2026-05-03 : smoke-test enrichi pour figer l'UX `ai-context.sh status` (prochaine action minimale) et `ai-context.sh brief <path>` (contexte feature exposé hors hooks Claude).
 - 2026-05-03 : smoke-test enrichi pour figer `ai-context.sh mission`, `repair`, `document-delta` et `ship-report` sur un scaffold sans git actif, afin de garantir une UX Codex/Claude utilisable dès le bootstrap.

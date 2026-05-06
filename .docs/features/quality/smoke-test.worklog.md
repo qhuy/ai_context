@@ -23,3 +23,7 @@
 ## 2026-05-05 — freshness
 - Ajout d'un test `tests/unit/test-project-overlay.sh` et d'assertions smoke pour vérifier l'absence d'overlay par défaut et la présence de la section Project Overlay.
 - Validation associée : `bash tests/smoke-test.sh` PASS.
+
+## 2026-05-06 — update
+- Étape [19/28] étendue pour vérifier `aic-document-feature` côté Claude/Codex et le workflow interne `document-feature`.
+- Validation prévue : `bash tests/smoke-test.sh`.

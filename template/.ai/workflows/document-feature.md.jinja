@@ -1,0 +1,282 @@
+# Procédure interne — document-feature
+
+**Goal** : créer, mettre à jour, auditer ou préparer la clôture d'une fiche feature du mesh `{{ docs_root }}/features/**`.
+
+**Role** : scribe de feature. Cette procédure documente le comportement et l'état du travail ; elle n'implémente pas de code applicatif.
+
+**Scope** : générique `ai_context`. Les règles projet spécifiques vivent dans `.ai/project/**` et ne sont chargées que via `.ai/project/index.md` si ce fichier existe.
+
+## Modes
+
+- `init` : créer une fiche feature + worklog.
+- `update` : aligner une fiche/worklog existants avec l'intent ou les fichiers touchés.
+- `audit` : comparer fiche, worklog, `touches` et delta sans éditer sauf demande explicite.
+- `handoff` : formaliser une passation quand le travail sort du scope primaire.
+- `done-check` : vérifier qu'une fiche peut être considérée prête pour DONE.
+
+Mode par défaut : inférer depuis la demande et les fichiers existants.
+
+## Inputs
+
+Résoudre depuis la demande utilisateur et le repo :
+
+- `scope` : scope primaire.
+- `id` : identifiant kebab-case.
+- `title` : titre humain court.
+- `intent` : ce que la fiche doit documenter.
+- `paths` : fichiers, globs ou surfaces concernées.
+- `mode` : `init`, `update`, `audit`, `handoff`, `done-check`.
+
+Demander uniquement l'information manquante impossible à inférer raisonnablement.
+
+## Scope Selection
+
+Utiliser un seul scope primaire.
+
+Scopes canoniques du template :
+
+- `core` : runtime/template, scripts, schéma, Copier, fichiers générés.
+- `workflow` : workflows agent, skills, lifecycle feature, handoff, auto-progress.
+- `quality` : checks, gates, validation, CI, freshness, coverage.
+- `product` : initiative, roadmap, décision, traceability.
+
+Scope custom réutilisable, seulement si le repo l'active :
+
+- `legacy` : ancien système, migration, compatibilité, reverse-engineering, dépréciation.
+
+`legacy` n'est pas un scope par défaut du template. Ne pas le créer automatiquement. Si `.ai/project/index.md` définit d'autres scopes, les utiliser uniquement dans ce repo.
+
+Cross-scope : documenter le scope primaire, puis produire un `HANDOFF` explicite pour le scope suivant.
+
+## Context Loading
+
+Toujours démarrer lean :
+
+- requête utilisateur ;
+- `.ai/index.md` ;
+- `git status --short` ;
+- recherche ciblée avec `rg`.
+
+Charger à la demande :
+
+- `{{ docs_root }}/FEATURE_TEMPLATE.md` avant une création.
+- `{{ docs_root }}/features/<scope>/<id>.md` avant une mise à jour.
+- `{{ docs_root }}/features/<scope>/<id>.worklog.md` avant append.
+- `.ai/project/index.md` seulement s'il existe.
+- `.ai/rules/<scope>.md` seulement si le scope est clair et utile.
+- `.ai/quality/QUALITY_GATE.md` ou `.ai/workflows/quality-gate.md` près de DONE ou pour une doc risquée.
+
+Ne pas lister toutes les features sauf ambiguïté réelle. Si un path est connu, préférer :
+
+```bash
+bash .ai/scripts/features-for-path.sh <path> --with-docs
+```
+
+## Phase 1 — Resolve
+
+1. Si `scope/id` est fourni, vérifier `{{ docs_root }}/features/<scope>/<id>.md`.
+2. Si seulement des paths sont fournis, lancer `features-for-path.sh`.
+3. Si aucune fiche ne matche, proposer `scope/id/title`.
+4. Si plusieurs fiches matchent, choisir la plus cohérente ou demander confirmation.
+
+Avant création, afficher :
+
+```text
+Feature:
+Scope:
+ID:
+Mode:
+Doc:
+Worklog:
+Primary paths:
+Depends on:
+Cross-scope risk:
+```
+
+## Phase 2 — INIT
+
+Créer une fiche seulement si l'intention est un livrable cohérent.
+
+Fichiers requis :
+
+- `{{ docs_root }}/features/<scope>/<id>.md`
+- `{{ docs_root }}/features/<scope>/<id>.worklog.md`
+
+Utiliser `{{ docs_root }}/FEATURE_TEMPLATE.md`.
+
+Frontmatter :
+
+- `id` matche le nom de fichier.
+- `scope` matche le dossier parent.
+- `title` est humain.
+- `status` démarre à `draft` ou `active`.
+- `depends_on` utilise `<scope>/<id>`.
+- `touches` contient des paths réels ou des globs utiles.
+- `progress.phase`, `progress.step`, `progress.blockers`, `progress.resume_hint`, `progress.updated` décrivent l'état courant.
+
+Worklog initial :
+
+```md
+# Worklog — <scope>/<id>
+
+## <YYYY-MM-DD> — création
+- Feature créée via `.ai/workflows/document-feature.md`
+- Scope : <scope>
+- Intent initial : <title>
+```
+
+Validation :
+
+```bash
+bash .ai/scripts/build-feature-index.sh --write
+bash .ai/scripts/check-features.sh
+bash .ai/scripts/check-feature-docs.sh <scope>/<id>
+```
+
+## Phase 3 — UPDATE
+
+1. Lire fiche et worklog existants.
+2. Inspecter uniquement les fichiers/surfaces pertinents.
+3. Mettre à jour les sections devenues fausses ou incomplètes.
+4. Conserver les décisions historiques valides.
+5. Ajouter une entrée worklog append-only.
+
+Format worklog :
+
+```md
+## <YYYY-MM-DD> — update
+- Intent : <changement documenté>
+- Fichiers/surfaces : <paths>
+- Décision : <décision importante ou "aucune">
+- Validation : <commandes lancées ou prévues>
+- Next : <resume_hint si utile>
+```
+
+Si l'orientation change, mettre à jour `progress.*` et `progress.updated`.
+
+## Phase 4 — AUDIT
+
+Mode lecture par défaut : ne rien écrire sauf demande explicite.
+
+Vérifier :
+
+- `touches` couvre les fichiers réellement concernés ;
+- `depends_on` est complet et minimal ;
+- le worklog existe et est récent ;
+- `progress.phase` et `status` reflètent l'état réel ;
+- les validations attendues sont documentées ;
+- les docs impactées sont listées ;
+- aucun travail cross-scope n'est caché dans une seule fiche.
+
+Commandes utiles :
+
+```bash
+bash .ai/scripts/build-feature-index.sh --write
+bash .ai/scripts/check-features.sh
+bash .ai/scripts/check-feature-freshness.sh --warn
+bash .ai/scripts/check-feature-coverage.sh
+bash .ai/scripts/check-ai-references.sh
+```
+
+Sortie audit :
+
+```text
+RESULT: OK | STALE | BLOCKED
+Feature:
+Findings:
+Required doc updates:
+Suggested commands:
+```
+
+## Phase 5 — HANDOFF
+
+Produire un handoff si le travail quitte le scope primaire.
+
+```md
+## HANDOFF — <from-scope> -> <to-scope>
+
+- Feature source : `<scope>/<id>`
+- Status :
+- Contexte :
+- Fichiers touchés :
+- Travail restant :
+- Contrats / décisions :
+- Risques :
+- Validation attendue :
+- Resume hint :
+```
+
+Ne pas continuer silencieusement dans l'autre scope.
+
+## Phase 6 — DONE-CHECK
+
+Avant DONE :
+
+```bash
+bash .ai/scripts/check-features.sh
+bash .ai/scripts/check-feature-docs.sh --strict <scope/id>
+bash .ai/scripts/check-feature-freshness.sh --warn
+bash .ai/scripts/check-ai-references.sh
+```
+
+DONE exige :
+
+- fiche complète ;
+- worklog à jour ;
+- evidence de validation présente ;
+- docs impactées mises à jour ;
+- aucun blocker ;
+- Doc Impact Decision explicite ;
+- `progress.phase: done` seulement si l'evidence le justifie.
+
+## Legacy Scope Rules
+
+`legacy` reste un scope custom, non généré par défaut.
+
+L'utiliser seulement pour un livrable borné :
+
+- ancien comportement ou source historique ;
+- comportement cible ;
+- contrat de compatibilité ;
+- frontière de migration ;
+- gaps connus ;
+- note de dépréciation ou rollback ;
+- source d'evidence ;
+- handoff si l'implémentation relève d'un autre scope.
+
+Toute règle legacy spécifique à un projet doit vivre dans `.ai/project/**`, pas dans cette procédure générique.
+
+## Final Output
+
+Terminer avec :
+
+```text
+RESULT: DONE | UPDATED | INIT_CREATED | AUDIT_ONLY | BLOCKED | HANDOFF_REQUIRED
+Feature:
+Doc:
+Worklog:
+Mode:
+Files changed:
+Validation:
+Doc Impact Decision:
+Next action:
+Commit suggestion:
+```
+
+Commit suggestion en français :
+
+```text
+docs(<scope>): documente <feature>
+docs(<scope>): met à jour <feature>
+docs(<scope>): prépare le handoff <feature>
+```
+
+## Non-Negotiable Rules
+
+- Un scope primaire par tâche.
+- Pas de chargement large.
+- Pas de logique projet spécifique dans cette procédure.
+- Pas de code applicatif dans ce workflow.
+- Pas de DONE sans evidence.
+- Pas de cross-scope sans HANDOFF.
+- `.ai/project/index.md` est optionnel et lu seulement s'il existe.

@@ -107,3 +107,13 @@
 - Impact template : `template/.ai/workflows/feature-new.md.jinja` et `template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja` intègrent les règles feature-new récentes.
 - Changement porté par dogfood runtime sync et les features workflow associées.
 - Validation associée : `check-dogfood-drift.sh` PASS.
+
+## 2026-05-06 — update
+- Template enrichi avec `template/.ai/workflows/document-feature.md.jinja` et les wrappers Claude/Codex `aic-document-feature`.
+- `_message_after_copy` et les README exposent le nouveau geste documentaire sans modifier les scopes Copier.
+- Validation prévue : rendu dogfood et smoke-test.
+
+## 2026-05-06 — freshness commit
+- Impact couvert : templates skill/workflow et README template synchronisés avec le rendu runtime.
+- Aucun changement sur le moteur Copier/Jinja lui-même.
+- Validation associée : `check-dogfood-drift.sh`, smoke-test PASS.

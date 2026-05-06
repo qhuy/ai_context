@@ -33,3 +33,13 @@ feat(core): installer les skills Codex par défaut
 ## 2026-05-06 — alignement dogfood Codex/Claude
 - Intent : aligner la surface de skills disponible localement pour Codex avec les skills intentionnels déjà présents côté Claude.
 - Changement prévu : synchroniser `.agents/**` depuis le rendu Copier minimal et faire échouer `check-dogfood-drift.sh` en cas de divergence.
+
+## 2026-05-06 — update
+- Ajout du wrapper Codex `aic-document-feature`.
+- Le skill délègue au workflow partagé `.ai/workflows/document-feature.md`.
+- Validation prévue : smoke-test [19/28] et dogfood drift.
+
+## 2026-05-06 — freshness commit
+- Impact couvert : README, template Codex et smoke-test référencent le nouveau wrapper.
+- Aucun changement sur le mécanisme d'installation Codex hors ajout du skill.
+- Validation associée : `check-dogfood-drift.sh`, `check-shims.sh`, `check-ai-references.sh`, smoke-test PASS.

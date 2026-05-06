@@ -15,3 +15,8 @@
 - Impact template : `template/.ai/workflows/feature-new.md.jinja` reste compatible avec les skills Claude qui délèguent aux workflows canoniques.
 - Changement porté par dogfood runtime sync.
 - Validation associée : `check-dogfood-drift.sh` PASS.
+
+## 2026-05-06 — update
+- Ajout du skill public Claude `/aic-document-feature`.
+- Le wrapper reste mince (`SKILL.md` + `workflow.md`) et délègue à `.ai/workflows/document-feature.md`.
+- Validation prévue : `check-dogfood-drift.sh`, `check-shims.sh`, `check-features.sh`, smoke-test.

@@ -8,3 +8,8 @@
 ## 2026-05-06 — freshness
 - Impact indirect : les scripts source-only de dogfooding synchronisent désormais `.agents/**`.
 - Aucun changement sur le contrat `.ai/project/**` ni sur l'overlay projet stable.
+
+## 2026-05-06 — freshness
+- Impact indirect : README, template README et `copier.yml` mentionnent le nouveau skill tout en conservant `.ai/project/index.md` optionnel.
+- `legacy` reste documenté comme scope custom activable par projet, pas comme scope template.
+- Validation associée : `check-ai-references.sh`, smoke-test PASS.

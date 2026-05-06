@@ -781,6 +781,7 @@ Le template embarque des skills Claude Code (`.claude/skills`) et des skills Cod
 | `/aic-frame` | Cadrage avant implémentation — objectif, position, spécificités métier/technique, plan, validation |
 | `/aic-status` | Début de session — état actionnable, blockers, stale, delta courant, prochaine reprise |
 | `/aic-diagnose` | Diagnostic du bottleneck principal. Équivalent Codex : "diagnostique le blocage" |
+| `/aic-document-feature` | Documentation feature — créer, mettre à jour, auditer, handoff ou done-check d'une fiche |
 | `/aic-review` | Avant review/PR — risques du delta, features impactées, doc/freshness, checks |
 | `/aic-ship` | Avant commit/push — quality gate, evidence, commit proposé, confirmation obligatoire |
 
@@ -806,6 +807,7 @@ Codex reçoit aussi des wrappers directs pour les procédures feature :
 | `.ai/workflows/feature-update.md` | Mettre à jour `progress.*` sur changement d'intent |
 | `.ai/workflows/feature-handoff.md` | Formaliser une passation inter-scope/session |
 | `.ai/workflows/feature-audit.md` | Rétro-doc/re-sync, maintenance mesh |
+| `.ai/workflows/document-feature.md` | Documenter, auditer, handoff ou done-check d'une fiche feature |
 | `.ai/workflows/quality-gate.md` | Backend déterministe de `/aic-ship` |
 | `.ai/workflows/project-guardrails.md` | Procédure de cadrage guardrails, déclenchée via `/aic-frame` |
 | `.ai/workflows/feature-done.md` | Clôturer la feature (evidence + status `done`) |

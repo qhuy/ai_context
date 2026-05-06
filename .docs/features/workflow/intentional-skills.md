@@ -1,7 +1,7 @@
 ---
 id: intentional-skills
 scope: workflow
-title: Skills intentionnels pour cadrage, status, review et ship
+title: Skills intentionnels pour cadrage, documentation, status, review et ship
 status: active
 depends_on:
   - workflow/claude-skills
@@ -11,12 +11,16 @@ touches:
   - template/.ai/workflows/**
   - .claude/skills/aic-frame/**
   - .claude/skills/aic-status/**
+  - .claude/skills/aic-document-feature/**
   - .claude/skills/aic-review/**
   - .claude/skills/aic-ship/**
   - template/.claude/skills/aic-frame/**
   - template/.claude/skills/aic-status/**
+  - template/.claude/skills/aic-document-feature/**
   - template/.claude/skills/aic-review/**
   - template/.claude/skills/aic-ship/**
+  - .agents/skills/aic-document-feature/**
+  - template/.agents/skills/aic-document-feature/**
   - .ai/index.md
   - template/.ai/index.md.jinja
   - copier.yml
@@ -29,10 +33,10 @@ touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "intentions préservées sans chargement Pack A large"
+  step: "aic-document-feature ajouté sans logique projet spécifique"
   blockers: []
-  resume_hint: "valider smoke-test et check-shims après toute évolution de .ai/index.md"
-  updated: 2026-05-04
+  resume_hint: "valider smoke-test, check-shims et dogfood après évolution des skills publics"
+  updated: 2026-05-06
 ---
 
 # Skills intentionnels
@@ -44,6 +48,7 @@ Réduire la friction des skills Claude en exposant des intentions utilisateur pl
 Le vocabulaire utilisateur devient :
 
 - cadrer ;
+- documenter une feature ;
 - voir le status ;
 - diagnostiquer ;
 - review ;
@@ -55,6 +60,7 @@ Les primitives procédurales vivent sous `.ai/workflows/`. Elles restent disponi
 
 - `/aic-frame` cadre une tâche/feature : objectif, position, spécificités métier, spécificités techniques, plan, validation, points à confirmer.
 - `/aic-status` reprend le contexte : features en cours, blockers, stale, delta courant, prochaine action.
+- `/aic-document-feature` documente une fiche du mesh : init/update/audit/handoff/done-check, sans logique projet spécifique.
 - `/aic-review` analyse le delta : risques, features directes/liées, doc/freshness, checks.
 - `/aic-ship` prépare la sortie : quality gate, freshness staged, evidence, risques, commit proposé.
 - `.ai/workflows/*` porte les procédures internes : création/reprise/update/handoff/audit/gate/done/guardrails.
@@ -83,3 +89,4 @@ Les primitives procédurales vivent sous `.ai/workflows/`. Elles restent disponi
 - 2026-05-04 : ajout des intentions CLI `repair-copier-metadata` et `template-diff` pour rendre le cycle update Copier pilotable en langage naturel, sans nouveau skill utilisateur.
 - 2026-05-04 : lean Codex confirmé : `.ai/index.md` garde les intentions comme vocabulaire d'usage, mais ne charge plus quality gate, `.ai/agent/*` ni workflows au démarrage.
 - 2026-05-04 : `ai-context.sh check-docs` devient l'intention CLI pour vérifier la fiche "bible feature". Les workflows `feature-new`, `quality-gate` et `feature-done` documentent le strict ciblé avant DONE.
+- 2026-05-06 : ajout de `/aic-document-feature` côté Claude et Codex. Le skill reste générique `ai_context`, documente le mesh feature et laisse `legacy` comme scope custom activable par les repos consommateurs.

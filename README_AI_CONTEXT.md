@@ -91,6 +91,7 @@ bash .ai/scripts/ai-context.sh template-diff
 | Voir où j'en suis | `bash .ai/scripts/ai-context.sh status` |
 | Préparer une édition avec Codex | `bash .ai/scripts/ai-context.sh brief <path>` |
 | Vérifier les docs du delta | `bash .ai/scripts/ai-context.sh document-delta` |
+| Documenter une feature | Claude : `/aic-document-feature` ; Codex : skill local `aic-document-feature` ou langage naturel |
 | Réparer le mesh | `bash .ai/scripts/ai-context.sh repair` |
 | Réparer les métadonnées Copier | `bash .ai/scripts/ai-context.sh repair-copier-metadata` |
 | Prévisualiser le template | `bash .ai/scripts/ai-context.sh template-diff` |

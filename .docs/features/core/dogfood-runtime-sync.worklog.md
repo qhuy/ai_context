@@ -18,3 +18,13 @@
 ## 2026-05-05 — freshness
 - Impact transversal : l'overlay projet stable ajoute `.ai/OWNERSHIP.md`, `.ai/templates/project-overlay/README.md` et adapte les scripts dogfood pour préserver `.ai/project/**`.
 - Validation associée : dogfood-update appliqué puis `check-dogfood-drift.sh`, `check-shims.sh`, `check-features.sh` PASS.
+
+## 2026-05-06 — dogfood
+- `bash .ai/scripts/dogfood-update.sh --apply` exécuté après ajout de `document-feature` au template.
+- Runtime synchronisé : `.ai/workflows/document-feature.md`, `.claude/skills/aic-document-feature/**`, `.agents/skills/aic-document-feature/**`, `README_AI_CONTEXT.md`.
+- Validation prévue : `check-dogfood-drift.sh`, `check-shims.sh`, `check-features.sh`.
+
+## 2026-05-06 — freshness commit
+- Impact couvert : runtime `.ai/workflows/**`, `.claude/skills/**`, `.agents/skills/**` et `README_AI_CONTEXT.md` synchronisés.
+- Aucun changement sur le contrat source-only de dogfood.
+- Validation associée : `check-dogfood-drift.sh`, `check-shims.sh`, smoke-test PASS.

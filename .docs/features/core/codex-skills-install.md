@@ -117,3 +117,4 @@ Aucune dépendance déclarée.
 - 2026-05-04 : décision d'ajouter les skills Codex par défaut à l'installation.
 - 2026-05-04 : ajout des wrappers `.agents/skills` conditionnés par l'agent `codex`.
 - 2026-05-06 : alignement dogfood local : les skills Codex rendus sont synchronisés dans `.agents/skills/` et contrôlés par `check-dogfood-drift.sh`.
+- 2026-05-06 : ajout du wrapper Codex `aic-document-feature`, aligné avec le workflow partagé `.ai/workflows/document-feature.md`.

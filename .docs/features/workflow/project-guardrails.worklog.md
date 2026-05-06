@@ -28,3 +28,8 @@
 ## 2026-05-05 — freshness
 - Impact transversal : l'overlay projet clarifie la migration des règles locales et garde les guardrails génériques on-demand.
 - Validation associée : `check-shims.sh` et smoke-test PASS.
+
+## 2026-05-06 — freshness
+- Impact indirect : `README_AI_CONTEXT.md`, son template et `copier.yml` mentionnent le nouveau skill documentaire sans changer la procédure guardrails.
+- Les règles projet restent dans `.ai/project/**` et chargées via `.ai/project/index.md` seulement.
+- Validation associée : `check-ai-references.sh`, smoke-test PASS.

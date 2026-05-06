@@ -54,3 +54,8 @@
 ## 2026-05-05 — freshness
 - Impact transversal : le message post-copy guide les règles locales vers `.ai/project/index.md` sans ajouter de skill obligatoire.
 - Validation associée : smoke-test PASS.
+
+## 2026-05-06 — freshness
+- Impact indirect : `copier.yml` expose `/aic-document-feature` comme commande intentionnelle optionnelle.
+- Le langage naturel reste le chemin par défaut ; le skill sert aux cas où la documentation feature doit être cadrée explicitement.
+- Validation associée : smoke-test PASS.

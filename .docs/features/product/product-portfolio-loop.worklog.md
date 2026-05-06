@@ -21,3 +21,8 @@
 ## 2026-05-06 — freshness
 - Impact indirect : les scripts source-only de dogfooding synchronisent désormais `.agents/**`.
 - Aucun changement sur les commandes product-status/product-portfolio/product-review ni sur la traceability produit.
+
+## 2026-05-06 — freshness
+- Impact indirect : `README_AI_CONTEXT.md`, `copier.yml`, le template README et le smoke-test évoluent pour exposer `/aic-document-feature`.
+- Aucun changement sur le contrat initiative/roadmap/traceability produit.
+- Validation associée : smoke-test PASS.

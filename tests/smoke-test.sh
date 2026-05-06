@@ -1121,7 +1121,7 @@ rm -rf "$OUT/.git" "$OUT/.docs/features/back/specfeat.md" "$OUT/.docs/features/b
 
 echo
 echo "[19/28] skills publics + workflows internes présents"
-for s in aic aic-frame aic-status aic-diagnose aic-review aic-ship; do
+for s in aic aic-frame aic-status aic-diagnose aic-document-feature aic-review aic-ship; do
   if [[ ! -f "$OUT/.claude/skills/$s/SKILL.md" ]]; then
     echo "  ✗ $s/SKILL.md absent"
     exit 1
@@ -1147,7 +1147,7 @@ for s in aic aic-frame aic-status aic-diagnose aic-review aic-ship; do
     exit 1
   fi
 done
-for s in feature-new feature-resume feature-update feature-handoff feature-audit quality-gate feature-done project-guardrails; do
+for s in feature-new feature-resume feature-update feature-handoff feature-audit document-feature quality-gate feature-done project-guardrails; do
   if [[ ! -f "$OUT/.ai/workflows/$s.md" ]]; then
     echo "  ✗ .ai/workflows/$s.md absent"
     exit 1
@@ -1178,7 +1178,7 @@ for s in aic-quality-gate aic-project-guardrails; do
     exit 1
   fi
 done
-echo "  ✓ skills Claude publics + skills Codex + 8 workflows internes présents"
+echo "  ✓ skills Claude publics + skills Codex + 9 workflows internes présents"
 # Lean context policy
 if [[ ! -f "$OUT/.ai/context-ignore.md" ]]; then
   echo "  ✗ .ai/context-ignore.md absent"
