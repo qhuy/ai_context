@@ -37,3 +37,13 @@
   - Niveau 4 : checks/CI/doctor (strict requis, passent explicitement `--strict`).
 - Décision tranchée : `bash features-for-path.sh <path>` sans flag = best-effort. Pas d'auto-détection CLI/hook qui pourrait mal classer. Strict = opt-in pur.
 - Question ouverte (à arbitrer en phase implement) : `review-delta.sh` reste-t-il en best-effort (compat utilisateur) ou bascule strict pour traçabilité ?
+
+## 2026-05-07 — micro-fix Invariants + Niveau 1 (re-review Codex)
+- Codex re-review du commit `f200018` : 2 incohérences résiduelles.
+  1. Ligne Invariants disait "exit ≠ 0 en mode CLI/check" alors que le défaut CLI sans flag est best-effort. Contradiction avec lignes suivantes.
+  2. Niveau 1 matcher disait "silent no-match par défaut" alors que le wrapper best-effort doit produire un warning. Si le matcher est silencieux, le wrapper ne peut pas warning sans dupliquer la détection.
+- Corrections :
+  - Invariants : "CLI/check" remplacé par "strict/check". Les 3 politiques (silent compat / warn+exit 0 / error+exit≠0) explicitement listées en référence aux Contrats.
+  - Niveau 1 matcher reformulé : le matcher **expose** les patterns non supportés (via stderr ou variable de sortie) et **n'impose pas** de politique exit. 3 politiques disponibles aux callers : silent compat opt-in (`_FEATURES_MATCHING_SILENT=1`), warn+exit 0 (défaut), error+exit≠0 (via `_FEATURES_MATCHING_STRICT=1`).
+  - Validation : ajout de 2 tests d'acceptance — best-effort (pattern non supporté observable sur stderr sans bloquer) et strict (erreur + exit ≠ 0 avec flag).
+- Justification ajoutée : « la fonction seule ne décide pas de la politique exit, c'est le wrapper/caller qui le fait. Mais elle doit toujours rendre l'info disponible (sauf en mode silent explicite), sinon un wrapper best-effort ne peut pas afficher de warning sans dupliquer la détection. »

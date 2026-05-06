@@ -71,7 +71,7 @@ Cette fiche couvre un seul outil (`features-for-path.sh`) et son matcher (`_lib.
 - Pack A reste lean : pas d'élargissement.
 - Le script reste agent-agnostic (Bash, pas de dépendance hookée Claude).
 - Comportement déterministe : sortie reproductible pour un même path et un même état du mesh.
-- Erreur claire si un pattern non supporté est utilisé (pas de silent no-op). **Comportement dual** : exit ≠ 0 en mode CLI/check, warning stderr + exit 0 en mode hook PreToolUse/PostToolUse pour ne jamais bloquer une édition.
+- Pattern non supporté observable selon 3 politiques (cf. Contrats) : **silent compat** pour callers historiques explicitement opt-in, **warn stderr + exit 0** pour wrapper/hook best-effort (défaut), **error stderr + exit ≠ 0** en mode strict/check.
 
 ## Décisions
 
@@ -114,9 +114,13 @@ Le périmètre couvre **deux niveaux de code** (matcher + wrapper) consommés pa
 
 Fonction interne ([_lib.sh:130](.ai/scripts/_lib.sh:130)). Lit l'index, retourne les features dont un `touches:` direct couvre le path.
 
-- Comportement par défaut : silent no-match si pattern non supporté (compatibilité ascendante).
-- Mode strict (à introduire) : variable interne `_FEATURES_MATCHING_STRICT=1` → log warning ou erreur sur stderr selon caller. Le code retour de la fonction reste informatif ; chaque caller décide de propager ou pas.
-- Justification : la fonction seule ne décide pas de la politique exit, c'est le wrapper/caller qui le fait.
+Le matcher **expose** les patterns non supportés (via stderr ou variable de sortie côté `_lib.sh`) et **n'impose pas** de politique exit. Trois politiques disponibles aux callers :
+
+- **silent compat** : aucun message, no-match silencieux. Activé seulement si le caller le demande explicitement (variable `_FEATURES_MATCHING_SILENT=1`). Cible : compat ascendante avec callers historiques.
+- **warn + exit 0** *(défaut)* : warning sur stderr listant le pattern cassé, fonction continue, code retour informatif. Le caller peut afficher le warning sans propager d'échec.
+- **error + exit ≠ 0** : erreur sur stderr, le caller propage le code retour ≠ 0. Activé via `_FEATURES_MATCHING_STRICT=1` côté caller.
+
+Justification : la fonction seule ne décide pas de la politique exit, c'est le wrapper/caller qui le fait. Mais elle doit **toujours** rendre l'info disponible (sauf en mode silent explicite), sinon un wrapper best-effort ne peut pas afficher de warning sans dupliquer la détection.
 
 ### Niveau 2 — Wrapper `features-for-path.sh`
 
@@ -151,6 +155,8 @@ Consommateurs directs de `features_matching_path` ou de `features-for-path.sh` q
 
 - Test reproductible matcher : créer une fiche avec `touches: src/**/*.ts`, lancer le script sur `src/sub/file.ts`, vérifier que la fiche est matchée. Idem pour `foo-*/**`.
 - Test ranking : créer 5 fiches dont les `touches:` matchent un même path à des spécificités différentes, vérifier que top-3 sont retournées dans l'ordre attendu.
+- Test acceptance best-effort : créer une fiche avec un `touches:` non supporté, lancer `bash features-for-path.sh <path>` sans flag → le pattern non supporté **doit être observable** sur stderr (warning) **sans bloquer** l'exit (code 0). Idem si invoqué via le hook PreToolUse Claude : édition non bloquée, warning visible dans les logs.
+- Test acceptance strict : même configuration, lancer avec `--strict` ou `AI_CONTEXT_FEATURES_STRICT=1` → erreur sur stderr + exit ≠ 0.
 - `bash tests/smoke-test.sh` PASS après intégration.
 - Mesure de bruit : lancer le hook PreToolUse sur 10 paths représentatifs avant/après, vérifier réduction du nombre de features injectées sans perte des features pertinentes.
 
