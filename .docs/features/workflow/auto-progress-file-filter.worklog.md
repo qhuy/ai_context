@@ -21,3 +21,11 @@
 ## 2026-05-07 17:33 — auto
 - Fichiers modifiés :
   - .ai/scripts/auto-progress.sh
+
+## 2026-05-07 18:04 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - .ai/scripts/auto-progress.sh
+  - template/.ai/scripts/_lib.sh.jinja
+  - template/.ai/scripts/auto-progress.sh.jinja
+  - tests/unit/test-auto-progress-filter.sh

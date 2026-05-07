@@ -217,3 +217,8 @@
 - Fichiers modifiés :
   - template/.ai/scripts/_lib.sh.jinja
   - template/.ai/scripts/auto-progress.sh.jinja
+
+## 2026-05-07 18:04 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/_lib.sh.jinja
+  - template/.ai/scripts/auto-progress.sh.jinja
