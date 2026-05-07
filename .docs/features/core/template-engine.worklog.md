@@ -212,3 +212,8 @@
 - Impact template : `template/.ai/scripts/_lib.sh.jinja` (ajout helper) et `template/.ai/scripts/auto-progress.sh.jinja` (consumer du helper) — livraison Phase 2 #4.
 - Aucun changement profil/agents/scopes/variables Copier.
 - Validation : check-dogfood-drift PASS.
+
+## 2026-05-07 17:33 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/_lib.sh.jinja
+  - template/.ai/scripts/auto-progress.sh.jinja

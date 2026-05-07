@@ -17,3 +17,7 @@
 ## 2026-05-07 14:20 — auto
 - Fichiers modifiés :
   - .claude/settings.json
+
+## 2026-05-07 17:33 — auto
+- Fichiers modifiés :
+  - .ai/scripts/auto-progress.sh

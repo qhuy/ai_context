@@ -102,3 +102,8 @@
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-05-07 17:33 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja

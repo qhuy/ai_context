@@ -348,10 +348,12 @@ features_matching_path() {
 
   # Note : while ... done | awk crée un subshell qui ne propage pas strict_seen.
   # On stocke d'abord, puis on dédup.
+  # Note : path_matches_touch peut retourner 1 (no-match) ou 2 (strict unsupported).
+  # On utilise `|| rc=$?` pour capturer sans déclencher `set -e` chez le caller.
   while IFS=$'\t' read -r scope id feature_path touch; do
     [[ -z "$scope" || -z "$touch" ]] && continue
-    path_matches_touch "$rel_path" "$touch"
-    local rc=$?
+    local rc=0
+    path_matches_touch "$rel_path" "$touch" || rc=$?
     case "$rc" in
       0) raw_output+="$scope"$'\t'"$id"$'\t'"$feature_path"$'\n' ;;
       2) strict_seen=1 ;;  # pattern unsupported en mode strict, propager après
@@ -379,10 +381,12 @@ features_matching_path_ranked() {
 
   [[ -f "$index_file" ]] || return 0
 
+  # Note : path_matches_touch peut retourner 1 (no-match) ou 2 (strict).
+  # `|| rc=$?` capture sans déclencher `set -e` chez le caller.
   while IFS=$'\t' read -r scope id feature_path touch; do
     [[ -z "$scope" || -z "$touch" ]] && continue
-    path_matches_touch "$rel_path" "$touch"
-    local rc=$?
+    local rc=0
+    path_matches_touch "$rel_path" "$touch" || rc=$?
     case "$rc" in
       0) raw_output+="$scope"$'\t'"$id"$'\t'"$feature_path"$'\t'"$touch"$'\n' ;;
       2) strict_seen=1 ;;

@@ -75,3 +75,7 @@
 ## 2026-05-07 — freshness
 - Impact indirect : ajout d'un nouveau test unit `tests/unit/test-auto-progress-filter.sh` (livraison Phase 2 #4).
 - Aucun changement sur le contrat overlay projet.
+
+## 2026-05-07 17:33 — auto
+- Fichiers modifiés :
+  - tests/unit/test-auto-progress-filter.sh

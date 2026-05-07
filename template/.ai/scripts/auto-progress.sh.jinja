@@ -81,6 +81,25 @@ while IFS= read -r key; do
   has_real_edit=0
   while IFS= read -r edited_file; do
     [[ -z "$edited_file" ]] && continue
+
+    # Revalidation Finding 1 Codex post-77d6d16 : la trace peut être stale
+    # (index regénéré entre-temps, feature qui a perdu ce touches:). Avant
+    # d'appliquer is_structural_feature_edit, on revérifie via l'index
+    # courant que edited_file matche encore un touches: direct de $key.
+    matches_direct=0
+    while IFS=$'\t' read -r m_scope m_id _; do
+      [[ -z "$m_scope" ]] && continue
+      if [[ "$m_scope/$m_id" == "$key" ]]; then
+        matches_direct=1
+        break
+      fi
+    done < <(features_matching_path "$index_file" "$edited_file")
+
+    if [[ "$matches_direct" -eq 0 ]]; then
+      log_debug "auto-progress no-bump $key : trace stale ou touches: perdu pour $edited_file"
+      continue
+    fi
+
     if is_structural_feature_edit "$feature_path" "$edited_file"; then
       has_real_edit=$((has_real_edit + 1))
     fi

@@ -46,3 +46,8 @@
 - Impact direct : nouveau helper `is_structural_feature_edit` ajouté dans `.ai/scripts/_lib.sh` (et template). Filtre metadata/noise pour distinguer édits structurels des édits documentaires (livraison Phase 2 #4).
 - Aucun changement sur la sémantique de l'index ni sur les helpers de matching existants.
 - Validation : 22 cas test-auto-progress-filter PASS.
+
+## 2026-05-07 17:33 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja

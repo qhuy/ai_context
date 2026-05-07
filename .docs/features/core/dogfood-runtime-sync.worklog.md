@@ -134,3 +134,8 @@
 - Impact direct : `.ai/scripts/auto-progress.sh` modifié pour utiliser `is_structural_feature_edit` (livraison Phase 2 #4).
 - Parité template appliquée : `_lib.sh.jinja` + `auto-progress.sh.jinja`.
 - Validation : check-dogfood-drift PASS.
+
+## 2026-05-07 17:33 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - .ai/scripts/auto-progress.sh
