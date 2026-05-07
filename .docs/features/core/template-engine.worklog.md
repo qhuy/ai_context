@@ -207,3 +207,8 @@
 ## 2026-05-07 14:53 — auto
 - Fichiers modifiés :
   - template/.ai/scripts/features-for-path.sh.jinja
+
+## 2026-05-07 — freshness
+- Impact template : `template/.ai/scripts/_lib.sh.jinja` (ajout helper) et `template/.ai/scripts/auto-progress.sh.jinja` (consumer du helper) — livraison Phase 2 #4.
+- Aucun changement profil/agents/scopes/variables Copier.
+- Validation : check-dogfood-drift PASS.

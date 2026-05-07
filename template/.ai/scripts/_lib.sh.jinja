@@ -83,6 +83,57 @@ enable_globstar() {
   shopt -s globstar 2>/dev/null || true
 }
 
+# is_structural_feature_edit <feature_path> <file_path>
+#   — retourne 0 si l'édit est "structurel" pour la feature, 1 sinon.
+#
+#   Filtre metadata/noise uniquement. NE refait PAS la politique matcher :
+#   le caller doit avoir déjà filtré via features_matching_path (touches: direct).
+#
+#   Exclusions (édits non-structurels) :
+#     - tout fichier sous .docs/features/** (fiches feature, leurs worklogs)
+#     - tout *.worklog.md (worklog hors .docs aussi)
+#     - .lock partout
+#     - .ai/.* fichiers cachés (logs/cache auto : .session-edits.log,
+#       .progress-history.jsonl, .context-relevance.jsonl, etc.)
+#
+#   Override : AI_CONTEXT_AUTO_PROGRESS_FILTER_EXT=".md,.txt" exclut en plus
+#   les extensions listées (séparées par virgule). Ne s'applique pas à la
+#   liste de base ci-dessus (qui reste exclue par défaut).
+#
+#   Ne pas exclure .md globalement en v1 : un .md peut être le livrable
+#   réel d'une feature documentaire (cf. décision Codex round 1 #4).
+is_structural_feature_edit() {
+  local feature_path="$1"
+  local file_path="$2"
+  [[ -z "$feature_path" || -z "$file_path" ]] && return 1
+
+  # Normaliser : strip leading ./ si présent.
+  file_path="${file_path#./}"
+
+  # Exclusions de base (toujours non-structurelles).
+  case "$file_path" in
+    .docs/features/*) return 1 ;;
+    *.worklog.md) return 1 ;;
+    *.lock) return 1 ;;
+    .ai/.[!.]*|.ai/*/.[!.]*) return 1 ;;
+  esac
+
+  # Override env : extensions exclues additionnelles.
+  if [[ -n "${AI_CONTEXT_AUTO_PROGRESS_FILTER_EXT:-}" ]]; then
+    local IFS=','
+    local ext
+    for ext in $AI_CONTEXT_AUTO_PROGRESS_FILTER_EXT; do
+      ext="${ext# }"
+      ext="${ext% }"
+      [[ -z "$ext" ]] && continue
+      [[ "$ext" != .* ]] && ext=".$ext"
+      [[ "$file_path" == *"$ext" ]] && return 1
+    done
+  fi
+
+  return 0
+}
+
 # collect_uncommitted_paths
 #   — liste les paths uncommitted (tracked modifié + staged + untracked + deletions/renames).
 #   Source canonique : `git status --porcelain=v1 -z --untracked-files=all`.

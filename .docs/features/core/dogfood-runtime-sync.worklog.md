@@ -129,3 +129,8 @@
 ## 2026-05-07 14:53 — auto
 - Fichiers modifiés :
   - .ai/scripts/features-for-path.sh
+
+## 2026-05-07 — freshness
+- Impact direct : `.ai/scripts/auto-progress.sh` modifié pour utiliser `is_structural_feature_edit` (livraison Phase 2 #4).
+- Parité template appliquée : `_lib.sh.jinja` + `auto-progress.sh.jinja`.
+- Validation : check-dogfood-drift PASS.

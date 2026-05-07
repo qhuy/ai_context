@@ -75,3 +75,6 @@
 ## 2026-05-07 14:53 — auto
 - Fichiers modifiés :
   - tests/unit/test-context-relevance.sh
+
+## 2026-05-07 — freshness
+- Impact indirect : nouveau test unit autonome `tests/unit/test-auto-progress-filter.sh` (livraison Phase 2 #4). Aucune modif sur `tests/smoke-test.sh`.

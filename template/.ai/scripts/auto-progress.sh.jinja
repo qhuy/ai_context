@@ -70,20 +70,26 @@ while IFS= read -r key; do
   # Heuristique V1 : applique uniquement spec → implement
   [[ "$current_phase" != "spec" ]] && continue
 
-  # Vérifie qu'au moins 1 fichier édité ≠ la fiche elle-même ou son worklog
+  # Vérifie qu'au moins 1 fichier édité est "structurel" pour la feature
+  # (filtre metadata/noise via is_structural_feature_edit, cf. workflow/
+  # auto-progress-file-filter Phase 2 #4).
   scope="${key%%/*}"
   id="${key##*/}"
   fiche_path="$feature_path"
   worklog_path="$(dirname "$feature_path")/$id.worklog.md"
 
-  has_real_edit=$(jq -rs --arg k "$key" --arg fp "$fiche_path" --arg wp "$worklog_path" '
-    [.[] | select(.feature == $k) | .file]
-    | unique
-    | map(select(. != $fp and . != $wp))
-    | length
-  ' "$trace_file" 2>/dev/null)
+  has_real_edit=0
+  while IFS= read -r edited_file; do
+    [[ -z "$edited_file" ]] && continue
+    if is_structural_feature_edit "$feature_path" "$edited_file"; then
+      has_real_edit=$((has_real_edit + 1))
+    fi
+  done < <(jq -rs --arg k "$key" '[.[] | select(.feature == $k) | .file] | unique | .[]' "$trace_file" 2>/dev/null)
 
-  [[ -z "$has_real_edit" || "$has_real_edit" == "0" ]] && continue
+  if [[ "$has_real_edit" -eq 0 ]]; then
+    log_debug "auto-progress no-bump $key : aucun édit structurel parmi les fichiers tracés"
+    continue
+  fi
 
   # Snapshot AVANT modification (pour undo futur)
   snapshot=$(jq -nc \

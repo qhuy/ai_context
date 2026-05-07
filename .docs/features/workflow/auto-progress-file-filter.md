@@ -6,10 +6,14 @@ status: draft
 depends_on: []
 touches:
   - .ai/scripts/auto-progress.sh
-  - .claude/settings.json
-  - tests/smoke-test.sh
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/auto-progress.sh.jinja
+  - template/.ai/scripts/_lib.sh.jinja
+  - tests/unit/test-auto-progress-filter.sh
 touches_shared:
   - .ai/scripts/features-for-path.sh
+  - .claude/settings.json
+  - tests/smoke-test.sh
 product: {}
 external_refs: {}
 doc:
@@ -22,10 +26,10 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: implement
-  step: "draft cadré, à reprendre pour implémentation"
+  phase: review
+  step: "implémentation livrée, 22 cas test PASS, prêt à commit"
   blockers: []
-  resume_hint: "lire auto-progress.sh, définir le critère « édit structurel », implémenter le filtre + tests reproductibles"
+  resume_hint: "commit feat(workflow) ; #5 stop-hook-idempotence consommera le helper dans un turn dédié"
   updated: 2026-05-07
 ---
 
@@ -71,12 +75,39 @@ Cette fiche couvre **uniquement** la transition `spec→implement` du hook Stop.
 
 ## Décisions
 
-Ouvertes, à arbitrer en phase implement :
+Tranchées post cross-check Codex 2026-05-07 :
 
-- Liste d'extensions « non structurelles » : par défaut `.md`, `.txt`, `.lock`. À discuter pour `.json`, `.yml` (souvent config, parfois data).
-- Comportement sur fichiers de tests : (a) considérer comme structurel (TDD valide la phase implement), ou (b) non structurel (test seul ne fait pas avancer la feature). Préférence par défaut : (a) pour ne pas pénaliser TDD.
-- Fichiers fiches feature (`.docs/features/<scope>/<id>.md`) : non structurels par définition (la fiche n'est pas l'implémentation).
-- Si la feature n'a pas de `touches:` (cas pathologique), comportement actuel ou no-bump strict ?
+### 1. Critère « non-structurel » (Codex affine A1 → ciblé)
+
+- **Exclure toujours** : `.docs/features/**` (fiches + worklogs), `*.worklog.md` partout, `.lock`, fichiers cachés `.ai/.*` (logs/cache auto).
+- **Ne pas exclure** `.md` globalement en v1. Un `.md` peut être le livrable réel d'une feature documentaire dans ce repo. Override via env var possible mais pas en défaut.
+- Le critère est **complémentaire** au matching `touches:` direct : on filtre l'édit AVANT d'évaluer s'il bumpe la phase. Le caller `auto-progress.sh` consomme déjà des fichiers déjà passés par `features_matching_path`.
+
+### 2. Tests = structurel (B1)
+
+Si un fichier de test matche `touches:` direct d'une feature, son édit est structurel. TDD doit pouvoir faire passer `spec → implement`. Pas de filtre extension `.test.*` ou `_test.go`.
+
+### 3. Feature sans `touches:` = no-bump (C1/C3)
+
+Cas en pratique exclu par le flux actuel : `auto-worklog-log.sh` ne logge dans `.session-edits.log` que les fichiers matchant un `touches:` direct via `features_matching_path`. Une feature sans `touches:` n'arrive donc pas dans `auto-progress.sh`, sauf trace synthétique/stale.
+
+Tranche : **no-bump**. Debug visible si `AI_CONTEXT_DEBUG=1`. Override via `/aic` si besoin réel.
+
+### 4. Helper minimal `is_structural_feature_edit` (D1)
+
+Signature : `is_structural_feature_edit <feature_path> <file_path>`. Retourne 0 si l'édit est structurel pour la feature, 1 sinon.
+
+**Périmètre minimal** : filtre metadata/noise uniquement. Ne refait pas la politique matcher (`features_matching_path` a déjà tranché direct vs shared). Dans `auto-progress.sh`, on peut revalider direct-vs-shared via l'index si besoin, mais c'est un raffinement séparé.
+
+Refactor dans `_lib.sh` pour partage avec Phase 2 #5 (`stop-hook-idempotence`) sans coupling fort : #5 consommera le helper dans son turn dédié.
+
+### 5. Tests E1 dédiés
+
+`tests/unit/test-auto-progress-filter.sh` couvrant 7 cas (cf. Validation).
+
+### Stratégie de delivery — L2 (sequential)
+
+#4 livre le helper + son consumer (`auto-progress.sh`). #5 dans un turn dédié consommera le helper sans refactor supplémentaire. Pas de dual delivery #4+#5 dans ce turn.
 
 ## Comportement attendu
 
@@ -95,11 +126,19 @@ Ouvertes, à arbitrer en phase implement :
 
 ## Validation
 
-- Test reproductible 1 : feature en `phase: spec`, hook Stop avec un seul fichier `.md` édité → vérifier que phase reste `spec`.
-- Test reproductible 2 : même feature, hook Stop avec un fichier source matchant `touches:` direct → vérifier que phase devient `implement`.
-- Test reproductible 3 : même feature, hook Stop avec mix `.md` + source structurel → bump (au moins un fichier passe).
-- Test reproductible 4 : même feature, hook Stop avec uniquement des fichiers `touches_shared:` → no-bump.
+Tests obligatoires (Codex post cross-check, 7 cas) :
+
+1. `.docs/features/**` seul édité → no-bump.
+2. Worklog `*.worklog.md` seul → no-bump.
+3. Source matchant `touches:` direct → bump.
+4. Test matchant `touches:` direct → bump (TDD valide).
+5. `touches_shared:` seul → no-bump.
+6. Feature sans `touches:` → no-bump.
+7. Override env d'extensions exclues si ajoutée (optionnel v1).
+
+Plus :
 - `bash tests/smoke-test.sh` PASS après intégration.
+- Non-régression : édit fichier source légitime continue de bumper.
 
 ## Risques
 
