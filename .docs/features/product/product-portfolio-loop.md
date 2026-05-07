@@ -58,7 +58,7 @@ progress:
   step: "traceability product préservée hors Pack A"
   blockers: []
   resume_hint: "valider que le product loop reste on-demand et que smoke/check-product-links passent"
-  updated: 2026-05-04
+  updated: 2026-05-07
 ---
 
 # Product Traceability Loop

@@ -16,7 +16,7 @@ progress:
   step: "bootstrap dog-fooding (v0.9 historique)"
   blockers: []
   resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-04-24
+  updated: 2026-05-07
 ---
 
 # Auto-worklog

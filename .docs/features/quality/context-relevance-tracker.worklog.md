@@ -57,3 +57,13 @@
   8. `AI_CONTEXT_RELEVANCE_DISABLED=1` → no-op.
 - Validation : check-shims, check-features, check-dogfood-drift, smoke-test, 8 cas test unit ALL PASS.
 - Phase bumpée implement → review.
+
+## 2026-05-07 14:20 — auto
+- Fichiers modifiés :
+  - .ai/.gitignore
+  - .ai/scripts/auto-worklog-log.sh
+  - .ai/scripts/features-for-path.sh
+  - .claude/settings.json
+  - template/.ai/scripts/auto-worklog-log.sh.jinja
+  - template/.ai/scripts/features-for-path.sh.jinja
+  - template/.claude/settings.json.jinja

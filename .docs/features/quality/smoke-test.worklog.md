@@ -63,3 +63,7 @@
 
 ## 2026-05-07 — freshness
 - Impact indirect : ajout d'un nouveau test unit autonome `tests/unit/test-context-relevance.sh` (livraison Phase 2 #3). Aucune modif sur la matrice smoke.
+
+## 2026-05-07 14:20 — auto
+- Fichiers modifiés :
+  - tests/unit/test-context-relevance.sh

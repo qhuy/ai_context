@@ -177,6 +177,68 @@ else
 fi
 rm -rf "$tmp8"
 
+# ─── Cas 9 : E2E wiring — CLI mode ne crée pas d'event inject ───
+# (Finding 1 Codex post-0ce2094 : éviter faux injects en mode CLI.)
+log_runtime="$repo_root/.ai/.context-relevance.jsonl"
+log_runtime_backup=""
+[[ -f "$log_runtime" ]] && log_runtime_backup=$(mktemp) && mv "$log_runtime" "$log_runtime_backup"
+
+bash "$repo_root/.ai/scripts/features-for-path.sh" "$repo_root/.ai/scripts/_lib.sh" >/dev/null 2>&1 || true
+if [[ -f "$log_runtime" ]] && grep -q '"event":"inject"' "$log_runtime" 2>/dev/null; then
+  fail=$((fail + 1))
+  failures+=("cas 9 : CLI mode a créé un event inject (Finding 1 Codex non corrigé)")
+else
+  pass=$((pass + 1))
+  echo "PASS: cas 9 CLI mode ne crée pas d'event inject"
+fi
+rm -f "$log_runtime" 2>/dev/null
+
+# ─── Cas 10 : E2E wiring — Hook mode crée un event inject ───
+echo '{"tool_name":"Edit","tool_input":{"file_path":".ai/scripts/_lib.sh"}}' \
+  | bash "$repo_root/.ai/scripts/features-for-path.sh" >/dev/null 2>&1 || true
+if [[ -f "$log_runtime" ]] && grep -q '"event":"inject".*"hook":"PreToolUse"' "$log_runtime" 2>/dev/null; then
+  pass=$((pass + 1))
+  echo "PASS: cas 10 Hook mode crée un event inject"
+else
+  fail=$((fail + 1))
+  failures+=("cas 10 : Hook mode n'a pas créé d'event inject")
+fi
+rm -f "$log_runtime" 2>/dev/null
+
+# ─── Cas 11 : matcher émet "pattern non supporté" sur stderr ───
+# (Finding 2 Codex post-0ce2094 : la capture wrapper grep ce message stderr.)
+# Test ciblé sur le contrat matcher → wrapper. Le wiring E2E complet
+# avec mock index n'est pas testable sans répliquer tout le script_dir.
+# Ce cas valide que le matcher émet bien le pattern dans stderr, donc
+# que la regex `grep -oE 'pattern non supporté : .+'` dans log_inject_event
+# capture quelque chose à parser.
+matcher_stderr=$(. "$repo_root/.ai/scripts/_lib.sh" && _FEATURES_MATCHING_POLICY=warn path_matches_touch "src/foo.ts" "foo**bar" 2>&1 1>/dev/null)
+if printf '%s' "$matcher_stderr" | grep -qE 'pattern non supporté : foo\*\*bar'; then
+  pass=$((pass + 1))
+  echo "PASS: cas 11 matcher émet stderr pour pattern unsupported (foo**bar)"
+else
+  fail=$((fail + 1))
+  failures+=("cas 11 : matcher silent sur foo**bar — wrapper capture grep ne trouvera rien")
+fi
+
+# ─── Cas 12 : Budget bas force truncated=true ───
+# (Finding 3 Codex post-0ce2094 : log inject APRÈS load_feature_context.)
+echo '{"tool_name":"Edit","tool_input":{"file_path":".ai/scripts/_lib.sh"}}' \
+  | AI_CONTEXT_FEATURE_DOC_MAX_CHARS=300 AI_CONTEXT_FEATURE_DOC_PER_DOC_CHARS=300 \
+  bash "$repo_root/.ai/scripts/features-for-path.sh" >/dev/null 2>&1 || true
+if [[ -f "$log_runtime" ]] && \
+   jq -s '[.[] | select(.event == "inject" and .truncated == true)] | length > 0' "$log_runtime" 2>/dev/null | grep -q true; then
+  pass=$((pass + 1))
+  echo "PASS: cas 12 budget bas force truncated=true"
+else
+  fail=$((fail + 1))
+  failures+=("cas 12 : truncated reste false avec budget 300 chars (Finding 3 Codex non corrigé)")
+fi
+rm -f "$log_runtime" 2>/dev/null
+
+# Restaurer log runtime original si présent
+[[ -n "$log_runtime_backup" && -f "$log_runtime_backup" ]] && mv "$log_runtime_backup" "$log_runtime"
+
 # ─── Rapport ───
 total=$((pass + fail))
 echo

@@ -13,3 +13,7 @@
 ## 2026-05-07 11:51 — auto-progress
 - Bascule phase : spec → implement (édits réels détectés sur 1 fichier(s))
 - Annulable via /aic undo (snapshot dans .ai/.progress-history.jsonl)
+
+## 2026-05-07 14:20 — auto
+- Fichiers modifiés :
+  - .claude/settings.json

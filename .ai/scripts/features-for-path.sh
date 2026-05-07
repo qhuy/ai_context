@@ -209,7 +209,15 @@ if [[ -f "$index_file" ]]; then
 
   # Capture la sortie ET le code retour de features_matching_path_ranked
   # (rc=2 si pattern unsupported en mode strict, propagé par le matcher).
-  ranked_output=$(features_matching_path_ranked "$index_file" "$rel_path"); ranked_rc=$?
+  # Capture aussi stderr pour extraire les unsupported patterns (best-effort).
+  stderr_tmp=$(mktemp 2>/dev/null || echo "")
+  if [[ -n "$stderr_tmp" ]]; then
+    ranked_output=$(features_matching_path_ranked "$index_file" "$rel_path" 2>"$stderr_tmp"); ranked_rc=$?
+    # Re-print stderr pour préserver l'output utilisateur/agent.
+    cat "$stderr_tmp" >&2 2>/dev/null || true
+  else
+    ranked_output=$(features_matching_path_ranked "$index_file" "$rel_path"); ranked_rc=$?
+  fi
 
   while IFS=$'\t' read -r scope id fpath touch; do
     [[ -z "$scope" ]] && continue
@@ -252,49 +260,76 @@ fi
 end_ts=$(date +%s 2>/dev/null || echo 0)
 log_debug "durée lookup touches : $((end_ts - start_ts))s"
 
-# ─── Log event "inject" pour le tracker de pertinence (best-effort) ───
-# Construit les arrays JSON direct/dependency/injected_features pour le logger.
-# Best-effort total : aucune erreur ne propage.
-{
-  direct_json='[]'
-  if [[ -n "${kept_lines:-}" ]]; then
-    direct_json=$(printf '%s' "$kept_lines" | awk -F'\t' '$4 != "" && $5 != "" {print $4 "/" $5}' \
-      | jq -Rsc 'split("\n") | map(select(length > 0))' 2>/dev/null) || direct_json='[]'
-  fi
-  injected_json='[]'
-  if [[ -n "${feature_keys:-}" ]]; then
-    injected_json=$(printf '%s' "$feature_keys" | jq -Rsc 'split("\n") | map(select(length > 0))' 2>/dev/null) || injected_json='[]'
-  fi
-  dep_json=$(jq -nc --argjson all "$injected_json" --argjson direct "$direct_json" \
-    '$all | map(select(. as $x | $direct | index($x) | not))' 2>/dev/null) || dep_json='[]'
+# ─── Helper : log event "inject" pour le tracker (best-effort) ───
+# N'est appelé que dans le bloc hook (Finding 1 Codex : éviter faux injects en CLI).
+# Doit être invoqué APRÈS load_feature_context pour que truncated soit à jour
+# (Finding 3 Codex).
+log_inject_event() {
+  {
+    local direct_json injected_json dep_json index_mtime truncated_str unsupported_json log_tool
+    direct_json='[]'
+    if [[ -n "${kept_lines:-}" ]]; then
+      direct_json=$(printf '%s' "$kept_lines" | awk -F'\t' '$4 != "" && $5 != "" {print $4 "/" $5}' \
+        | jq -Rsc 'split("\n") | map(select(length > 0))' 2>/dev/null) || direct_json='[]'
+    fi
+    injected_json='[]'
+    if [[ -n "${feature_keys:-}" ]]; then
+      injected_json=$(printf '%s' "$feature_keys" | jq -Rsc 'split("\n") | map(select(length > 0))' 2>/dev/null) || injected_json='[]'
+    fi
+    dep_json=$(jq -nc --argjson all "$injected_json" --argjson direct "$direct_json" \
+      '$all | map(select(. as $x | $direct | index($x) | not))' 2>/dev/null) || dep_json='[]'
 
-  index_mtime=$(stat -f %m "$index_file" 2>/dev/null || stat -c %Y "$index_file" 2>/dev/null || echo "")
-  truncated_str="false"
-  [[ "${feature_context_truncated:-0}" == "1" ]] && truncated_str="true"
-  log_tool="${tool_name:-cli}"
+    # Finding 2 Codex : capture des unsupported_patterns depuis stderr du matcher.
+    unsupported_json='[]'
+    if [[ -n "${stderr_tmp:-}" && -f "$stderr_tmp" ]]; then
+      local unsupported_lines
+      unsupported_lines=$(grep -oE 'pattern non supporté : .+' "$stderr_tmp" 2>/dev/null \
+        | sed 's/^pattern non supporté : //' | sort -u || true)
+      if [[ -n "$unsupported_lines" ]]; then
+        unsupported_json=$(printf '%s' "$unsupported_lines" | jq -Rsc 'split("\n") | map(select(length > 0))' 2>/dev/null) || unsupported_json='[]'
+      fi
+    fi
 
-  bash "$script_dir/context-relevance-log.sh" inject \
-    "$log_tool" \
-    "$rel_path" \
-    "$direct_json" \
-    "$dep_json" \
-    "$injected_json" \
-    '[]' \
-    "$truncated_str" \
-    "${feature_doc_max_chars:-0}" \
-    "$index_mtime" \
-    "${_FEATURES_MATCHING_POLICY:-warn}" \
-    "${omitted_count:-0}" \
-    "${top_k:-3}" \
-    >/dev/null 2>&1 || true
-} 2>/dev/null || true
+    index_mtime=$(stat -f %m "$index_file" 2>/dev/null || stat -c %Y "$index_file" 2>/dev/null || echo "")
+    # Finding 3 Codex : truncated reflète l'état réel APRÈS load_feature_context.
+    truncated_str="false"
+    [[ "${feature_context_truncated:-0}" == "1" ]] && truncated_str="true"
+    log_tool="${tool_name:-}"
+
+    bash "$script_dir/context-relevance-log.sh" inject \
+      "$log_tool" \
+      "$rel_path" \
+      "$direct_json" \
+      "$dep_json" \
+      "$injected_json" \
+      "$unsupported_json" \
+      "$truncated_str" \
+      "${feature_doc_max_chars:-0}" \
+      "$index_mtime" \
+      "${_FEATURES_MATCHING_POLICY:-warn}" \
+      "${omitted_count:-0}" \
+      "${top_k:-3}" \
+      >/dev/null 2>&1 || true
+  } 2>/dev/null || true
+}
+
+# Cleanup stderr_tmp si pas déjà fait (best-effort).
+cleanup_stderr_tmp() {
+  [[ -n "${stderr_tmp:-}" && -f "$stderr_tmp" ]] && rm -f "$stderr_tmp" 2>/dev/null || true
+}
 
 # ─── Output ───
 if [[ "$mode" == "hook" ]]; then
   if [[ -z "$matches" ]]; then
+    # Logge inject vide pour signaler touched_not_injected (Q2 Codex acté).
+    log_inject_event
+    cleanup_stderr_tmp
     exit 0
   fi
   load_feature_context
+  # Finding 3 Codex : log inject APRÈS load_feature_context (truncated à jour).
+  log_inject_event
+  cleanup_stderr_tmp
   ctx=$'⚠️  Features concernées par ce fichier — relis-les AVANT d\'écrire, mets à jour leur section Historique APRÈS :\n'"$matches"
   if [[ -n "$feature_context" ]]; then
     ctx+="$feature_context"
@@ -321,6 +356,7 @@ else
     load_feature_context
     printf '%s' "$feature_context"
   fi
+  cleanup_stderr_tmp
   # En mode strict, exit ≠ 0 même si des matches existent, pour signaler
   # le pattern cassé au caller (CI/doctor).
   if [[ "${_FEATURES_MATCHING_POLICY:-warn}" == "strict" && "${ranked_rc:-0}" -eq 2 ]]; then

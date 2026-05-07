@@ -89,3 +89,7 @@ feat(core): installer les skills Codex par défaut
   - template/.agents/skills/aic-quality-gate/workflow.md.jinja
   - template/.agents/skills/aic-ship/SKILL.md.jinja
   - template/.agents/skills/aic-status/SKILL.md.jinja
+
+## 2026-05-07 14:20 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-dogfood-drift.sh

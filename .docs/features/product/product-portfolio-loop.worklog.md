@@ -37,3 +37,7 @@
 - Impact indirect : `copier.yml` mis à jour pendant le durcissement post-cross-check (round 4 workflow/intentional-skills).
 - Aucun changement sur le contrat initiative/roadmap/traceability produit.
 - Validation associée : `check-feature-freshness.sh` (staged) PASS attendu.
+
+## 2026-05-07 14:20 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-dogfood-drift.sh
