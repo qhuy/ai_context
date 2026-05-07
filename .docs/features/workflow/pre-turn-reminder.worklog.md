@@ -24,3 +24,7 @@
 ## 2026-05-07 14:45 — auto
 - Fichiers modifiés :
   - template/.ai/scripts/features-for-path.sh.jinja
+
+## 2026-05-07 14:53 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/features-for-path.sh.jinja

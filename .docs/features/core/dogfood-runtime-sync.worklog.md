@@ -125,3 +125,7 @@
 ## 2026-05-07 14:45 — auto
 - Fichiers modifiés :
   - .ai/scripts/features-for-path.sh
+
+## 2026-05-07 14:53 — auto
+- Fichiers modifiés :
+  - .ai/scripts/features-for-path.sh

@@ -73,3 +73,9 @@
   - .ai/scripts/features-for-path.sh
   - template/.ai/scripts/features-for-path.sh.jinja
   - tests/unit/test-context-relevance.sh
+
+## 2026-05-07 14:53 — auto
+- Fichiers modifiés :
+  - .ai/scripts/features-for-path.sh
+  - template/.ai/scripts/features-for-path.sh.jinja
+  - tests/unit/test-context-relevance.sh

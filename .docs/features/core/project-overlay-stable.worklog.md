@@ -67,3 +67,7 @@
 ## 2026-05-07 14:45 — auto
 - Fichiers modifiés :
   - tests/unit/test-context-relevance.sh
+
+## 2026-05-07 14:53 — auto
+- Fichiers modifiés :
+  - tests/unit/test-context-relevance.sh
