@@ -41,7 +41,9 @@ progress:
 
 Le hook Stop ([auto-worklog-flush.sh:23](.ai/scripts/auto-worklog-flush.sh:23)) est déjà idempotent sur tour conversationnel ou lecture seule : il exit early si `.ai/.session-edits.log` est vide, et le log n'est alimenté que par PostToolUse Write/Edit/MultiEdit ([auto-worklog-log.sh:36](.ai/scripts/auto-worklog-log.sh:36)) sur fichiers matchant un `touches:` direct via `features_matching_path` ([_lib.sh:130](.ai/scripts/_lib.sh:130)).
 
-Le **vrai bruit** vient des édits **non-structurels** qui passent ce filtre car listés dans `touches:` direct : édit d'une fiche feature elle-même (`.docs/features/<scope>/<id>.md`), édit d'un README listé dans `touches:`, édit d'un fichier `.md` de doc, parfois fichiers de tests. Sur ces édits, `auto-worklog-log.sh` enregistre, puis `auto-worklog-flush.sh` écrit dans le worklog et bumpe `progress.updated`. Conséquence : worklog peuplé d'entrées `auto` qui tracent des modifications documentaires plutôt que des changes structurels.
+Le **vrai bruit** vient des édits **non-structurels** qui passent ce filtre car listés dans `touches:` direct : édit d'une fiche feature elle-même (`.docs/features/<scope>/<id>.md`), édit d'un fichier `*.worklog.md`, fichier `*.lock`, ou cache `.ai/.*` listé dans `touches:`. Sur ces édits, `auto-worklog-log.sh` enregistrait dans `.session-edits.log`, puis `auto-worklog-flush.sh` écrivait dans le worklog et bumpait `progress.updated`. Conséquence : worklog peuplé d'entrées `auto` documentaires sans change structurel.
+
+**Note importante** : `.md` n'est PAS exclu globalement. Un `README.md` listé dans `touches:` reste considéré comme **structurel** (livrable doc d'une feature). Seules les exclusions du helper `is_structural_feature_edit` (Phase 2 #4) sont appliquées : `.docs/features/**`, `*.worklog.md`, `*.lock`, `.ai/.*` cachés (+ override env `AI_CONTEXT_AUTO_PROGRESS_FILTER_EXT`).
 
 Cette fiche couvre le filtrage par extension structurelle, **après** `features_matching_path` (donc sans toucher au matcher), pour rendre le hook idempotent sur édit non-structurel matchant `touches:`.
 
@@ -80,13 +82,15 @@ Cette fiche couvre l'idempotence auto-worklog côté Stop, avec **implémentatio
 
 ## Décisions
 
-Ouvertes, à arbitrer en phase implement :
+Tranchées post cross-check Codex 2026-05-07 (Phase 2 #5) :
 
-- Critère partagé avec `workflow/auto-progress-file-filter` ou critère spécifique ? Préférence : partagé via une fonction commune dans `_lib.sh` pour éviter la divergence.
-- Comportement sur fichiers fiches feature (`.docs/features/<scope>/<id>.md`) : non structurel par définition (la fiche n'est pas l'implémentation), même si elle est dans `touches:` indirectement.
-- Comportement sur fichiers de tests : (a) considérer comme structurel ou (b) non. Cohérence avec `workflow/auto-progress-file-filter` à privilégier (probable : structurel).
-- Si la feature ciblée n'a pas de `touches:` (cas pathologique), no-op par défaut ou bump par défaut ?
-- Doit-on quand même mettre à jour `progress.updated` sur tour purement conversationnel mais avec lecture du contexte feature ? Préférence : non. La date doit refléter un change, pas un attoutchement.
+- **Critère partagé** : `is_structural_feature_edit` dans `_lib.sh` (helper Phase 2 #4). Pas de duplication de code, pas de divergence sémantique entre #4 et #5.
+- **Lieu du filtre** : option (a) — filtre dans `auto-worklog-log.sh` AVANT alimentation `.session-edits.log`. Court-circuit en amont, le flush n'a rien à filtrer. Le logger context-relevance touch reste agnostique du filtre (logge tous les matches pour mesurer `touched_not_injected`).
+- **Granularité A** : `features_matching_path` retourne 3 colonnes (scope, id, feature_path) ; `feature_path` est conservé jusqu'au helper `is_structural_feature_edit`. Pas de collapse précoce en `scope/id` qui ferait perdre l'info nécessaire au helper.
+- **Fichiers de tests** : structurel s'ils matchent `touches:` direct (cohérent avec Phase 2 #4, TDD valide).
+- **`.md` normal** : structurel s'il matche `touches:` direct ET hors `.docs/features/**` ET pas un `*.worklog.md`. Un README listé dans `touches:` est un livrable doc → bump légitime.
+- **Feature sans `touches:`** : no-op (en pratique, le caller ne peut pas amener un edit sans touches dans cette fonction).
+- **Trace legacy** : entrées non-structurelles déjà dans `.session-edits.log` au moment du fix → flushées une dernière fois, pas de filtre redondant côté flush (acté Codex).
 
 ## Comportement attendu
 
@@ -94,7 +98,7 @@ Option (a) recommandée : filtrer dans `auto-worklog-log.sh` ([ligne ~36, après
 
 1. Le hook PostToolUse Write/Edit/MultiEdit reçoit `tool_input.file_path`.
 2. `features_matching_path` retourne les features dont un `touches:` direct couvre ce path.
-3. **Nouveau** : si l'extension du fichier ∈ liste « non-structurelle » (par défaut `.md`, `.txt`, `.lock`), ne pas alimenter `.ai/.session-edits.log`.
+3. **Nouveau** : appel à `is_structural_feature_edit "$feature_path" "$rel"`. Si retourne 1 (non-structurel selon les exclusions du helper #4 : `.docs/features/**`, `*.worklog.md`, `*.lock`, `.ai/.*` cachés, + override env), `continue` sans alimenter `.ai/.session-edits.log`.
 4. Conséquence : `auto-worklog-flush.sh` exit déjà early (log vide), aucun changement à faire dans flush.
 
 Cas de régression à préserver :
