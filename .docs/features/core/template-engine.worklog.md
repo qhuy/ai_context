@@ -199,3 +199,7 @@
   - template/.ai/scripts/auto-worklog-log.sh.jinja
   - template/.ai/scripts/features-for-path.sh.jinja
   - template/.claude/settings.json.jinja
+
+## 2026-05-07 14:45 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/features-for-path.sh.jinja

@@ -342,6 +342,7 @@ if [[ "$mode" == "hook" ]]; then
   }'
 else
   if [[ -z "$matches" ]]; then
+    cleanup_stderr_tmp
     # Mode strict : pattern unsupported propagé via ranked_rc → exit ≠ 0.
     if [[ "${_FEATURES_MATCHING_POLICY:-warn}" == "strict" && "${ranked_rc:-0}" -eq 2 ]]; then
       echo "Pattern unsupported détecté en mode strict pour '$rel_path'." >&2

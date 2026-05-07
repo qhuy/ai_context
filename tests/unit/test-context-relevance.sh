@@ -239,6 +239,21 @@ rm -f "$log_runtime" 2>/dev/null
 # Restaurer log runtime original si présent
 [[ -n "$log_runtime_backup" && -f "$log_runtime_backup" ]] && mv "$log_runtime_backup" "$log_runtime"
 
+# ─── Cas 13 : pas de fuite stderr_tmp sur CLI no-match ───
+# (Réserve résiduelle Codex post-49663cd : cleanup_stderr_tmp doit être
+# appelé avant exit 1 / exit 2 dans le bloc CLI no-match.)
+isolated_tmp=$(mktemp -d)
+TMPDIR="$isolated_tmp" bash "$repo_root/.ai/scripts/features-for-path.sh" /chemin/qui/ne/matche/rien.xyz >/dev/null 2>&1 || true
+leftover=$(find "$isolated_tmp" -type f 2>/dev/null | wc -l | tr -d '[:space:]')
+rm -rf "$isolated_tmp"
+if [[ "$leftover" -eq 0 ]]; then
+  pass=$((pass + 1))
+  echo "PASS: cas 13 pas de fuite stderr_tmp sur CLI no-match"
+else
+  fail=$((fail + 1))
+  failures+=("cas 13 : $leftover fichier(s) temp restant après CLI no-match (cleanup_stderr_tmp manquant avant exit)")
+fi
+
 # ─── Rapport ───
 total=$((pass + fail))
 echo

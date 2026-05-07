@@ -121,3 +121,7 @@
   - .ai/scripts/context-relevance-report.sh
   - .ai/scripts/features-for-path.sh
   - .claude/settings.json
+
+## 2026-05-07 14:45 — auto
+- Fichiers modifiés :
+  - .ai/scripts/features-for-path.sh
