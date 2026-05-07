@@ -7,9 +7,13 @@ depends_on: []
 touches:
   - .ai/.gitignore
   - .claude/settings.json
-  - tests/smoke-test.sh
-touches_shared:
   - .ai/scripts/features-for-path.sh
+  - .ai/scripts/auto-worklog-log.sh
+  - template/.ai/scripts/features-for-path.sh.jinja
+  - template/.ai/scripts/auto-worklog-log.sh.jinja
+  - template/.claude/settings.json.jinja
+touches_shared:
+  - tests/smoke-test.sh
 product: {}
 external_refs: {}
 doc:
@@ -22,11 +26,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: spec
-  step: "draft cadré, à reprendre pour implémentation"
+  phase: implement
+  step: "5 choix tranchés post cross-check Codex, prêt à coder"
   blockers: []
-  resume_hint: "implémenter context-relevance-log.sh (3 événements) + report.sh, brancher hooks Claude, vérifier que la métrique reste un proxy non-bloquant"
-  updated: 2026-05-06
+  resume_hint: "créer context-relevance-log.sh + context-relevance-report.sh, brancher 3 hooks (PreToolUse via features-for-path, PostToolUse via auto-worklog-log, Stop séparé pour summary), B3 fenêtre last-summary, rotation taille 10MB"
+  updated: 2026-05-07
 ---
 
 # Tracker minimal de pertinence du contexte injecté
@@ -72,11 +76,58 @@ Cette fiche couvre un seul outil de mesure (logger + reporter). Le ranking lui-m
 
 ## Décisions
 
-Ouvertes, à arbitrer en phase implement :
+Tranchées post cross-check Codex 2026-05-07 :
 
-- Format de rotation : par taille (10 MB) ou par nombre de tours (1000) ? Préférence : par taille pour borner le coût disque.
-- Granularité du `tour` pour le `summary` : un tour = un cycle UserPromptSubmit → Stop côté Claude. Côté Codex sans hooks, on pourrait grouper par session si un jour on logue depuis là.
-- Format du report : markdown avec tableau précision/rappel par feature, ou JSON structuré pour piping ? Préférence : markdown avec section JSON appendée pour piping.
+### 1. Branchement hooks (A1 partiel + Stop dédié)
+
+- `features-for-path.sh` (PreToolUse Write|Edit|MultiEdit) appelle `context-relevance-log.sh inject ...` à la fin de son traitement.
+- `auto-worklog-log.sh` (PostToolUse Write|Edit|MultiEdit) appelle `context-relevance-log.sh touch ...` en plus de son écriture session-edits.
+- **Nouveau Stop hook séparé** : `bash .ai/scripts/context-relevance-log.sh summary`, ajouté dans `.claude/settings.json` après `auto-worklog-flush.sh` et `auto-progress.sh`. **Pas dans `auto-worklog-flush.sh`** : ce dernier exit early si aucun edit, ce qui raterait le cas critique « inject sans touch » (faux positif à mesurer).
+
+### 2. Tour : fenêtre last-summary (B3)
+
+- Le summary agrège les events depuis le dernier `event=summary` (fenêtre temporelle implicite, pas de UUID).
+- Champs : `window_start_ts` (timestamp du dernier summary, ou epoch 0 au premier run), `window_end_ts` (now).
+- **Si aucun inject/touch dans la fenêtre** : **no-op silencieux**. Pas de summary vide écrit.
+
+### 3. Rotation par taille (C1)
+
+- `.ai/.context-relevance.jsonl` rotation à 10 MB : `mv .context-relevance.jsonl .context-relevance.jsonl.old` quand seuil atteint.
+- **Pas de promesse atomicité PIPE_BUF** (confusion pipes/FIFOs, pas applicable au fichier régulier). Contrat correct : best-effort, une écriture = un `printf '%s\n' >> file`, payload < 1 KB. Race append/rotation acceptée comme non bloquante.
+- `.ai/.gitignore` : ajout de `.context-relevance.jsonl*` (jsonl + .old).
+
+### 4. Reporter standalone
+
+- `.ai/scripts/context-relevance-report.sh [--last N] [--feature scope/id] [--format markdown|json]`.
+- Pas d'intégration `aic.sh` dans ce scope. Wrapper futur si besoin.
+
+### 5. Tests E3 (unit + E2E)
+
+Cas obligatoires :
+- Unit logger : 3 événements (inject/touch/summary) écrits, JSONL parsable via jq.
+- Unit reporter : 10 summaries synthétiques en input, ratios précision/rappel calculés correctement.
+- E2E inject sans touch : PreToolUse + Stop sans PostToolUse → summary avec `injected_not_touched` non vide, `touched_not_injected` vide.
+- E2E touch sans inject : PostToolUse + Stop sans PreToolUse → summary inverse.
+- Rotation : taille seuil basse (1 KB pour test) → vérifier `.old` produit.
+- Best-effort : simuler erreur d'écriture (permissions read-only) → hook continue, exit 0.
+
+### Q1 résolu — pas de tour_id explicite
+
+B3 fenêtre temporelle suffisante. UUID pas nécessaire. Si multi-Stop par prompt apparaît, traiter au moment où ça pose un vrai problème.
+
+### Q2 résolu — logger même si unsupported
+
+Champs structurés (pas parsing stderr) :
+- `matcher_policy` : `silent|warn|strict`
+- `unsupported_patterns` : `["foo**bar", ...]`
+- `direct_features`, `dependency_features`, `injected_features`
+- `omitted_count`, `top_k`
+
+Si unsupported sans matches : log `inject` quand même avec ensembles vides + `unsupported_patterns` populated.
+
+### Q3 résolu — pas de promesse atomicité
+
+Cf. décision 3.
 
 ## Comportement attendu
 
@@ -126,8 +177,9 @@ Avec en bas : top features `injected_not_touched` (candidats à ranker plus bas)
 ## Risques
 
 - Sur bash 3.2, le calcul d'intersection ensembliste peut être verbeux. Peut nécessiter `comm` ou des boucles. À tester avant de committer.
-- `injected_features` est calculé par `features-for-path.sh` qui a un matcher contaminé sur bash 3.2 (bug couvert par `quality/features-for-path-ranking-and-matcher-correctness`). Tant que ce bug n'est pas fixé, les ratios sont biaisés. Le tracker devient **calibré** seulement après le matcher correct. Ne pas livrer en se reposant sur les ratios : c'est un instrument, pas un verdict.
-- Hooks PostToolUse Claude peuvent ne pas exister aujourd'hui (à vérifier dans `.claude/settings.json`). Si non, créer le hook et tracer l'ajout dans `core/dogfood-runtime-sync` ou `workflow/git-hooks`.
+- ~~Matcher contaminé bash 3.2~~ : **résolu** par Phase 2 #2 (livrée commit `de6f86b` + fixes `6bf2b1b` `b5b1be7`). Le matcher est maintenant path-aware POSIX, no-overmatch garantis. Le tracker peut donc considérer `injected_features` comme fiable.
+- Hooks PostToolUse Claude existent (cf. `.claude/settings.json:37-48` : Write|Edit|MultiEdit → `auto-worklog-log.sh`). On modifie ce dernier pour appeler aussi `context-relevance-log.sh touch`.
+- Race append/rotation : best-effort, accepté comme non bloquant. Si problème futur, ajouter un lock `mkdir` dédié.
 
 ## Cross-refs
 
