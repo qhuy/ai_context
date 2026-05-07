@@ -55,3 +55,6 @@
 ## 2026-05-07 01:16 — auto
 - Fichiers modifiés :
   - tests/unit/test-matcher-multi-level.sh
+
+## 2026-05-07 — freshness
+- Impact indirect : ajout d'un nouveau test unit `tests/unit/test-context-relevance.sh` (livraison Phase 2 #3). Aucune modif sur le contrat overlay projet.

@@ -30,6 +30,8 @@ rsync -a --delete \
   --exclude='.ai/.progress-history.jsonl' \
   --exclude='.ai/.session-edits.log' \
   --exclude='.ai/.session-edits.flushed' \
+  --exclude='.ai/.context-relevance.jsonl' \
+  --exclude='.ai/.context-relevance.jsonl.old' \
   "$repo_root/" "$src_copy/"
 
 if ! copier copy --defaults --trust \
@@ -89,7 +91,7 @@ compare_tree() {
 
 is_ignored_runtime_extra() {
   case "$1" in
-    .feature-index.json|.progress-history.jsonl|.session-edits.log|.session-edits.flushed|scripts/dogfood-update.sh|scripts/check-dogfood-drift.sh|project|project/*)
+    .feature-index.json|.progress-history.jsonl|.session-edits.log|.session-edits.flushed|.context-relevance.jsonl|.context-relevance.jsonl.old|scripts/dogfood-update.sh|scripts/check-dogfood-drift.sh|project|project/*)
       return 0
       ;;
   esac

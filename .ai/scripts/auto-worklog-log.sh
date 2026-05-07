@@ -35,6 +35,21 @@ esac
 # Matche les features dont un glob touches: couvre ce path
 matches=$(features_matching_path "$index_file" "$rel" | awk -F '\t' '{print $1 "/" $2}' | sort -u)
 
+# ─── Log event "touch" pour le tracker de pertinence (best-effort) ───
+# Logue même si matches vide (utile pour repérer touched_not_injected = 0).
+{
+  touched_json='[]'
+  if [[ -n "$matches" ]]; then
+    touched_json=$(printf '%s' "$matches" | jq -Rsc 'split("\n") | map(select(length > 0))' 2>/dev/null) || touched_json='[]'
+  fi
+  tool_name=$(printf '%s' "$input" | jq -r '.tool_name // ""' 2>/dev/null) || tool_name=""
+  bash "$script_dir/context-relevance-log.sh" touch \
+    "$tool_name" \
+    "$rel" \
+    "$touched_json" \
+    >/dev/null 2>&1 || true
+} 2>/dev/null || true
+
 [[ -z "$matches" ]] && exit 0
 
 ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ")

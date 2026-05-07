@@ -22,11 +22,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: spec
+  phase: implement
   step: "draft cadré, à reprendre pour implémentation"
   blockers: []
   resume_hint: "lire auto-progress.sh, définir le critère « édit structurel », implémenter le filtre + tests reproductibles"
-  updated: 2026-05-06
+  updated: 2026-05-07
 ---
 
 # Filtrer la transition spec→implement par type de fichier édité

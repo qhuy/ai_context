@@ -252,6 +252,43 @@ fi
 end_ts=$(date +%s 2>/dev/null || echo 0)
 log_debug "durée lookup touches : $((end_ts - start_ts))s"
 
+# ─── Log event "inject" pour le tracker de pertinence (best-effort) ───
+# Construit les arrays JSON direct/dependency/injected_features pour le logger.
+# Best-effort total : aucune erreur ne propage.
+{
+  direct_json='[]'
+  if [[ -n "${kept_lines:-}" ]]; then
+    direct_json=$(printf '%s' "$kept_lines" | awk -F'\t' '$4 != "" && $5 != "" {print $4 "/" $5}' \
+      | jq -Rsc 'split("\n") | map(select(length > 0))' 2>/dev/null) || direct_json='[]'
+  fi
+  injected_json='[]'
+  if [[ -n "${feature_keys:-}" ]]; then
+    injected_json=$(printf '%s' "$feature_keys" | jq -Rsc 'split("\n") | map(select(length > 0))' 2>/dev/null) || injected_json='[]'
+  fi
+  dep_json=$(jq -nc --argjson all "$injected_json" --argjson direct "$direct_json" \
+    '$all | map(select(. as $x | $direct | index($x) | not))' 2>/dev/null) || dep_json='[]'
+
+  index_mtime=$(stat -f %m "$index_file" 2>/dev/null || stat -c %Y "$index_file" 2>/dev/null || echo "")
+  truncated_str="false"
+  [[ "${feature_context_truncated:-0}" == "1" ]] && truncated_str="true"
+  log_tool="${tool_name:-cli}"
+
+  bash "$script_dir/context-relevance-log.sh" inject \
+    "$log_tool" \
+    "$rel_path" \
+    "$direct_json" \
+    "$dep_json" \
+    "$injected_json" \
+    '[]' \
+    "$truncated_str" \
+    "${feature_doc_max_chars:-0}" \
+    "$index_mtime" \
+    "${_FEATURES_MATCHING_POLICY:-warn}" \
+    "${omitted_count:-0}" \
+    "${top_k:-3}" \
+    >/dev/null 2>&1 || true
+} 2>/dev/null || true
+
 # ─── Output ───
 if [[ "$mode" == "hook" ]]; then
   if [[ -z "$matches" ]]; then

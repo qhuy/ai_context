@@ -23,11 +23,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: spec
+  phase: implement
   step: "draft cadré (diagnostic corrigé post-review Codex), à reprendre pour implémentation"
   blockers: []
   resume_hint: "filtrer les fichiers déjà matchés par features_matching_path par extension structurelle, dans auto-worklog-log.sh ou auto-worklog-flush.sh"
-  updated: 2026-05-06
+  updated: 2026-05-07
 ---
 
 # Rendre le hook Stop idempotent sur tour sans édit structurel

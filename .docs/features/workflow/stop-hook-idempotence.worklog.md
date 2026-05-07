@@ -31,3 +31,7 @@
 ## 2026-05-07 — micro-fix Granularité (re-review Codex)
 - Codex re-review du commit `e63efca` : section "Granularité / nommage" disait encore « cette fiche couvre uniquement le hook Stop / auto-worklog-flush », inexact après l'ajout de `auto-worklog-log.sh` en `touches:`.
 - Correction : reformulation explicite — la fiche couvre l'idempotence côté Stop avec implémentation préférée dans le logger PostToolUse (option a) et alternative dans le flush Stop (option b). Titre conservé pour préserver l'id.
+
+## 2026-05-07 11:51 — auto-progress
+- Bascule phase : spec → implement (édits réels détectés sur 1 fichier(s))
+- Annulable via /aic undo (snapshot dans .ai/.progress-history.jsonl)

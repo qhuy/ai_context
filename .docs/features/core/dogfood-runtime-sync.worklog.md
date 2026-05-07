@@ -107,3 +107,7 @@
 ## 2026-05-07 01:16 — auto
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
+
+## 2026-05-07 — freshness
+- Impact direct : 2 nouveaux scripts (`context-relevance-log.sh`, `context-relevance-report.sh`) + templates correspondants + modifs hooks `features-for-path.sh`, `auto-worklog-log.sh`, `.claude/settings.json` + `.ai/.gitignore` + exclusions `check-dogfood-drift.sh` (livraison Phase 2 #3).
+- Validation associée : `check-dogfood-drift.sh` PASS.

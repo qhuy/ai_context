@@ -9,3 +9,7 @@
 
 # Historique append-only des transitions auto-progress (pour /aic undo)
 .progress-history.jsonl
+
+# Tracker de pertinence du contexte injecté (logger best-effort + rotation)
+.context-relevance.jsonl
+.context-relevance.jsonl.old

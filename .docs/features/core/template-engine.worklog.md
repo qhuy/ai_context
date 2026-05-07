@@ -188,3 +188,7 @@
 ## 2026-05-07 01:16 — auto
 - Fichiers modifiés :
   - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-05-07 — freshness
+- Impact template : 2 nouveaux templates (`context-relevance-log.sh.jinja`, `context-relevance-report.sh.jinja`) + extensions `features-for-path.sh.jinja`, `auto-worklog-log.sh.jinja`, `settings.json.jinja`, `.ai/.gitignore` (livraison Phase 2 #3).
+- Validation associée : copier copy direct PASS, check-dogfood-drift PASS.

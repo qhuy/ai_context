@@ -9,3 +9,7 @@
 - Approche par défaut envisagée : filtre déterministe combinant matche `touches:` direct (pas `touches_shared:`) ET extension ∈ liste « structurelle » (par défaut exclure `.md`, `.txt`, `.lock`).
 - Question ouverte : comportement sur fichiers de tests. Préférence par défaut : structurel (TDD valide la phase implement).
 - Next : à reprendre dans un turn dédié pour passer en `status: active`, lire `auto-progress.sh`, définir précisément la liste d'extensions exclues, implémenter, ajouter tests reproductibles 1-4 décrits dans la fiche.
+
+## 2026-05-07 11:51 — auto-progress
+- Bascule phase : spec → implement (édits réels détectés sur 1 fichier(s))
+- Annulable via /aic undo (snapshot dans .ai/.progress-history.jsonl)

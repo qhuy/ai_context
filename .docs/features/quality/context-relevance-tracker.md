@@ -7,11 +7,18 @@ depends_on: []
 touches:
   - .ai/.gitignore
   - .claude/settings.json
+  - .ai/scripts/context-relevance-log.sh
+  - .ai/scripts/context-relevance-report.sh
   - .ai/scripts/features-for-path.sh
   - .ai/scripts/auto-worklog-log.sh
+  - .ai/scripts/check-dogfood-drift.sh
+  - template/.ai/.gitignore
+  - template/.ai/scripts/context-relevance-log.sh.jinja
+  - template/.ai/scripts/context-relevance-report.sh.jinja
   - template/.ai/scripts/features-for-path.sh.jinja
   - template/.ai/scripts/auto-worklog-log.sh.jinja
   - template/.claude/settings.json.jinja
+  - tests/unit/test-context-relevance.sh
 touches_shared:
   - tests/smoke-test.sh
 product: {}
@@ -26,10 +33,10 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: implement
-  step: "5 choix tranchés post cross-check Codex, prêt à coder"
+  phase: review
+  step: "implémentation livrée, 8/8 cas test PASS, prêt à commit"
   blockers: []
-  resume_hint: "créer context-relevance-log.sh + context-relevance-report.sh, brancher 3 hooks (PreToolUse via features-for-path, PostToolUse via auto-worklog-log, Stop séparé pour summary), B3 fenêtre last-summary, rotation taille 10MB"
+  resume_hint: "commit feat(quality) puis valider en utilisation réelle (run report --last 50 après quelques tours pour voir précision/rappel)"
   updated: 2026-05-07
 ---
 

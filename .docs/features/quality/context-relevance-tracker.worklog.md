@@ -27,3 +27,33 @@
 - Risque « matcher contaminé bash 3.2 » retiré : Phase 2 #2 livrée.
 - Phase bumpée spec → implement.
 - Next : implémenter dans un turn dédié.
+
+## 2026-05-07 — implémentation livrée
+- **Logger central** `.ai/scripts/context-relevance-log.sh` (3 sous-commandes) :
+  - `inject` : 12 args (tool_name, file, direct/dep/injected/unsupported JSON, truncated, budget, index_mtime, matcher_policy, omitted, top_k).
+  - `touch` : 3 args (tool_name, file, touched JSON).
+  - `summary` : agrège fenêtre last-summary, calcule precision/recall via jq, no-op si fenêtre vide.
+  - Rotation 10 MB (configurable via `AI_CONTEXT_RELEVANCE_ROTATION_MB`).
+  - Désactivable via `AI_CONTEXT_RELEVANCE_DISABLED=1`.
+  - Best-effort total : exit 0 toujours, jq absent → silent no-op, erreurs d'écriture silencieuses.
+- **Reporter** `.ai/scripts/context-relevance-report.sh` :
+  - `--last N`, `--feature scope/id`, `--format markdown|json`.
+  - Markdown : tableau par feature avec injected/touched/intersection/precision/recall + 2 sections « top candidats à ranker plus bas » et « top candidats à matcher mieux ».
+- **Hooks branchés** :
+  - `features-for-path.sh` : appel `context-relevance-log.sh inject ...` à la fin (best-effort, bloc `{ ... } 2>/dev/null || true`).
+  - `auto-worklog-log.sh` : appel `context-relevance-log.sh touch ...` (logue même si matches vide pour repérer touched_not_injected).
+  - `.claude/settings.json` : Stop hook séparé `context-relevance-log.sh summary` ajouté en chaîne après auto-worklog-flush et auto-progress.
+- **`.ai/.gitignore`** : `.context-relevance.jsonl` et `.context-relevance.jsonl.old`.
+- **`.ai/scripts/check-dogfood-drift.sh`** : exclusions ajoutées pour les 2 fichiers runtime.
+- **Parité templates** : 5 fichiers (2 nouveaux scripts copiés, 3 existants modifiés, .gitignore template mis à jour, settings.json.jinja mis à jour).
+- **Tests** `tests/unit/test-context-relevance.sh` : 8 cas couvrant les 6 obligatoires + 2 robustesse :
+  1. Logger 3 événements JSONL parsables.
+  2. Reporter 10 summaries synthétiques (core/a injected=10 recall=1).
+  3. E2E inject-sans-touch → injected_not_touched non vide.
+  4. E2E touch-sans-inject → touched_not_injected non vide.
+  5. Rotation taille basse → `.old` produit.
+  6. Best-effort écriture impossible → exit 0.
+  7. Sous-commande inconnue → silent no-op.
+  8. `AI_CONTEXT_RELEVANCE_DISABLED=1` → no-op.
+- Validation : check-shims, check-features, check-dogfood-drift, smoke-test, 8 cas test unit ALL PASS.
+- Phase bumpée implement → review.
