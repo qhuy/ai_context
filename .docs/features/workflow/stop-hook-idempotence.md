@@ -6,11 +6,14 @@ status: draft
 depends_on: []
 touches:
   - .ai/scripts/auto-worklog-log.sh
-  - .ai/scripts/auto-worklog-flush.sh
-  - tests/smoke-test.sh
+  - template/.ai/scripts/auto-worklog-log.sh.jinja
+  - tests/unit/test-stop-hook-idempotence.sh
 touches_shared:
+  - .ai/scripts/auto-worklog-flush.sh
   - .ai/scripts/auto-progress.sh
+  - .ai/scripts/_lib.sh
   - .claude/settings.json
+  - tests/smoke-test.sh
 product: {}
 external_refs: {}
 doc:
@@ -23,10 +26,10 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: implement
-  step: "draft cadré (diagnostic corrigé post-review Codex), à reprendre pour implémentation"
+  phase: review
+  step: "implémentation livrée, 9/9 cas test E2E PASS, prêt à commit"
   blockers: []
-  resume_hint: "filtrer les fichiers déjà matchés par features_matching_path par extension structurelle, dans auto-worklog-log.sh ou auto-worklog-flush.sh"
+  resume_hint: "commit feat(workflow) ; Phase 2 entièrement livrée"
   updated: 2026-05-07
 ---
 
@@ -48,14 +51,13 @@ Restaurer la sémantique de `progress.updated` comme « date du dernier change r
 
 ## Périmètre
 
-### Inclus
+### Inclus (post cross-check Codex Phase 2 #5)
 
-- Filtrer **après** `features_matching_path` les fichiers par extension structurelle. Deux options de placement :
-  - (a) dans `auto-worklog-log.sh` : ne pas alimenter `.ai/.session-edits.log` pour les fichiers non-structurels (préféré, court-circuite le flush sans toucher la logique).
-  - (b) dans `auto-worklog-flush.sh` : filtrer la liste avant `printf` (plus tardif mais plus localisé).
-- Définir la liste « non-structurelle » : par défaut `.md`, `.txt`, `.lock`. À discuter pour `.json`, `.yml`.
-- Tests reproductibles : édit fiche feature seule → no-op ; édit README seul (s'il est dans `touches:` d'une fiche) → no-op ; édit fichier source structurel → write+bump ; édit mix structurel+non-structurel → write+bump (au moins un fichier passe, conservateur).
-- Tests de non-régression : tour conversationnel → toujours no-op (déjà le cas) ; tour lecture seule → toujours no-op (déjà le cas) ; tour avec édit hors `touches:` direct → toujours no-op (déjà le cas).
+- Option **(a) seule** dans `auto-worklog-log.sh` : filtrer la boucle qui alimente `.ai/.session-edits.log`. Court-circuit en amont, le flush n'a rien à filtrer.
+- **Granularité A** : garder les 3 colonnes de `features_matching_path` (scope, id, feature_path) avant filtre — `is_structural_feature_edit` a besoin de `feature_path`. Ne pas collapser trop tôt en `scope/id`.
+- **Helper réutilisé** : `is_structural_feature_edit <feature_path> <file_path>` livré en Phase 2 #4. Exclusions par défaut : `.docs/features/**`, `*.worklog.md`, `*.lock`, `.ai/.*` cachés. Override env `AI_CONTEXT_AUTO_PROGRESS_FILTER_EXT` partagé. **Pas de retour à l'ancien contrat** « `.md`/README = non-structurel global » : `.md` peut être livrable doc.
+- **Logger context-relevance `touch` non touché** : doit continuer à logger même les édits non-structurels (utile pour mesurer `touched_not_injected`). Le filtre n'agit que sur `.session-edits.log`.
+- Tests reproductibles E2E (cf. Validation).
 - Documentation du comportement dans le workflow associé.
 
 ### Hors périmètre
@@ -107,19 +109,19 @@ Cas de régression à préserver :
 
 ## Validation
 
-Tests de non-régression (déjà passants aujourd'hui, à protéger) :
+Tests E2E sur `auto-worklog-log.sh` complet (mock stdin payload PostToolUse + mini index + vérification `.session-edits.log` final) :
 
-- Test 1 : tour purement conversationnel (zéro Write/Edit) → no-op. Déjà le cas.
-- Test 2 : tour avec lecture seule (Read uniquement) → no-op. Déjà le cas.
-- Test 3 : édit fichier hors `touches:` direct → no-op. Déjà le cas.
+1. Édit fiche feature seule (`.docs/features/test/feat.md`) → log vide.
+2. Édit worklog seul (`*.worklog.md`) → log vide.
+3. Édit `.lock` → log vide.
+4. Édit source structurel (`src/foo.sh` matchant `touches:`) → log alimenté.
+5. Édit `.md` normal matchant `touches:` (livrable doc, ex: README.md) → log alimenté. Différence vs Test 1 : ce `.md` n'est pas dans `.docs/features/**`.
+6. Édit hors `touches:` direct → log vide (non-régression).
+7. Édit mix : log alimenté uniquement pour les fichiers structurels (vérifier les lignes).
 
-Tests cibles du fix (à passer après livraison) :
+Trace legacy : si `.session-edits.log` contient déjà des entrées non-structurelles (avant ce fix), `auto-worklog-flush.sh` les écrira au prochain Stop. Acceptable best-effort, pas de filtre redondant côté flush.
 
-- Test 4 : édit fiche feature `.md` seule (matche `touches:` direct mais extension non-structurelle) → no-op. **Aujourd'hui : write+bump (bruit confirmé en local sur ce repo).**
-- Test 5 : édit README seul (s'il est dans `touches:` d'une feature) → no-op.
-- Test 6 : édit fichier source `.sh` matchant `touches:` direct → write+bump. Comportement attendu inchangé.
-- Test 7 : édit mix structurel+non-structurel matchant `touches:` direct → write+bump (au moins un fichier passe, conservateur).
-- `bash tests/smoke-test.sh` PASS après intégration.
+`bash tests/smoke-test.sh` PASS après intégration.
 
 ## Risques
 

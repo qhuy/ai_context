@@ -86,3 +86,6 @@
 ## 2026-05-07 18:04 — auto
 - Fichiers modifiés :
   - tests/unit/test-auto-progress-filter.sh
+
+## 2026-05-07 — freshness
+- Impact indirect : ajout d'un nouveau test unit autonome `tests/unit/test-stop-hook-idempotence.sh` (livraison Phase 2 #5). Aucune modif `tests/smoke-test.sh`.

@@ -144,3 +144,6 @@
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - .ai/scripts/auto-progress.sh
+
+## 2026-05-07 — freshness
+- Impact direct : `auto-worklog-log.sh` modifié pour filtrer via `is_structural_feature_edit` (livraison Phase 2 #5). Parité template.

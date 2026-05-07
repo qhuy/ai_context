@@ -79,3 +79,6 @@
   - .ai/scripts/features-for-path.sh
   - template/.ai/scripts/features-for-path.sh.jinja
   - tests/unit/test-context-relevance.sh
+
+## 2026-05-07 — freshness
+- Impact indirect : `auto-worklog-log.sh` filtre désormais `.session-edits.log` (Phase 2 #5). Le logger context-relevance touch reste agnostique du filtre — il continue à logger tous les matches pour mesurer touched_not_injected.

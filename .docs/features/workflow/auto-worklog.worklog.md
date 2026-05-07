@@ -13,3 +13,7 @@
 - Fichiers modifiés :
   - .ai/scripts/auto-worklog-log.sh
   - template/.ai/scripts/auto-worklog-log.sh.jinja
+
+## 2026-05-07 — freshness
+- Impact direct : `auto-worklog-log.sh` filtre désormais via `is_structural_feature_edit` (livraison Phase 2 #5). Le logger context-relevance touch reste agnostique. Aucune modif sur auto-worklog-flush ni le contrat append-only.
+- Validation : 9/9 cas test-stop-hook-idempotence PASS.

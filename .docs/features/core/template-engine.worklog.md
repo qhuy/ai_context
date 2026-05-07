@@ -222,3 +222,7 @@
 - Fichiers modifiés :
   - template/.ai/scripts/_lib.sh.jinja
   - template/.ai/scripts/auto-progress.sh.jinja
+
+## 2026-05-07 — freshness
+- Impact template : `template/.ai/scripts/auto-worklog-log.sh.jinja` étendu pour parité runtime (livraison Phase 2 #5).
+- Validation : check-dogfood-drift PASS.
