@@ -147,3 +147,9 @@
 
 ## 2026-05-07 — freshness
 - Impact direct : `auto-worklog-log.sh` modifié pour filtrer via `is_structural_feature_edit` (livraison Phase 2 #5). Parité template.
+
+## 2026-05-08 — stabilisation drift README
+- Intent : retirer le drift runtime cause par une note locale dans `README_AI_CONTEXT.md`.
+- Changement : note mainteneur deplacée vers `PROJECT_STATE.md`; le README runtime redevient strictement aligne avec le rendu Copier.
+- Ajustement template : whitespace de la boucle `agents` dans `template/README_AI_CONTEXT.md.jinja` resserre pour produire le meme rendu que le dogfood runtime.
+- Validation : `check-dogfood-drift.sh` PASS local.

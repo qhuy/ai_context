@@ -226,3 +226,9 @@
 ## 2026-05-07 — freshness
 - Impact template : `template/.ai/scripts/auto-worklog-log.sh.jinja` étendu pour parité runtime (livraison Phase 2 #5).
 - Validation : check-dogfood-drift PASS.
+
+## 2026-05-08 — docs variables + Jinja freshness
+- Intent : corriger la reference des variables et garder les templates rendables apres optimisation freshness.
+- Changement docs : `docs/variables.md` aligne `scope_profile=minimal` sur `product`, ajoute `adoption_mode` et precise la generation des skills Codex/Claude.
+- Changement template : `template/.ai/scripts/check-feature-freshness.sh.jinja` evite la forme Bash `${#...}` incompatible avec Jinja (`{#`).
+- Validation : rendu Copier via `check-dogfood-drift.sh` PASS local.

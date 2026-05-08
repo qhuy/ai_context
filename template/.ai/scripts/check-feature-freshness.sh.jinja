@@ -141,11 +141,24 @@ run_staged_check() {
 
 git_path_ts() {
   local path="$1"
-  if [[ -e "$path" ]] && ! git diff --quiet -- "$path" 2>/dev/null; then
-    date +%s
-    return 0
-  fi
   git log -1 --format=%ct -- "$path" 2>/dev/null | head -n1
+}
+
+git_path_ts_cached() {
+  local path="$1"
+  local cached ts
+  if [[ -n "${ts_cache_file:-}" && -f "$ts_cache_file" ]]; then
+    cached=$(awk -F '\t' -v p="$path" '$1 == p { print $2; found=1; exit } END { exit found ? 0 : 1 }' "$ts_cache_file" 2>/dev/null) && {
+      echo "$cached"
+      return 0
+    }
+  fi
+  ts=$(git_path_ts "$path")
+  [[ -z "$ts" ]] && ts=0
+  if [[ -n "${ts_cache_file:-}" ]]; then
+    printf '%s\t%s\n' "$path" "$ts" >> "$ts_cache_file"
+  fi
+  echo "$ts"
 }
 
 latest_doc_ts() {
@@ -156,7 +169,7 @@ latest_doc_ts() {
   local doc_path ts
   while IFS= read -r doc_path; do
     [[ -z "$doc_path" ]] && continue
-    ts=$(git_path_ts "$doc_path")
+    ts=$(git_path_ts_cached "$doc_path")
     [[ -z "$ts" ]] && ts=0
     if [[ "$ts" -gt "$max_ts" ]]; then
       max_ts="$ts"
@@ -168,34 +181,33 @@ latest_doc_ts() {
 latest_code_ts_for_feature() {
   local scope="$1"
   local id="$2"
-  local max_ts=0
-  local touch tracked_file ts
+  local touch ts
+  local touches=()
 
   while IFS= read -r touch; do
     [[ -z "$touch" ]] && continue
-    while IFS= read -r tracked_file; do
-      [[ -z "$tracked_file" ]] && continue
-      if path_matches_touch "$tracked_file" "$touch"; then
-        ts=$(git_path_ts "$tracked_file")
-        [[ -z "$ts" ]] && ts=0
-        if [[ "$ts" -gt "$max_ts" ]]; then
-          max_ts="$ts"
-        fi
-      fi
-    done < <(git ls-files)
+    touches+=("$touch")
   done < <(jq -r --arg scope "$scope" --arg id "$id" '
     .features[]
     | select(.scope == $scope and .id == $id)
     | .touches[]?
   ' "$index_file")
 
-  echo "$max_ts"
+  if [[ -z "${touches[*]-}" ]]; then
+    echo 0
+    return 0
+  fi
+
+  ts=$(git log -1 --format=%ct -- "${touches[@]}" 2>/dev/null | head -n1)
+  [[ -z "$ts" ]] && ts=0
+  echo "$ts"
 }
 
 run_history_check() {
   local stale
   stale=$(mktemp "${TMPDIR:-/tmp}/ai-context-stale.XXXXXX")
-  trap 'rm -f "$stale"' RETURN
+  ts_cache_file=$(mktemp "${TMPDIR:-/tmp}/ai-context-ts-cache.XXXXXX")
+  trap 'rm -f "$stale" "$ts_cache_file"' RETURN
 
   local scope id feature_path doc_ts code_ts
   while IFS=$'\t' read -r scope id feature_path; do
@@ -211,6 +223,8 @@ run_history_check() {
   done < <(jq -r '.features[] | [.scope, .id, .path] | @tsv' "$index_file")
 
   echo "═══ check-feature-freshness ═══"
+  echo "  mode historique : compare uniquement l'historique Git committe"
+  echo "  pour le prochain commit : bash .ai/scripts/check-feature-freshness.sh --staged --strict"
 
   if [[ ! -s "$stale" ]]; then
     echo "  aucune feature stale detectee"

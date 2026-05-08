@@ -12,3 +12,10 @@
 - Fichiers/surfaces : `.ai/scripts/check-feature-freshness.sh`, `template/.ai/scripts/check-feature-freshness.sh.jinja`.
 - Décision : ne plus ignorer les suppressions staged via `--diff-filter=AM`.
 - Validation : prévue via `check-feature-freshness --staged --strict`.
+
+## 2026-05-08 — stabilisation mode historique
+- Intent : rendre `check-feature-freshness.sh --warn` exploitable sur le repo source sans scan exhaustif ni blocage silencieux.
+- Changement : le mode historique compare uniquement l'historique Git committe ; le prochain commit reste couvert par `--staged`.
+- Implementation : un `git log` par feature avec tous ses pathspecs `touches:` et cache timestamp pour les fiches/worklogs.
+- Parite : runtime dogfoode et template `.jinja` synchronises.
+- Validation : `check-feature-freshness.sh --warn` OK, `check-feature-freshness.sh --staged --warn` OK, test unitaire freshness OK.
