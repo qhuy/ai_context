@@ -1,6 +1,6 @@
 ---
 name: aic-frame
-description: Cadre une tâche, une feature ou une décision avant implémentation. Produit un plan concret, les spécificités métier et techniques, les risques, les validations attendues et la prochaine action minimale.
+description: Cadre une intention de feature avant implémentation. Challenge la demande, formalise impacts, préconisations et routage, et peut produire un cadrage durable référençable sans créer de feature sans confirmation.
 ---
 
 Suivre `workflow.md` dans ce dossier.

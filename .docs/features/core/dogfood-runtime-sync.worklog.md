@@ -153,3 +153,8 @@
 - Changement : note mainteneur deplacée vers `PROJECT_STATE.md`; le README runtime redevient strictement aligne avec le rendu Copier.
 - Ajustement template : whitespace de la boucle `agents` dans `template/README_AI_CONTEXT.md.jinja` resserre pour produire le meme rendu que le dogfood runtime.
 - Validation : `check-dogfood-drift.sh` PASS local.
+
+## 2026-05-11 — aic-frame durable
+- Intent : dogfooder la nouvelle sortie `aic-frame` durable dans les wrappers runtime et templates.
+- Changement : runtime Claude/Codex et templates alignes sur challenge IA, routage enum et `execution_ref`.
+- Validation : `check-dogfood-drift.sh` PASS ; smoke complet PASS sur copie Git propre.

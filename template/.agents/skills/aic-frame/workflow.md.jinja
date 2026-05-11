@@ -1,94 +1,116 @@
 # Workflow — aic-frame
 
-**Goal** : transformer une intention en cadrage exécutable sans écrire de code.
+**Goal** : cadrer complètement une intention avant implémentation, puis recommander la bonne suite sans écrire de code.
 
-**Role** : Cadreur. Écoute, clarifie, prend position, produit un plan testable. Peut créer ou mettre à jour une fiche feature seulement après confirmation explicite.
+**Role** : Cadreur critique. L'agent clarifie, challenge, factorise, découpe si nécessaire, prend position et produit une sortie exploitable. Il peut créer ou mettre à jour une fiche feature seulement après confirmation explicite.
 
-## INPUT ATTENDU
+## INPUT
 
-- Une intention libre : "je veux ajouter X", "on devrait améliorer Y", "prépare la feature Z".
-- Optionnel : scope, feature existante, contrainte métier, contrainte technique, deadline.
-
-Si l'intention est trop vague, poser une seule question bloquante. Ne pas lancer un questionnaire.
+- Intention libre : "je veux ajouter X", "améliorer Y", "prépare la feature Z".
+- Optionnel : scope, feature existante, contrainte métier/technique, deadline, besoin de sortie durable.
+- Si l'intention est trop vague : poser toutes les questions nécessaires au cadrage, limitées aux décisions bloquantes. Les grouper par thème, séparer `Bloquant maintenant` de `À valider plus tard`, et ne pas produire de plan tant que les bloquantes ne sont pas résolues.
 
 ## CONTEXT LOADING
 
 Mandatory :
 
 1. `.ai/index.md`
-2. `.ai/rules/<scope>.md` si le scope est identifiable et utile au cadrage
+2. `.ai/rules/<scope>.md` si le scope est identifiable et utile
 3. `{{ docs_root }}/features/<scope>/<id>.md` si la feature existe
 
-On-demand selon règle déterministe :
+On-demand seulement :
 
-- `.ai/quality/QUALITY_GATE.md` si :
-  - `progress.phase` ∈ {review, done} de la feature ciblée, OU
-  - intention nommée par l'utilisateur : ship, done, review, quality-gate, OU
-  - change touchant : contrat (API, schema), sécurité, CI, doc canonique.
-- `.ai/agent/posture.md`, `.ai/agent/initiative-contract.md`, `.ai/agent/response-style.md` seulement si la demande porte explicitement sur posture, diagnostic ou style de réponse.
+- `.ai/quality/QUALITY_GATE.md` si `progress.phase` ∈ {review, done}, ou intention nommée ship/done/review/quality-gate, ou changement contrat/sécurité/CI/doc canonique.
+- `.ai/agent/posture.md`, `.ai/agent/initiative-contract.md`, `.ai/agent/response-style.md` seulement si la demande porte explicitement sur posture, diagnostic ou style.
 
 Ne pas précharger le reste.
 
 ## PHASES
 
-### Phase 1 — Intention réelle
+### 1. Intention réelle
 
-Identifier :
+Identifier le problème réel, l'objectif, l'utilisateur/système concerné, les non-objectifs, la décision manquante et le résultat vérifiable attendu.
 
-- résultat attendu ;
-- utilisateur ou système concerné ;
-- problème traité ;
-- non-goal principal ;
-- décision qui manque, s'il y en a une.
+### 2. Challenge IA
 
-### Phase 2 — Spécificités
+Challenger avant de planifier :
+
+- Le problème déclaré est-il le vrai problème ?
+- Faut-il reprendre une feature existante ?
+- L'intention doit-elle être découpée en plusieurs features ou étapes ?
+- Une doc, une ADR, une décision humaine ou `aic-diagnose` est-elle plus adaptée ?
+- Quels angles morts, risques ou dépendances changent la route ?
+
+### 3. Analyse
 
 Séparer explicitement :
 
-- **Métier** : règles, vocabulaire, cas limites, droits, états, invariants.
-- **Technique** : scope, fichiers probables, contrats, dépendances, données, tests, migration éventuelle.
+- **Métier / produit** : règles, vocabulaire, acteurs, cas limites, invariants.
+- **Technique** : surfaces probables, contrats, données, dépendances, migrations, tests.
+- **Impacts** : fichiers, workflows, templates, docs, CI, compatibilité downstream.
+- **Non couverts / à couvrir** : ce qui reste volontairement hors décision ou demande un arbitrage.
 
-Si une spécificité est inconnue mais bloquante, la marquer comme `À valider`, pas comme hypothèse silencieuse.
+Marquer `À valider` toute inconnue bloquante. Ne pas l'enterrer en hypothèse.
 
-### Phase 3 — Plan
+### 4. Préconisations et routage
 
-Produire un plan court en 3 à 7 étapes. Chaque étape doit avoir un résultat vérifiable.
+Fournir des préconisations priorisées et une décision unique :
 
-### Phase 4 — Validation
+- `feature` : créer/reprendre une feature après confirmation humaine ;
+- `doc` : produire ou mettre à jour une doc ;
+- `adr` : formaliser une décision d'architecture ;
+- `manual` : décision humaine requise ;
+- `diagnose` : basculer vers `aic-diagnose` ;
+- `dropped` : abandon recommandé.
 
-Définir :
+### 5. Plan et validation
 
-- critères d'acceptance ;
-- commandes de validation prévues ;
-- quality gate concernée ;
-- décision doc : nouvelle fiche, fiche existante, worklog seulement, ou aucun impact doc.
+Si la suite est actionnable, produire 3 à 7 étapes vérifiables, les critères d'acceptance, les checks prévus et l'impact documentaire.
 
-### Phase 5 — Proposition de matérialisation
+### 6. Sortie durable
 
-Si une nouvelle feature est claire :
+Si l'utilisateur demande `execution_ref`, AI Debate, orchestrateur externe, reprise durable ou plan externe :
 
-1. proposer `scope/id`, titre, `depends_on`, `touches` probables ;
-2. demander confirmation avant de créer la fiche ;
-3. après confirmation seulement, créer la fiche depuis `{{ docs_root }}/FEATURE_TEMPLATE.md`.
-4. utiliser `.ai/workflows/feature-new.md` comme procédure d'écriture si une fiche doit être matérialisée.
+- créer ou mettre à jour un artefact Markdown repo-local sous `{{ docs_root }}/frames/<YYYY-MM-DD>-<slug>.md` ;
+- y mettre le même cadrage, plus `status`, `route`, `evidence`, `next_hint` ;
+- retourner `execution_ref: {{ docs_root }}/frames/<...>.md`.
+
+Sinon, répondre en conversation et indiquer `execution_ref: non créé`. Ne pas importer de workflow externe.
+
+## CADRAGE TERMINÉ / BLOQUÉ
+
+Terminé si : objectif clair, challenge fait, impacts listés, non-couverts listés, préconisations priorisées, route unique, prochaine action claire.
+
+Bloqué si : information indispensable absente, routes concurrentes sans arbitrage, vrai problème incertain, découpage dépendant d'une décision, ou diagnostic nécessaire. Dans ce cas : expliquer le blocage, poser les questions ou décisions attendues, fournir `next_hint`.
 
 ## FORMAT DE SORTIE
-
-Répondre avec cette structure stable :
 
 ```markdown
 ## Cadrage
 
+Statut : done | blocked
+execution_ref : <path | non créé>
+
 Objectif :
 - ...
 
-Position recommandée :
+Challenge IA :
 - ...
 
-Spécificités métier :
+Analyse technique approfondie :
 - ...
 
-Spécificités techniques :
+Impacts :
+- ...
+
+Aspects non couverts / à couvrir :
+- ...
+
+Préconisations :
+1. ...
+
+Décision de routage : feature | doc | adr | manual | diagnose | dropped
+Justification :
 - ...
 
 Plan :
@@ -102,6 +124,10 @@ Validation :
 Points à confirmer :
 - ...
 
+Questions de cadrage si bloqué :
+- Bloquant maintenant :
+- À valider plus tard :
+
 Prochaine action minimale :
 - ...
 ```
@@ -109,7 +135,8 @@ Prochaine action minimale :
 ## NON-NEGOTIABLE RULES
 
 - Pas de code dans ce skill.
-- Pas de plan sans validation.
 - Pas de liste neutre : prendre position.
-- Pas de création de fiche sans confirmation.
-- Si le cadrage révèle un blocage, basculer vers le format `/aic-diagnose`.
+- Pas de création de fiche sans confirmation humaine explicite.
+- Si `route=feature`, proposer `scope/id`, titre, `depends_on`, `touches`, puis attendre confirmation avant `.ai/workflows/feature-new.md`.
+- Si le cadrage révèle un blocage de compréhension, choisir `route=diagnose` et basculer vers le format `aic-diagnose`.
+- AI Debate ou tout orchestrateur externe ne stocke que `execution_ref`, `status`, `evidence`, `next_hint`; le détail reste dans `ai_context`.

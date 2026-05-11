@@ -232,3 +232,8 @@
 - Changement docs : `docs/variables.md` aligne `scope_profile=minimal` sur `product`, ajoute `adoption_mode` et precise la generation des skills Codex/Claude.
 - Changement template : `template/.ai/scripts/check-feature-freshness.sh.jinja` evite la forme Bash `${#...}` incompatible avec Jinja (`{#`).
 - Validation : rendu Copier via `check-dogfood-drift.sh` PASS local.
+
+## 2026-05-11 — aic-frame durable
+- Impact template : `template/.agents/skills/aic-frame/*` et `template/.claude/skills/aic-frame/*` propagent le contrat de cadrage durable.
+- Compatibilite : conservation des variables `docs_root` pour les chemins de features et frames.
+- Validation : `check-dogfood-drift.sh` PASS ; smoke complet PASS sur copie Git propre.

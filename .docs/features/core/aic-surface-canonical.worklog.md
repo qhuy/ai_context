@@ -43,3 +43,7 @@
   - template/.claude/skills/aic-frame/workflow.md.jinja
   - template/.claude/skills/aic-ship/SKILL.md.jinja
   - template/.claude/skills/aic-status/SKILL.md.jinja
+
+## 2026-05-08 — freshness
+- Impact indirect : nettoyage drift README runtime/template + note mainteneur PROJECT_STATE (driver core/dogfood-runtime-sync).
+- Aucun changement de contrat propre a cette feature.

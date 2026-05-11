@@ -31,3 +31,8 @@
   - template/.claude/skills/aic-frame/workflow.md.jinja
   - template/.claude/skills/aic-ship/SKILL.md.jinja
   - template/.claude/skills/aic-status/SKILL.md.jinja
+
+## 2026-05-11 — aic-frame durable
+- Impact Claude : `/aic-frame` precise le challenge IA, les questions de cadrage, le routage et la sortie durable `execution_ref`.
+- Garde-fou : le skill reste sans code et sans creation de feature avant confirmation humaine.
+- Validation : `check-dogfood-drift`, `check-features`, `check-feature-docs workflow/aic-frame-external-reference`, smoke sur copie Git propre.

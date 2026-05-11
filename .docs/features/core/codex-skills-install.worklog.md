@@ -93,3 +93,8 @@ feat(core): installer les skills Codex par défaut
 ## 2026-05-07 14:20 — auto
 - Fichiers modifiés :
   - .ai/scripts/check-dogfood-drift.sh
+
+## 2026-05-11 — aic-frame durable
+- Impact Codex : `.agents/skills/aic-frame/*` et `template/.agents/skills/aic-frame/*` alignés sur le cadrage durable référençable.
+- Garde-fou maintenu : les wrappers Codex restent intentionnels ; aucune création de feature sans confirmation humaine.
+- Validation : `check-dogfood-drift`, `check-features`, `check-feature-docs workflow/aic-frame-external-reference`, smoke sur copie Git propre.
