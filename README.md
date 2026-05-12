@@ -181,6 +181,14 @@ Conclusion pragmatique :
 - Codex a une bonne expérience via skills locaux, `.ai/index.md` et `aic.sh`.
 - Les autres agents bénéficient surtout des shims, règles, hooks git et checks.
 
+## Contrats multi-agent
+
+Les capacités avancées restent opt-in et gouvernées par `.ai/rules/workflow.md` :
+
+- Subagents : déléguer seulement avec rôle clair (`explorer` lecture seule, `worker` avec write-set explicite), sortie structurée et aucun cross-scope sans HANDOFF.
+- Hooks Codex : pilote déterministe uniquement ; les hooks Git et checks `.ai/scripts/*` restent la garantie stable.
+- MCP : aucun serveur par défaut ; allowlist explicite, pas de secrets, source des données annoncée et fallback sans MCP.
+
 ## Feature mesh
 
 Une feature est un fichier Markdown versionné :
@@ -287,6 +295,7 @@ Guide complet : [docs/upgrading.md](docs/upgrading.md).
 | Commande | Rôle |
 |---|---|
 | `bash .ai/scripts/check-shims.sh` | vérifie que les shims restent minces et pointent vers `.ai/index.md` |
+| `bash .ai/scripts/check-agent-config.sh` | vérifie les configs Claude/Codex et scripts de hooks référencés |
 | `bash .ai/scripts/check-features.sh` | valide frontmatter, scopes, `depends_on`, `touches` |
 | `bash .ai/scripts/check-feature-docs.sh` | vérifie les sections obligatoires des fiches |
 | `bash .ai/scripts/check-feature-freshness.sh --staged --strict` | bloque si code stage sans fiche/worklog stage |

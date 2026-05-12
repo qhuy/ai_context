@@ -89,3 +89,8 @@
 
 ## 2026-05-07 — freshness
 - Impact indirect : ajout d'un nouveau test unit autonome `tests/unit/test-stop-hook-idempotence.sh` (livraison Phase 2 #5). Aucune modif `tests/smoke-test.sh`.
+
+## 2026-05-12 — agent-config unit dans smoke
+- Impact direct : `tests/smoke-test.sh` lance désormais `tests/unit/test-check-agent-config.sh` en étape `[0g/28]`.
+- Changement porté par `quality/agent-config-validation`.
+- Validation : `tests/smoke-test.sh` PASS.

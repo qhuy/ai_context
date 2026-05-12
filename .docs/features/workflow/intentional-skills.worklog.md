@@ -107,3 +107,8 @@
 ## 2026-05-08 — freshness
 - Impact indirect : nettoyage drift README runtime/template + note mainteneur PROJECT_STATE (driver core/dogfood-runtime-sync).
 - Aucun changement de contrat propre a cette feature.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : ajout de workflows on-demand `subagent-contract`, `codex-hooks-parity` et `mcp-policy` sans modifier les wrappers de skills intentionnels.
+- Clarification README/runtime : ces contrats restent activables explicitement et compatibles multi-agent.
+- Validation : `check-shims`, `check-features`, strict docs des nouvelles fiches et smoke-test PASS.

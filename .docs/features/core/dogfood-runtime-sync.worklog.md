@@ -158,3 +158,8 @@
 - Intent : dogfooder la nouvelle sortie `aic-frame` durable dans les wrappers runtime et templates.
 - Changement : runtime Claude/Codex et templates alignes sur challenge IA, routage enum et `execution_ref`.
 - Validation : `check-dogfood-drift.sh` PASS ; smoke complet PASS sur copie Git propre.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : synchronisation dogfood runtime/template des nouveaux contrats workflow, du check `check-agent-config.sh`, du branchement `doctor`, de la quality gate et des workflows CI.
+- HANDOFF : changements `workflow` et `quality` propages dans `template/` via le scope `core`.
+- Validation : `check-dogfood-drift.sh`, `doctor` et smoke-test PASS avant revue finale.

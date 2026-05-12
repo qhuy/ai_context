@@ -86,3 +86,8 @@
 
 ## 2026-05-07 — freshness
 - Impact indirect : ajout d'un nouveau test unit `tests/unit/test-stop-hook-idempotence.sh` (livraison Phase 2 #5).
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : README/template et tests ajoutent le check agent-config sans modifier le contrat `.ai/project/index.md`.
+- Aucun chargement additionnel de l'overlay projet au demarrage.
+- Validation : `check-shims`, `check-features` et smoke-test PASS.

@@ -12,6 +12,7 @@
 Exécuter **dans cet ordre**, ne pas s'arrêter au premier fail :
 ```bash
 bash .ai/scripts/check-shims.sh
+bash .ai/scripts/check-agent-config.sh
 bash .ai/scripts/check-ai-references.sh
 bash .ai/scripts/check-features.sh
 bash .ai/scripts/check-feature-docs.sh     # warnings par défaut ; --strict <scope/id> près de DONE
@@ -39,6 +40,7 @@ Format markdown, même structure à chaque fois :
 | Check | Status | Détails |
 |---|---|---|
 | check-shims | ✅ / ❌ | <sortie courte> |
+| check-agent-config | ✅ / ⚠️ / ❌ | <configs agents et scripts référencés> |
 | check-ai-references | ✅ / ❌ | <sortie> |
 | check-features | ✅ / ❌ | <sortie> |
 | check-feature-docs | ✅ / ⚠️ / ❌ | <sections manquantes ou strict OK> |

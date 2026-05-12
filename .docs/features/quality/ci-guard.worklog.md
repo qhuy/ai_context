@@ -10,3 +10,8 @@
 - Changement : `template-smoke-test.yml` se declenche aussi sur `.agents/**`, `.ai/**`, `.claude/**`, `.githooks/**`, `AGENTS.md`, `CLAUDE.md`, `README_AI_CONTEXT.md`, `.docs/FEATURE_TEMPLATE.md` et `tests/unit/**`.
 - Ajout : etape explicite `bash .ai/scripts/check-dogfood-drift.sh` avant le smoke test.
 - Validation : `check-dogfood-drift.sh` PASS local.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact direct : le workflow CI source lance `bash .ai/scripts/check-agent-config.sh` avant le smoke-test.
+- Parite template : `template/.github/workflows/ai-context-check.yml.jinja` alignee.
+- Validation locale : `check-agent-config`, `doctor` et smoke-test PASS.

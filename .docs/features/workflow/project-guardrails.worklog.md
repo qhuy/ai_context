@@ -41,3 +41,8 @@
 - Impact indirect : `copier.yml` mis à jour pendant le durcissement post-cross-check (round 4 workflow/intentional-skills).
 - Aucun changement sur la procédure project-guardrails ni sur `.ai/guardrails.md`.
 - Validation associée : `check-feature-freshness.sh` (staged) PASS attendu.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : README runtime/template mentionnent les politiques MCP et subagents sans charger `.ai/guardrails.md` par defaut.
+- Aucun changement sur la procedure project-guardrails.
+- Validation : `check-shims`, `check-features` et smoke-test PASS.

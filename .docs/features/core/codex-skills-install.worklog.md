@@ -98,3 +98,8 @@ feat(core): installer les skills Codex par défaut
 - Impact Codex : `.agents/skills/aic-frame/*` et `template/.agents/skills/aic-frame/*` alignés sur le cadrage durable référençable.
 - Garde-fou maintenu : les wrappers Codex restent intentionnels ; aucune création de feature sans confirmation humaine.
 - Validation : `check-dogfood-drift`, `check-features`, `check-feature-docs workflow/aic-frame-external-reference`, smoke sur copie Git propre.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : README et smoke-test restent compatibles avec les skills Codex existants pendant l'ajout des contrats multi-agent.
+- Aucun changement sur `.agents/skills/**` ni sur l'installation des skills Codex.
+- Validation : `check-shims`, `check-ai-references` et smoke-test PASS.

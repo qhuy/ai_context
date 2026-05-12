@@ -19,3 +19,8 @@
 - Implementation : un `git log` par feature avec tous ses pathspecs `touches:` et cache timestamp pour les fiches/worklogs.
 - Parite : runtime dogfoode et template `.jinja` synchronises.
 - Validation : `check-feature-freshness.sh --warn` OK, `check-feature-freshness.sh --staged --warn` OK, test unitaire freshness OK.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : le workflow CI reste aligne avec la freshness staged stricte tout en ajoutant le check agent-config adjacent.
+- Aucun changement de logique `check-feature-freshness.sh`.
+- Validation : `check-feature-freshness.sh --staged --strict` relance avant commit.

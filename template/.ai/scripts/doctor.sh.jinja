@@ -127,6 +127,17 @@ else
   ko ".ai/scripts/check-features.sh missing"
 fi
 
+if [[ -f ".ai/scripts/check-agent-config.sh" ]]; then
+  if bash .ai/scripts/check-agent-config.sh >/dev/null 2>&1; then
+    ok "check-agent-config OK"
+  else
+    ko "check-agent-config failed"
+    add_action "corriger les configs agents puis relancer bash .ai/scripts/check-agent-config.sh"
+  fi
+else
+  warn ".ai/scripts/check-agent-config.sh missing"
+fi
+
 if [[ -f ".ai/scripts/measure-context-size.sh" ]]; then
   if bash .ai/scripts/measure-context-size.sh >/dev/null 2>&1; then
     ok "measure-context-size readable"

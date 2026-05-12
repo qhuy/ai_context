@@ -11,3 +11,8 @@
 - Décision : garder un seul README, mais séparer clairement promesse, quickstart, workflow `aic`, limites runtime, feature mesh et référence.
 - Validation : `check-ai-references`, `check-product-links`, `check-features`, `check-feature-docs product/readme-positioning`.
 - Next : relire le delta staged puis commit dédié si freshness OK.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : README enrichi avec les contrats subagents, hooks Codex et MCP pour clarifier l'adoption sans changer le positionnement produit.
+- Aucun changement sur le quickstart ou la promesse principale.
+- Validation : `check-ai-references`, `check-features` et smoke-test PASS.

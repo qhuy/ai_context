@@ -41,3 +41,8 @@
 ## 2026-05-07 14:20 — auto
 - Fichiers modifiés :
   - .ai/scripts/check-dogfood-drift.sh
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : README runtime/template et smoke-test restent compatibles avec la traceability product pendant l'ajout des contrats workflow/quality.
+- Aucun changement sur `product-status`, `product-portfolio`, `product-review` ni sur les contrats initiative/roadmap.
+- Validation : `check-features` et smoke-test PASS.

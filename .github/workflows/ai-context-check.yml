@@ -75,6 +75,9 @@ jobs:
       - name: check-shims
         run: bash .ai/scripts/check-shims.sh
 
+      - name: check-agent-config
+        run: bash .ai/scripts/check-agent-config.sh
+
       - name: check-ai-references
         run: bash .ai/scripts/check-ai-references.sh
 

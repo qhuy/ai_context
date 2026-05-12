@@ -237,3 +237,9 @@
 - Impact template : `template/.agents/skills/aic-frame/*` et `template/.claude/skills/aic-frame/*` propagent le contrat de cadrage durable.
 - Compatibilite : conservation des variables `docs_root` pour les chemins de features et frames.
 - Validation : `check-dogfood-drift.sh` PASS ; smoke complet PASS sur copie Git propre.
+
+## 2026-05-12 — HANDOFF workflow/quality → core
+- HANDOFF reçu : `workflow/subagent-contract`, `workflow/codex-hooks-parity`, `workflow/mcp-policy` et `quality/agent-config-validation`.
+- Impact template : ajout des workflows `subagent-contract`, `codex-hooks-parity`, `mcp-policy`, miroir de `.ai/rules/workflow.md`, ajout de `template/.ai/scripts/check-agent-config.sh.jinja`, update quality gate, doctor, CI et `README_AI_CONTEXT`.
+- Décision : aucune nouvelle variable Copier ; aucun changement Pack A ; les hooks Codex restent opt-in et non générés par défaut.
+- Validation : `check-dogfood-drift.sh` PASS ; `tests/smoke-test.sh` PASS.

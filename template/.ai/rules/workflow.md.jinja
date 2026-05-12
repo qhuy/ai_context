@@ -16,6 +16,29 @@ HANDOFF
 
 Attendre confirmation utilisateur avant de changer de scope primaire.
 
+## Subagents
+
+- Agent principal responsable : garde le scope primaire, intègre les retours, ferme les agents inutiles.
+- `explorer` : lecture seule, question ciblée, aucune modification.
+- `worker` : write-set explicite et disjoint ; ne touche pas les fichiers hors assignation.
+- Fanout : déléguer seulement si le travail parallèle réduit le risque ou le temps sans bloquer la décision suivante.
+- Sortie obligatoire : résumé, fichiers lus/modifiés, risques, checks lancés ou non lancés.
+- Détail : `.ai/workflows/subagent-contract.md`.
+
+## Hooks Codex
+
+- Opt-in uniquement ; les hooks Git et checks `.ai/scripts/*` restent la garantie stable.
+- Autorisé : commande déterministe, versionnée, timeout explicite, non interactive.
+- Interdit comme garantie : Auto-review, hook LLM, injection de contexte non bornée ou non testée.
+- Détail : `.ai/workflows/codex-hooks-parity.md`.
+
+## MCP
+
+- Aucun serveur MCP par défaut.
+- Utiliser MCP seulement avec allowlist explicite, besoin clair, provenance des données et fallback sans MCP.
+- Ne jamais stocker de secrets dans `.ai/`, `template/` ou les shims.
+- Détail : `.ai/workflows/mcp-policy.md`.
+
 ## Sortie
 
 Près de DONE, charger `.ai/quality/QUALITY_GATE.md`.

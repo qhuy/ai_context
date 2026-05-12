@@ -47,3 +47,8 @@
 ## 2026-05-08 — freshness
 - Impact indirect : nettoyage drift README runtime/template + note mainteneur PROJECT_STATE (driver core/dogfood-runtime-sync).
 - Aucun changement de contrat propre a cette feature.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : README, README runtime/template et smoke-test exposent les contrats subagents/hooks/MCP sans changer la commande canonique `aic`.
+- Aucun alias legacy ou nouvelle surface CLI ajoute.
+- Validation : `check-ai-references`, `check-shims` et smoke-test PASS.
