@@ -103,3 +103,8 @@
 - Contexte : l'item AI Debate `0013/Q3` ajoute un arbre de décision compact pour `feat:`, `fix:`, `refactor:`, `chore:`, `docs:` et `doc.level`.
 - Impact : le chargement de l'overlay projet reste inchangé ; l'index expose seulement une règle de décision agentique supplémentaire.
 - Validation portée par les checks Q3.
+## 2026-05-12 — impact Q4 régressions ciblées
+
+- Surfaces : `tests/smoke-test.sh`, `tests/unit/test-targeted-regressions.sh`.
+- Impact : le test cible Q4 cree des copies temporaires du projet pour isoler fallback, lock et rendu Copier ; le smoke l'execute comme prevalidation.
+- Validation : `bash tests/unit/test-targeted-regressions.sh` PASS ; `bash tests/smoke-test.sh` PASS.

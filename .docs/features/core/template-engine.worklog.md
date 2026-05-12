@@ -257,3 +257,8 @@
   - inventaire des variables `AI_CONTEXT_*` exposees par `.ai/scripts/` et les templates correspondants ;
   - precision des valeurs par defaut, surfaces de lecture et effets.
 - Validation portée par les checks documentaires de `core/template-engine`.
+## 2026-05-12 — impact Q4 régressions ciblées
+
+- Surface : `template/.ai/scripts/check-commit-features.sh.jinja`.
+- Impact : parite template/runtime appliquee pour le parsing heredoc du guard commit.
+- Validation : `bash .ai/scripts/check-dogfood-drift.sh` PASS.

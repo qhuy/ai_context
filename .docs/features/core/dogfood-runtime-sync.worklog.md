@@ -168,3 +168,8 @@
 - Contexte : `quality/index-lock-contract` corrige `with_index_lock` pour echouer explicitement au timeout au lieu d'executer sans verrou.
 - Impact : le runtime dogfood conserve une ecriture d'index protegee et verifiee par `check-dogfood-drift`.
 - Validation portée par `quality/index-lock-contract`.
+## 2026-05-12 — impact Q4 régressions ciblées
+
+- Surface : `.ai/scripts/check-commit-features.sh`.
+- Impact : correction minimale du parsing heredoc revelee par la couverture ciblee Q4 ; le guard runtime reste aligne avec le template.
+- Validation : `bash .ai/scripts/check-dogfood-drift.sh` PASS.

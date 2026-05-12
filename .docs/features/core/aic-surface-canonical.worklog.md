@@ -57,3 +57,8 @@
 - Contexte : `quality/index-lock-contract` ajoute une assertion smoke sur le timeout de `with_index_lock`.
 - Impact : aucune evolution de surface AIC ; le smoke couvre une regression runtime supplementaire.
 - Validation portée par `quality/index-lock-contract`.
+## 2026-05-12 — impact Q4 régressions ciblées
+
+- Surface : `tests/smoke-test.sh`.
+- Impact : ajout d'un appel aux tests unitaires de regressions Q4 dans le smoke, sans modifier la surface utilisateur `aic`.
+- Validation : `bash tests/smoke-test.sh` PASS.

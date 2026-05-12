@@ -56,6 +56,10 @@ echo "[0f/28] tests unitaires (project overlay)"
 bash tests/unit/test-project-overlay.sh
 echo
 
+echo "[0g/28] tests unitaires (régressions ciblées Q4)"
+bash tests/unit/test-targeted-regressions.sh
+echo
+
 echo "[1/28] copier copy (profil par défaut)"
 copier copy --defaults --trust \
   --data project_name=smoke-project \

@@ -104,3 +104,8 @@ feat(core): installer les skills Codex par défaut
 - Contexte : `quality/index-lock-contract` renforce le smoke test global.
 - Impact : aucun changement des skills Codex ; la suite de validation couvre le lock d'index.
 - Validation portée par `quality/index-lock-contract`.
+## 2026-05-12 — impact Q4 régressions ciblées
+
+- Surface : `tests/smoke-test.sh`.
+- Impact : le smoke lance maintenant les tests unitaires Q4 avant les validations d'installation ; aucun changement des skills Codex.
+- Validation : `bash tests/smoke-test.sh` PASS.

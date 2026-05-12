@@ -58,3 +58,8 @@
 - Contexte : l'item AI Debate `0013/Q3` documente les conventions de type de commit et de niveau documentaire.
 - Impact : aucun changement du product loop ; l'index precise seulement comment choisir entre feature, correction, maintenance et documentation.
 - Validation portée par les checks Q3.
+## 2026-05-12 — impact Q4 régressions ciblées
+
+- Surface : `tests/smoke-test.sh`.
+- Impact : ajout d'une prevalidation Q4 dans le smoke global ; les assertions product portfolio existantes restent inchangées.
+- Validation : `bash tests/smoke-test.sh` PASS.

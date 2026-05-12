@@ -39,3 +39,8 @@
 ### Commit suggéré
 
 feat(quality): corriger le contrat de lock index
+## 2026-05-12 — impact Q4 régressions ciblées
+
+- Surface : `tests/smoke-test.sh`.
+- Impact : le contrat de lock Q1 est maintenant verifie aussi par le test cible Q4 via un timeout qui ne doit pas executer la commande protegee.
+- Validation : `bash tests/unit/test-targeted-regressions.sh` PASS ; `bash tests/smoke-test.sh` PASS.

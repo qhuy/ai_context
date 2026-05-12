@@ -43,12 +43,12 @@ elif [[ ! -t 0 ]]; then
   #   -m "simple"        → capture interne
   #   -m 'simple'        → capture interne
   #   -m "$(cat <<'EOF'  → 1ère ligne entre les marqueurs EOF
-  if [[ "$cmd" =~ -m[[:space:]]+\"([^\"]+)\" ]]; then
+  if [[ "$cmd" == *"<<'EOF'"* ]]; then
+    msg=$(echo "$cmd" | awk "/<<'EOF'/{f=1; next} f && /^EOF/{exit} f" | head -n1)
+  elif [[ "$cmd" =~ -m[[:space:]]+\"([^\"]+)\" ]]; then
     msg="${BASH_REMATCH[1]}"
   elif [[ "$cmd" =~ -m[[:space:]]+\'([^\']+)\' ]]; then
     msg="${BASH_REMATCH[1]}"
-  elif [[ "$cmd" == *"<<'EOF'"* ]]; then
-    msg=$(echo "$cmd" | awk "/<<'EOF'/{f=1; next} f && /^EOF/{exit} f" | head -n1)
   fi
 
   # Si on n'a rien pu extraire : laisser passer, le git commit-msg hook rattrapera.

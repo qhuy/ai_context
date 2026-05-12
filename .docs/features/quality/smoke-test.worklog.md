@@ -95,3 +95,8 @@
 - Contexte : `quality/index-lock-contract` ajoute un cas `[9b/28]` prouvant qu'un timeout de lock n'execute pas la commande protegee.
 - Impact : le smoke test couvre explicitement la regression du fallback sans verrou.
 - Validation portée par `quality/index-lock-contract`.
+## 2026-05-12 — impact Q4 régressions ciblées
+
+- Surfaces : `tests/smoke-test.sh`, `tests/unit/test-targeted-regressions.sh`.
+- Impact : ajout d'une suite unitaire ciblee branchee dans le smoke pour isoler les regressions Q4 avant le parcours bout-en-bout.
+- Validation : `bash tests/unit/test-targeted-regressions.sh` PASS ; `bash tests/smoke-test.sh` PASS.
