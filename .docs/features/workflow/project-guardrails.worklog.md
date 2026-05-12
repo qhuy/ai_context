@@ -41,3 +41,7 @@
 - Impact indirect : `copier.yml` mis à jour pendant le durcissement post-cross-check (round 4 workflow/intentional-skills).
 - Aucun changement sur la procédure project-guardrails ni sur `.ai/guardrails.md`.
 - Validation associée : `check-feature-freshness.sh` (staged) PASS attendu.
+
+## 2026-05-08 — freshness
+- Impact indirect : nettoyage drift README runtime/template + note mainteneur PROJECT_STATE (driver core/dogfood-runtime-sync).
+- Aucun changement de contrat propre a cette feature.

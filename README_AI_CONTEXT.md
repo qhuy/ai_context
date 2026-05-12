@@ -28,7 +28,6 @@ Ce projet a été scaffoldé depuis le template [`ai_context`](https://github.co
 - claude
 - codex
 
-
 ## Scopes
 
 - `core` → `.ai/rules/core.md`

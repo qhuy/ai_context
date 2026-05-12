@@ -7,6 +7,7 @@ Les questions posées par `copier copy` et leurs effets.
 | `project_name` | str | — (requis) | Nom injecté dans les shims et `.ai/index.md` |
 | `project_description` | str | "" | Description 1 ligne dans l'index |
 | `scope_profile` | choice | `fullstack` | Détermine la liste `scopes` (voir profils) |
+| `adoption_mode` | choice | `standard` | Module l'enforcement scaffoldé : `lite`, `standard` ou `strict` |
 | `tech_profile` | choice | `generic` | Ajoute des règles stack optionnelles (`dotnet-clean-cqrs`, `react-next`, `fullstack-dotnet-react`) |
 | `commit_language` | choice | `fr` | Langue des commits imposée par les règles |
 | `docs_root` | str | `.docs` | Dossier racine de la doc métier (`.docs` ou `docs`) |
@@ -17,8 +18,8 @@ Les questions posées par `copier copy` et leurs effets.
 
 | Profil | Scopes |
 |---|---|
-| `minimal` | core, quality, workflow |
-| `backend` | core, quality, workflow, back, architecture, security, handoff |
+| `minimal` | core, quality, workflow, product |
+| `backend` | core, quality, workflow, product, back, architecture, security, handoff |
 | `fullstack` | backend + front |
 | `custom` | minimal (tu ajoutes tes scopes à la main après scaffold) |
 
@@ -35,8 +36,8 @@ Les questions posées par `copier copy` et leurs effets.
 
 | Agent | Fichiers générés |
 |---|---|
-| `claude` | `CLAUDE.md`, `.claude/settings.json` (hook UserPromptSubmit) |
-| `codex` | `AGENTS.md` (toujours généré, canonical pour Codex) |
+| `claude` | `CLAUDE.md`, `.claude/settings.json`, `.claude/skills/aic-*` |
+| `codex` | `AGENTS.md` (toujours généré) + `.agents/skills/aic-*` si `codex` est sélectionné |
 | `cursor` | `.cursor/rules/protocol-reminder.mdc` |
 | `gemini` | `GEMINI.md` |
 | `copilot` | `.github/copilot-instructions.md` |
@@ -51,7 +52,7 @@ Les questions posées par `copier copy` et leurs effets.
 - `.ai/reminder.md`
 - `.ai/context-ignore.md`
 - `.ai/quality/QUALITY_GATE.md`
-- `.ai/rules/core.md`, `quality.md`, `workflow.md` (scopes minimum)
+- `.ai/rules/core.md`, `quality.md`, `workflow.md`, `product.md` (scopes minimum)
 - `.ai/scripts/pre-turn-reminder.sh`, `check-shims.sh`, `check-ai-references.sh`, `check-feature-docs.sh`
 - `.ai/templates/project-overlay/README.md` (exemple, pas un overlay actif)
 - `README_AI_CONTEXT.md`

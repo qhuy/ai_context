@@ -86,3 +86,7 @@
 
 ## 2026-05-07 — freshness
 - Impact indirect : ajout d'un nouveau test unit `tests/unit/test-stop-hook-idempotence.sh` (livraison Phase 2 #5).
+
+## 2026-05-08 — freshness
+- Impact indirect : nettoyage drift README runtime/template + note mainteneur PROJECT_STATE (driver core/dogfood-runtime-sync).
+- Aucun changement de contrat propre a cette feature.

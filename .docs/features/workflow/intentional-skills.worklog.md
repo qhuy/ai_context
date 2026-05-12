@@ -107,3 +107,7 @@
 ## 2026-05-08 — freshness
 - Impact indirect : nettoyage drift README runtime/template + note mainteneur PROJECT_STATE (driver core/dogfood-runtime-sync).
 - Aucun changement de contrat propre a cette feature.
+
+## 2026-05-12 — README surface intentionnelle
+- Impact : `README_AI_CONTEXT.md` et son template restent coherents avec la surface intentionnelle `aic-frame/status/diagnose/document-feature/review/ship`.
+- Validation : `check-dogfood-drift.sh` PASS.

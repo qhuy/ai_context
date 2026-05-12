@@ -158,3 +158,7 @@
 - Intent : dogfooder la nouvelle sortie `aic-frame` durable dans les wrappers runtime et templates.
 - Changement : runtime Claude/Codex et templates alignes sur challenge IA, routage enum et `execution_ref`.
 - Validation : `check-dogfood-drift.sh` PASS ; smoke complet PASS sur copie Git propre.
+
+## 2026-05-12 — alignement README dogfood
+- Impact : `README_AI_CONTEXT.md` reste synchronise avec le rendu template apres retrait du drift local.
+- Validation : `check-dogfood-drift.sh` PASS.

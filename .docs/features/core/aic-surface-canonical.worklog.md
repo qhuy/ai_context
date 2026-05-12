@@ -47,3 +47,7 @@
 ## 2026-05-08 — freshness
 - Impact indirect : nettoyage drift README runtime/template + note mainteneur PROJECT_STATE (driver core/dogfood-runtime-sync).
 - Aucun changement de contrat propre a cette feature.
+
+## 2026-05-12 — alignement dogfood
+- Impact : `PROJECT_STATE.md`, `README_AI_CONTEXT.md` et `template/README_AI_CONTEXT.md.jinja` restent alignes avec la surface publique `aic-*`.
+- Validation : `check-dogfood-drift.sh` PASS.

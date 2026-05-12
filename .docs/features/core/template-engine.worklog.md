@@ -237,3 +237,7 @@
 - Impact template : `template/.agents/skills/aic-frame/*` et `template/.claude/skills/aic-frame/*` propagent le contrat de cadrage durable.
 - Compatibilite : conservation des variables `docs_root` pour les chemins de features et frames.
 - Validation : `check-dogfood-drift.sh` PASS ; smoke complet PASS sur copie Git propre.
+
+## 2026-05-12 — variables et README template
+- Impact : `docs/variables.md` et `template/README_AI_CONTEXT.md.jinja` alignent la documentation des variables et le rendu README.
+- Validation : `check-dogfood-drift.sh` PASS.

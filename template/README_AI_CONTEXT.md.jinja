@@ -25,10 +25,9 @@ Ce projet a été scaffoldé depuis le template [`ai_context`](https://github.co
 
 ## Agents activés
 
-{% for a in agents %}- {{ a }}
-{% endfor %}
-
-## Scopes
+{% for a in agents -%}
+- {{ a }}
+{% endfor -%}{{ "\n" }}## Scopes
 
 {% for scope in scopes %}- `{{ scope }}` → `.ai/rules/{{ scope }}.md`{% if scope in ['back', 'front', 'architecture', 'security', 'product'] %} + features `{{ docs_root }}/features/{{ scope }}/`{% endif %}
 {% endfor %}

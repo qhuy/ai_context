@@ -7,6 +7,10 @@
 
 > Ce fichier est un **point d'entrée rapide**. Pour l'historique détaillé des versions, consulter [CHANGELOG.md](CHANGELOG.md). Pour adopter le template sur un projet existant, [MIGRATION.md](MIGRATION.md). Pour l'architecture visuelle, diagramme mermaid dans [README.md](README.md).
 
+## Notes mainteneur
+
+- 2026-05-07 : ce repo a servi de cible distincte pour un run supervisé depuis `ai_debate`, avec chargement prouvé de ses règles locales.
+
 ## Comment reprendre le dev
 
 1. Ouvrir Claude Code dans le dossier local du dépôt `ai_context`.

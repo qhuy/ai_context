@@ -41,3 +41,7 @@
 ## 2026-05-07 14:20 — auto
 - Fichiers modifiés :
   - .ai/scripts/check-dogfood-drift.sh
+
+## 2026-05-08 — freshness
+- Impact indirect : nettoyage drift README runtime/template + note mainteneur PROJECT_STATE (driver core/dogfood-runtime-sync).
+- Aucun changement de contrat propre a cette feature.
