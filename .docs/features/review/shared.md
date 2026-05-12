@@ -1,10 +1,11 @@
 ---
-id: a
+id: shared
 scope: review
-title: A
+title: Shared surface
 status: active
 depends_on: []
-touches:
+touches: []
+touches_shared:
   - shared.txt
 progress:
   phase: implement
@@ -13,6 +14,4 @@ progress:
   resume_hint: test
   updated: 2026-05-03
 ---
-# A
-
-- documented a only
+# Shared
