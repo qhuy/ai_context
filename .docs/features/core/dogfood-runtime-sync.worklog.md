@@ -162,3 +162,9 @@
 ## 2026-05-12 — alignement README dogfood
 - Impact : `README_AI_CONTEXT.md` reste synchronise avec le rendu template apres retrait du drift local.
 - Validation : `check-dogfood-drift.sh` PASS.
+## 2026-05-12 — impact partagé contrat lock index
+
+- Fichiers/surfaces : `.ai/scripts/_lib.sh`.
+- Contexte : `quality/index-lock-contract` corrige `with_index_lock` pour echouer explicitement au timeout au lieu d'executer sans verrou.
+- Impact : le runtime dogfood conserve une ecriture d'index protegee et verifiee par `check-dogfood-drift`.
+- Validation portée par `quality/index-lock-contract`.

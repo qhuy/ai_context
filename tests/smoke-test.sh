@@ -570,6 +570,27 @@ if [[ -n "$orphans" ]]; then
 fi
 echo "  ✓ 5 builds parallèles : JSON valide, pas de tmp orphelin"
 
+lock_timeout_dir="$OUT/.ai/test-index-lock"
+lock_timeout_marker="$OUT/.ai/lock-timeout-ran"
+mkdir "$lock_timeout_dir"
+(
+  cd "$OUT"
+  set +e
+  AI_CONTEXT_LOCK_DIR="$lock_timeout_dir" bash -c '. .ai/scripts/_lib.sh; with_index_lock touch .ai/lock-timeout-ran' >/dev/null 2>&1
+  rc=$?
+  set -e
+  if [[ "$rc" -eq 0 ]]; then
+    echo "  ✗ timeout lock retourne 0"
+    exit 1
+  fi
+)
+if [[ -e "$lock_timeout_marker" ]]; then
+  echo "  ✗ commande exécutée malgré timeout lock"
+  exit 1
+fi
+rmdir "$lock_timeout_dir"
+echo "  ✓ timeout lock : échec explicite sans exécuter la commande protégée"
+
 echo
 echo "[10/28] pre-turn-reminder : dépendances inverses exposées"
 cat > "$OUT/.docs/features/back/base.md" <<'FEAT'

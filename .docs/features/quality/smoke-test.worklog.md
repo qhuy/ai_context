@@ -89,3 +89,9 @@
 
 ## 2026-05-07 — freshness
 - Impact indirect : ajout d'un nouveau test unit autonome `tests/unit/test-stop-hook-idempotence.sh` (livraison Phase 2 #5). Aucune modif `tests/smoke-test.sh`.
+## 2026-05-12 — impact partagé contrat lock index
+
+- Fichiers/surfaces : `tests/smoke-test.sh`.
+- Contexte : `quality/index-lock-contract` ajoute un cas `[9b/28]` prouvant qu'un timeout de lock n'execute pas la commande protegee.
+- Impact : le smoke test couvre explicitement la regression du fallback sans verrou.
+- Validation portée par `quality/index-lock-contract`.

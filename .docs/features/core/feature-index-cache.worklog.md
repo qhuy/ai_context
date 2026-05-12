@@ -56,3 +56,9 @@
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
+## 2026-05-12 — impact partagé contrat lock index
+
+- Fichiers/surfaces : `.ai/scripts/_lib.sh`, `template/.ai/scripts/_lib.sh.jinja`.
+- Contexte : `quality/index-lock-contract` durcit le lock utilise par `build-feature-index.sh --write`.
+- Impact : le cache JSON conserve un lock atomique `mkdir`, sans fallback concurrent apres timeout.
+- Validation portée par `quality/index-lock-contract`.

@@ -29,3 +29,9 @@
   - template/.ai/scripts/_lib.sh.jinja
   - template/.ai/scripts/auto-progress.sh.jinja
   - tests/unit/test-auto-progress-filter.sh
+## 2026-05-12 — impact partagé contrat lock index
+
+- Fichiers/surfaces : `.ai/scripts/_lib.sh`, `template/.ai/scripts/_lib.sh.jinja`.
+- Contexte : `quality/index-lock-contract` modifie un helper commun de `_lib.sh`.
+- Impact : aucun changement du filtre d'auto-progression ; le lock d'index devient strict en cas de timeout.
+- Validation portée par `quality/index-lock-contract`.

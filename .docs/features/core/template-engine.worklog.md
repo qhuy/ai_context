@@ -241,3 +241,9 @@
 ## 2026-05-12 — variables et README template
 - Impact : `docs/variables.md` et `template/README_AI_CONTEXT.md.jinja` alignent la documentation des variables et le rendu README.
 - Validation : `check-dogfood-drift.sh` PASS.
+## 2026-05-12 — impact partagé contrat lock index
+
+- Fichiers/surfaces : `template/.ai/scripts/_lib.sh.jinja`.
+- Contexte : `quality/index-lock-contract` aligne le template Copier sur le runtime `_lib.sh`.
+- Impact : le rendu Copier garde le meme contrat de lock que le repo dogfood.
+- Validation portée par `quality/index-lock-contract`.

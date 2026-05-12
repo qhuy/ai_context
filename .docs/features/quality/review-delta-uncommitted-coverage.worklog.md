@@ -112,3 +112,9 @@
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
+## 2026-05-12 — impact partagé contrat lock index
+
+- Fichiers/surfaces : `.ai/scripts/_lib.sh`, `template/.ai/scripts/_lib.sh.jinja`.
+- Contexte : `quality/index-lock-contract` modifie uniquement le helper `with_index_lock` partage.
+- Impact : aucun changement du calcul de delta ; le helper commun ne lance plus de commande protegee sans verrou apres timeout.
+- Validation portée par `quality/index-lock-contract`.

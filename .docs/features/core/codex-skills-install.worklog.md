@@ -98,3 +98,9 @@ feat(core): installer les skills Codex par défaut
 - Impact Codex : `.agents/skills/aic-frame/*` et `template/.agents/skills/aic-frame/*` alignés sur le cadrage durable référençable.
 - Garde-fou maintenu : les wrappers Codex restent intentionnels ; aucune création de feature sans confirmation humaine.
 - Validation : `check-dogfood-drift`, `check-features`, `check-feature-docs workflow/aic-frame-external-reference`, smoke sur copie Git propre.
+## 2026-05-12 — impact partagé test lock index
+
+- Fichiers/surfaces : `tests/smoke-test.sh`.
+- Contexte : `quality/index-lock-contract` renforce le smoke test global.
+- Impact : aucun changement des skills Codex ; la suite de validation couvre le lock d'index.
+- Validation portée par `quality/index-lock-contract`.

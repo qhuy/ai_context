@@ -514,15 +514,14 @@ read_config() {
 # Lock basé sur mkdir (atomique, portable — pas de flock sur macOS par défaut).
 # Usage : with_index_lock bash build-feature-index.sh --write
 with_index_lock() {
-  local lock_dir="${AI_CONTEXT_LOCK_DIR:-/tmp/.ai-context-$USER-$$-lock}"
-  lock_dir="${AI_CONTEXT_LOCK_DIR:-/tmp/.ai-context-$(id -u 2>/dev/null || echo user)-index-lock}"
+  local lock_dir="${AI_CONTEXT_LOCK_DIR:-/tmp/.ai-context-$(id -u 2>/dev/null || echo user)-index-lock}"
   local tries=0
   local max_tries=30  # 3s max (30 × 0.1s)
   while ! mkdir "$lock_dir" 2>/dev/null; do
     tries=$((tries + 1))
     if [[ $tries -ge $max_tries ]]; then
-      log_debug "lock timeout sur $lock_dir, on procède sans"
-      break
+      log_debug "lock timeout sur $lock_dir"
+      return 75
     fi
     sleep 0.1
   done

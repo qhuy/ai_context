@@ -138,3 +138,9 @@
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
+## 2026-05-12 — impact partagé contrat lock index
+
+- Fichiers/surfaces : `.ai/scripts/_lib.sh`, `template/.ai/scripts/_lib.sh.jinja`.
+- Contexte : `quality/index-lock-contract` modifie uniquement `with_index_lock`, helper partage dans `_lib.sh`.
+- Impact : aucun changement du matching/ranking ; le lock d'index echoue proprement au timeout.
+- Validation portée par `quality/index-lock-contract`.

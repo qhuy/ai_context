@@ -45,3 +45,9 @@
 ## 2026-05-08 — freshness
 - Impact indirect : nettoyage drift README runtime/template + note mainteneur PROJECT_STATE (driver core/dogfood-runtime-sync).
 - Aucun changement de contrat propre a cette feature.
+## 2026-05-12 — impact partagé test lock index
+
+- Fichiers/surfaces : `tests/smoke-test.sh`.
+- Contexte : `quality/index-lock-contract` renforce la suite smoke commune.
+- Impact : aucun changement du portfolio produit ; validation commune etendue au lock d'index.
+- Validation portée par `quality/index-lock-contract`.
