@@ -247,3 +247,13 @@
 - Contexte : `quality/index-lock-contract` aligne le template Copier sur le runtime `_lib.sh`.
 - Impact : le rendu Copier garde le meme contrat de lock que le repo dogfood.
 - Validation portée par `quality/index-lock-contract`.
+
+## 2026-05-12 — documentation variables runtime
+
+- Fichiers/surfaces : `docs/variables.md`.
+- Contexte : l'item AI Debate `0013/Q2` demande de distinguer les questions Copier des variables runtime `AI_CONTEXT_*`.
+- Documentation :
+  - ajout d'une separation explicite entre variables Copier et overrides runtime ;
+  - inventaire des variables `AI_CONTEXT_*` exposees par `.ai/scripts/` et les templates correspondants ;
+  - precision des valeurs par defaut, surfaces de lecture et effets.
+- Validation portée par les checks documentaires de `core/template-engine`.
