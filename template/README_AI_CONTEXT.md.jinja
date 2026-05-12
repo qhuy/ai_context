@@ -22,6 +22,7 @@ Ce projet a été scaffoldé depuis le template [`ai_context`](https://github.co
    ```bash
    bash .ai/scripts/aic.sh frame "première tâche"
    ```
+   Cette commande donne un bootstrap de contexte. Pour un cadrage critique ou durable, utiliser le skill `/aic-frame`.
 
 ## Agents activés
 
@@ -91,7 +92,7 @@ bash .ai/scripts/aic.sh template-diff
 
 | Intention | Commande |
 |---|---|
-| Cadrer avant action | Claude : `/aic-frame` ; CLI : `bash .ai/scripts/aic.sh frame "<objectif>"` |
+| Cadrer avant action | Claude : `/aic-frame` ; CLI : `bash .ai/scripts/aic.sh frame "<objectif>"` pour bootstrap de contexte |
 | Voir où j'en suis | `bash .ai/scripts/aic.sh status` |
 | Diagnostiquer un blocage | Claude : `/aic-diagnose` ; CLI : `bash .ai/scripts/aic.sh diagnose "<symptôme>"` |
 | Préparer une édition avec Codex | `bash .ai/scripts/aic.sh document-feature <path>` |
@@ -105,7 +106,7 @@ bash .ai/scripts/aic.sh template-diff
 | Tracer les initiatives produit | `bash .ai/scripts/aic.sh product-status` puis `bash .ai/scripts/aic.sh product-portfolio` |
 | Vérifier avant commit | `bash .ai/scripts/aic.sh doctor` puis `bash .ai/scripts/aic.sh check` |
 
-Claude reçoit le contexte feature automatiquement via hooks. Codex et les autres agents peuvent cadrer avec `frame`, obtenir le même contexte juste-à-temps avec `document-feature <path>` avant d'éditer, puis vérifier la sortie avec `document-feature` et `ship`.
+Claude reçoit le contexte feature automatiquement via hooks. Codex et les autres agents peuvent obtenir un bootstrap avec `frame`, obtenir le même contexte juste-à-temps avec `document-feature <path>` avant d'éditer, puis vérifier la sortie avec `document-feature` et `ship`. Pour un cadrage fiable, utiliser le skill `aic-frame`.
 
 ## Contrats avancés
 

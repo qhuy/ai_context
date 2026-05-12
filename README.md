@@ -80,6 +80,8 @@ bash .ai/scripts/check-feature-docs.sh
 bash .ai/scripts/aic.sh frame "première tâche"
 ```
 
+`aic.sh frame` donne un bootstrap de contexte. Pour un cadrage critique ou durable, utiliser le skill `/aic-frame`.
+
 Dans Claude Code, lance ensuite `/hooks` et active les hooks proposés si tu veux
 l'injection de contexte automatique à chaque tour.
 
@@ -89,7 +91,7 @@ La surface utilisateur canonique est `aic`.
 
 | Besoin | Claude | Codex / terminal |
 |---|---|---|
-| Cadrer avant d'écrire | `/aic-frame` | `bash .ai/scripts/aic.sh frame "<objectif>"` |
+| Cadrer avant d'écrire | `/aic-frame` | `bash .ai/scripts/aic.sh frame "<objectif>"` pour bootstrap |
 | Savoir où reprendre | `/aic-status` | `bash .ai/scripts/aic.sh status` |
 | Diagnostiquer un blocage | `/aic-diagnose` | `bash .ai/scripts/aic.sh diagnose "<symptôme>"` |
 | Charger le contexte d'un fichier | `/aic-document-feature` | `bash .ai/scripts/aic.sh document-feature <path>` |

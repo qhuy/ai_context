@@ -25,7 +25,12 @@ CLI aic — surface canonique alignée avec les skills aic-*.
 
 Commandes utilisateur :
   frame "<objectif>"
-               cadrage avant action : scope, docs à lire, plan, validation
+               bootstrap de contexte : scope probable, docs à lire, feature candidates
+               Ne remplace pas le skill aic-frame pour un cadrage critique.
+  frame-bootstrap "<objectif>"
+               alias explicite de frame
+  frame-context "<objectif>"
+               alias explicite de frame
   status       état actionnable : features, delta, hooks, checks, prochaine action
   diagnose ["symptôme"]
                diagnostic court du goulot probable et prochaine action
@@ -261,7 +266,11 @@ run_frame() {
   fi
 
   cat <<EOF
-## AIC Frame
+## AIC Frame Bootstrap
+
+Important :
+- Cette sortie est un bootstrap de contexte, pas un cadrage critique complet.
+- Pour un cadrage fiable, utiliser le skill \`aic-frame\`, qui déclare un niveau \`low|standard|high\`, gère les incertitudes et peut produire un \`execution_ref\`.
 
 Objectif :
 - $objective
@@ -309,7 +318,9 @@ Validation :
 - Doc impact : fiche feature \`$docs_root/features/$doc_feature_scope/<id>.md\` si comportement modifié ; $product_line
 
 Prochaine action minimale :
-- Si le cadrage est clair, créer ou mettre à jour la fiche feature ; sinon lancer \`bash .ai/scripts/aic.sh diagnose "$objective"\`.
+- Si le changement est simple et clair, créer ou mettre à jour la fiche feature.
+- Si le cadrage doit être fiable ou durable, lancer le skill \`aic-frame\`.
+- Si le vrai blocage est incertain, lancer \`bash .ai/scripts/aic.sh diagnose "$objective"\`.
 EOF
 }
 
@@ -841,7 +852,7 @@ esac
 shift
 
 case "$cmd" in
-  frame)      run_frame "$@" ;;
+  frame|frame-bootstrap|frame-context) run_frame "$@" ;;
   status)     run_status "$@" ;;
   diagnose)   run_diagnose "$@" ;;
   document-feature) run_document_feature "$@" ;;

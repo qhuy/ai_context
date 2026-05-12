@@ -1204,6 +1204,16 @@ for s in aic-quality-gate aic-project-guardrails; do
   fi
 done
 echo "  ✓ skills Claude publics + skills Codex + 9 workflows internes présents"
+
+if [[ ! -f "$OUT/.docs/frames/0000-template.md" ]]; then
+  echo "  ✗ template de cadrage durable absent"
+  exit 1
+fi
+if ! grep -q "AIC Frame Bootstrap" "$OUT/.ai/scripts/aic.sh"; then
+  echo "  ✗ aic.sh frame ne déclare pas le bootstrap"
+  exit 1
+fi
+echo "  ✓ template frames + bootstrap CLI présents"
 # Lean context policy
 if [[ ! -f "$OUT/.ai/context-ignore.md" ]]; then
   echo "  ✗ .ai/context-ignore.md absent"

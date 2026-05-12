@@ -7,7 +7,7 @@
 ## INPUT
 
 - Intention libre : "je veux ajouter X", "améliorer Y", "prépare la feature Z".
-- Optionnel : scope, feature existante, contrainte métier/technique, deadline, besoin de sortie durable.
+- Optionnel : scope, feature existante, contrainte métier/technique, deadline, besoin de sortie durable, niveau demandé `low|standard|high`.
 - Si l'intention est trop vague : poser toutes les questions nécessaires au cadrage, limitées aux décisions bloquantes. Les grouper par thème, séparer `Bloquant maintenant` de `À valider plus tard`, et ne pas produire de plan tant que les bloquantes ne sont pas résolues.
 
 ## CONTEXT LOADING
@@ -24,6 +24,25 @@ On-demand seulement :
 - `.ai/agent/posture.md`, `.ai/agent/initiative-contract.md`, `.ai/agent/response-style.md` seulement si la demande porte explicitement sur posture, diagnostic ou style.
 
 Ne pas précharger le reste.
+
+## NIVEAU DE CADRAGE
+
+Choisir automatiquement un niveau `low | standard | high`, sauf override humain explicite. Le niveau doit être visible et justifié dans la sortie.
+
+Déclencheurs :
+
+- `low` : demande locale, faible risque, sans contrat durable ni reprise externe.
+- `standard` : défaut pour une feature ou une évolution de workflow non critique.
+- `high` : contrat agentique, workflow, runtime/template, CI, migration, multi-agent, reprise externe, AI Debate ou `execution_ref`.
+
+Signaux à inspecter :
+
+- Signal A — déclaration utilisateur : cadrage durable, reprise externe, AI Debate, `execution_ref`, plan d'action, décision d'architecture, migration, compatibilité, refonte de workflow ou skill.
+- Signal B — détection lexicale : `skill`, `workflow`, `hook`, `quality gate`, `contrat`, `template`, `Claude`, `Codex`, `agent`, `orchestrateur`, `MCP`, `ADR`, `handoff`, `cross-scope`, `migration`, `schema`, `format`, `runtime`.
+- Signal C — inspection ciblée : au plus deux familles de chemins parmi `.agents/skills/<nom>/`, `.claude/skills/<nom>/`, `.ai/workflows/<nom>.md`, `.ai/scripts/<nom>.sh`, `.docs/features/<scope>/<id>.md`, `template/.agents/skills/<nom>/`, `template/.claude/skills/<nom>/`.
+
+Si le signal lexical est seul, confirmer par une justification d'une ligne pour éviter les faux positifs.
+Si l'inspection révèle un contrat agentique, un format durable, un script partagé ou une surface template/runtime, passer `high`.
 
 ## PHASES
 
@@ -52,6 +71,17 @@ Séparer explicitement :
 
 Marquer `À valider` toute inconnue bloquante. Ne pas l'enterrer en hypothèse.
 
+Pour `standard` et `high`, classer les incertitudes :
+
+| Catégorie | Règle |
+|---|---|
+| Bloquant maintenant | empêche `done`, exige question, diagnostic ou décision |
+| Hypothèse de travail | autorisée si elle ne change probablement pas scope/route/DONE/validation |
+| Risque accepté | conséquence écrite + validation prévue |
+| À valider plus tard | attaché à une étape ou un check précis |
+
+Une inconnue ne peut pas rester une hypothèse si elle a une probabilité crédible de changer le scope, la route, le DONE ou la validation, ou si son impact serait majeur même à faible probabilité.
+
 ### 4. Préconisations et routage
 
 Fournir des préconisations priorisées et une décision unique :
@@ -67,12 +97,18 @@ Fournir des préconisations priorisées et une décision unique :
 
 Si la suite est actionnable, produire 3 à 7 étapes vérifiables, les critères d'acceptance, les checks prévus et l'impact documentaire.
 
+Compléments obligatoires par niveau :
+
+- `low` : problème réel, non-objectifs, scope primaire, route unique, prochaine action minimale.
+- `standard` : impacts probables, critères d'acceptation testables, validations prévues, risques et inconnues, proposition `scope/id`, `depends_on`, `touches` si `route=feature`.
+- `high` : surfaces probables, contrats touchés, compatibilité Claude/Codex/templates/downstream, scénario nominal, au moins deux cas limites, stratégie d'artefact durable, checks ciblés, décision explicite `done` vs `blocked`.
+
 ### 6. Sortie durable
 
 Si l'utilisateur demande `execution_ref`, AI Debate, orchestrateur externe, reprise durable ou plan externe :
 
 - créer ou mettre à jour un artefact Markdown repo-local sous `.docs/frames/<YYYY-MM-DD>-<slug>.md` ;
-- y mettre le même cadrage, plus `status`, `route`, `evidence`, `next_hint` ;
+- y mettre le même cadrage, plus `frame_id`, `status`, `scope_probable`, `route`, `level`, `evidence`, `next_hint` ;
 - retourner `execution_ref: .docs/frames/<...>.md`.
 
 Sinon, répondre en conversation et indiquer `execution_ref: non créé`. Ne pas importer de workflow externe.
@@ -89,6 +125,9 @@ Bloqué si : information indispensable absente, routes concurrentes sans arbitra
 ## Cadrage
 
 Statut : done | blocked
+Niveau de cadrage : low | standard | high
+Justification du niveau :
+- ...
 execution_ref : <path | non créé>
 
 Objectif :
@@ -100,8 +139,22 @@ Challenge IA :
 Analyse technique approfondie :
 - ...
 
+Scénario nominal :
+- ...
+
+Cas limites :
+- ...
+
 Impacts :
 - ...
+
+Incertitudes :
+| Catégorie | Point | Décision |
+|---|---|---|
+| Bloquant maintenant | ... | ... |
+| Hypothèse de travail | ... | ... |
+| Risque accepté | ... | ... |
+| À valider plus tard | ... | ... |
 
 Aspects non couverts / à couvrir :
 - ...

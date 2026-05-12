@@ -17,3 +17,13 @@
 ## 2026-05-11 — questions de cadrage
 - Correction post-review : une intention trop vague doit déclencher toutes les questions nécessaires au cadrage, pas une seule question bloquante.
 - Les questions sont bornées aux décisions utiles, groupées par thème et séparées entre `Bloquant maintenant` et `À valider plus tard`.
+
+## 2026-05-12 — arbitrage AI Debate 0015 appliqué
+- Décision humaine : validation du cahier des charges et du plan A1-A5.
+- Ajout du cadrage adaptatif automatique `low|standard|high`, avec justification visible et override humain explicite.
+- Ajout de la table d'incertitudes pour distinguer blocage immédiat, hypothèse de travail, risque accepté et validation différée.
+- Création du template durable `.docs/frames/0000-template.md` et de sa version Copier.
+- Vérification du schéma : `external_refs.frame` est déjà autorisé par `.ai/schema/feature.schema.json`.
+- Repositionnement de `aic.sh frame` comme bootstrap de contexte, avec alias explicites `frame-bootstrap` et `frame-context`.
+- Documentation utilisateur clarifiée dans `README.md`, `README_AI_CONTEXT.md` et le template README.
+- Validations PASS : `bash -n .ai/scripts/aic.sh`, `bash -n template/.ai/scripts/aic.sh.jinja`, `bash .ai/scripts/aic.sh frame "test cadrage"`, `check-features`, `check-feature-docs --strict workflow/aic-frame-external-reference`, `check-dogfood-drift`, `check-agent-config`, `check-ai-references`, `check-feature-coverage`, `check-shims`, `measure-context-size`, `tests/smoke-test.sh`.
