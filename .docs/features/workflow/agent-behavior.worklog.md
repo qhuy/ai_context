@@ -25,3 +25,12 @@
 - Impact indirect : `copier.yml` mis à jour pendant le durcissement post-cross-check (round 4 workflow/intentional-skills).
 - Aucun changement sur la posture agent ni le Pack A.
 - Validation associée : `check-feature-freshness.sh` (staged) PASS attendu.
+## 2026-05-12 — conventions commit et doc.level
+
+- Fichiers/surfaces : `.ai/index.md`, `template/.ai/index.md.jinja`.
+- Contexte : l'item AI Debate `0013/Q3` demande une pedagogie explicite sans modifier la gate `commit-msg`.
+- Documentation :
+  - arbre de decision pour `feat:`, `fix:`, `refactor:`, `chore:` et `docs:` ;
+  - usage de `doc.level=brief|standard|full` selon risque et durabilite du contrat.
+- Impact : comportement agentique clarifie dans l'entrypoint lean ; aucun changement runtime.
+- Validation portée par les checks Q3.

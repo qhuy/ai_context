@@ -51,3 +51,10 @@
 - Contexte : `quality/index-lock-contract` renforce la suite smoke commune.
 - Impact : aucun changement du portfolio produit ; validation commune etendue au lock d'index.
 - Validation portée par `quality/index-lock-contract`.
+
+## 2026-05-12 — impact partagé conventions commit
+
+- Fichiers/surfaces : `.ai/index.md`, `template/.ai/index.md.jinja`.
+- Contexte : l'item AI Debate `0013/Q3` documente les conventions de type de commit et de niveau documentaire.
+- Impact : aucun changement du product loop ; l'index precise seulement comment choisir entre feature, correction, maintenance et documentation.
+- Validation portée par les checks Q3.

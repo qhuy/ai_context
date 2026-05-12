@@ -96,3 +96,10 @@
 - Contexte : `quality/index-lock-contract` ajoute une assertion smoke sans modifier le comportement project overlay.
 - Impact : aucun changement fonctionnel du project overlay.
 - Validation portée par `quality/index-lock-contract`.
+
+## 2026-05-12 — impact partagé conventions commit
+
+- Fichiers/surfaces : `.ai/index.md`, `template/.ai/index.md.jinja`.
+- Contexte : l'item AI Debate `0013/Q3` ajoute un arbre de décision compact pour `feat:`, `fix:`, `refactor:`, `chore:`, `docs:` et `doc.level`.
+- Impact : le chargement de l'overlay projet reste inchangé ; l'index expose seulement une règle de décision agentique supplémentaire.
+- Validation portée par les checks Q3.
