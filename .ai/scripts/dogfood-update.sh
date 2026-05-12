@@ -96,6 +96,7 @@ run_rsync "$out/AGENTS.md" "AGENTS.md"
 run_rsync "$out/CLAUDE.md" "CLAUDE.md"
 run_rsync "$out/README_AI_CONTEXT.md" "README_AI_CONTEXT.md"
 run_rsync "$out/.docs/FEATURE_TEMPLATE.md" ".docs/FEATURE_TEMPLATE.md"
+run_rsync "$out/.docs/frames/" ".docs/frames/"
 
 cat <<'NOTE'
 

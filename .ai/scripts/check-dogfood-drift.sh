@@ -109,6 +109,7 @@ compare_file "AGENTS.md" "$out/AGENTS.md" "AGENTS.md"
 compare_file "CLAUDE.md" "$out/CLAUDE.md" "CLAUDE.md"
 compare_file "README_AI_CONTEXT.md" "$out/README_AI_CONTEXT.md" "README_AI_CONTEXT.md"
 compare_file ".docs/FEATURE_TEMPLATE.md" "$out/.docs/FEATURE_TEMPLATE.md" ".docs/FEATURE_TEMPLATE.md"
+compare_tree ".docs/frames" "$out/.docs/frames" ".docs/frames"
 
 echo
 echo "source-only ignored:"

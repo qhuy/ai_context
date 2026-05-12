@@ -28,6 +28,19 @@ if ! echo "$out" | grep -q "extra-runtime: .ai/scripts/stale-runtime.sh"; then
 fi
 
 rm .ai/scripts/stale-runtime.sh
+
+cp .docs/frames/0000-template.md "$tmp/frame-template.bak"
+printf '\n# local drift\n' >> .docs/frames/0000-template.md
+out="$(bash .ai/scripts/check-dogfood-drift.sh 2>&1 || true)"
+
+if ! echo "$out" | grep -q "drift: .docs/frames/0000-template.md"; then
+  echo "✗ check-dogfood-drift should detect frame template drift"
+  echo "$out"
+  exit 1
+fi
+
+cp "$tmp/frame-template.bak" .docs/frames/0000-template.md
+
 if ! bash .ai/scripts/check-dogfood-drift.sh >/dev/null; then
   echo "✗ check-dogfood-drift should pass after removing the extra runtime file"
   exit 1

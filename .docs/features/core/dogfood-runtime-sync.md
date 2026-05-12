@@ -12,6 +12,7 @@ touches:
   - .claude/settings.json
   - .claude/skills/**
   - .githooks/**
+  - .docs/frames/**
   - tests/unit/test-dogfood-drift-extra.sh
   - AGENTS.md
   - CLAUDE.md

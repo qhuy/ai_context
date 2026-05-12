@@ -180,3 +180,8 @@
 - Impact indirect : synchronisation dogfood runtime/template des nouveaux contrats workflow, du check `check-agent-config.sh`, du branchement `doctor`, de la quality gate et des workflows CI.
 - HANDOFF : changements `workflow` et `quality` propages dans `template/` via le scope `core`.
 - Validation : `check-dogfood-drift.sh`, `doctor` et smoke-test PASS avant revue finale.
+
+## 2026-05-12 — frames dogfood
+- Impact direct : `.docs/frames/**` rejoint les surfaces synchronisees et comparees par le dogfood runtime.
+- Test : `tests/unit/test-dogfood-drift-extra.sh` detecte maintenant un drift sur `.docs/frames/0000-template.md`.
+- Validation prévue : test unitaire dogfood, `check-dogfood-drift`, `check-shims`, `check-features`.
