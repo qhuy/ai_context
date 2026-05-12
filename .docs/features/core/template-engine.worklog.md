@@ -241,6 +241,7 @@
 ## 2026-05-12 — variables et README template
 - Impact : `docs/variables.md` et `template/README_AI_CONTEXT.md.jinja` alignent la documentation des variables et le rendu README.
 - Validation : `check-dogfood-drift.sh` PASS.
+
 ## 2026-05-12 — impact partagé contrat lock index
 
 - Fichiers/surfaces : `template/.ai/scripts/_lib.sh.jinja`.
@@ -257,8 +258,15 @@
   - inventaire des variables `AI_CONTEXT_*` exposees par `.ai/scripts/` et les templates correspondants ;
   - precision des valeurs par defaut, surfaces de lecture et effets.
 - Validation portée par les checks documentaires de `core/template-engine`.
+
 ## 2026-05-12 — impact Q4 régressions ciblées
 
 - Surface : `template/.ai/scripts/check-commit-features.sh.jinja`.
 - Impact : parite template/runtime appliquee pour le parsing heredoc du guard commit.
 - Validation : `bash .ai/scripts/check-dogfood-drift.sh` PASS.
+
+## 2026-05-12 — HANDOFF workflow/quality → core
+- HANDOFF reçu : `workflow/subagent-contract`, `workflow/codex-hooks-parity`, `workflow/mcp-policy` et `quality/agent-config-validation`.
+- Impact template : ajout des workflows `subagent-contract`, `codex-hooks-parity`, `mcp-policy`, miroir de `.ai/rules/workflow.md`, ajout de `template/.ai/scripts/check-agent-config.sh.jinja`, update quality gate, doctor, CI et `README_AI_CONTEXT`.
+- Décision : aucune nouvelle variable Copier ; aucun changement Pack A ; les hooks Codex restent opt-in et non générés par défaut.
+- Validation : `check-dogfood-drift.sh` PASS ; `tests/smoke-test.sh` PASS.

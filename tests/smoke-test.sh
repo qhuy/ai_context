@@ -58,6 +58,9 @@ echo
 
 echo "[0g/28] tests unitaires (régressions ciblées Q4)"
 bash tests/unit/test-targeted-regressions.sh
+
+echo "[0h/28] tests unitaires (agent config)"
+bash tests/unit/test-check-agent-config.sh
 echo
 
 echo "[1/28] copier copy (profil par défaut)"

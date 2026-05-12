@@ -29,3 +29,9 @@
   - `git diff --check` PASS.
 - Résultat : Q4 couvre les regressions ciblees, corrige le parsing heredoc du guard commit et documente explicitement le support macOS/Linux Bash.
 - Commit suggere : `feat(quality): couvrir les regressions ciblees`.
+
+## 2026-05-12 — merge veille Claude/Codex
+
+- Surfaces : `tests/smoke-test.sh`, `tests/unit/test-check-agent-config.sh`.
+- Impact : resolution de merge conservant la suite Q4 et ajoutant le test agent-config sans modifier les assertions Q4.
+- Validation : `tests/unit/test-targeted-regressions.sh`, `tests/unit/test-check-agent-config.sh` et smoke-test relances avant push main.

@@ -89,14 +89,21 @@
 
 ## 2026-05-07 — freshness
 - Impact indirect : ajout d'un nouveau test unit autonome `tests/unit/test-stop-hook-idempotence.sh` (livraison Phase 2 #5). Aucune modif `tests/smoke-test.sh`.
+
 ## 2026-05-12 — impact partagé contrat lock index
 
 - Fichiers/surfaces : `tests/smoke-test.sh`.
 - Contexte : `quality/index-lock-contract` ajoute un cas `[9b/28]` prouvant qu'un timeout de lock n'execute pas la commande protegee.
 - Impact : le smoke test couvre explicitement la regression du fallback sans verrou.
 - Validation portée par `quality/index-lock-contract`.
+
 ## 2026-05-12 — impact Q4 régressions ciblées
 
 - Surfaces : `tests/smoke-test.sh`, `tests/unit/test-targeted-regressions.sh`.
 - Impact : ajout d'une suite unitaire ciblee branchee dans le smoke pour isoler les regressions Q4 avant le parcours bout-en-bout.
 - Validation : `bash tests/unit/test-targeted-regressions.sh` PASS ; `bash tests/smoke-test.sh` PASS.
+
+## 2026-05-12 — agent-config unit dans smoke
+- Impact direct : `tests/smoke-test.sh` lance désormais `tests/unit/test-check-agent-config.sh` en étape `[0h/28]`.
+- Changement porté par `quality/agent-config-validation`.
+- Validation : `tests/smoke-test.sh` PASS.

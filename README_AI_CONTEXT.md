@@ -101,9 +101,16 @@ bash .ai/scripts/aic.sh template-diff
 
 Claude reçoit le contexte feature automatiquement via hooks. Codex et les autres agents peuvent cadrer avec `frame`, obtenir le même contexte juste-à-temps avec `document-feature <path>` avant d'éditer, puis vérifier la sortie avec `document-feature` et `ship`.
 
+## Contrats avancés
+
+- Subagents : utiliser `.ai/workflows/subagent-contract.md` avant toute délégation parallèle. Un `explorer` reste lecture seule ; un `worker` reçoit un write-set explicite et disjoint.
+- Hooks Codex : `.ai/workflows/codex-hooks-parity.md` décrit un pilote opt-in, déterministe et non LLM. Les hooks Git restent la garantie stable.
+- MCP : `.ai/workflows/mcp-policy.md` garde MCP opt-in, avec allowlist explicite, pas de secrets et fallback sans MCP.
+
 ## Checks
 
 - `bash .ai/scripts/check-shims.sh` — garde-fou structure shims.
+- `bash .ai/scripts/check-agent-config.sh` — validation non destructive des configs Claude/Codex et scripts référencés.
 - `bash .ai/scripts/check-features.sh` — maillage feature (frontmatter + scope + depends_on).
 - `bash .ai/scripts/check-feature-docs.sh` — sections "bible feature" ; utiliser `--strict <scope/id>` avant DONE.
 - `bash .ai/scripts/check-product-links.sh` — liens `product.initiative` + initiatives product.

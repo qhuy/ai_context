@@ -29,3 +29,8 @@
 - Fichiers modifiés :
   - CHANGELOG.md
   - PROJECT_STATE.md
+
+## 2026-05-12 — veille Claude/Codex
+- Impact direct : `doctor` execute maintenant le check non destructif `check-agent-config.sh` avant les checks de references.
+- Parite template : `template/.ai/scripts/doctor.sh.jinja` alignee.
+- Validation : `bash .ai/scripts/doctor.sh` PASS.

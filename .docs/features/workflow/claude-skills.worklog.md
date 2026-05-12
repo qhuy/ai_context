@@ -36,3 +36,8 @@
 - Impact Claude : `/aic-frame` precise le challenge IA, les questions de cadrage, le routage et la sortie durable `execution_ref`.
 - Garde-fou : le skill reste sans code et sans creation de feature avant confirmation humaine.
 - Validation : `check-dogfood-drift`, `check-features`, `check-feature-docs workflow/aic-frame-external-reference`, smoke sur copie Git propre.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : templates de workflows canoniques ajoutes pour les contrats subagents/hooks/MCP ; aucun nouveau skill Claude expose.
+- Les skills Claude existants restent des wrappers minces vers `.ai/workflows/**`.
+- Validation : `check-dogfood-drift`, `check-shims` et smoke-test PASS.

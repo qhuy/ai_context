@@ -19,8 +19,14 @@
 - Implementation : un `git log` par feature avec tous ses pathspecs `touches:` et cache timestamp pour les fiches/worklogs.
 - Parite : runtime dogfoode et template `.jinja` synchronises.
 - Validation : `check-feature-freshness.sh --warn` OK, `check-feature-freshness.sh --staged --warn` OK, test unitaire freshness OK.
+
 ## 2026-05-12 — impact Q4 régressions ciblées
 
 - Surfaces : `.ai/scripts/check-commit-features.sh`, `template/.ai/scripts/check-commit-features.sh.jinja`.
 - Impact : le guard de commit extrait d'abord les messages heredoc avant la capture generique `-m "..."`, afin de preserver la fraicheur documentaire sur les commits complexes.
 - Validation : `bash .ai/scripts/check-feature-docs.sh --strict quality/targeted-regression-coverage` PASS ; `bash tests/unit/test-targeted-regressions.sh` PASS.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : le workflow CI reste aligne avec la freshness staged stricte tout en ajoutant le check agent-config adjacent.
+- Aucun changement de logique `check-feature-freshness.sh`.
+- Validation : `check-feature-freshness.sh --staged --strict` relance avant commit.

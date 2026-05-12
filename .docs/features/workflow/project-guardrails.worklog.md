@@ -45,3 +45,8 @@
 ## 2026-05-08 — freshness
 - Impact indirect : nettoyage drift README runtime/template + note mainteneur PROJECT_STATE (driver core/dogfood-runtime-sync).
 - Aucun changement de contrat propre a cette feature.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : README runtime/template mentionnent les politiques MCP et subagents sans charger `.ai/guardrails.md` par defaut.
+- Aucun changement sur la procedure project-guardrails.
+- Validation : `check-shims`, `check-features` et smoke-test PASS.

@@ -111,3 +111,8 @@
 ## 2026-05-12 — README surface intentionnelle
 - Impact : `README_AI_CONTEXT.md` et son template restent coherents avec la surface intentionnelle `aic-frame/status/diagnose/document-feature/review/ship`.
 - Validation : `check-dogfood-drift.sh` PASS.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : ajout de workflows on-demand `subagent-contract`, `codex-hooks-parity` et `mcp-policy` sans modifier les wrappers de skills intentionnels.
+- Clarification README/runtime : ces contrats restent activables explicitement et compatibles multi-agent.
+- Validation : `check-shims`, `check-features`, strict docs des nouvelles fiches et smoke-test PASS.

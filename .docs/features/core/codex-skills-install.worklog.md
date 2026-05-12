@@ -98,14 +98,21 @@ feat(core): installer les skills Codex par défaut
 - Impact Codex : `.agents/skills/aic-frame/*` et `template/.agents/skills/aic-frame/*` alignés sur le cadrage durable référençable.
 - Garde-fou maintenu : les wrappers Codex restent intentionnels ; aucune création de feature sans confirmation humaine.
 - Validation : `check-dogfood-drift`, `check-features`, `check-feature-docs workflow/aic-frame-external-reference`, smoke sur copie Git propre.
+
 ## 2026-05-12 — impact partagé test lock index
 
 - Fichiers/surfaces : `tests/smoke-test.sh`.
 - Contexte : `quality/index-lock-contract` renforce le smoke test global.
 - Impact : aucun changement des skills Codex ; la suite de validation couvre le lock d'index.
 - Validation portée par `quality/index-lock-contract`.
+
 ## 2026-05-12 — impact Q4 régressions ciblées
 
 - Surface : `tests/smoke-test.sh`.
 - Impact : le smoke lance maintenant les tests unitaires Q4 avant les validations d'installation ; aucun changement des skills Codex.
 - Validation : `bash tests/smoke-test.sh` PASS.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : README et smoke-test restent compatibles avec les skills Codex existants pendant l'ajout des contrats multi-agent.
+- Aucun changement sur `.agents/skills/**` ni sur l'installation des skills Codex.
+- Validation : `check-shims`, `check-ai-references` et smoke-test PASS.

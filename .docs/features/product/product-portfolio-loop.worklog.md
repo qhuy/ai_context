@@ -45,6 +45,7 @@
 ## 2026-05-08 — freshness
 - Impact indirect : nettoyage drift README runtime/template + note mainteneur PROJECT_STATE (driver core/dogfood-runtime-sync).
 - Aucun changement de contrat propre a cette feature.
+
 ## 2026-05-12 — impact partagé test lock index
 
 - Fichiers/surfaces : `tests/smoke-test.sh`.
@@ -58,8 +59,14 @@
 - Contexte : l'item AI Debate `0013/Q3` documente les conventions de type de commit et de niveau documentaire.
 - Impact : aucun changement du product loop ; l'index precise seulement comment choisir entre feature, correction, maintenance et documentation.
 - Validation portée par les checks Q3.
+
 ## 2026-05-12 — impact Q4 régressions ciblées
 
 - Surface : `tests/smoke-test.sh`.
 - Impact : ajout d'une prevalidation Q4 dans le smoke global ; les assertions product portfolio existantes restent inchangées.
 - Validation : `bash tests/smoke-test.sh` PASS.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : README runtime/template et smoke-test restent compatibles avec la traceability product pendant l'ajout des contrats workflow/quality.
+- Aucun changement sur `product-status`, `product-portfolio`, `product-review` ni sur les contrats initiative/roadmap.
+- Validation : `check-features` et smoke-test PASS.

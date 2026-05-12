@@ -90,6 +90,7 @@
 ## 2026-05-08 — freshness
 - Impact indirect : nettoyage drift README runtime/template + note mainteneur PROJECT_STATE (driver core/dogfood-runtime-sync).
 - Aucun changement de contrat propre a cette feature.
+
 ## 2026-05-12 — impact partagé test lock index
 
 - Fichiers/surfaces : `tests/smoke-test.sh`.
@@ -103,8 +104,14 @@
 - Contexte : l'item AI Debate `0013/Q3` ajoute un arbre de décision compact pour `feat:`, `fix:`, `refactor:`, `chore:`, `docs:` et `doc.level`.
 - Impact : le chargement de l'overlay projet reste inchangé ; l'index expose seulement une règle de décision agentique supplémentaire.
 - Validation portée par les checks Q3.
+
 ## 2026-05-12 — impact Q4 régressions ciblées
 
 - Surfaces : `tests/smoke-test.sh`, `tests/unit/test-targeted-regressions.sh`.
 - Impact : le test cible Q4 cree des copies temporaires du projet pour isoler fallback, lock et rendu Copier ; le smoke l'execute comme prevalidation.
 - Validation : `bash tests/unit/test-targeted-regressions.sh` PASS ; `bash tests/smoke-test.sh` PASS.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : README/template et tests ajoutent le check agent-config sans modifier le contrat `.ai/project/index.md`.
+- Aucun chargement additionnel de l'overlay projet au demarrage.
+- Validation : `check-shims`, `check-features` et smoke-test PASS.

@@ -162,14 +162,21 @@
 ## 2026-05-12 — alignement README dogfood
 - Impact : `README_AI_CONTEXT.md` reste synchronise avec le rendu template apres retrait du drift local.
 - Validation : `check-dogfood-drift.sh` PASS.
+
 ## 2026-05-12 — impact partagé contrat lock index
 
 - Fichiers/surfaces : `.ai/scripts/_lib.sh`.
 - Contexte : `quality/index-lock-contract` corrige `with_index_lock` pour echouer explicitement au timeout au lieu d'executer sans verrou.
 - Impact : le runtime dogfood conserve une ecriture d'index protegee et verifiee par `check-dogfood-drift`.
 - Validation portée par `quality/index-lock-contract`.
+
 ## 2026-05-12 — impact Q4 régressions ciblées
 
 - Surface : `.ai/scripts/check-commit-features.sh`.
 - Impact : correction minimale du parsing heredoc revelee par la couverture ciblee Q4 ; le guard runtime reste aligne avec le template.
 - Validation : `bash .ai/scripts/check-dogfood-drift.sh` PASS.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : synchronisation dogfood runtime/template des nouveaux contrats workflow, du check `check-agent-config.sh`, du branchement `doctor`, de la quality gate et des workflows CI.
+- HANDOFF : changements `workflow` et `quality` propages dans `template/` via le scope `core`.
+- Validation : `check-dogfood-drift.sh`, `doctor` et smoke-test PASS avant revue finale.

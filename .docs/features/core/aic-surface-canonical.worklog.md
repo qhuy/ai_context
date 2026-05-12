@@ -51,14 +51,21 @@
 ## 2026-05-12 — alignement dogfood
 - Impact : `PROJECT_STATE.md`, `README_AI_CONTEXT.md` et `template/README_AI_CONTEXT.md.jinja` restent alignes avec la surface publique `aic-*`.
 - Validation : `check-dogfood-drift.sh` PASS.
+
 ## 2026-05-12 — impact partagé test lock index
 
 - Fichiers/surfaces : `tests/smoke-test.sh`.
 - Contexte : `quality/index-lock-contract` ajoute une assertion smoke sur le timeout de `with_index_lock`.
 - Impact : aucune evolution de surface AIC ; le smoke couvre une regression runtime supplementaire.
 - Validation portée par `quality/index-lock-contract`.
+
 ## 2026-05-12 — impact Q4 régressions ciblées
 
 - Surface : `tests/smoke-test.sh`.
 - Impact : ajout d'un appel aux tests unitaires de regressions Q4 dans le smoke, sans modifier la surface utilisateur `aic`.
 - Validation : `bash tests/smoke-test.sh` PASS.
+
+## 2026-05-12 — veille Claude/Codex
+- Impact indirect : README, README runtime/template et smoke-test exposent les contrats subagents/hooks/MCP sans changer la commande canonique `aic`.
+- Aucun alias legacy ou nouvelle surface CLI ajoute.
+- Validation : `check-ai-references`, `check-shims` et smoke-test PASS.
