@@ -31,6 +31,10 @@ cd "$repo_root"
 index_file=".ai/.feature-index.json"
 index_tmp=""
 config_file=".ai/config.yml"
+# Override projet drift-safe : `.ai/project/` est `_skip_if_exists` (copier) et
+# ignoré par check-dogfood-drift, donc un repo dont le code ne vit pas sous
+# src/app/lib peut adapter ses roots de couverture sans diverger du template.
+[[ -f ".ai/project/config.yml" ]] && config_file=".ai/project/config.yml"
 mode="${1:---warn}"
 
 # Zones de code à auditer. Ajuste selon ton repo.

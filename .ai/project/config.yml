@@ -1,0 +1,16 @@
+# Override de configuration projet — repo dogfood ai_context.
+#
+# Le code de ce repo est du Bash (`.ai/scripts/`, `tests/`), pas du src/app/lib.
+# Le `.ai/config.yml` par défaut (orienté projets consommateurs C#/React) scanne
+# donc 0 fichier ici. Cet override rend `check-feature-coverage` pertinent sur le
+# repo template, sans diverger du template :
+#   - `.ai/project/` est `_skip_if_exists` côté copier (jamais régénéré) ;
+#   - il est ignoré par `check-dogfood-drift` (pas de drift runtime/template).
+coverage:
+  roots:
+    - .ai/scripts
+    - tests
+  extensions:
+    - sh
+  exclude_dirs:
+    - node_modules

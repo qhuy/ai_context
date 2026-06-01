@@ -59,3 +59,15 @@
 - Fichiers modifiés :
   - .ai/scripts/review-delta.sh
   - template/.ai/scripts/review-delta.sh.jinja
+
+## 2026-06-01 17:38 — auto
+- Fichiers modifiés :
+  - .github/workflows/ai-context-check.yml
+  - CHANGELOG.md
+  - template/.github/workflows/ai-context-check.yml.jinja
+
+## 2026-06-01 — coverage : override projet drift-safe (audit U3)
+
+- `check-feature-coverage.sh` (+ `.jinja`) lit `.ai/project/config.yml` s'il existe, sinon `.ai/config.yml`. `.ai/project/` est `_skip_if_exists` (copier) et ignoré par `check-dogfood-drift` → un repo dont le code ne vit pas sous `src/app/lib` (ex. ce template Bash) peut adapter ses roots de couverture sans diverger du template. Bénéficie aussi aux projets consommateurs (override per-projet).
+- Repo dogfood : ajout de `.ai/project/config.yml` (roots `.ai/scripts`, `tests` ; ext `sh`). `check-feature-coverage` passe de **0 fichier scanné** (faux signal) à **50 scannés / 50 couverts / 0 orphelin**.
+- Validation : coverage 50/50, `check-dogfood-drift` PASS (parité + `.ai/project` ignoré), `check-shims`/`check-ai-references` PASS.
