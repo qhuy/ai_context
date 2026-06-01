@@ -20,9 +20,34 @@ progress:
 
 # CI guard
 
+## Résumé
+
+Deux workflows GitHub Actions rejouent en CI les validations critiques du framework (shims, mesh, tests de contrat, smoke du template) pour rattraper les contournements locaux des git hooks. C'est le filet d'enforcement quand `core.hooksPath` est désactivé ou `git commit --no-verify` utilisé.
+
 ## Objectif
 
 Rejouer en CI les validations critiques pour rattraper les contournements locaux (`git commit --no-verify`, hooks désactivés).
+
+## Périmètre
+
+### Inclus
+
+- Les trois workflows : `ai-context-check.yml` (source), `template-smoke-test.yml` (rendu Copier complet, source-only) et `template/.github/workflows/ai-context-check.yml.jinja` (CI livrée aux projets générés).
+- Matrice `ubuntu-latest` + `macos-latest`, installation jq/yq/shellcheck (+ copier pour le smoke).
+- Enchaînement des checks read-only et des tests unitaires de contrat.
+
+### Hors périmètre
+
+- La logique des checks eux-mêmes (portée par leurs features : `doctor`, `smoke-test`, `read-only-checks-contract`…).
+- L'enforcement local (couvert par `workflow/git-hooks`).
+- Le support Windows (best-effort, `continue-on-error`).
+
+## Invariants
+
+- Un check en échec bloque le merge si la protection de branche est active côté repo cible.
+- Le smoke-test complet ne s'exécute que dans le repo template, jamais chez les consommateurs.
+- `yq` reste épinglé (`v4.44.3`) et vérifié par sha256 ; aucune divergence non intentionnelle entre la CI source et la CI générée (`.jinja`).
+- Les workflows restent rapides et sans secret (lint/doc/tests déterministes).
 
 ## Comportement attendu
 
@@ -37,6 +62,20 @@ Rejouer en CI les validations critiques pour rattraper les contournements locaux
 
 - Échec bloque le merge si protection de branche activée côté repo cible.
 - Le smoke-test complet tourne dans le repo template uniquement, pas dans les projets scaffoldés.
+
+## Décisions
+
+- La CI est un **filet au-dessus** des git hooks (contournables via `--no-verify` ou `core.hooksPath` désactivé), pas un remplacement.
+- Le workflow généré reste **minimal** (pas de Python, pas de cache, matrice réduite) ; le smoke lourd dépendant de Copier reste **source-only**.
+- `check-feature-docs.sh` tourne en **`--warn`** : signale la dette doc sans bloquer les projets legacy.
+- Windows est **best-effort** (`continue-on-error`) : une régression Windows n'empêche pas le merge.
+
+## Validation
+
+- `copier copy` rend la CI générée sans erreur Jinja (couvert par le smoke-test).
+- Les checks enchaînés passent en local : `check-shims.sh`, `check-features.sh --no-write`, tests unitaires `tests/unit/*.sh`.
+- `check-dogfood-drift.sh` ignore `.github/workflows/**` (source-only) → l'évolution de la CI source ne déclenche pas de faux drift.
+- YAML valide pour les trois workflows.
 
 ## Cross-refs
 

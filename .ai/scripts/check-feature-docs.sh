@@ -140,7 +140,9 @@ section_has_content() {
 
 has_placeholder() {
   local file="$1"
-  grep -qiE 'TODO|TBD|à compléter|a completer|<[^>]+>|À renseigner|A renseigner' "$file"
+  # Ignore les spans de code inline (backticks) : la notation type/chemin comme
+  # `<scope>/<id>`, `Result<T>` ou `brief <path>` n'est PAS un placeholder à remplir.
+  sed 's/`[^`]*`//g' "$file" | grep -qiE 'TODO|TBD|à compléter|a completer|<[^>]+>|À renseigner|A renseigner'
 }
 
 validate_section() {

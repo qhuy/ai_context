@@ -22,9 +22,34 @@ progress:
 
 # Moteur de template copier
 
+## Résumé
+
+`copier.yml` + `template/` génèrent le contexte AI dans un projet cible : profils de scope, presets tech optionnels, shims conditionnels par agent, hooks/CI selon le mode d'adoption, et cycle `install → update` non destructif. C'est la surface d'industrialisation du framework.
+
 ## Objectif
 
 Industrialiser la génération du contexte AI dans n'importe quel projet via `copier copy gh:huyqdt/ai_context .`. Quatre profils (`minimal`, `backend`, `fullstack`, `custom`) déterminent les scopes générés.
+
+## Périmètre
+
+### Inclus
+
+- Questions et variables calculées de `copier.yml` (profils, agents, `tech_profile`, `adoption_mode`, `docs_root`).
+- Rendu de `template/**`, `_exclude` conditionnels (shims/règles/CI selon agents/scopes/mode), `_skip_if_exists` (`.ai/project/**`).
+- Messages `_message_after_copy` / `_message_after_update` et le cycle `copier update`.
+
+### Hors périmètre
+
+- La logique runtime des scripts rendus (portée par leurs features : `feature-mesh`, `feature-index-cache`, `ci-guard`…).
+- Les conventions métier des presets tech (génériques, non spécifiques à un projet).
+- La synchronisation dogfood du repo source (portée par `core/dogfood-runtime-sync`).
+
+## Invariants
+
+- `project_name` requis ; `_min_copier_version` impose Copier ≥ 9.
+- Le rendu est reproductible (`_envops.keep_trailing_newline`) et compatible Bash 3.2.
+- `scope_profile` dérive `scopes` de façon déterministe ; un agent/scope non sélectionné n'émet pas son shim/règle.
+- Le runtime généré reste aligné avec le repo source (garanti par `check-dogfood-drift`).
 
 ## Comportement attendu
 
@@ -40,6 +65,19 @@ Industrialiser la génération du contexte AI dans n'importe quel projet via `co
 - `docs_root` (default `.docs`) configure le dossier feature mesh.
 - `tech_profile` ∈ {generic, dotnet-clean-cqrs, react-next, fullstack-dotnet-react} → génère des règles stack optionnelles sans modifier les scopes métier.
 - `.ai/context-ignore.md` est rendu systématiquement pour guider la récupération de contexte Codex/on-demand.
+
+## Décisions
+
+- Quatre profils de scope + `agents` en multiselect plutôt qu'une matrice figée : couvre minimal→fullstack sans dupliquer les templates.
+- Presets `tech_profile` **optionnels** et additifs : ils ajoutent des règles stack sans modifier les scopes métier dérivés.
+- `adoption_mode` (`lite`/`standard`/`strict`) découple l'enforcement (hooks/CI) de la génération de contexte.
+- La CLI `aic.sh` est rendue sans logique métier propre (façade) pour garder une surface stable.
+
+## Validation
+
+- `tests/smoke-test.sh` : rendu Copier complet, profils, `tech_profile`, modes d'adoption, `docs_root=docs`.
+- `check-dogfood-drift.sh` : le repo source reste aligné sur le rendu minimal.
+- `copier copy` / `copier update --vcs-ref` validés (install + upgrade non destructif), `template-diff` pour prévisualiser.
 
 ## Cross-refs
 
