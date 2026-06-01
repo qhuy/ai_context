@@ -41,3 +41,7 @@
 - Impact indirect : templates de workflows canoniques ajoutes pour les contrats subagents/hooks/MCP ; aucun nouveau skill Claude expose.
 - Les skills Claude existants restent des wrappers minces vers `.ai/workflows/**`.
 - Validation : `check-dogfood-drift`, `check-shims` et smoke-test PASS.
+
+## 2026-06-02 00:27 — auto
+- Fichiers modifiés :
+  - template/.claude/skills/aic/SKILL.md.jinja

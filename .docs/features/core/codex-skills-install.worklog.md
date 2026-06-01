@@ -116,3 +116,8 @@ feat(core): installer les skills Codex par défaut
 - Impact indirect : README et smoke-test restent compatibles avec les skills Codex existants pendant l'ajout des contrats multi-agent.
 - Aucun changement sur `.agents/skills/**` ni sur l'installation des skills Codex.
 - Validation : `check-shims`, `check-ai-references` et smoke-test PASS.
+
+## 2026-06-02 00:27 — auto
+- Fichiers modifiés :
+  - .agents/skills/aic/SKILL.md
+  - template/.agents/skills/aic/SKILL.md.jinja

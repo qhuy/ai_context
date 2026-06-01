@@ -310,3 +310,8 @@
 - HANDOFF reçu depuis `quality/features-for-path-ranking-and-matcher-correctness`.
 - `template/.ai/scripts/_lib.sh.jinja` reprend le fast-path no-glob du runtime pour les projets générés.
 - Aucun nouveau paramètre Copier ; compat Bash 3.2 préservée.
+
+## 2026-06-02 00:27 — auto
+- Fichiers modifiés :
+  - template/.agents/skills/aic/SKILL.md.jinja
+  - template/.claude/skills/aic/SKILL.md.jinja

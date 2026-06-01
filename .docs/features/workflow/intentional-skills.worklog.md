@@ -120,3 +120,10 @@
 ## 2026-06-01 12:33 — auto
 - Fichiers modifiés :
   - copier.yml
+
+## 2026-06-02 00:27 — auto
+- Fichiers modifiés :
+  - .agents/skills/aic/SKILL.md
+  - .claude/skills/aic/SKILL.md
+  - template/.agents/skills/aic/SKILL.md.jinja
+  - template/.claude/skills/aic/SKILL.md.jinja

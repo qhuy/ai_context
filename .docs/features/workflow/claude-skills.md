@@ -14,7 +14,7 @@ progress:
   step: "skills Claude maintenus hors contexte Codex obligatoire"
   blockers: []
   resume_hint: "valider que les workflows internes restent accessibles sans être chargés par défaut"
-  updated: 2026-05-06
+  updated: 2026-06-02
 ---
 
 # Claude skills /aic*

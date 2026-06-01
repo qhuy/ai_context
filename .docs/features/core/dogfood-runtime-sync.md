@@ -24,7 +24,7 @@ progress:
   step: "runtime dogfoodé + frames locaux ignorés"
   blockers: []
   resume_hint: "vérifier check-shims, dogfood drift, measure-context-size et smoke-test complet"
-  updated: 2026-06-01
+  updated: 2026-06-02
 ---
 
 # Synchronisation dogfooding du runtime
