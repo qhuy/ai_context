@@ -14,3 +14,19 @@
 - Impact template : `template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja` conserve la règle de granularité pour les projets générés.
 - Changement porté par dogfood runtime sync.
 - Validation associée : `check-dogfood-drift.sh` PASS.
+## 2026-05-14 — HANDOFF quality/read-only-checks-contract
+
+- HANDOFF reçu depuis `quality/read-only-checks-contract`.
+- Besoin : exposer un mode non-mutant de `check-features.sh` pour que `doctor` et le quality gate puissent valider le mesh sans réécrire `.ai/.feature-index.json`.
+- Changement limité : ajout de `--no-write`, qui construit un index temporaire pour la détection des cycles mais ne touche pas le cache repo-local.
+- Le comportement historique sans option reste inchangé.
+
+## 2026-06-01 — convention d'ownership des fichiers de config partagés (audit U13)
+
+- Constat (audit unifié) : `copier.yml` était listé en `touches:` (bloquant freshness) par 10 features sur 4 scopes → toute édition d'un fichier de config partagé déclenchait une cascade documentaire cross-scope disproportionnée et forçait un commit multi-scope (violation « un scope primaire par tâche »).
+- Décision : un fichier de config partagé n'est *bloquant* (`touches:`) que pour les features de son scope d'appartenance naturel ; les features d'autres scopes ayant un intérêt secondaire le référencent en `touches_shared:` (visible dans `review-delta`, non bloquant pour `check-feature-freshness --staged`).
+- Application à `copier.yml` (config du moteur template → scope core) : reste `touches:` pour core/{template-engine, aic-surface-canonical, preset-ds-skeletons, project-overlay-stable} ; déplacé en `touches_shared:` pour product/product-portfolio-loop, quality/targeted-regression-coverage, workflow/{agent-behavior, conversational-skills, intentional-skills, project-guardrails}.
+- Effet : éditer `copier.yml` redevient une tâche mono-scope core ; la visibilité review est préservée. Débloque U10 (_min_copier_version) en mono-scope.
+- HANDOFF : édition du frontmatter de 6 fiches hors core (product/quality/workflow) = pure maintenance du contrat mesh, aucun changement de comportement de ces features. Confirmé par l'utilisateur (option « narrow touches d'abord »).
+- Suivi : appliquer la même convention à `_lib.sh` et autres configs partagées si la cascade se reproduit.
+- Validation : index rebuild → `copier.yml` bloquant sur 4 core uniquement ; `check-features --no-write` PASS.

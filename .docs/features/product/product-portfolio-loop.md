@@ -7,7 +7,6 @@ depends_on:
   - workflow/agent-behavior
   - core/feature-mesh
 touches:
-  - copier.yml
   - .ai/rules/product.md
   - template/.ai/rules/product.md.jinja
   - .ai/schema/feature.schema.json
@@ -26,6 +25,7 @@ touches:
   - template/.ai/scripts/product-review.sh.jinja
   - template/.ai/scripts/build-feature-index.sh.jinja
   - template/.ai/scripts/aic.sh.jinja
+  - tests/unit/test-product-reports-read-only.sh
   - .ai/index.md
   - template/.ai/index.md.jinja
   - .docs/FEATURE_TEMPLATE.md
@@ -34,6 +34,7 @@ touches:
   - template/README_AI_CONTEXT.md.jinja
   - tests/smoke-test.sh
 touches_shared:
+  - copier.yml
   - README.md
   - CHANGELOG.md
 product:
@@ -54,11 +55,11 @@ product:
     urgency: medium
     strategic_fit: high
 progress:
-  phase: implement
-  step: "traceability product préservée hors Pack A"
+  phase: review
+  step: "rapports product alignés et testés read-only"
   blockers: []
-  resume_hint: "valider que le product loop reste on-demand et que smoke/check-product-links passent"
-  updated: 2026-05-07
+  resume_hint: "relire le delta product et décider si le scoring portfolio doit être durci dans une feature dédiée"
+  updated: 2026-06-01
 ---
 
 # Product Traceability Loop
@@ -104,3 +105,4 @@ initiative product -> refs externes -> features dev liées -> evidence -> décis
 - 2026-05-04 : recadrage marché. Le scope product devient une couche de traceability/governance compatible BMAD, Spec Kit et tickets externes via `external_refs`, pas une roadmap autonome.
 - 2026-05-04 : lean Codex confirmé : la traceability product reste on-demand et n'augmente pas le Pack A ; le smoke continue de couvrir le rendu product sans imposer de chargement produit au démarrage.
 - 2026-05-04 : le nouveau template feature documente explicitement les décisions produit/fonctionnelles dans `Décisions`, `Périmètre`, `Validation` et les modules conditionnels. `external_refs` et les initiatives product restent des liens de traceability, pas des duplications de specs externes.
+- 2026-05-14 : alignement effectif du contrat read-only. `check-product-links`, `product-status`, `product-portfolio` et `product-review` consomment un index temporaire ou un cache existant, mais ne reconstruisent plus `.ai/.feature-index.json` implicitement.

@@ -6,7 +6,6 @@ status: active
 depends_on:
   - workflow/claude-skills
 touches:
-  - copier.yml
   - .ai/agent/**
   - .ai/index.md
   - .claude/skills/aic-diagnose/**
@@ -14,13 +13,14 @@ touches:
   - template/.ai/index.md.jinja
   - template/.claude/skills/aic-diagnose/**
 touches_shared:
+  - copier.yml
   - README.md
 progress:
   phase: implement
   step: "couche agent sortie du Pack A Codex"
   blockers: []
   resume_hint: "vérifier check-shims, measure-context-size et smoke-test après changement Pack A"
-  updated: 2026-05-04
+  updated: 2026-06-01
 ---
 
 # Couche comportementale agent légère

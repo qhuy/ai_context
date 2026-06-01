@@ -33,10 +33,10 @@ touches:
   - template/.agents/skills/aic-quality-gate/**
   - .ai/index.md
   - template/.ai/index.md.jinja
-  - copier.yml
   - template/README_AI_CONTEXT.md.jinja
   - README_AI_CONTEXT.md
 touches_shared:
+  - copier.yml
   - README.md
   - PROJECT_STATE.md
   - CHANGELOG.md
@@ -46,7 +46,7 @@ progress:
   step: "round 4 appliqué, validation PASS, prêt à commit"
   blockers: []
   resume_hint: "commit FR conventional puis attendre evidence DONE pour bumper phase=done"
-  updated: 2026-05-06
+  updated: 2026-06-01
 ---
 
 # Skills intentionnels

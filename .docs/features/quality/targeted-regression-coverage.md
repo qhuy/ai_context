@@ -14,8 +14,8 @@ touches:
   - .ai/scripts/check-dogfood-drift.sh
   - .ai/scripts/check-feature-docs.sh
   - .ai/scripts/check-feature-coverage.sh
-  - copier.yml
 touches_shared:
+  - copier.yml
   - .docs/features/quality/index-lock-contract.md
 product: {}
 external_refs:
@@ -34,7 +34,7 @@ progress:
   step: ""
   blockers: []
   resume_hint: "Feature cloturee le 2026-05-12."
-  updated: 2026-05-12
+  updated: 2026-06-01
 ---
 
 # Couverture ciblee des regressions critiques

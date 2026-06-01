@@ -9,16 +9,16 @@ depends_on:
   - core/feature-index-cache
 touches:
   - template/AGENTS.md.jinja
-  - copier.yml
   - template/.claude/skills/aic/**
 touches_shared:
+  - copier.yml
   - tests/smoke-test.sh
 progress:
   phase: implement
   step: "UX zéro skill quotidien alignée avec Pack A lean"
   blockers: []
   resume_hint: "valider que les shims restent minces et que check-shims bloque le bloat"
-  updated: 2026-05-04
+  updated: 2026-06-01
 ---
 
 # Auto-progression invisible (+ skill `/aic` en override)

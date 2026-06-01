@@ -13,15 +13,15 @@ touches:
   - template/.ai/workflows/project-guardrails.md.jinja
   - template/.ai/index.md.jinja
   - template/README_AI_CONTEXT.md.jinja
-  - copier.yml
 touches_shared:
+  - copier.yml
   - tests/smoke-test.sh
 progress:
   phase: implement
   step: "guardrails conservé hors Pack A"
   blockers: []
   resume_hint: "vérifier que project-guardrails reste on-demand dans index, workflow et smoke-test"
-  updated: 2026-05-04
+  updated: 2026-06-01
 ---
 
 # Procédure project-guardrails
