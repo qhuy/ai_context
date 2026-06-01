@@ -41,3 +41,10 @@
 ## 2026-06-01 12:33 — auto
 - Fichiers modifiés :
   - .github/workflows/ai-context-check.yml
+
+## 2026-06-01 — intégrité supply-chain du binaire yq (audit U6)
+
+- Les 3 workflows (`ai-context-check.yml`, `template-smoke-test.yml`, et le template `.jinja` livré aux consommateurs) téléchargeaient yq v4.44.3 puis `chmod +x` sans vérification d'intégrité.
+- Ajout d'une vérification sha256 épinglée (checksums officiels mikefarah/yq v4.44.3) entre download et chmod : Linux via `sha256sum -c`, macOS via `shasum -a 256 -c` (hash par arch arm64/amd64). Un asset corrompu ou substitué fait échouer le job.
+- Hashes vérifiés contre les vrais binaires : linux_amd64, darwin_arm64, darwin_amd64 → match exact. Template rendu OK (la CI générée hérite du checksum).
+- NB : à mettre à jour si `YQ_VERSION` change (les 3 hashes sont liés à v4.44.3).
