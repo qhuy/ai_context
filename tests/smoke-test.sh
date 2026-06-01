@@ -541,19 +541,23 @@ fi
 echo "  ✓ index expose project_id"
 
 echo
-echo "[9/28] build-feature-index : rebuild sur mtime (frontmatter modifié)"
+echo "[9/28] build-feature-index : write idempotent sur touch sans changement (index-contract-v2)"
 before_marker=$(mktemp)
 touch -r "$idx" "$before_marker"
 sleep 1
+# Contrat index-contract-v2 : un `touch` qui ne change PAS le contenu (donc pas
+# le JSON hors generated_at) ne doit PAS réécrire l'index. ensure_index relance
+# build-feature-index, mais write_index détecte un contrat inchangé et n'écrit
+# rien — le mtime de l'index est préservé (évite d'invalider les caches aval).
 touch "$OUT/.docs/features/back/sample.md"
 ( cd "$OUT" && bash .ai/scripts/features-for-path.sh src/foo.ts >/dev/null ) || true
-if [[ ! "$idx" -nt "$before_marker" ]]; then
-  echo "  ✗ index pas rebuilt (pas plus récent que marker)"
+if [[ "$idx" -nt "$before_marker" ]]; then
+  echo "  ✗ index réécrit alors que le contenu est inchangé (idempotence index-contract-v2 cassée)"
   rm -f "$before_marker"
   exit 1
 fi
 rm -f "$before_marker"
-echo "  ✓ index rebuilt après touch"
+echo "  ✓ index non réécrit sur touch sans changement de contenu"
 
 echo
 echo "[9b/28] build-feature-index : concurrence (lock atomique)"
