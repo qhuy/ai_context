@@ -113,3 +113,8 @@
 ## 2026-06-01 — dédup matcher : pr-report consomme le canonique
 
 - Retrait de `path_matches_touch_fast` (copie locale) ; le fast-path `dir/**` est désormais dans `_lib.sh::path_matches_touch`. `pr-report` garde son extraction de table touches en une passe, mais matche via le canonique. Plus de 2ᵉ implémentation à maintenir.
+
+## 2026-06-01 — perf pr-report après dédup matcher
+
+- Correction de la régression perf introduite par la dédup : le canonique court-circuite maintenant aussi les `touches:` sans glob (`src`, `src/`, fichiers exacts), au lieu de passer par `_glob_pattern_supported` pour chaque ligne de table.
+- Objectif : conserver la source unique de vérité du matcher sans perdre le temps de réponse du rapport large.

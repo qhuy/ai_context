@@ -304,3 +304,9 @@
 - Fichiers modifiés :
   - template/.ai/scripts/_lib.sh.jinja
   - template/.ai/scripts/pr-report.sh.jinja
+
+## 2026-06-01 — HANDOFF depuis quality : parité matcher no-glob
+
+- HANDOFF reçu depuis `quality/features-for-path-ranking-and-matcher-correctness`.
+- `template/.ai/scripts/_lib.sh.jinja` reprend le fast-path no-glob du runtime pour les projets générés.
+- Aucun nouveau paramètre Copier ; compat Bash 3.2 préservée.

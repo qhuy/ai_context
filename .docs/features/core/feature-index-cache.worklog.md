@@ -85,3 +85,9 @@
   - .ai/scripts/pr-report.sh
   - template/.ai/scripts/_lib.sh.jinja
   - template/.ai/scripts/pr-report.sh.jinja
+
+## 2026-06-01 — HANDOFF depuis quality : matcher no-glob rapide
+
+- HANDOFF reçu depuis `quality/features-for-path-ranking-and-matcher-correctness` et `quality/pr-report`.
+- Le cache/index n'est pas modifié ; seul le consommateur canonique `path_matches_touch` évite le coût de validation glob pour les `touches:` exacts ou dossiers.
+- Aucun changement de format `.ai/.feature-index.json`.

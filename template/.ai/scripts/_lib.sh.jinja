@@ -315,6 +315,13 @@ path_matches_touch() {
   [[ -z "$path" || -z "$touch" ]] && return 1
   [[ "$path" == "$touch" ]] && return 0
 
+  # Fast-path : touch sans glob ni backslash → exact ou préfixe dossier. On garde
+  # les backslashes sur le chemin lent pour préserver la politique unsupported.
+  if [[ "$touch" != *[\*\?\[]* && "$touch" != *\\* ]]; then
+    [[ "$path" == "$normalized" || "$path" == "$normalized"/* ]] && return 0
+    return 1
+  fi
+
   # Fast-path : `dir/**` (préfixe sans glob) → match dossier récursif en pur
   # bash, sans _glob_pattern_supported (forks tr/wc) ni _glob_to_regex. Même
   # sémantique que le regex équivalent (vérifié différentiellement). Un préfixe
@@ -334,12 +341,6 @@ path_matches_touch() {
       strict) printf '[features-matcher] pattern non supporté : %s\n' "$touch" >&2; return 2 ;;
       *)      printf '[features-matcher] pattern non supporté : %s\n' "$touch" >&2 ;;
     esac
-    return 1
-  fi
-
-  # Sans glob : exact ou prefix dossier.
-  if [[ "$touch" != *[\*\?\[]* ]]; then
-    [[ "$path" == "$normalized" || "$path" == "$normalized"/* ]] && return 0
     return 1
   fi
 
