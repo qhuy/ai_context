@@ -13,6 +13,7 @@
 - `build-feature-index.sh --write` ne réécrit plus `.ai/.feature-index.json` quand le contrat JSON est inchangé hors `generated_at`; l'ordre des features est stable et le cas "aucune feature" produit un index vide valide.
 - Tests ajoutés : `test-build-feature-index-contract.sh`, `test-read-only-checks-contract.sh`, `test-product-reports-read-only.sh`.
 - Fallback sans `yq` : `build-feature-index.sh` extrait maintenant `product.portfolio.{appetite,confidence,expected_impact,urgency,strategic_fit}` pour préserver le scoring product sur environnements minimalistes.
+- Remédiation audit prod : suite de tests fiabilisée (clones `cp -R .` → `rsync --exclude=.git`, fixture `review-delta` rebasée pour éviter une explosion O(fichiers)), couverture CI complète via boucle `for t in tests/unit/*.sh` (5 tests auparavant orphelins), `_min_copier_version: "9.0.0"`, ownership `copier.yml` restreint au scope `core`, récupération des locks d'index orphelins dans `with_index_lock`, et alignement du smoke `[9/28]` sur l'écriture idempotente de l'index.
 
 ### Migration
 - Dans les CI, hooks custom et scripts de diagnostic existants, remplacer `check-features.sh` par `check-features.sh --no-write` si l'étape ne doit pas modifier le workspace.
