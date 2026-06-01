@@ -50,3 +50,15 @@ feat(quality): corriger le contrat de lock index
 - Surface : `tests/smoke-test.sh`.
 - Impact : resolution de merge conservant la prevalidation lock existante et ajoutant le test agent-config sur une etape separee.
 - Validation : freshness stricte et smoke-test relances avant push main.
+
+## 2026-06-01 15:36 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja
+  - tests/smoke-test.sh
+
+## 2026-06-01 — récupération des locks orphelins (audit U8)
+
+- `with_index_lock` (`_lib.sh` + `.jinja`) : un process tué brutalement (SIGKILL/crash) laissait `$lock_dir` orphelin → tout run ultérieur timeout en 3s (return 75) à perpétuité. Ajout d'une reprise : un lock plus vieux que `AI_CONTEXT_LOCK_STALE_MIN` (défaut 1 min) est considéré orphelin et récupéré une fois (les opérations sous lock sont sub-secondes, via `find -mmin` portable).
+- Contrat préservé : un lock frais (réellement tenu) timeout toujours sans exécuter la commande.
+- Test : `tests/unit/test-targeted-regressions.sh` étendu (lock orphelin backdaté → récupéré + commande exécutée). PASS.

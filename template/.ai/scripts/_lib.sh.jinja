@@ -517,7 +517,18 @@ with_index_lock() {
   local lock_dir="${AI_CONTEXT_LOCK_DIR:-/tmp/.ai-context-$(id -u 2>/dev/null || echo user)-index-lock}"
   local tries=0
   local max_tries=30  # 3s max (30 × 0.1s)
+  local stale_min="${AI_CONTEXT_LOCK_STALE_MIN:-1}"
   while ! mkdir "$lock_dir" 2>/dev/null; do
+    # Récupération d'un lock orphelin : un process tué brutalement (SIGKILL,
+    # crash, coupure) ne déclenche pas le trap et laisse "$lock_dir" derrière
+    # lui. Sans cette reprise, tout run ultérieur timeout en 3s (return 75) à
+    # perpétuité. Les opérations sous lock étant sub-secondes, un lock plus
+    # vieux que stale_min minute(s) est considéré orphelin et récupéré une fois.
+    if [[ -d "$lock_dir" ]] && find "$lock_dir" -maxdepth 0 -mmin "+$stale_min" 2>/dev/null | grep -q .; then
+      log_debug "lock orphelin (> ${stale_min}min) récupéré : $lock_dir"
+      rmdir "$lock_dir" 2>/dev/null || true
+      continue
+    fi
     tries=$((tries + 1))
     if [[ $tries -ge $max_tries ]]; then
       log_debug "lock timeout sur $lock_dir"

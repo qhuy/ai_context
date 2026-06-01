@@ -134,8 +134,23 @@ copy_repo "lock"
     echo "✗ with_index_lock doit échouer sans exécuter la commande si le lock est tenu"
     exit 1
   fi
+
+  # Lock orphelin : un lock backdaté (process mort sans trap) doit être récupéré
+  # et la commande exécutée, au lieu de timeout à perpétuité.
+  stale_dir="$tmp/stale-lock"
+  stale_marker="$tmp/stale-ran"
+  mkdir "$stale_dir"
+  touch -t 202001010000 "$stale_dir"
+  set +e
+  AI_CONTEXT_LOCK_DIR="$stale_dir" bash -c '. .ai/scripts/_lib.sh; with_index_lock touch "$1"' _ "$stale_marker" >/dev/null 2>&1
+  rc=$?
+  set -e
+  if [[ "$rc" -ne 0 || ! -e "$stale_marker" ]]; then
+    echo "✗ with_index_lock doit récupérer un lock orphelin (> stale_min) et exécuter la commande"
+    exit 1
+  fi
 )
-echo "  ✓ with_index_lock timeout sans exécution"
+echo "  ✓ with_index_lock : timeout si tenu, récupération si orphelin"
 
 if require_copier_or_skip; then
   copy_repo "dogfood"
