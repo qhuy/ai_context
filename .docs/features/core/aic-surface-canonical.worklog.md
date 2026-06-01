@@ -69,3 +69,11 @@
 - Impact indirect : README, README runtime/template et smoke-test exposent les contrats subagents/hooks/MCP sans changer la commande canonique `aic`.
 - Aucun alias legacy ou nouvelle surface CLI ajoute.
 - Validation : `check-ai-references`, `check-shims` et smoke-test PASS.
+
+## 2026-06-01 — copier.yml : ajout _min_copier_version (audit U10)
+
+- `copier.yml` reçoit un plancher `_min_copier_version: "9.0.0"` (setting moteur, porté par core/template-engine). Aucun impact sur le périmètre de cette feature ; entrée de traçabilité car `copier.yml` reste dans son `touches:`.
+
+## 2026-06-01 12:33 — auto
+- Fichiers modifiés :
+  - copier.yml

@@ -52,3 +52,11 @@
 - Impact indirect : `copier.yml` ajoute la mention « internes/fallback » des wrappers Codex pendant le durcissement post-cross-check (round 4 workflow/intentional-skills).
 - Aucun changement sur les squelettes DS ni sur les fichiers générés associés.
 - Validation associée : `check-feature-freshness.sh` (staged) PASS attendu.
+
+## 2026-06-01 — copier.yml : ajout _min_copier_version (audit U10)
+
+- `copier.yml` reçoit un plancher `_min_copier_version: "9.0.0"` (setting moteur, porté par core/template-engine). Aucun impact sur le périmètre de cette feature ; entrée de traçabilité car `copier.yml` reste dans son `touches:`.
+
+## 2026-06-01 12:33 — auto
+- Fichiers modifiés :
+  - copier.yml

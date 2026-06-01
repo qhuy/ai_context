@@ -133,3 +133,7 @@
   - tests/unit/test-project-overlay.sh
   - tests/unit/test-review-delta-shared.sh
   - tests/unit/test-targeted-regressions.sh
+
+## 2026-06-01 — copier.yml : ajout _min_copier_version (audit U10)
+
+- `copier.yml` reçoit `_min_copier_version: "9.0.0"` (setting moteur porté par core/template-engine). Aucun impact sur le périmètre overlay ; entrée de traçabilité (`copier.yml` reste dans le `touches:` de cette feature).

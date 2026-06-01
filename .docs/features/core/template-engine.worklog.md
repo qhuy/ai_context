@@ -270,3 +270,13 @@
 - Impact template : ajout des workflows `subagent-contract`, `codex-hooks-parity`, `mcp-policy`, miroir de `.ai/rules/workflow.md`, ajout de `template/.ai/scripts/check-agent-config.sh.jinja`, update quality gate, doctor, CI et `README_AI_CONTEXT`.
 - Décision : aucune nouvelle variable Copier ; aucun changement Pack A ; les hooks Codex restent opt-in et non générés par défaut.
 - Validation : `check-dogfood-drift.sh` PASS ; `tests/smoke-test.sh` PASS.
+
+## 2026-06-01 — plancher _min_copier_version (audit U10)
+
+- Ajout de `_min_copier_version: "9.0.0"` dans `copier.yml` (aligné sur `copier>=9` exigé en CI). Un utilisateur en version trop ancienne obtient désormais une erreur explicite au lieu d'un échec Jinja/YAML obscur (multiselect, validator, `_skip_if_exists` exigent Copier ≥ 9).
+- Édité en mono-scope core grâce à U13 (copier.yml restreint au scope core).
+- Validation : `copier copy` minimal OK (111 fichiers, copier 9.14.3) ; `check-features` PASS ; `freshness --staged --strict` OK.
+
+## 2026-06-01 12:33 — auto
+- Fichiers modifiés :
+  - copier.yml
