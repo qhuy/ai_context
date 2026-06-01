@@ -59,6 +59,44 @@ La commande infère `project_name`, `docs_root`, le profil de scopes, les agents
 
 Copier détecte les modifications locales. Il propose un **merge à 3 voies** (template ancien / template nouveau / version locale). Tu arbitres conflit par conflit.
 
+## Migration vers les checks read-only
+
+Les diagnostics et rapports récents ne doivent plus modifier le repo par défaut.
+Après update, accepte en priorité les changements sur :
+
+- `.ai/scripts/build-feature-index.sh`
+- `.ai/scripts/check-features.sh`
+- `.ai/scripts/check-feature-freshness.sh`
+- `.ai/scripts/check-feature-coverage.sh`
+- `.ai/scripts/review-delta.sh`
+- `.ai/scripts/pr-report.sh`
+- `.ai/scripts/doctor.sh`
+- `.ai/scripts/check-product-links.sh`
+- `.ai/scripts/product-status.sh`
+- `.ai/scripts/product-portfolio.sh`
+- `.ai/scripts/product-review.sh`
+- `.ai/workflows/quality-gate.md`
+- `.github/workflows/ai-context-check.yml`
+
+Nouveau contrat :
+
+- `check-features.sh --no-write` valide le mesh sans écrire `.ai/.feature-index.json`.
+- `doctor`, `quality-gate`, `review-delta`, `pr-report`, `check-feature-freshness`, `check-feature-coverage` et les rapports product utilisent un index temporaire.
+- `check-features.sh` sans option garde provisoirement le comportement historique et peut rafraîchir le cache.
+- Un rebuild de cache reste explicite :
+
+```bash
+bash .ai/scripts/build-feature-index.sh --write
+# ou
+bash .ai/scripts/aic.sh index --write
+```
+
+À faire dans les projets existants :
+
+- remplacer les gates CI/custom par `bash .ai/scripts/check-features.sh --no-write` quand elles ne doivent pas modifier le workspace ;
+- garder `build-feature-index.sh --write` seulement dans les hooks ou scripts qui ont explicitement besoin d'un cache local ;
+- ne pas dépendre du `mtime` de `.ai/.feature-index.json` : `--write` ne réécrit plus le fichier si le contrat JSON est inchangé hors `generated_at`.
+
 ## Overlay projet stable
 
 Les règles locales propres au repo doivent vivre sous `.ai/project/**`. Ce dossier est project-owned : le template ne le scaffold pas par défaut et `copier update` ne doit ni le supprimer ni l'écraser.

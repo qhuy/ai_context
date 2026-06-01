@@ -1,10 +1,22 @@
 # CHANGELOG
 
-## Unreleased
+## [0.13.0] — 2026-06-01
+
+> Release de l'initiative `ai-context-stability-migration` (contrat read-only des
+> checks, index contract v2, fallback parser sans yq). **Breaking** d'usage sur la
+> surface CLI publique — voir ci-dessous et `MIGRATION.md`.
 
 - Breaking : la surface CLI publique devient `aic.sh frame/status/diagnose/document-feature/review/ship`, alignée avec les skills `aic-*`. Les anciens verbes publics de cadrage, brief, document delta et ship report sont supprimés au lieu d'être conservés en aliases.
 - `aic-document-feature` est intégré explicitement à la surface utilisateur canonique, côté Claude et Codex.
 - Installation Codex : quand `codex` est sélectionné dans `agents`, le template génère désormais `.agents/skills/` avec les wrappers `aic-*`, `aic-feature-*` et `aic-quality-gate`. Les wrappers restent minces et délèguent aux workflows canoniques `.ai/workflows/*`.
+- Contrat read-only des checks : `check-features.sh --no-write` valide le mesh sans écrire l'index ; `doctor`, `quality-gate`, la CI, `check-feature-freshness`, `check-feature-coverage`, `review-delta`, `pr-report` et les rapports product consomment un index temporaire ou un cache existant avec warning.
+- `build-feature-index.sh --write` ne réécrit plus `.ai/.feature-index.json` quand le contrat JSON est inchangé hors `generated_at`; l'ordre des features est stable et le cas "aucune feature" produit un index vide valide.
+- Tests ajoutés : `test-build-feature-index-contract.sh`, `test-read-only-checks-contract.sh`, `test-product-reports-read-only.sh`.
+- Fallback sans `yq` : `build-feature-index.sh` extrait maintenant `product.portfolio.{appetite,confidence,expected_impact,urgency,strategic_fit}` pour préserver le scoring product sur environnements minimalistes.
+
+### Migration
+- Dans les CI, hooks custom et scripts de diagnostic existants, remplacer `check-features.sh` par `check-features.sh --no-write` si l'étape ne doit pas modifier le workspace.
+- Garder `build-feature-index.sh --write` pour les rebuilds explicites du cache, notamment avant des hooks qui lisent `.ai/.feature-index.json`.
 
 ## v0.12.0 — 2026-05-04 « Agent UX, product traceability & robust updates »
 

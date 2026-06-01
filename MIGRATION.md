@@ -107,8 +107,12 @@ touches:
 Puis :
 ```bash
 bash .ai/scripts/build-feature-index.sh --write
-bash .ai/scripts/check-features.sh   # valide scope + depends_on + touches
+bash .ai/scripts/check-features.sh --no-write   # valide scope + depends_on + touches sans réécrire le cache
 ```
+
+`build-feature-index.sh --write` reste l'étape explicite de création du cache.
+Les diagnostics et gates doivent préférer `--no-write` pour éviter les diffs ou
+réécritures implicites dans les projets existants.
 
 ### 3b. Rolling (recommandé si projet legacy volumineux)
 
@@ -154,7 +158,7 @@ Déjà déclarés dans `.claude/settings.json.jinja` du template — vérifier d
 Impact : les worklogs se remplissent **sans intervention manuelle** au fil des éditions. `/aic-feature-update` ne sert plus qu'aux changements d'intent (phase, blockers, resume_hint).
 
 ### 4.5 — CI guard (en dernier)
-Le workflow `.github/workflows/ai-context-check.yml` lance `check-shims` + `check-features` + `check-ai-references`. **Active-le seulement quand les 3 passent en local.**
+Le workflow `.github/workflows/ai-context-check.yml` lance `check-shims` + `check-features --no-write` + `check-ai-references`. **Active-le seulement quand les 3 passent en local.**
 
 Optionnel, plus tard :
 ```bash
@@ -169,6 +173,7 @@ bash .ai/scripts/check-feature-coverage.sh --strict   # fail si orphelins
 | Symptôme | Cause | Fix |
 |---|---|---|
 | `check-features.sh` fail : "touches morte" | Glob dans `touches:` ne résout aucun fichier | Corrige le glob ou supprime l'entrée |
+| Un check ne rafraîchit plus `.ai/.feature-index.json` | Contrat read-only : diagnostics/gates utilisent un index temporaire | Lance explicitement `bash .ai/scripts/build-feature-index.sh --write` si tu veux mettre le cache à jour |
 | Reminder vide | Toutes les features sont `done/deprecated/archived` | `AI_CONTEXT_SHOW_ALL_STATUS=1` ou repasse une feature en `active` |
 | Hook `PreToolUse` timeout | Trop de features + pas de cache | `bash .ai/scripts/build-feature-index.sh --write` puis rejoue |
 | `copier update` écrase un fichier customisé | `.copier-answers.yml` absent ou corrompu | Restaure depuis git ou re-scaffold en skip |
