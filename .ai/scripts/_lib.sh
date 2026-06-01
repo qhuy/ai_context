@@ -315,6 +315,18 @@ path_matches_touch() {
   [[ -z "$path" || -z "$touch" ]] && return 1
   [[ "$path" == "$touch" ]] && return 0
 
+  # Fast-path : `dir/**` (préfixe sans glob) → match dossier récursif en pur
+  # bash, sans _glob_pattern_supported (forks tr/wc) ni _glob_to_regex. Même
+  # sémantique que le regex équivalent (vérifié différentiellement). Un préfixe
+  # contenant un glob (`foo-*/**`) retombe sur le chemin regex ci-dessous.
+  if [[ "$touch" == *'/**' ]]; then
+    local _ds_prefix="${touch%'/**'}"
+    if [[ -n "$_ds_prefix" && "$_ds_prefix" != *[\*\?\[]* ]]; then
+      [[ "$path" == "$_ds_prefix" || "$path" == "$_ds_prefix"/* ]] && return 0
+      return 1
+    fi
+  fi
+
   # Pattern non supporté → politique 3 niveaux.
   if ! _glob_pattern_supported "$touch"; then
     case "$policy" in

@@ -299,3 +299,8 @@
 - HANDOFF reçu depuis `quality/pr-report`.
 - `template/.ai/scripts/pr-report.sh.jinja` reprend la normalisation `${touch%/}` du runtime pour préserver `touches: src/` dans les projets générés.
 - Aucun nouveau paramètre Copier.
+
+## 2026-06-01 22:47 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/_lib.sh.jinja
+  - template/.ai/scripts/pr-report.sh.jinja

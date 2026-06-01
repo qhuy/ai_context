@@ -78,3 +78,10 @@
 - HANDOFF reçu depuis `quality/pr-report`.
 - `pr-report.sh` conserve les tables préchargées depuis l'index feature, mais le fast-path sans glob normalise désormais le slash final (`src/`) comme le matcher canonique `_lib.sh`.
 - Aucun changement du format `.ai/.feature-index.json`.
+
+## 2026-06-01 22:47 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - .ai/scripts/pr-report.sh
+  - template/.ai/scripts/_lib.sh.jinja
+  - template/.ai/scripts/pr-report.sh.jinja

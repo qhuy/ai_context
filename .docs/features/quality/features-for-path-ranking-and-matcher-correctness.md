@@ -30,7 +30,7 @@ progress:
   step: "implémentation livrée, 49 cas test PASS, prêt à commit"
   blockers: []
   resume_hint: "commit feat(quality) puis valider en utilisation réelle"
-  updated: 2026-05-07
+  updated: 2026-06-01
 ---
 
 # Ranker features-for-path et corriger le matcher globstar bash 3.2

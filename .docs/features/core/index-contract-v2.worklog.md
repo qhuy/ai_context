@@ -23,3 +23,8 @@
 - Validations : `test-build-feature-index-contract` PASS, `test-read-only-checks-contract` PASS, `test-product-reports-read-only` PASS, `check-features --no-write` PASS.
 - Décision : le cache `.ai/.feature-index.json` reste utile pour hooks/performance, mais sa mise à jour est explicite.
 - next : traiter le fallback produit/portfolio sans `yq` dans une feature séparée si l'audit de pertinence le confirme.
+
+## 2026-06-01 22:47 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja

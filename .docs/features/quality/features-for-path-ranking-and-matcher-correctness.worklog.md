@@ -144,3 +144,14 @@
 - Contexte : `quality/index-lock-contract` modifie uniquement `with_index_lock`, helper partage dans `_lib.sh`.
 - Impact : aucun changement du matching/ranking ; le lock d'index echoue proprement au timeout.
 - Validation portée par `quality/index-lock-contract`.
+
+## 2026-06-01 22:47 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-06-01 — fast-path `dir/**` dans le matcher canonique (dédup pr-report)
+
+- `_lib.sh::path_matches_touch` (+ `.jinja`) : ajout d'un fast-path pour `dir/**` (préfixe sans glob) qui matche le dossier en pur bash, sans `_glob_pattern_supported` (forks tr/wc) ni `_glob_to_regex`. Même sémantique récursive que le regex (vérifié différentiellement, 0 divergence ; un préfixe glob comme `foo-*/**` retombe sur le chemin regex). Bénéficie à tous les appelants (hook features-for-path, checks).
+- Supprime la duplication : `pr-report.sh` n'a plus sa copie locale `path_matches_touch_fast` ; `features_matching_table` appelle directement le canonique. Source unique de vérité du matcher.
+- Validation : `test-path-matches-touch` + `test-matcher-multi-level` PASS, `test-pr-report-glob-match` PASS, smoke-test 28/28 PASS, dogfood-drift PASS.

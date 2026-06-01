@@ -104,3 +104,12 @@
 - Fix : `path_matches_touch_fast` normalise les `touches:` sans glob avec `${touch%/}` pour préserver le contrat canonique `src/` = préfixe dossier.
 - Régression ajoutée dans `test-pr-report-glob-match.sh` : `touches: src/` couvre bien un enfant direct et un chemin imbriqué, tandis que `src/*` reste limité à l'enfant direct.
 - Parité runtime/template conservée.
+
+## 2026-06-01 22:47 — auto
+- Fichiers modifiés :
+  - .ai/scripts/pr-report.sh
+  - template/.ai/scripts/pr-report.sh.jinja
+
+## 2026-06-01 — dédup matcher : pr-report consomme le canonique
+
+- Retrait de `path_matches_touch_fast` (copie locale) ; le fast-path `dir/**` est désormais dans `_lib.sh::path_matches_touch`. `pr-report` garde son extraction de table touches en une passe, mais matche via le canonique. Plus de 2ᵉ implémentation à maintenir.

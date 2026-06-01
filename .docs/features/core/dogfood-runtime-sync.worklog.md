@@ -223,3 +223,8 @@
 ## 2026-06-01 22:26 — auto
 - Fichiers modifiés :
   - .ai/scripts/pr-report.sh
+
+## 2026-06-01 22:47 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - .ai/scripts/pr-report.sh

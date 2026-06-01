@@ -83,3 +83,8 @@
   - .ai/scripts/pr-report.sh
   - template/.ai/scripts/pr-report.sh.jinja
   - tests/unit/test-pr-report-glob-match.sh
+
+## 2026-06-01 22:47 — auto
+- Fichiers modifiés :
+  - .ai/scripts/pr-report.sh
+  - template/.ai/scripts/pr-report.sh.jinja

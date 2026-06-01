@@ -99,30 +99,6 @@ shared_touches_tmp="$(mktemp "${TMPDIR:-/tmp}/ai-context-pr-shared.XXXXXX")"
 jq -r '.features[] | . as $f | ($f.touches // [])[] | [$f.scope, $f.id, $f.path, .] | @tsv' "$index_file" > "$touches_tmp"
 jq -r '.features[] | . as $f | ($f.touches_shared // [])[] | [$f.scope, $f.id, $f.path, .] | @tsv' "$index_file" > "$shared_touches_tmp"
 
-path_matches_touch_fast() {
-  local path="$1"
-  local touch="$2"
-
-  [[ -z "$path" || -z "$touch" ]] && return 1
-  [[ "$path" == "$touch" ]] && return 0
-
-  if [[ "$touch" != *[\*\?\[]* ]]; then
-    local normalized="${touch%/}"
-    [[ "$path" == "$normalized" || "$path" == "$normalized"/* ]] && return 0
-    return 1
-  fi
-
-  if [[ "$touch" == *'/**' ]]; then
-    local prefix="${touch%'/**'}"
-    if [[ -n "$prefix" && "$prefix" != *[\*\?\[]* ]]; then
-      [[ "$path" == "$prefix" || "$path" == "$prefix"/* ]] && return 0
-      return 1
-    fi
-  fi
-
-  path_matches_touch "$path" "$touch"
-}
-
 features_matching_table() {
   local table_file="$1"
   local rel_path="$2"
@@ -134,7 +110,7 @@ features_matching_table() {
   while IFS=$'\t' read -r scope id feature_path touch; do
     [[ -z "$scope" || -z "$touch" ]] && continue
     local rc=0
-    path_matches_touch_fast "$rel_path" "$touch" || rc=$?
+    path_matches_touch "$rel_path" "$touch" || rc=$?
     case "$rc" in
       0) raw_output+="$scope"$'\t'"$id"$'\t'"$feature_path"$'\n' ;;
       2) strict_seen=1 ;;

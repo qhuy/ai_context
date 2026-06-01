@@ -35,3 +35,8 @@
 - Contexte : `quality/index-lock-contract` modifie un helper commun de `_lib.sh`.
 - Impact : aucun changement du filtre d'auto-progression ; le lock d'index devient strict en cas de timeout.
 - Validation portée par `quality/index-lock-contract`.
+
+## 2026-06-01 22:47 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja
