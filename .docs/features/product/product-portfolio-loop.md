@@ -64,6 +64,10 @@ progress:
 
 # Product Traceability Loop
 
+## Résumé
+
+Ajoute une couche de traceability produit au feature mesh : `scope: product` représente une initiative, les features dev s'y relient via `product.initiative` et les artefacts externes via `external_refs`. Des scripts read-only (`product-status`, `product-portfolio`, `product-review`) donnent une vue de suivi et une recommandation de décision sans créer de roadmap parallèle ni augmenter le reminder.
+
 ## Objectif
 
 Ajouter une couche de traceability produit au feature mesh sans créer une roadmap séparée ni injecter de contexte produit à chaque tour.
@@ -73,6 +77,28 @@ Le modèle cible :
 ```text
 initiative product -> refs externes -> features dev liées -> evidence -> décision suivante
 ```
+
+## Périmètre
+
+### Inclus
+
+- Le frontmatter produit : `scope: product`, bloc `product` (bet, target_user, success_metric, decision_state, kill_criteria, portfolio), `product.initiative` côté features dev et `external_refs`.
+- Les scripts read-only `check-product-links.sh`, `product-status.sh`, `product-portfolio.sh`, `product-review.sh` et leur exposition via `aic.sh product-*`, côté source et template (`.jinja`).
+- La validation par `feature.schema.json`, le rendu dans `build-feature-index.sh` et la couverture smoke-test.
+
+### Hors périmètre
+
+- Toute roadmap autonome : `.docs/features/product/*.md` reste un index d'initiatives et de décisions, pas un backlog parallèle.
+- La propriété des artefacts externes (specs, stories, tickets BMAD, Spec Kit, Linear, Jira, GitHub) : `external_refs` ne fait que les relier, sans les dupliquer.
+- Le durcissement du scoring portfolio (appetite/confidence/impact/urgency), candidat à une feature dédiée — cf. `resume_hint`.
+
+## Invariants
+
+- Aucun script produit ne modifie de fichier : la couche reste strictement read-only.
+- La couche produit est lue juste-à-temps : aucun chargement produit imposé au démarrage, le Pack A / reminder n'augmente pas.
+- `depends_on` reste réservé aux dépendances techniques ou de contexte ; le lien initiative ↔ dev passe par `product.initiative`, jamais par `depends_on`.
+- Les rapports consomment un index temporaire ou un cache existant et ne reconstruisent jamais `.ai/.feature-index.json` implicitement.
+- La surface est identique côté Claude et Codex via `aic.sh product-*`.
 
 ## Comportement attendu
 
@@ -92,6 +118,21 @@ initiative product -> refs externes -> features dev liées -> evidence -> décis
 - Pas de roadmap parallèle : `.docs/features/product/*.md` reste un index d'initiatives et de décisions.
 - Interop : BMAD, Spec Kit, Linear, Jira, GitHub et autres sources restent propriétaires de leurs artefacts ; `external_refs` ne fait que les relier.
 - Compatible Claude/Codex : la surface commune passe par `aic.sh product-*`.
+
+## Décisions
+
+- **Pas de copie de BOS** : on retient une boucle product adaptée au logiciel (initiatives, lien typé vers dev, evidence, décision suivante) plutôt qu'un cadre importé tel quel.
+- **Traceability/governance, pas roadmap** : le scope product est une couche compatible BMAD, Spec Kit et tickets externes via `external_refs`, jamais une roadmap autonome.
+- **Lean by design** : la traceability reste on-demand pour ne pas augmenter le Pack A ; le smoke vérifie le rendu product sans imposer de chargement au démarrage.
+- **Recommandation, pas décision** : `product-review.sh` propose `continue / cut / pivot / scale`, l'humain tranche (posture héritée de `workflow/agent-behavior`).
+- **Read-only assumé** : les rapports n'écrivent jamais l'index, choix verrouillé le 2026-05-14 pour éviter les reconstructions implicites.
+
+## Validation
+
+- `tests/unit/test-product-reports-read-only.sh` garantit que `check-product-links`, `product-status`, `product-portfolio` et `product-review` ne reconstruisent pas `.ai/.feature-index.json`.
+- `tests/smoke-test.sh` couvre `product-status`, `product-portfolio` et `product-review` sur un scaffold Copier (leading indicator de la feature).
+- `check-product-links.sh` signale les initiatives floues, non exécutables ou liées à tort.
+- Le frontmatter produit valide contre `.ai/schema/feature.schema.json` (et son pendant template).
 
 ## Cross-refs
 

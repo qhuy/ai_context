@@ -29,9 +29,36 @@ progress:
 
 # PR report
 
+## Résumé
+
+Génère un rapport markdown (ou JSON) à partir d'un delta git : features impactées via `touches`, features liées via `touches_shared`, et warnings de drift (orphelins, fiche done modifiée, multi-couverture, dépendance dépréciée, feature stale). Rend visible la valeur du mesh au moment de la review/PR sans rien modifier.
+
 ## Objectif
 
 Rendre visible la valeur du mesh dans les PRs via un rapport markdown simple: features impactées et signaux de drift.
+
+## Périmètre
+
+### Inclus
+
+- `pr-report.sh` (rapport `--base`/`--head`, formats `--format=markdown` par défaut et `--format=json`, option `--include-docs`).
+- `review-delta.sh` (rapport de review du delta `--staged` : fichiers, features directes, features liées shared, risques, checks recommandés).
+- Le wrapper `aic.sh` qui route vers ces rapports (et leurs équivalents template `.jinja`).
+- Les exclusions documentaires par défaut (README/CHANGELOG/MIGRATION/PROJECT_STATE/LICENSE/.github/.ai/docs/.docs/features) et le fallback shallow-clone vers `HEAD~1`.
+
+### Hors périmètre
+
+- L'intégration CI (commentaire PR automatique) : précurseur seulement, pas encore implémenté.
+- La construction de l'index features et `path_matches_touch` (portés par `core/feature-index-cache` et `core/feature-mesh`).
+- Les rapports product (`product-status`, `product-portfolio`, `product-review`) : juste recommandés quand le delta touche `scope: product`.
+
+## Invariants
+
+- Lecture seule : aucun écrit dans le repo ni dans l'index (git + index uniquement).
+- La sortie `--format=markdown` sans option reste stable et lisible : les nouveautés (compteur `Fichiers analysés`, ligne `Exclus par défaut`) s'ajoutent en pied sans casser le format historique.
+- Compatible Bash 3.2 (macOS par défaut) : pas de `mapfile`, pas de `declare -A`.
+- Compatible CI : déterministe, sans secret.
+- Si `--base` n'est pas atteignable (shallow clone), fallback sur `HEAD~1` annoncé dans la note.
 
 ## Comportement attendu
 
@@ -47,6 +74,21 @@ Rendre visible la valeur du mesh dans les PRs via un rapport markdown simple: fe
 - Non destructif (lecture git + index).
 - Sortie markdown stable.
 - Compatible CI.
+
+## Décisions
+
+- `markdown` reste le format par défaut ; `--format=json` est opt-in pour les intégrations machine.
+- Les fichiers documentaires sont exclus par défaut (bruit faible côté mesh), `--include-docs` lève l'exclusion à la demande.
+- Renoncement aux features Bash 4 (`mapfile`, `declare -A`) pour garantir le runtime macOS par défaut plutôt que d'exiger un Bash récent.
+- L'implémentation et la trace décisionnelle ont été splittées en deux commits (doc landée avant le code) pour garder l'historique lisible.
+- Le commentaire PR automatique est reporté : on stabilise d'abord la surface review/ship (`aic`) avant d'ajouter l'intégration CI.
+
+## Validation
+
+- `tests/smoke-test.sh` : assertions `--format=json` (parse `jq`), `--include-docs` (`docs_excluded=0`) et exclusion par défaut (`docs_excluded ≥ 1` quand un README est modifié).
+- `tests/unit/test-review-delta-shared.sh` couvre le rapport `review-delta` (features directes/shared, risques, checks).
+- `bash .ai/scripts/pr-report.sh --base=<ref> --head=<ref>` produit un markdown stable (entête base/head, features impactées, warnings) ; idem `review-delta.sh --staged`.
+- Le smoke partagé rejoue les tests unitaires de régression avant les scénarios Copier.
 
 ## Cross-refs
 

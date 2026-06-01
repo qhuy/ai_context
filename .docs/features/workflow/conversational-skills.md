@@ -23,6 +23,10 @@ progress:
 
 # Auto-progression invisible (+ skill `/aic` en override)
 
+## Résumé
+
+L'agent auto-progresse silencieusement les transitions d'état des fiches (`progress.phase`, `status`, worklog) et ne les rapporte que dans la réponse finale, ramenant l'UX à zéro skill au quotidien. Le skill `/aic` n'est qu'un mode override pour corriger ou forcer une bascule quand l'inférence se trompe.
+
 ## Objectif
 
 Réduire la surface utilisateur du système à **zéro skill par défaut**. L'humain travaille en langage naturel ; l'agent code, teste, et **auto-progresse** les transitions d'état (`progress.phase`, `status`, scellage worklog) **silencieusement mais visiblement** (rapportées dans la réponse finale).
@@ -41,6 +45,22 @@ Constats du dog-fooding :
 - L'agent dispose déjà des informations nécessaires pour inférer ces transitions (auto-worklog sait quels fichiers ont été touchés ; tests/build savent si l'evidence est OK).
 
 → Faire de la comptabilité un service du système, pas une charge utilisateur.
+
+## Périmètre
+
+### Inclus
+
+- L'auto-progression de bout en bout : détection d'intent, création/mise à jour de fiche, et bascules `progress.phase` / `progress.step` / `status` rapportées dans la ligne d'état finale.
+- Les deux canaux de convergence partageant `auto-progress.sh` : hook Claude `Stop` (immédiat) et hook git `pre-commit` (universel, tous agents).
+- Le skill `/aic` (override conversationnel + `/aic undo`) et son snapshot d'état dans `.ai/.progress-history.jsonl`.
+- La réécriture des docs de surface (`copier.yml` `_message_after_copy`, `template/AGENTS.md.jinja`) pour exposer l'UX zéro skill.
+
+### Hors périmètre
+
+- La mécanique d'append worklog et de trace d'édition, portée par `workflow/auto-worklog`.
+- L'hébergement du hook `pre-commit` lui-même, porté par `workflow/git-hooks`.
+- La bascule `active → done`, déléguée à `.ai/workflows/feature-done.md` (quality gate, build/tests, docs strictes).
+- La résolution fuzzy de cible, consommée depuis `core/feature-index-cache`.
 
 ## Comportement attendu
 
@@ -124,6 +144,23 @@ Les primitives procédurales :
 - La surface recommandée est `/aic-frame`, `/aic-status`, `/aic-diagnose`, `/aic-review`, `/aic-ship`.
 - Ne sont pas chargées par défaut dans Pack A ; elles sont appelées juste-à-temps.
 
+## Invariants
+
+- Une transition est **invisible quand elle est sûre** (bump `updated`, append worklog) et **visible quand elle mord** (phase, step, `status`) : rapportée dans la ligne d'état finale.
+- `active → done` ne se patche jamais directement : elle passe toujours par `feature-done` avec evidence obligatoire.
+- `git commit` propose et attend « go » ; `git push`, `reset --hard` et suppressions demandent toujours explicitement.
+- Idempotence des deux canaux : si Claude a déjà auto-progressé dans le tour, le `pre-commit` ne refait rien (`current_phase != "spec"`), aucun double-bump.
+- Les deux canaux partagent le même script (`auto-progress.sh`) et le même format de trace (`.session-edits.flushed`).
+- Chaque transition prend un snapshot `progress` dans `.ai/.progress-history.jsonl` (append-only, gitignore, 50 derniers) pour rendre `/aic undo` possible.
+
+## Décisions
+
+- **Zéro skill par défaut** : la comptabilité d'état devient un service du système (hooks + agent), pas une charge utilisateur — 2 interventions humaines par feature (intent + « go »).
+- **Préfixe forcé `/aic`** sur tous les prompts : envisagé puis **rejeté** (friction massive sans gain ; hard rules + reminders couvrent déjà la discipline).
+- **Renommage `→ workflow/auto-progress`** : **rejeté** pour stabilité d'`id` (cohérent avec l'heuristique extension/création du projet).
+- **Convergence universelle via `pre-commit`** : retenue car le hook `Stop` est Claude-only ; le commit est le point commun à tous les agents (`claude, codex, cursor, gemini, copilot`, humain CLI).
+- **`/aic` reste Claude-only** : acceptable car c'est un mode exceptionnel ; les autres agents éditent directement la fiche pour un override.
+
 ## Cross-refs
 
 - **`workflow/claude-skills`** : périmètre **réduit radicalement** (de 6 skills exposés à 0 + 2 optionnels). Sera rouverte au moment de l'implem effective pour acter ce changement.
@@ -147,6 +184,13 @@ Les deux canaux partagent le **même script** (`.ai/scripts/auto-progress.sh`) e
 Idempotence : si Claude a déjà auto-progressé dans le tour (phase passée de `spec` à `implement`), le `pre-commit` ne refait rien (`current_phase != "spec"` → continue). Aucun double-bump.
 
 Le skill `/aic` (mode override) reste Claude-only — acceptable : c'est un mode exceptionnel. Les autres agents peuvent éditer directement la fiche si besoin d'override (accessible, documenté dans `AGENTS.md`).
+
+## Validation
+
+- Assertion smoke-test (cross-scope `quality/smoke-test`) : vérifie la bascule `spec → implement` au commit, le snapshot dans `.progress-history.jsonl`, l'append worklog et l'idempotence.
+- Régression dog-foodée : `auto-progress.sh` crée le worklog s'il est absent (cas des agents non-Claude via `pre-commit`) — bug révélé puis fixé, correctif propagé dans `.ai/scripts/` et `template/.ai/scripts/`.
+- Override du seuil STALE testé via `progress.stale_after_days: 0` (le bucket STALE inclut alors `back/inprog`).
+- `template/AGENTS.md.jinja` reste un shim mince : vérifié par `check-shims` (les détails runtime vivent dans `.ai/index.md` et les docs, pas dans le shim).
 
 ## Cross-scope anticipé (à l'implem)
 

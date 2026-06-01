@@ -19,9 +19,34 @@ progress:
 
 # Smoke-test
 
+## Résumé
+
+Un script end-to-end (`tests/smoke-test.sh`, 28 assertions) qui scaffolde un projet jetable via Copier et exerce toute la chaîne du framework — des shims au commit-msg Conventional. Sert de filet anti-régression unique rejoué localement et en CI à chaque évolution du Pack A ou des scripts runtime.
+
 ## Objectif
 
 Vérifier en un script que la chaîne complète tient : `copier copy` → check-shims → check-features → reminder text+json → commit-msg Conventional → features-for-path → cycles → coverage → focus graph → i18n → auto-worklog.
+
+## Périmètre
+
+### Inclus
+
+- Le script orchestrateur `tests/smoke-test.sh` et ses 28 assertions end-to-end, plus les tests ciblés sur le matching `touches:` (`path_matches_touch` dans `_lib.sh`) et le rendu `docs_root=docs`.
+- L'enchaînement réel des scripts générés sur un scaffold jetable dans `/tmp` : shims, mesh, reminder text+json, commit-msg, features-for-path, cycles, coverage, focus graph, i18n, auto-worklog.
+- La couverture des variantes de rendu Copier : profils `tech_profile` (`dotnet-clean-cqrs`, `react-next`, `fullstack-dotnet-react`), `adoption_mode` (`lite`/`strict`), squelettes DS et budget Pack A lean.
+
+### Hors périmètre
+
+- La logique interne de chaque check (portée par leurs propres features : `doctor`, `cycle-detection`, `doc-freshness`…) ; le smoke ne fige que leur comportement observable depuis un scaffold.
+- L'exécution en CI elle-même (orchestrée par `quality/ci-guard`) ; le smoke fournit l'assertion, pas le workflow.
+- L'enforcement local des hooks (couvert par `workflow/git-hooks`).
+
+## Invariants
+
+- Idempotent : deux lancements consécutifs passent sans nettoyage manuel intermédiaire.
+- Exit non-zéro à la première assertion qui casse ; aucune étape suivante n'est masquée par `|| true`.
+- Compatible macOS bash 3.2 et Linux bash 5.x (interdit notamment `mapfile` dans les scripts générés vérifiés).
+- Toujours exécuté sur un projet jetable sous `/tmp` rendu par Copier, jamais contre le workspace en place.
 
 ## Comportement attendu
 
@@ -34,6 +59,20 @@ Vérifier en un script que la chaîne complète tient : `copier copy` → check-
 - Couverture : end-to-end + tests ciblés sur le matching `touches:` dans `_lib.sh` et `docs_root=docs`.
 - Idempotent : 2 lancements consécutifs sans nettoyage manuel.
 - Exécutable sur macOS bash 3.2 et Linux bash 5.x.
+
+## Décisions
+
+- Un **script monolithique** plutôt qu'une suite éclatée : une seule commande figeant toute la chaîne, exit à la première casse pour un diagnostic CI clair.
+- Le scaffold se fait sur une **copie temporaire du workspace courant** dans `/tmp` : on teste le template réellement rendu par Copier, pas une fixture figée qui dériverait.
+- Les **modules conditionnels** (`tech_profile`, `adoption_mode`, squelettes DS, Pack A lean) sont couverts par des assertions dédiées dans `[28/28]` et `[19/28]` plutôt que par des fiches isolées, pour fixer en un point les rendus générés/exclus.
+- L'assertion `check-feature-docs.sh` couvre le **gradient warning → strict** : warning non bloquant sur legacy, `--strict` bloquant sur section manquante, puis PASS strict sur le noyau minimal — pour verrouiller le contrat de cette CLI sans casser les projets existants.
+
+## Validation
+
+- `bash tests/smoke-test.sh` en local : les 28 étapes passent, et un second lancement confirme l'idempotence.
+- Rejeu automatique en CI via `quality/ci-guard` (repo template uniquement) sur `push`/`pull_request`.
+- Tests ciblés inclus dans le script : `path_matches_touch` (matching exact, dossier, glob `**`, faux positifs proches) et rendu `docs_root=docs` (`check-features`, `features-for-path`, index JSON).
+- Garde de compatibilité Bash 3.2 vérifiée sur les scripts générés (ex. absence de `mapfile` dans `pr-report.sh`).
 
 ## Cross-refs
 

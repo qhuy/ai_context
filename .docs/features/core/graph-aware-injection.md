@@ -17,9 +17,28 @@ progress:
 
 # Graph-aware injection
 
+## Résumé
+
+`AI_CONTEXT_FOCUS=<scope|id>` restreint l'injection contextuelle au scope ciblé et à ses voisins 1-hop dans le graphe `depends_on`, pour éviter l'explosion de tokens quand le mesh dépasse ~100 features.
+
 ## Objectif
 
 Sur un mesh > 100 features, injecter l'inventaire complet à chaque tour explose les tokens. La variable `AI_CONTEXT_FOCUS=<scope|id>` réduit l'injection au scope ciblé + ses voisins 1-hop dans le graphe `depends_on`.
+
+## Périmètre
+
+### Inclus
+
+- Lecture de `AI_CONTEXT_FOCUS` par `pre-turn-reminder.sh` et filtrage de l'inventaire injecté.
+- Deux granularités : focus par scope (`back`) et focus par feature (`back/payment`).
+- Traversée 1-hop bidirectionnelle du graphe `depends_on` (features pointées et features pointantes).
+- Fallback sur l'inventaire complet quand le focus est invalide.
+
+### Hors périmètre
+
+- La validation du mesh (`check-features`) et le build de l'index : non affectés.
+- Le filtrage par status (`active` par défaut) : conservé, non remplacé par le focus.
+- La traversée multi-hop (> 1) : non gérée, hors scope volontaire.
 
 ## Comportement attendu
 
@@ -28,11 +47,32 @@ Sur un mesh > 100 features, injecter l'inventaire complet à chaque tour explose
 - Focus invalide (scope inexistant, id introuvable) → warn + fallback inventaire complet (jamais de vide).
 - Désactivable en désactivant la variable.
 
+## Invariants
+
+- Un focus invalide ne produit jamais d'injection vide : fallback systématique sur l'inventaire complet + warn.
+- Le voisinage 1-hop est bidirectionnel (les deux sens de `depends_on`), jamais réduit à un seul sens.
+- Seul `pre-turn-reminder.sh` lit la variable ; aucun autre script n'en dépend.
+- L'absence de la variable laisse le comportement historique inchangé (inventaire complet).
+
+## Décisions
+
+- Voisinage limité à **1-hop** : compromis assumé entre réduction des tokens et conservation du contexte directement pertinent ; pas de traversée transitive.
+- Le focus est une **optimisation au-dessus** du filtrage par status, pas un remplacement : `active` reste le défaut.
+- Fallback plutôt qu'erreur sur focus invalide : ne jamais dégrader l'agent en contexte vide.
+- Variable d'environnement (et non flag de script) pour rester transparente vis-à-vis des appels existants.
+
 ## Contrats
 
 - Variable lue par `pre-turn-reminder.sh` uniquement.
 - N'affecte ni la validation (`check-features`) ni le build d'index.
 - Compatible avec `AI_CONTEXT_SHOW_ALL_STATUS`.
+
+## Validation
+
+- `AI_CONTEXT_FOCUS=<scope>` et `AI_CONTEXT_FOCUS=<scope>/<id>` injectent bien le sous-ensemble attendu (scope + voisins 1-hop).
+- Focus invalide (scope inexistant, id introuvable) → warn émis et inventaire complet injecté, jamais de sortie vide.
+- Sans la variable, l'injection reste identique au comportement complet historique.
+- `check-features` et le build d'index donnent le même résultat avec ou sans focus (non affectés).
 
 ## Cross-refs
 

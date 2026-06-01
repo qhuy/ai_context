@@ -21,9 +21,35 @@ progress:
 
 # Git hooks
 
+## Résumé
+
+Trois hooks Git (`commit-msg`, `post-checkout`, `pre-commit`) font respecter le mesh au moment du commit, tiennent `.feature-index.json` à jour entre branches et garantissent une auto-progression agent-agnostic. C'est le point de convergence universel qui assure la parité Claude / Codex / Cursor / Gemini / Copilot / humain CLI.
+
 ## Objectif
 
 Faire respecter le mesh au moment du commit et tenir l'index à jour entre branches.
+
+## Périmètre
+
+### Inclus
+
+- Les trois hooks livrés : `commit-msg` (validation Conventional + garde `feat:`), `post-checkout` (rebuild d'index) et `pre-commit` (auto-progression universelle).
+- Activation via `git config core.hooksPath .githooks && chmod +x .githooks/*` (étape 2 du `_message_after_copy`).
+- Le matching des fichiers stagés contre `touches:`, mutualisé avec les hooks Claude via `_lib.sh` (`features_matching_path`).
+
+### Hors périmètre
+
+- Le rejouage CI des validations en cas de contournement local (`--no-verify`, `core.hooksPath` désactivé) : couvert par `quality/ci-guard`.
+- La logique d'auto-progression elle-même (`auto-progress.sh`) et le hook Claude `Stop`, portés par `workflow/conversational-skills`.
+- La construction de l'index (`workflow/auto-worklog`, `core/feature-index-cache`) : le hook ne fait que l'invoquer.
+
+## Invariants
+
+- `commit-msg` bloque un commit `feat:` tant qu'aucun fichier `<docs_root>/features/**` n'est touché.
+- `pre-commit` **ne bloque jamais** : toute erreur interne (index absent, jq manquant, pattern non résolu) se résout en exit 0 silencieux.
+- `pre-commit` est idempotent : si le hook Claude `Stop` a déjà auto-progressé dans le tour, `.session-edits.flushed` est vide ou les phases sont déjà basculées → no-op.
+- Le matching stagé ↔ `touches:` partage exactement la sémantique des hooks Claude (même `_lib.sh`), sans logique `jq startswith/endswith` dupliquée.
+- La langue du message est imposée par `commit_language` (fr/en).
 
 ## Comportement attendu
 
@@ -39,6 +65,20 @@ Faire respecter le mesh au moment du commit et tenir l'index à jour entre branc
 - `pre-commit` **ne bloque jamais** un commit : toute erreur interne (absence d'index, jq manquant, pattern non résolu) → exit 0 silencieux.
 - Langue du message imposée par `commit_language` (fr/en).
 - Idempotence : si le hook Claude `Stop` a déjà auto-progressé dans le même tour, `.session-edits.flushed` est vide ou les phases sont déjà basculées → `pre-commit` est un no-op.
+
+## Décisions
+
+- `pre-commit` retenu comme **point de convergence universel** de l'auto-progression (option B) : le hook Claude `Stop` seul ne couvrait que Claude Code, rupture de garantie pour les autres agents du multiselect `agents`. Option A (acter Claude-first) rejetée — rupture de promesse multi-agent ; option C (wrapper script) rejetée — friction d'invocation.
+- `pre-commit` **non bloquant par construction** : il améliore l'état du mesh sans jamais empêcher un commit, donc une défaillance d'outillage ne casse pas le flux de l'utilisateur.
+- Garde `feat:` **bloquante** mais types `chore`/`docs`/`fix` **non bloquants** (simple warning hors Conventional) : on force la doc là où elle est due sans freiner le travail courant.
+- Sémantique de matching factorisée dans `_lib.sh` plutôt que dupliquée : une seule source de vérité partagée avec les hooks Claude évite les divergences.
+
+## Validation
+
+- Smoke-test : un commit `feat:` sans fiche `features/**` stagée doit être rejeté par `commit-msg` ; avec fiche stagée, il passe.
+- Smoke-test `pre-commit` : des fichiers stagés couvrant une feature en phase `spec` déclenchent la bascule `spec→implement` au `git commit`, fiches/worklogs re-stagés (assertion ciblée par le `resume_hint`).
+- Non-blocage `pre-commit` : un environnement sans `jq` ou sans `.feature-index.json` doit aboutir à exit 0 sans bloquer le commit.
+- Idempotence : un second `git commit` immédiat (phases déjà basculées) est un no-op.
 
 ## Cross-refs
 

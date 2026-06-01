@@ -25,9 +25,36 @@ progress:
 
 # Fraicheur documentaire des features
 
+## Résumé
+
+Filet de sécurité qui empêche de committer une évolution de comportement couverte par une feature sans toucher sa fiche ou son worklog. Bloque en local au commit et signale en CI les fiches plus anciennes que le code qu'elles couvrent.
+
 ## Objectif
 
 Garantir qu'une evolution de comportement couverte par une feature ne puisse pas etre committee sans trace documentaire explicite.
+
+## Périmètre
+
+### Inclus
+
+- Le contrôle staged au commit local (`check-feature-freshness.sh --staged --strict`) appelé par le hook `commit-msg`.
+- Le rapport de fraîcheur en CI / quality gate (modes `--warn` et `--strict` sur l'historique Git).
+- La résolution des features candidates via `touches:` (bloquant) et `touches_shared:` (reporting/review seulement).
+- Le filet sémantique côté fiche via `check-feature-docs.sh` : sections noyau, modules conditionnels `doc.requires.*`, warnings par défaut et strict avant DONE.
+
+### Hors périmètre
+
+- La validation structurelle du mesh (portée par `check-features.sh`) : ici on couvre la maintenance sémantique, pas la cohérence des liens.
+- Le contenu rédactionnel des fiches : le check vérifie la présence/fraîcheur, pas la justesse du texte.
+- L'enforcement réseau : le contrôle bloquant local repose sur les git hooks (contournables via `--no-verify`), rattrapé par la CI.
+
+## Invariants
+
+- Le contrôle bloquant reste fondé sur `touches:` uniquement ; `touches_shared:` ne déclenche jamais l'obligation de fiche/worklog staged.
+- Un fichier stage couvert par plusieurs fiches exige une fiche ou un worklog stage pour **chaque** feature candidate.
+- En staged strict, un fichier couvert sans doc ni worklog stage bloque le commit ; aucune feature couverte ne peut passer silencieusement.
+- Le hook `commit-msg` appelle le mode staged strict **après** la validation Conventional Commits, jamais avant.
+- La quality gate `QUALITY_GATE.md` reste bloquante avant DONE sans imposer son chargement initial (cohérence Pack A lean).
 
 ## Comportement attendu
 
@@ -44,11 +71,25 @@ Garantir qu'une evolution de comportement couverte par une feature ne puisse pas
   - `--strict` bloque sur les features stale detectees dans l'historique Git.
 - Le hook `commit-msg` appelle le mode staged strict apres validation Conventional Commits.
 
+## Décisions
+
+- Contrôle bloquant restreint à `touches:` ; `touches_shared:` n'alimente que reporting/review pour réduire le bruit sur les fichiers transverses (`tests/smoke-test.sh`, CHANGELOG, états projet).
+- Pré-calcul des fiches/worklogs stages au lieu de rescanner tous les fichiers stages par feature candidate : évite un crash local silencieux sur les gros commits dogfood.
+- `check-feature-docs.sh` complète `check-feature-freshness.sh` : la fraîcheur garantit qu'on touche la doc, le docs check garantit que la fiche reste structurée.
+- Sévérité graduée : `--warn` par défaut (ne casse pas le legacy), `--strict` avant DONE et en CI bloquante.
+
+## Validation
+
+- `tests/unit/test-check-feature-freshness.sh` couvre le staged strict, le multi-feature et la non-régression du crash gros commit.
+- `tests/unit/test-review-delta-shared.sh` vérifie que `touches_shared:` reste non bloquant pour la fraîcheur staged.
+- Au commit local : `check-feature-freshness.sh --staged --strict` via le hook `commit-msg` (un fichier couvert sans doc/worklog stage bloque).
+- En CI : `check-feature-freshness.sh --warn` puis `--strict` selon le contexte ; `check-feature-docs.sh` en warning sur les projets legacy.
+
 ## Cross-refs
 
 Aucune dependance de feature declaree.
 
-## Historique / decisions
+## Historique / décisions
 
 - 2026-05-03 : correction d'une regression multi-feature : un fichier couvert par plusieurs fiches exige maintenant une fiche/worklog stage pour chaque feature candidate. Ajout d'un test unitaire dédié.
 - 2026-05-03 : introduction de `touches_shared` comme surface non bloquante pour la fraîcheur staged. Objectif : réduire le bruit sur les fichiers transverses (`tests/smoke-test.sh`, CHANGELOG, états projet) sans perdre la visibilité dans les rapports.

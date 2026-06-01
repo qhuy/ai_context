@@ -19,9 +19,43 @@ progress:
 
 # Claude skills /aic*
 
+## Résumé
+
+Définit le catalogue des skills Claude `/aic*` (les seules intentions exposées à l'utilisateur) et les procédures internes déplacées sous `.ai/workflows/`. But : offrir une surface conversationnelle minimale côté Claude tout en partageant les étapes d'orchestration avec Codex, sans en faire du contexte obligatoire.
+
 ## Objectif
 
 Exposer côté Claude uniquement les intentions lisibles, et déplacer les étapes internes du mesh dans `.ai/workflows/` pour qu'elles soient partagées par Claude et Codex.
+
+## Périmètre
+
+### Inclus
+
+- Le catalogue des skills publics `/aic*` : `/aic`, `/aic-frame`, `/aic-status`, `/aic-diagnose`, `/aic-document-feature`, `/aic-review`, `/aic-ship` (`SKILL.md` + `workflow.md` sous `template/.claude/skills/**`).
+- Les procédures internes sous `template/.ai/workflows/**` : `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `document-feature`, `quality-gate`, `feature-done`, `project-guardrails`.
+- Le routage skill public → procédure interne (quel skill invoque quel workflow).
+
+### Hors périmètre
+
+- L'auto-progression invisible (hook Stop + pre-commit), portée par `workflow/conversational-skills`.
+- Le logging des éditions, porté par `workflow/auto-worklog`.
+- Le contenu et la logique des checks invoqués par `quality-gate` (portés par leurs features respectives).
+- L'inclusion de `.claude/skills/**` ou `.ai/workflows/**` dans le contexte obligatoire Codex (explicitement hors Pack A, voir `context-ignore.md`).
+
+## Invariants
+
+- Tout skill public Claude possède un `SKILL.md` (description courte) **et** un `workflow.md` (procédure d'orchestration).
+- Les procédures internes restent sous `.ai/workflows/` et ne sont **jamais** invocables comme commandes Claude.
+- Aucun skill ne contourne `auto-worklog` : ils déclenchent des éditions, le hook se charge du log.
+- `/aic done` et `/aic force done` délèguent à `feature-done` ; aucun skill ne patche directement `status: done`.
+- `.claude/skills/**` et `.ai/workflows/**` restent disponibles mais hors contexte Codex obligatoire.
+
+## Décisions
+
+- Surface utilisateur **minimale** : on n'expose que des intentions lisibles, pas les primitives procédurales du mesh — l'utilisateur n'a pas à connaître les étapes internes.
+- Les primitives (`feature-*`, `quality-gate`) sont **déplacées**, pas supprimées : elles deviennent des procédures internes partagées Claude/Codex sous `.ai/workflows/`.
+- `/aic` est le **point d'entrée conversationnel unique** pour corriger ou forcer l'auto-progression quand elle se trompe.
+- Les skills restent rédigés en **anglais** (dette tracée) tandis que les reminders pre-turn sont i18n FR/EN.
 
 ## Comportement attendu
 
@@ -57,6 +91,14 @@ Exposer côté Claude uniquement les intentions lisibles, et déplacer les étap
 - Les procédures internes vivent sous `.ai/workflows/` et ne sont pas invocables comme commandes Claude.
 - Aucun skill ne contourne `auto-worklog` : ils déclenchent des éditions, le hook s'en charge.
 - `quality-gate` invoque `check-shims` + `check-features` + `check-feature-coverage` + `measure-context-size`.
+
+## Validation
+
+- Chaque skill public sous `template/.claude/skills/**` expose bien un couple `SKILL.md` + `workflow.md`.
+- Les procédures listées existent sous `template/.ai/workflows/**` et ne sont déclarées nulle part comme commandes Claude invocables.
+- `_message_after_copy` (README) et `.ai/index.md` n'annoncent que les skills publics, jamais les procédures internes.
+- Le smoke-test du template rend `.claude/skills/**` et `.ai/workflows/**` sans erreur Jinja.
+- `context-ignore.md` documente l'exclusion de `.claude/skills/**` et `.ai/workflows/**` du Pack A.
 
 ## Cross-refs
 

@@ -26,11 +26,47 @@ progress:
 
 # Procédure project-guardrails
 
+## Résumé
+
+Procédure interne qui matérialise `.ai/guardrails.md` (non-goals + glossaire métier) pour orienter l'agent là où le README ne le fait pas. Comble le trou laissé par une `project_description` mono-ligne et des skills `/aic-*` tous feature-centric, sans dupliquer vision ni utilisateurs.
+
 ## Objectif
 
 Combler le trou identifié dans le contexte général projet : la `project_description` (copier) se réduit à 1 ligne en blockquote, et les 8 skills `/aic-*` existants sont 100 % feature-centric. Aucun mécanisme ne capture **les non-goals** (ce que l'agent ne doit *pas* proposer) ni le **glossaire métier** (acronymes, vocabulaire spécifique).
 
 La procédure cible spécifiquement ce qui n'est *pas* déjà dans le README — pour orienter l'agent, pas pour décrire le produit. Vision et utilisateurs cibles restent intentionnellement délégués au README pour éviter la duplication.
+
+## Périmètre
+
+### Inclus
+
+- La procédure interne `.ai/workflows/project-guardrails.md` et son rendu template (`.jinja`).
+- La génération de `.ai/guardrails.md` avec deux sections : non-goals (obligatoire, ≥ 1 item) et glossaire métier (optionnel).
+- L'entrée utilisateur recommandée `/aic-frame`, qui peut matérialiser les guardrails quand le besoin porte sur les non-goals ou le glossaire.
+- La vérification que les guardrails restent référencés on-demand (hors Pack A) dans `.ai/index.md`.
+
+### Hors périmètre
+
+- La vision, les utilisateurs cibles et la roadmap : délégués au README et à `scope: product`, jamais réintroduits dans le fichier généré.
+- Le cadrage produit complet (porté par la feature `product`) et le catalogue de skills (`workflow/claude-skills`).
+- Toute injection runtime ou ajout au pré-turn reminder : coût tokens nul par défaut.
+
+## Invariants
+
+- `.ai/guardrails.md` vit sous `.ai/` (orientation agent), jamais sous `{{ docs_root }}/` (doc produit).
+- Au moins 1 non-goal est requis ; sans lui la procédure perd sa valeur.
+- Le fichier n'est jamais chargé dans Pack A : il se consulte uniquement pour cadrage, non-goals ou glossaire.
+- Aucune injection dans `pre-turn-reminder.sh` ; pas de surcoût tokens au démarrage agent.
+- Idempotent : une ré-exécution passe en mode `update` sans perte de contenu existant.
+- Vision / Users / Roadmap restent absents du fichier généré.
+
+## Décisions
+
+- Resserrage assumé aux **non-goals + glossaire** : Vision et Users étaient redondants avec le README et `project_description`, donc retirés.
+- Logique déplacée du skill `/aic-project-guardrails` (retiré) vers la procédure `.ai/workflows/`, consommable par Claude et Codex via `/aic-frame`.
+- Livrable **doc** : aucune procédure ne déclenche de commit `feat:`.
+- Guardrails maintenus **on-demand** (Lean Codex) : la procédure vérifie l'absence dans Pack A au lieu de l'y forcer.
+- Séparation nette guardrails projet / décisions de feature : les non-goals/glossaire restent dans `.ai/guardrails.md`, les décisions fonctionnelles dans la fiche concernée.
 
 ## Comportement attendu
 
@@ -65,6 +101,13 @@ La procédure cible spécifiquement ce qui n'est *pas* déjà dans le README —
 - Idempotent : ré-exécution = mode update sans perte de contenu.
 - Pas de `feat:` commit déclenché par cette procédure (livrable doc).
 - Vision / Users / Roadmap **explicitement absents** du fichier généré (délégué au README).
+
+## Validation
+
+- `.ai/index.md` ne référence pas `.ai/guardrails.md` dans Pack A : vérifié par la procédure et par `tests/smoke-test.sh`.
+- Le rendu Copier du template (`.jinja`) produit `.ai/workflows/project-guardrails.md` sans erreur Jinja (smoke-test).
+- Ré-exécution sur un `.ai/guardrails.md` existant : mode `update` proposé, contenu conservé (idempotence).
+- Aucune référence à la procédure dans `pre-turn-reminder.sh` → coût tokens nul vérifiable.
 
 ## Cross-refs
 

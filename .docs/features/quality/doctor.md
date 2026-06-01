@@ -24,6 +24,10 @@ progress:
 
 # Doctor (diagnostic)
 
+## Résumé
+
+`doctor.sh` est le point d'entrée unique de diagnostic d'une installation ai_context : il vérifie dépendances, repo/hooks, fichiers `.ai` critiques et rejoue les checks read-only sans rien écrire. Il réduit la friction d'adoption en donnant un état lisible et des `Next actions` concrètes.
+
 ## Objectif
 
 Réduire la friction d'adoption en fournissant un point d'entrée unique de diagnostic qui n'écrit rien et donne des actions concrètes.
@@ -40,10 +44,47 @@ Réduire la friction d'adoption en fournissant un point d'entrée unique de diag
 - Mode strict (`doctor.sh --strict`) : retourne non-zéro si blocage.
 - Affiche un bloc `Next actions` si des corrections sont suggérées.
 
+## Périmètre
+
+### Inclus
+
+- Le script source `.ai/scripts/doctor.sh` et son gabarit `template/.ai/scripts/doctor.sh.jinja` (CI/diagnostic livrés aux projets générés).
+- Diagnostic des dépendances (`jq`, `yq`, `copier`), du repo git + hooks, des fichiers `.ai` critiques.
+- Orchestration en lecture seule des checks existants (`check-shims`, `check-features`, `measure-context-size`) et agrégation d'un bloc `Next actions`.
+
+### Hors périmètre
+
+- La logique interne des checks invoqués (portée par leurs propres features : `quality/ci-guard`, `core/template-engine`, etc.) ; `doctor.sh` ne fait que les appeler.
+- Toute écriture ou correction automatique : `doctor.sh` reste purement informatif.
+- Une CLI dédiée (`ai-context doctor` avec `--json`) : précurseur seulement, extraction future (cf. `resume_hint`).
+
+## Invariants
+
+- Non destructif : aucune écriture, quel que soit le mode.
+- Mode par défaut informatif → exit `0` (pas de faux négatif sur scaffold sain en CI smoke-test).
+- Mode `--strict` → exit non-zéro uniquement sur blocage réel.
+- Optionnel absent ⇒ warning ; bloquant absent ⇒ erreur (fallback gracieux).
+- Cohérence entre la source `.ai/scripts/doctor.sh` et le gabarit `.jinja` rendu chez les consommateurs.
+
+## Décisions
+
+- MVP en **Bash** embarqué dans le template avant toute extraction vers une CLI.
+- Mode par défaut **informatif** (exit 0), `--strict` **opt-in** : évite de casser le smoke-test sur un scaffold frais sain.
+- Repo git absent traité en **warning** (+ action suggérée), pas en blocage : un scaffold fraîchement généré n'a pas encore fait `git init`.
+- Présence des scripts critiques testée avec `[[ -f ]]` et non `[[ -x ]]` : le bit `+x` n'est pas préservé après rendu Copier et tous les scripts sont invoqués via `bash <script>`.
+- Le contrôle `.githooks` ne cible que les vrais hooks exécutables (`commit-msg`, `pre-commit`, `post-checkout`) et ignore `.githooks/README.md`.
+
 ## Contrats
 
 - Non destructif : aucune écriture.
 - Compatible fallback : warnings quand optionnel absent, erreurs quand bloquant.
+
+## Validation
+
+- `tests/smoke-test.sh` exécute `doctor.sh --strict` sur le scaffold rendu et garantit la non-régression (exit 0 sur scaffold sain, blocage sur réel manque).
+- `doctor.sh` (mode défaut) tourne sur un repo sain et retourne `0` ; `doctor.sh --strict` retourne non-zéro sur dépendance/fichier critique manquant.
+- Le gabarit `template/.ai/scripts/doctor.sh.jinja` est rendu sans erreur Jinja par `copier copy` (couvert par le smoke-test).
+- Vérifié au sanity check post-tag : présence des scripts via `[[ -f ]]` (pas de faux positif lié au bit `+x` après rendu Copier).
 
 ## Cross-refs
 

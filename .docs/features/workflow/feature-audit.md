@@ -23,6 +23,10 @@ progress:
 
 # Procédure feature-audit
 
+## Résumé
+
+Procédure de maintenance du mesh qui détecte les écarts entre le code et les fiches feature — code orphelin sans fiche, frontmatter dérivé du réel — et propose des patchs validés un par un. Comble les deux cas du cycle de vie feature jusqu'ici non outillés : rétro-documentation et re-synchronisation forcée.
+
 ## Objectif
 
 Combler le trou entre la création a priori d'une fiche et l'édition consciente de son frontmatter : couvrir deux cas jusqu'ici non outillés du cycle de vie feature.
@@ -55,6 +59,37 @@ Deux modes explicites (argument obligatoire, pas d'auto-détection) :
 - Dry-run par défaut : affiche un diff frontmatter proposé.
 - Avec `--apply` : demande confirmation globale, puis applique `.ai/workflows/feature-update.md` pour écrire les changements.
 
+## Périmètre
+
+### Inclus
+
+- Les deux modes explicites `discover <scope>` (orphelins → fiche suggérée) et `refresh <scope>/<id>` (diff frontmatter proposé).
+- Le script agent-agnostique `audit-features.sh` (MVP `discover` only) + la procédure `.ai/workflows/feature-audit.md`, appelée via `/aic-review` ou en langage naturel.
+- Le calcul des orphelins sur fichiers trackés ET non trackés (`git ls-files --cached --others --exclude-standard`), avec fallback `find` hors repo git.
+
+### Hors périmètre
+
+- L'écriture directe du frontmatter ou la création de fiche : déléguées à `.ai/workflows/feature-new.md` et `.ai/workflows/feature-update.md`.
+- Le format et les règles de validation du frontmatter (portés par `core/feature-mesh`).
+- L'auto-détection du mode : l'argument (`discover`/`refresh`) est toujours obligatoire.
+- Le mode `refresh` côté script `audit-features.sh` (MVP `discover` only ; l'UX riche reste dans la procédure).
+
+## Invariants
+
+- Dry-run par défaut : aucune écriture sans `--apply` explicite.
+- Jamais de batch silencieux : `--apply` confirme fiche par fiche en `discover`, ou globalement en `refresh`.
+- L'audit ne modifie jamais une fiche directement ; il passe par les procédures internes pour préserver worklog et bump de `progress`.
+- La validation finale (`build-feature-index.sh --write` + `check-features.sh`) tourne avant de rendre la main.
+- Le script reste compatible Bash 3.2 et fidèle aux chemins comportant des espaces.
+
+## Décisions
+
+- Une **procédure unique à deux modes** plutôt que deux procédures séparées, pour garder la maintenance du mesh lisible.
+- **Dry-run par défaut** assumé : éviter de polluer le mesh avec des fiches auto-générées sans contrôle humain.
+- **Délégation** aux workflows `feature-new`/`feature-update` plutôt que d'écrire en propre : un seul chemin garantit les invariants du mesh.
+- **Logique non exposée comme skill Claude** : déplacée sous `.ai/workflows/feature-audit.md`, déclenchée par `/aic-review` ou par Codex, pour ne pas multiplier les skills procéduraux.
+- `tests/smoke-test.sh` en **`touches_shared`** : signale le lien de review sans bloquer la fraîcheur documentaire à chaque ajout de smoke global.
+
 ## Contrats
 
 - **Procédure interne / maintenance mesh** — anciennement exposée directement ; l'UX recommandée passe désormais par `/aic-review` ou une demande naturelle de rétro-doc.
@@ -62,6 +97,14 @@ Deux modes explicites (argument obligatoire, pas d'auto-détection) :
 - **Jamais de batch silencieux** — `--apply` demande toujours confirmation fiche par fiche en `discover`, ou une confirmation globale en `refresh`.
 - **Délègue aux procédures internes** — n'écrit pas directement. Passe par `.ai/workflows/feature-new.md` (discover) ou `.ai/workflows/feature-update.md` (refresh) pour préserver les invariants (worklog, progress bump).
 - **Validation finale** — appelle `build-feature-index.sh --write` + `check-features.sh` avant de rendre la main.
+
+## Validation
+
+- `tests/smoke-test.sh` couvre `discover` : assertion `--help` (annonce `MVP discover only`) + détection des orphelins `src/orphan.ts` et `src/with space/file.ts` dans la sortie (cas [12/28]).
+- Deux tests unitaires de régression s'exécutent en tête du smoke partagé avant les scénarios Copier.
+- Le dry-run par défaut est vérifié : aucune écriture sans `--apply`.
+- Compatibilité Bash 3.2 et fidélité des chemins à espaces validées par le smoke (cas `src/with space/file.ts`).
+- Fallback `find` hors repo git couvert par le scénario scaffold neuf.
 
 ## Cross-refs
 
