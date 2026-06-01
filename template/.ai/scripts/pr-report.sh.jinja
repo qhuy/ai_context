@@ -81,8 +81,10 @@ fi
 
 index_file=".ai/.feature-index.json"
 index_tmp="$(mktemp "${TMPDIR:-/tmp}/ai-context-feature-index.XXXXXX")"
-cleanup_index_tmp() { rm -f "$index_tmp"; }
-trap cleanup_index_tmp EXIT
+touches_tmp=""
+shared_touches_tmp=""
+cleanup_pr_report_tmp() { rm -f "$index_tmp" "$touches_tmp" "$shared_touches_tmp"; }
+trap cleanup_pr_report_tmp EXIT
 if bash "$script_dir/build-feature-index.sh" > "$index_tmp" 2>/dev/null; then
   index_file="$index_tmp"
 elif [[ -f "$index_file" ]]; then
@@ -91,6 +93,75 @@ else
   echo "❌ index feature introuvable: $index_file (lance: bash .ai/scripts/build-feature-index.sh --write)" >&2
   exit 1
 fi
+
+touches_tmp="$(mktemp "${TMPDIR:-/tmp}/ai-context-pr-touches.XXXXXX")"
+shared_touches_tmp="$(mktemp "${TMPDIR:-/tmp}/ai-context-pr-shared.XXXXXX")"
+jq -r '.features[] | . as $f | ($f.touches // [])[] | [$f.scope, $f.id, $f.path, .] | @tsv' "$index_file" > "$touches_tmp"
+jq -r '.features[] | . as $f | ($f.touches_shared // [])[] | [$f.scope, $f.id, $f.path, .] | @tsv' "$index_file" > "$shared_touches_tmp"
+
+path_matches_touch_fast() {
+  local path="$1"
+  local touch="$2"
+
+  [[ -z "$path" || -z "$touch" ]] && return 1
+  [[ "$path" == "$touch" ]] && return 0
+
+  if [[ "$touch" != *[\*\?\[]* ]]; then
+    [[ "$path" == "$touch"/* ]] && return 0
+    return 1
+  fi
+
+  if [[ "$touch" == *'/**' ]]; then
+    local prefix="${touch%'/**'}"
+    if [[ -n "$prefix" && "$prefix" != *[\*\?\[]* ]]; then
+      [[ "$path" == "$prefix" || "$path" == "$prefix"/* ]] && return 0
+      return 1
+    fi
+  fi
+
+  path_matches_touch "$path" "$touch"
+}
+
+features_matching_table() {
+  local table_file="$1"
+  local rel_path="$2"
+  local strict_seen=0
+  local raw_output=""
+
+  [[ -f "$table_file" ]] || return 0
+
+  while IFS=$'\t' read -r scope id feature_path touch; do
+    [[ -z "$scope" || -z "$touch" ]] && continue
+    local rc=0
+    path_matches_touch_fast "$rel_path" "$touch" || rc=$?
+    case "$rc" in
+      0) raw_output+="$scope"$'\t'"$id"$'\t'"$feature_path"$'\n' ;;
+      2) strict_seen=1 ;;
+      *) ;;
+    esac
+  done < "$table_file"
+
+  printf '%s' "$raw_output" | awk '!seen[$0]++'
+
+  [[ "$strict_seen" -eq 1 ]] && return 2
+  return 0
+}
+
+json_array() {
+  if [[ "$#" -eq 0 ]]; then
+    printf '[]'
+    return 0
+  fi
+  printf '%s\n' "$@" | jq -R . | jq -s .
+}
+
+json_array_unique() {
+  if [[ "$#" -eq 0 ]]; then
+    printf '[]'
+    return 0
+  fi
+  printf '%s\n' "$@" | jq -R . | jq -s 'unique'
+}
 
 # ─── Résolution de refs (shallow clone friendly) ──────────────────────────
 fallback_note=""
@@ -150,8 +221,8 @@ stale_threshold=14
 today_epoch=$(date +%s 2>/dev/null || echo 0)
 
 for f in ${filtered[@]+"${filtered[@]}"}; do
-  matched="$(features_matching_path "$index_file" "$f" || true)"
-  shared_matched="$(features_matching_shared_path "$index_file" "$f" || true)"
+  matched="$(features_matching_table "$touches_tmp" "$f" || true)"
+  shared_matched="$(features_matching_table "$shared_touches_tmp" "$f" || true)"
   if [[ -z "$matched" ]]; then
     if [[ -n "$shared_matched" ]]; then
       shared_keys=""
@@ -211,7 +282,7 @@ if [[ "{% raw %}${#impacted_keys[@]}{% endraw %}" -gt 0 ]]; then
       dep_id="${dep##*/}"
       dep_status=$(jq -r --arg s "$dep_scope" --arg i "$dep_id" '.features[] | select(.scope == $s and .id == $i) | .status // ""' "$index_file")
       [[ "$dep_status" == "deprecated" || "$dep_status" == "archived" ]] && echo "$key dépend de $dep ($dep_status)"
-    done)
+    done || true)
     [[ -n "$line" ]] && deprecated_links+=("$line")
   done <<< "$uniq_keys"
 fi
@@ -293,17 +364,17 @@ emit_json() {
     --arg base "$base_ref" \
     --arg head "$head_ref" \
     --arg fallback "$fallback_note" \
-    --argjson changed "$(printf '%s\n' ${changed_files[@]+"${changed_files[@]}"} | jq -R . | jq -s .)" \
-    --argjson filtered "$(printf '%s\n' ${filtered[@]+"${filtered[@]}"} | jq -R . | jq -s .)" \
+    --argjson changed "$(json_array ${changed_files[@]+"${changed_files[@]}"})" \
+    --argjson filtered "$(json_array ${filtered[@]+"${filtered[@]}"})" \
     --argjson docs_excluded "$docs_excluded" \
-    --argjson impacted "$(printf '%s\n' ${impacted_keys[@]+"${impacted_keys[@]}"} | jq -R . | jq -s 'unique')" \
-    --argjson related "$(printf '%s\n' ${related_keys[@]+"${related_keys[@]}"} | jq -R . | jq -s 'unique')" \
-    --argjson warnings "$(printf '%s\n' ${warnings[@]+"${warnings[@]}"} | jq -R . | jq -s .)" \
-    --argjson shared_only "$(printf '%s\n' ${shared_only[@]+"${shared_only[@]}"} | jq -R . | jq -s .)" \
-    --argjson done_modified "$(printf '%s\n' ${done_modified[@]+"${done_modified[@]}"} | jq -R . | jq -s .)" \
-    --argjson multi_covered "$(printf '%s\n' ${multi_covered[@]+"${multi_covered[@]}"} | jq -R . | jq -s .)" \
-    --argjson deprecated_links "$(printf '%s\n' ${deprecated_links[@]+"${deprecated_links[@]}"} | jq -R . | jq -s .)" \
-    --argjson stale_features "$(printf '%s\n' ${stale_features[@]+"${stale_features[@]}"} | jq -R . | jq -s .)" \
+    --argjson impacted "$(json_array_unique ${impacted_keys[@]+"${impacted_keys[@]}"})" \
+    --argjson related "$(json_array_unique ${related_keys[@]+"${related_keys[@]}"})" \
+    --argjson warnings "$(json_array ${warnings[@]+"${warnings[@]}"})" \
+    --argjson shared_only "$(json_array ${shared_only[@]+"${shared_only[@]}"})" \
+    --argjson done_modified "$(json_array ${done_modified[@]+"${done_modified[@]}"})" \
+    --argjson multi_covered "$(json_array ${multi_covered[@]+"${multi_covered[@]}"})" \
+    --argjson deprecated_links "$(json_array ${deprecated_links[@]+"${deprecated_links[@]}"})" \
+    --argjson stale_features "$(json_array ${stale_features[@]+"${stale_features[@]}"})" \
     '{
       base: $base,
       head: $head,

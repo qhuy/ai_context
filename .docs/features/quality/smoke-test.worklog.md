@@ -121,3 +121,8 @@
   - tests/unit/test-project-overlay.sh
   - tests/unit/test-review-delta-shared.sh
   - tests/unit/test-targeted-regressions.sh
+
+## 2026-06-01 — test unitaire pr-report JSON
+
+- `tests/unit/test-review-delta-shared.sh` ajoute une assertion JSON pr-report ; le smoke couvre ce test via son prélude unitaire.
+- Aucun changement du script smoke lui-même.

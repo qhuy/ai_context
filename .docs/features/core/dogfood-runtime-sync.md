@@ -7,6 +7,7 @@ depends_on:
   - core/template-engine
   - workflow/agent-behavior
 touches:
+  - .gitignore
   - .ai/**
   - .agents/skills/**
   - .claude/settings.json

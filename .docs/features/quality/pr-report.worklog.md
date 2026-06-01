@@ -80,3 +80,16 @@
 - Fichiers modifiés :
   - .ai/scripts/review-delta.sh
   - template/.ai/scripts/review-delta.sh.jinja
+
+## 2026-06-01 — fix perf/json pr-report
+
+- `pr-report.sh` (+ `.jinja`) précharge les tables `touches` / `touches_shared` une seule fois depuis l'index temporaire, au lieu de rescanner l'index via `jq` pour chaque fichier du diff.
+- Correction du contrat JSON : les tableaux vides sont sérialisés en `[]`, plus en `[""]`.
+- `test-review-delta-shared.sh` couvre le cas `touches_shared` en JSON et vérifie l'absence de sentinelles vides.
+
+## 2026-06-01 — fix sur-match fast-path matcher (audit du delta Codex)
+
+- Le refacto perf de pr-report (fast-path `path_matches_touch_fast` évitant un fork jq par fichier) contenait un bug : `[[ "$touch" == */** ]]` **non quoté** → le `**` du motif matchait le `*` littéral, donc un touch en `dir/*` (ou `dir/*.ext`) était traité comme `dir/**` récursif et sur-matchait les chemins imbriqués / mauvaises extensions.
+- Fix : quoter le suffixe → `[[ "$touch" == *'/**' ]]` et `${touch%'/**'}` (runtime + `.jinja`). Test différentiel fast-path vs canonique : 4 divergences → **0**.
+- Régression ajoutée : `tests/unit/test-pr-report-glob-match.sh` (touch `src/*`, vérifie qu'un chemin imbriqué n'est PAS impacté, et qu'un enfant direct l'est). Dormant en pratique (aucune feature n'utilise `dir/*` aujourd'hui) mais verrouillé.
+- Le fix JSON de Codex (sentinelles `[""]` → `[]`) est conservé tel quel (correct).

@@ -82,4 +82,19 @@ if ! echo "$out" | grep -q "couvert seulement via touches_shared"; then
   exit 1
 fi
 
+git commit -q -m "fix: change shared surface"
+
+json="$(bash .ai/scripts/pr-report.sh --base=HEAD~1 --head=HEAD --format=json)"
+if ! printf '%s\n' "$json" | jq -e '
+  .filtered_files == ["shared.txt"]
+  and .impacted_features == []
+  and .related_features == ["review/shared"]
+  and .warnings.uncovered == []
+  and (.warnings.shared_only | length) == 1
+' >/dev/null; then
+  echo "✗ pr-report JSON should not emit empty-string sentinels for empty arrays"
+  echo "$json"
+  exit 1
+fi
+
 echo "✅ test-review-delta-shared PASS"

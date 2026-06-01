@@ -284,3 +284,8 @@
 ## 2026-06-01 14:22 — auto
 - Fichiers modifiés :
   - template/.ai/scripts/review-delta.sh.jinja
+
+## 2026-06-01 — template pr-report perf/json
+
+- `template/.ai/scripts/pr-report.sh.jinja` reprend la correction runtime : tables `touches` préchargées et sérialisation JSON vide en `[]`.
+- Aucun nouveau paramètre Copier ; compat Bash 3.2 préservée.

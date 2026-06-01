@@ -207,3 +207,15 @@
 ## 2026-06-01 14:22 — auto
 - Fichiers modifiés :
   - .ai/scripts/review-delta.sh
+
+## 2026-06-01 — HANDOFF depuis quality : pr-report runtime/template
+
+- HANDOFF reçu depuis `quality/pr-report`.
+- Surface dogfood : `.ai/scripts/pr-report.sh` et `template/.ai/scripts/pr-report.sh.jinja` restent synchronisés sur la correction perf/json.
+- Aucun changement du contrat global de drift ; validation portée par les checks dogfood et le test pr-report.
+
+## 2026-06-01 — HANDOFF depuis quality : ownership .gitignore runtime
+
+- HANDOFF reçu depuis l'audit `pr-report` du delta journalier.
+- `.gitignore` rejoint les surfaces directes de `core/dogfood-runtime-sync` pour couvrir les exclusions locales du runtime dogfoodé, notamment les verrous `.claude/*.lock`.
+- Aucun changement fonctionnel du runtime ; correction de traçabilité feature mesh.

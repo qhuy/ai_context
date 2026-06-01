@@ -137,3 +137,8 @@
 ## 2026-06-01 — copier.yml : ajout _min_copier_version (audit U10)
 
 - `copier.yml` reçoit `_min_copier_version: "9.0.0"` (setting moteur porté par core/template-engine). Aucun impact sur le périmètre overlay ; entrée de traçabilité (`copier.yml` reste dans le `touches:` de cette feature).
+
+## 2026-06-01 — test pr-report JSON dans fixture review-delta
+
+- `tests/unit/test-review-delta-shared.sh` ajoute une assertion JSON `pr-report` après commit de fixture.
+- Aucun changement d'overlay projet ; entrée requise car la fixture de test reste couverte par `tests/**`.

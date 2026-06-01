@@ -71,3 +71,9 @@
 - `check-feature-coverage.sh` (+ `.jinja`) lit `.ai/project/config.yml` s'il existe, sinon `.ai/config.yml`. `.ai/project/` est `_skip_if_exists` (copier) et ignoré par `check-dogfood-drift` → un repo dont le code ne vit pas sous `src/app/lib` (ex. ce template Bash) peut adapter ses roots de couverture sans diverger du template. Bénéficie aussi aux projets consommateurs (override per-projet).
 - Repo dogfood : ajout de `.ai/project/config.yml` (roots `.ai/scripts`, `tests` ; ext `sh`). `check-feature-coverage` passe de **0 fichier scanné** (faux signal) à **50 scannés / 50 couverts / 0 orphelin**.
 - Validation : coverage 50/50, `check-dogfood-drift` PASS (parité + `.ai/project` ignoré), `check-shims`/`check-ai-references` PASS.
+
+## 2026-06-01 — fix pr-report read-only large diff
+
+- `pr-report.sh` (+ `.jinja`) garde le contrat read-only : index temporaire hors repo, tables intermédiaires en `/tmp`, cleanup par trap.
+- Correction du JSON vide pour éviter que les consommateurs read-only interprètent `[""]` comme un vrai résultat.
+- Test ajouté dans `test-review-delta-shared.sh` sur le JSON `touches_shared`.

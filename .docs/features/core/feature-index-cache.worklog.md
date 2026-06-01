@@ -62,3 +62,8 @@
 - Contexte : `quality/index-lock-contract` durcit le lock utilise par `build-feature-index.sh --write`.
 - Impact : le cache JSON conserve un lock atomique `mkdir`, sans fallback concurrent apres timeout.
 - Validation portée par `quality/index-lock-contract`.
+
+## 2026-06-01 — impact pr-report : consommation index en une passe
+
+- `pr-report.sh` (+ `.jinja`) conserve l'index temporaire read-only, mais extrait désormais les tables `touches` / `touches_shared` une seule fois avant l'analyse du diff.
+- Objectif : éviter le coût `jq` répété par fichier sur les rapports larges, sans changer le format de `.ai/.feature-index.json`.

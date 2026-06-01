@@ -54,3 +54,8 @@
 
 - Ajout des tests du contrat read-only/index portés par l'initiative stability-migration : `test-build-feature-index-contract.sh`, `test-build-feature-index-fallback.sh`, `test-read-only-checks-contract.sh`, `test-product-reports-read-only.sh` (couverts par `touches: tests/unit/**`).
 - Aucun changement de logique de cette feature ; traçabilité du nouveau périmètre de tests.
+
+## 2026-06-01 — régression ciblée pr-report JSON vide
+
+- `tests/unit/test-review-delta-shared.sh` couvre désormais `pr-report --format=json` pour un diff uniquement relié par `touches_shared`.
+- Cas verrouillé : tableaux vides attendus en `[]`, pas en `[""]`.

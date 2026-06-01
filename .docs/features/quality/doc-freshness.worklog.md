@@ -54,6 +54,11 @@
   - .github/workflows/ai-context-check.yml
   - template/.github/workflows/ai-context-check.yml.jinja
 
+## 2026-06-01 — test pr-report JSON sur fixture freshness/shared
+
+- `tests/unit/test-review-delta-shared.sh` conserve l'assertion freshness staged `touches_shared` non bloquante et ajoute un contrôle `pr-report --format=json`.
+- Objectif : prévenir la régression `[""]` sur tableaux vides sans changer la politique freshness.
+
 ## 2026-06-01 — politique freshness/docs : --warn assumé (audit U4)
 
 - Décision actée après investigation : **`--warn` reste le steady-state**, `--strict` n'est pas imposé sur freshness ni check-feature-docs.
