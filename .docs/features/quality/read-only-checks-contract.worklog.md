@@ -77,3 +77,9 @@
 - `pr-report.sh` (+ `.jinja`) garde le contrat read-only : index temporaire hors repo, tables intermédiaires en `/tmp`, cleanup par trap.
 - Correction du JSON vide pour éviter que les consommateurs read-only interprètent `[""]` comme un vrai résultat.
 - Test ajouté dans `test-review-delta-shared.sh` sur le JSON `touches_shared`.
+
+## 2026-06-01 22:26 — auto
+- Fichiers modifiés :
+  - .ai/scripts/pr-report.sh
+  - template/.ai/scripts/pr-report.sh.jinja
+  - tests/unit/test-pr-report-glob-match.sh

@@ -107,7 +107,8 @@ path_matches_touch_fast() {
   [[ "$path" == "$touch" ]] && return 0
 
   if [[ "$touch" != *[\*\?\[]* ]]; then
-    [[ "$path" == "$touch"/* ]] && return 0
+    local normalized="${touch%/}"
+    [[ "$path" == "$normalized" || "$path" == "$normalized"/* ]] && return 0
     return 1
   fi
 

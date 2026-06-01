@@ -93,3 +93,14 @@
 - Fix : quoter le suffixe → `[[ "$touch" == *'/**' ]]` et `${touch%'/**'}` (runtime + `.jinja`). Test différentiel fast-path vs canonique : 4 divergences → **0**.
 - Régression ajoutée : `tests/unit/test-pr-report-glob-match.sh` (touch `src/*`, vérifie qu'un chemin imbriqué n'est PAS impacté, et qu'un enfant direct l'est). Dormant en pratique (aucune feature n'utilise `dir/*` aujourd'hui) mais verrouillé.
 - Le fix JSON de Codex (sentinelles `[""]` → `[]`) est conservé tel quel (correct).
+
+## 2026-06-01 22:26 — auto
+- Fichiers modifiés :
+  - .ai/scripts/pr-report.sh
+  - template/.ai/scripts/pr-report.sh.jinja
+
+## 2026-06-01 — review Codex : slash final dans le fast-path
+
+- Fix : `path_matches_touch_fast` normalise les `touches:` sans glob avec `${touch%/}` pour préserver le contrat canonique `src/` = préfixe dossier.
+- Régression ajoutée dans `test-pr-report-glob-match.sh` : `touches: src/` couvre bien un enfant direct et un chemin imbriqué, tandis que `src/*` reste limité à l'enfant direct.
+- Parité runtime/template conservée.

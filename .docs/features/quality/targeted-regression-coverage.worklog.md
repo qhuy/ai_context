@@ -59,3 +59,7 @@
 
 - `tests/unit/test-review-delta-shared.sh` couvre désormais `pr-report --format=json` pour un diff uniquement relié par `touches_shared`.
 - Cas verrouillé : tableaux vides attendus en `[]`, pas en `[""]`.
+
+## 2026-06-01 22:26 — auto
+- Fichiers modifiés :
+  - tests/unit/test-pr-report-glob-match.sh

@@ -67,3 +67,14 @@
 
 - `pr-report.sh` (+ `.jinja`) conserve l'index temporaire read-only, mais extrait désormais les tables `touches` / `touches_shared` une seule fois avant l'analyse du diff.
 - Objectif : éviter le coût `jq` répété par fichier sur les rapports larges, sans changer le format de `.ai/.feature-index.json`.
+
+## 2026-06-01 22:26 — auto
+- Fichiers modifiés :
+  - .ai/scripts/pr-report.sh
+  - template/.ai/scripts/pr-report.sh.jinja
+
+## 2026-06-01 — HANDOFF depuis quality : fast-path `src/`
+
+- HANDOFF reçu depuis `quality/pr-report`.
+- `pr-report.sh` conserve les tables préchargées depuis l'index feature, mais le fast-path sans glob normalise désormais le slash final (`src/`) comme le matcher canonique `_lib.sh`.
+- Aucun changement du format `.ai/.feature-index.json`.

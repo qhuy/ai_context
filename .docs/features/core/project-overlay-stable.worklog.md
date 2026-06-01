@@ -142,3 +142,7 @@
 
 - `tests/unit/test-review-delta-shared.sh` ajoute une assertion JSON `pr-report` après commit de fixture.
 - Aucun changement d'overlay projet ; entrée requise car la fixture de test reste couverte par `tests/**`.
+
+## 2026-06-01 22:26 — auto
+- Fichiers modifiés :
+  - tests/unit/test-pr-report-glob-match.sh

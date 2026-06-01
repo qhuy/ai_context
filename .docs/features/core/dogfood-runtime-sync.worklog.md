@@ -219,3 +219,7 @@
 - HANDOFF reçu depuis l'audit `pr-report` du delta journalier.
 - `.gitignore` rejoint les surfaces directes de `core/dogfood-runtime-sync` pour couvrir les exclusions locales du runtime dogfoodé, notamment les verrous `.claude/*.lock`.
 - Aucun changement fonctionnel du runtime ; correction de traçabilité feature mesh.
+
+## 2026-06-01 22:26 — auto
+- Fichiers modifiés :
+  - .ai/scripts/pr-report.sh

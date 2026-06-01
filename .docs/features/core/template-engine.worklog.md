@@ -289,3 +289,13 @@
 
 - `template/.ai/scripts/pr-report.sh.jinja` reprend la correction runtime : tables `touches` préchargées et sérialisation JSON vide en `[]`.
 - Aucun nouveau paramètre Copier ; compat Bash 3.2 préservée.
+
+## 2026-06-01 22:26 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/pr-report.sh.jinja
+
+## 2026-06-01 — HANDOFF depuis quality : parité pr-report slash final
+
+- HANDOFF reçu depuis `quality/pr-report`.
+- `template/.ai/scripts/pr-report.sh.jinja` reprend la normalisation `${touch%/}` du runtime pour préserver `touches: src/` dans les projets générés.
+- Aucun nouveau paramètre Copier.

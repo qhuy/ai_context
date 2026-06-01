@@ -126,3 +126,7 @@
 
 - `tests/unit/test-review-delta-shared.sh` ajoute une assertion JSON pr-report ; le smoke couvre ce test via son prélude unitaire.
 - Aucun changement du script smoke lui-même.
+
+## 2026-06-01 22:26 — auto
+- Fichiers modifiés :
+  - tests/unit/test-pr-report-glob-match.sh

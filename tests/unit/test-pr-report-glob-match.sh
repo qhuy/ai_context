@@ -1,8 +1,9 @@
 #!/bin/bash
 # Non-regression : le fast-path matcher de pr-report (`path_matches_touch_fast`)
-# ne doit PAS sur-matcher un touch en étoile simple (`dir/*`, enfants directs)
-# contre un chemin imbriqué. Régression : `[[ "$touch" == */** ]]` non quoté
-# traitait `dir/*` comme `dir/**` (récursif) → faux impacted_features.
+# doit rester aligné sur le matcher canonique pour `dir/*` et `dir/`.
+# Régression 1 : `[[ "$touch" == */** ]]` non quoté traitait `dir/*`
+# comme `dir/**` (récursif) → faux impacted_features.
+# Régression 2 : le fast-path ne normalisait pas `dir/` en préfixe dossier.
 
 set -euo pipefail
 
@@ -46,6 +47,24 @@ progress:
 ---
 # Star
 FEAT
+cat > .docs/features/globtest/dirslash.md <<'FEAT'
+---
+id: dirslash
+scope: globtest
+title: Directory slash touch fixture
+status: active
+depends_on: []
+touches:
+  - src/
+progress:
+  phase: implement
+  step: test
+  blockers: []
+  resume_hint: test
+  updated: 2026-06-01
+---
+# Dir slash
+FEAT
 
 printf 'a\n' > src/a.txt
 printf 'b\n' > src/deep/b.txt
@@ -62,14 +81,24 @@ if printf '%s' "$json" | jq -e '.impacted_features | index("globtest/star")' >/d
   printf '%s\n' "$json" | jq '.impacted_features'
   exit 1
 fi
+if ! printf '%s' "$json" | jq -e '.impacted_features | index("globtest/dirslash")' >/dev/null; then
+  echo "✗ 'src/' devrait couvrir le chemin imbriqué src/deep/b.txt"
+  printf '%s\n' "$json" | jq '.impacted_features'
+  exit 1
+fi
 
-# (2) Delta = enfant DIRECT src/a.txt → `src/*` doit matcher (cas positif).
+# (2) Delta = enfant DIRECT src/a.txt → `src/*` et `src/` doivent matcher.
 printf 'a2\n' > src/a.txt
 git add src/a.txt >/dev/null
 git commit -q -m "chore: direct change"
 json="$(bash .ai/scripts/pr-report.sh --base=HEAD~1 --head=HEAD --format=json)"
 if ! printf '%s' "$json" | jq -e '.impacted_features | index("globtest/star")' >/dev/null; then
   echo "✗ 'src/*' devrait couvrir l'enfant direct src/a.txt"
+  printf '%s\n' "$json" | jq '.impacted_features'
+  exit 1
+fi
+if ! printf '%s' "$json" | jq -e '.impacted_features | index("globtest/dirslash")' >/dev/null; then
+  echo "✗ 'src/' devrait couvrir l'enfant direct src/a.txt"
   printf '%s\n' "$json" | jq '.impacted_features'
   exit 1
 fi
