@@ -5,6 +5,8 @@ on:
     paths:
       - '.ai/**'
       - '.docs/features/**'
+      - 'tests/**'
+      - '.github/workflows/ai-context-check.yml'
       - 'AGENTS.md'
       - 'CLAUDE.md'
       - 'GEMINI.md'
@@ -13,6 +15,8 @@ on:
     paths:
       - '.ai/**'
       - '.docs/features/**'
+      - 'tests/**'
+      - '.github/workflows/ai-context-check.yml'
       - 'AGENTS.md'
       - 'CLAUDE.md'
       - 'GEMINI.md'
@@ -66,11 +70,17 @@ jobs:
         if: runner.os != 'Windows'
         run: shellcheck -S error .ai/scripts/*.sh
 
-      - name: tests unitaires (path_matches_touch)
-        run: bash tests/unit/test-path-matches-touch.sh
-
-      - name: tests unitaires (is_path_within_repo)
-        run: bash tests/unit/test-is-path-within-repo.sh
+      # Exécute toute la suite tests/unit/*.sh (boucle = pas de liste manuelle à
+      # maintenir, tout nouveau test est couvert automatiquement). Les tests qui
+      # dépendent de copier (test-dogfood-drift-extra, test-project-overlay,
+      # test-targeted-regressions) se court-circuitent proprement quand copier
+      # est absent — ce workflow ne l'installe pas (couverture complète : smoke).
+      - name: tests unitaires (suite complète)
+        run: |
+          for t in tests/unit/*.sh; do
+            echo "── $(basename "$t")"
+            bash "$t"
+          done
 
       - name: check-shims
         run: bash .ai/scripts/check-shims.sh
@@ -82,7 +92,7 @@ jobs:
         run: bash .ai/scripts/check-ai-references.sh
 
       - name: check-features
-        run: bash .ai/scripts/check-features.sh
+        run: bash .ai/scripts/check-features.sh --no-write
 
       - name: check-feature-docs
         run: bash .ai/scripts/check-feature-docs.sh

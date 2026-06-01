@@ -15,3 +15,29 @@
 - Impact direct : le workflow CI source lance `bash .ai/scripts/check-agent-config.sh` avant le smoke-test.
 - Parite template : `template/.github/workflows/ai-context-check.yml.jinja` alignee.
 - Validation locale : `check-agent-config`, `doctor` et smoke-test PASS.
+
+## 2026-05-14 — read-only CI
+
+- Intent : aligner le workflow généré sur le contrat read-only des checks.
+- Fichiers/surfaces : `.github/workflows/ai-context-check.yml`, `template/.github/workflows/ai-context-check.yml.jinja`.
+- Décision : `check-features` est lancé avec `--no-write` en CI ; les rebuilds d'index restent explicites hors gate.
+- Couverture : ajout des tests `test-build-feature-index-contract`, `test-read-only-checks-contract` et `test-product-reports-read-only` au workflow source. Le workflow template reste limité aux commandes rendues dans les projets downstream.
+- Validation : à relancer via les tests unitaires ciblés, `check-features --no-write`, `check-feature-docs quality/ci-guard` et contrôle dogfood.
+
+## 2026-05-14 — handoff core / index fallback
+
+- HANDOFF core -> quality : `core/feature-mesh-contract-alignment` ajoute `test-build-feature-index-fallback`.
+- Impact CI source : le workflow lance maintenant ce test après `test-build-feature-index-contract`.
+- Le workflow template reste inchangé : les tests unitaires source ne sont pas rendus dans les projets downstream.
+- Validation : `test-build-feature-index-fallback` PASS et `check-feature-docs quality/ci-guard` PASS avec warnings historiques.
+
+## 2026-06-01 — suite unitaire complète en CI (audit U2)
+
+- `ai-context-check.yml` : la liste manuelle de 6 tests unitaires (qui laissait 5 orphelins jamais exécutés en CI) est remplacée par une boucle `for t in tests/unit/*.sh`. Tout futur test est désormais couvert sans édition du YAML.
+- Triggers `push`/`pull_request` élargis à `tests/**` (+ le workflow lui-même) : une PR ne modifiant que des tests déclenche désormais ce workflow.
+- Les tests dépendant de copier (drift, overlay, regressions) se court-circuitent proprement quand copier est absent — ce workflow ne l'installe pas (couverture complète via le smoke).
+- Validation : YAML chargé (yaml.safe_load) ; 5 orphelins relancés localement, PASS.
+
+## 2026-06-01 12:33 — auto
+- Fichiers modifiés :
+  - .github/workflows/ai-context-check.yml

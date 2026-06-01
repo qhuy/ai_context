@@ -8,7 +8,15 @@ cd "$(dirname "$0")/../.."
 tmp="$(mktemp -d /tmp/aic-freshness-test-XXXXXX)"
 trap 'rm -rf "$tmp"' EXIT
 
-cp -R . "$tmp/repo"
+rsync -a \
+  --exclude='.git' \
+  --exclude='.ai/.feature-index.json' \
+  --exclude='.ai/.progress-history.jsonl' \
+  --exclude='.ai/.session-edits.log' \
+  --exclude='.ai/.session-edits.flushed' \
+  --exclude='.ai/.context-relevance.jsonl' \
+  --exclude='.ai/.context-relevance.jsonl.old' \
+  ./ "$tmp/repo/"
 cd "$tmp/repo"
 
 git init -q

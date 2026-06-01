@@ -13,7 +13,15 @@ fi
 tmp="$(mktemp -d /tmp/aic-dogfood-drift-test-XXXXXX)"
 trap 'rm -rf "$tmp"' EXIT
 
-cp -R . "$tmp/repo"
+rsync -a \
+  --exclude='.git' \
+  --exclude='.ai/.feature-index.json' \
+  --exclude='.ai/.progress-history.jsonl' \
+  --exclude='.ai/.session-edits.log' \
+  --exclude='.ai/.session-edits.flushed' \
+  --exclude='.ai/.context-relevance.jsonl' \
+  --exclude='.ai/.context-relevance.jsonl.old' \
+  ./ "$tmp/repo/"
 cd "$tmp/repo"
 
 mkdir -p .ai/scripts
@@ -41,8 +49,11 @@ fi
 
 cp "$tmp/frame-template.bak" .docs/frames/0000-template.md
 
+mkdir -p .docs/frames
+printf '# Local frame\n' > .docs/frames/2026-05-14-local-frame.md
+
 if ! bash .ai/scripts/check-dogfood-drift.sh >/dev/null; then
-  echo "✗ check-dogfood-drift should pass after removing the extra runtime file"
+  echo "✗ check-dogfood-drift should ignore local dated frames after removing the extra runtime file"
   exit 1
 fi
 

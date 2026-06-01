@@ -35,3 +35,17 @@
 - Surfaces : `tests/smoke-test.sh`, `tests/unit/test-check-agent-config.sh`.
 - Impact : resolution de merge conservant la suite Q4 et ajoutant le test agent-config sans modifier les assertions Q4.
 - Validation : `tests/unit/test-targeted-regressions.sh`, `tests/unit/test-check-agent-config.sh` et smoke-test relances avant push main.
+
+## 2026-06-01 — SKIP≠PASS sans copier + rsync (audit U11)
+
+- `test-targeted-regressions.sh` : verdict final `⚠️ PARTIAL` au lieu de `✅ PASS` quand copier est absent (blocs drift .jinja + modes adoption non vérifiés) — supprime le faux sentiment de couverture en local.
+- Validation : exécution locale (copier présent) PASS complet ; chemin PARTIAL relu.
+
+## 2026-06-01 12:33 — auto
+- Fichiers modifiés :
+  - copier.yml
+  - tests/unit/test-check-feature-freshness.sh
+  - tests/unit/test-dogfood-drift-extra.sh
+  - tests/unit/test-project-overlay.sh
+  - tests/unit/test-review-delta-shared.sh
+  - tests/unit/test-targeted-regressions.sh

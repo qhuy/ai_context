@@ -115,3 +115,21 @@
 - Impact indirect : README/template et tests ajoutent le check agent-config sans modifier le contrat `.ai/project/index.md`.
 - Aucun chargement additionnel de l'overlay projet au demarrage.
 - Validation : `check-shims`, `check-features` et smoke-test PASS.
+
+## 2026-06-01 — HANDOFF depuis quality (audit U1) : rsync dans test-project-overlay
+
+- HANDOFF reçu depuis le batch quality/test-infra. `tests/unit/test-project-overlay.sh` (possédé par cette feature) : clone `cp -R .` → `rsync --exclude=.git`. Assertions overlay/références inchangées.
+- Validation : `test-project-overlay.sh` PASS (2s).
+
+## 2026-06-01 — copier.yml : ajout _min_copier_version (audit U10)
+
+- `copier.yml` reçoit un plancher `_min_copier_version: "9.0.0"` (setting moteur, porté par core/template-engine). Aucun impact sur le périmètre de cette feature ; entrée de traçabilité car `copier.yml` reste dans son `touches:`.
+
+## 2026-06-01 12:33 — auto
+- Fichiers modifiés :
+  - copier.yml
+  - tests/unit/test-check-feature-freshness.sh
+  - tests/unit/test-dogfood-drift-extra.sh
+  - tests/unit/test-project-overlay.sh
+  - tests/unit/test-review-delta-shared.sh
+  - tests/unit/test-targeted-regressions.sh

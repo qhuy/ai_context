@@ -31,6 +31,8 @@ require_copier_or_skip() {
 
 echo "═══ test-targeted-regressions ═══"
 
+copier_skipped=0
+
 copy_repo "fallback"
 (
   cd "$tmp/fallback"
@@ -163,6 +165,12 @@ if require_copier_or_skip; then
     [[ -d "$out_strict/.githooks" && -d "$out_strict/.github/workflows" ]]
   )
   echo "  ✓ modes adoption standard/lite/strict"
+else
+  copier_skipped=1
 fi
 
-echo "✅ test-targeted-regressions PASS"
+if [[ "$copier_skipped" -eq 1 ]]; then
+  echo "⚠️  test-targeted-regressions PARTIAL — copier absent : drift .jinja + modes adoption NON vérifiés (relancer avec copier pour la couverture complète)"
+else
+  echo "✅ test-targeted-regressions PASS"
+fi

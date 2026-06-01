@@ -40,3 +40,12 @@ Source session : automation veille-techno
 - Fichiers/surfaces : `tests/smoke-test.sh`.
 - Décision : `tests/smoke-test.sh` reste en `touches_shared` pour cette feature ; la couverture directe du script de smoke reste portée par `quality/smoke-test`.
 - Validation : `tests/smoke-test.sh` PASS.
+
+## 2026-06-01 — couvert par la boucle tests unitaires CI (audit U2)
+
+- `ai-context-check.yml` passe à une boucle `for t in tests/unit/*.sh` : `test-check-agent-config.sh` (possédé par cette feature) reste exécuté en CI, sans étape dédiée à maintenir. Aucun changement de `check-agent-config.sh`.
+- Validation : `test-check-agent-config.sh` couvert par la boucle ; YAML valide.
+
+## 2026-06-01 12:33 — auto
+- Fichiers modifiés :
+  - .github/workflows/ai-context-check.yml

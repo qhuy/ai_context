@@ -8,7 +8,15 @@ cd "$(dirname "$0")/../.."
 tmp="$(mktemp -d /tmp/aic-review-delta-test-XXXXXX)"
 trap 'rm -rf "$tmp"' EXIT
 
-cp -R . "$tmp/repo"
+rsync -a \
+  --exclude='.git' \
+  --exclude='.ai/.feature-index.json' \
+  --exclude='.ai/.progress-history.jsonl' \
+  --exclude='.ai/.session-edits.log' \
+  --exclude='.ai/.session-edits.flushed' \
+  --exclude='.ai/.context-relevance.jsonl' \
+  --exclude='.ai/.context-relevance.jsonl.old' \
+  ./ "$tmp/repo/"
 cd "$tmp/repo"
 
 git init -q
@@ -39,7 +47,11 @@ progress:
 # Shared
 FEAT
 
-git add shared.txt .docs/features/review/shared.md >/dev/null
+# Commit l'arbre complet comme référence : sinon tout le tree copié reste
+# untracked et review-delta --staged (qui scanne git status --untracked-files=all
+# et forke jq par fichier) explose en O(fichiers). Le delta réellement testé est
+# le restage de shared.txt sur une base committée — proche de l'usage réel.
+git add -A >/dev/null
 git commit -q -m "chore: seed shared fixture"
 
 printf 'changed\n' > shared.txt

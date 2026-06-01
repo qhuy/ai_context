@@ -56,7 +56,15 @@ if ! ( cd "$out" && bash .ai/scripts/check-ai-references.sh ) >/dev/null; then
   exit 1
 fi
 
-cp -R . "$tmp/repo"
+rsync -a \
+  --exclude='.git' \
+  --exclude='.ai/.feature-index.json' \
+  --exclude='.ai/.progress-history.jsonl' \
+  --exclude='.ai/.session-edits.log' \
+  --exclude='.ai/.session-edits.flushed' \
+  --exclude='.ai/.context-relevance.jsonl' \
+  --exclude='.ai/.context-relevance.jsonl.old' \
+  ./ "$tmp/repo/"
 (
   cd "$tmp/repo"
   mkdir -p .ai/project

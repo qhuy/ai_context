@@ -185,3 +185,21 @@
 - Impact direct : `.docs/frames/**` rejoint les surfaces synchronisees et comparees par le dogfood runtime.
 - Test : `tests/unit/test-dogfood-drift-extra.sh` detecte maintenant un drift sur `.docs/frames/0000-template.md`.
 - Validation prévue : test unitaire dogfood, `check-dogfood-drift`, `check-shims`, `check-features`.
+# Worklog — core/dogfood-runtime-sync
+
+## 2026-05-14 — implement / frames locaux source-only
+
+- Ajustement du drift check pour ignorer les frames locaux datés `.docs/frames/YYYY-MM-DD-*.md`.
+- Le frame template `0000-template.md` reste comparé au rendu Copier, donc le contrat de dogfooding du runtime est conservé.
+- Ajout d'une assertion dans `tests/unit/test-dogfood-drift-extra.sh`.
+- Contexte : l'officialisation du cadrage `product/ai-context-stability-migration` crée un frame durable repo-local qui ne doit pas être rendu dans les projets downstream.
+
+## 2026-06-01 — HANDOFF depuis quality (audit U1) : rsync dans test-dogfood-drift-extra
+
+- HANDOFF reçu depuis le batch quality/test-infra. `tests/unit/test-dogfood-drift-extra.sh` (possédé par cette feature) : clone `cp -R .` → `rsync --exclude=.git`. Assertions de drift inchangées.
+- Aucun changement de `check-dogfood-drift.sh` ni du contrat de dogfooding.
+- Validation : `test-dogfood-drift-extra.sh` PASS (3s).
+
+## 2026-06-01 12:33 — auto
+- Fichiers modifiés :
+  - tests/unit/test-dogfood-drift-extra.sh

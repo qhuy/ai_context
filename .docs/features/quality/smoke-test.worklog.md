@@ -107,3 +107,17 @@
 - Impact direct : `tests/smoke-test.sh` lance désormais `tests/unit/test-check-agent-config.sh` en étape `[0h/28]`.
 - Changement porté par `quality/agent-config-validation`.
 - Validation : `tests/smoke-test.sh` PASS.
+
+## 2026-06-01 — clones de tests en rsync (audit U1)
+
+- Les tests unitaires joués en prélude du smoke ([0c]–[0g]) ne clonent plus via `cp -R .` (copiait `.git`) : passage à `rsync --exclude=.git`. Comportement asserté inchangé.
+- Aucune modification de `tests/smoke-test.sh` lui-même.
+- Validation : tests prélude relancés individuellement, PASS.
+
+## 2026-06-01 12:33 — auto
+- Fichiers modifiés :
+  - tests/unit/test-check-feature-freshness.sh
+  - tests/unit/test-dogfood-drift-extra.sh
+  - tests/unit/test-project-overlay.sh
+  - tests/unit/test-review-delta-shared.sh
+  - tests/unit/test-targeted-regressions.sh
