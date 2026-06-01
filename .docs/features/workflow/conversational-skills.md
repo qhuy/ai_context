@@ -10,15 +10,18 @@ depends_on:
 touches:
   - template/AGENTS.md.jinja
   - template/.claude/skills/aic/**
+  - .claude/skills/aic/**
+  - .agents/skills/aic/**
+  - template/.agents/skills/aic/**
 touches_shared:
   - copier.yml
   - tests/smoke-test.sh
 progress:
   phase: implement
-  step: "UX zéro skill quotidien alignée avec Pack A lean"
+  step: "/aic marqué non-auto-invocable sur les 4 surfaces (Claude: disable-model-invocation ; agents: garde prose)"
   blockers: []
-  resume_hint: "valider que les shims restent minces et que check-shims bloque le bloat"
-  updated: 2026-06-01
+  resume_hint: "check-shims + check-dogfood-drift + smoke verts, puis commit FR conventional"
+  updated: 2026-06-02
 ---
 
 # Auto-progression invisible (+ skill `/aic` en override)
@@ -160,6 +163,8 @@ Les primitives procédurales :
 - **Renommage `→ workflow/auto-progress`** : **rejeté** pour stabilité d'`id` (cohérent avec l'heuristique extension/création du projet).
 - **Convergence universelle via `pre-commit`** : retenue car le hook `Stop` est Claude-only ; le commit est le point commun à tous les agents (`claude, codex, cursor, gemini, copilot`, humain CLI).
 - **`/aic` reste Claude-only** : acceptable car c'est un mode exceptionnel ; les autres agents éditent directement la fiche pour un override.
+- **`/aic` non-auto-invocable (2026-06-02)** : l'override ne doit jamais se déclencher sur du matching lexical implicite. Mécanisme par harness — Claude : `disable-model-invocation: true` (champ natif) ; agents non-Claude (Codex/cursor/gemini/copilot) : garde prose dans la description (« invocation explicite uniquement »), comme les primitives `aic-feature-*`. La doctrine « commands vs skills » (mattpocock/skills) est ainsi satisfaite par le modèle 3-tiers déjà en place (intentions exposées / `/aic` override / procédures internes `.ai/workflows/`), sans nouvelle surface.
+- **Codex `/aic` conservé fonctionnel (option ii)** : le fichier `.agents/skills/aic/` garde sa logique d'override mais devient explicitement non-auto-déclenchable ; précise — sans la contredire — la décision « Claude-only » (le flag natif n'existe que côté Claude, la parité d'intention passe par la prose côté agents).
 
 ## Cross-refs
 
@@ -219,3 +224,4 @@ Le skill `/aic` (mode override) reste Claude-only — acceptable : c'est un mode
 - **2026-04-28** — `_message_after_copy` étendu pour exposer `/aic-project-guardrails` comme étape recommandée post-scaffold (étape 4 dans la liste numérotée + entrée dans la table « Commandes exposées »). N'invalide pas la philosophie « 0 skill par défaut au quotidien » : ce nouveau skill est explicitement positionné comme **1-2 fois dans la vie d'un projet** (bootstrap + révisions ponctuelles), pas un geste récurrent. Voir `workflow/project-guardrails`.
 - **2026-05-03** — Audit post-commits : `template/AGENTS.md.jinja` redevient un shim mince. Les détails runtime multi-agents sont conservés dans `.ai/index.md` et les docs, pour préserver l'UX zéro skill sans casser `check-shims`.
 - **2026-05-06** — Resserage `/aic done` : l'override ne patche plus directement `status: done`. Il délègue à `.ai/workflows/feature-done.md` et conserve l'evidence obligatoire (quality gate, build/tests, docs strictes).
+- **2026-06-02** — `/aic` rendu non-auto-invocable sur les 4 surfaces (runtime + template, Claude + agents). Claude : ajout de `disable-model-invocation: true`. Agents : clause « invocation explicite uniquement — ne pas déclencher par matching lexical implicite » dans la description (parité avec les primitives `aic-feature-*`). Origine : analyse comparée du repo `mattpocock/skills` (doctrine commands-vs-skills) — constat que ai_context implémente déjà un modèle 3-tiers plus riche, le seul gain additif propre étant ce marquage. `touches` étendu aux 4 surfaces `/aic`.

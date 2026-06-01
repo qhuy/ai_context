@@ -71,3 +71,14 @@
 ## 2026-06-01 12:33 — auto
 - Fichiers modifiés :
   - copier.yml
+
+## 2026-06-02 — update
+- Intent : rendre `/aic` non-auto-invocable (doctrine commands-vs-skills de `mattpocock/skills` ; gain additif retenu après analyse comparée).
+- Mécanisme par harness — Claude : `disable-model-invocation: true` ; agents non-Claude : garde prose dans la description.
+- Surfaces : `.claude/skills/aic/`, `template/.claude/skills/aic/`, `.agents/skills/aic/`, `template/.agents/skills/aic/`.
+- `touches` de la fiche étendu aux 4 surfaces `/aic`.
+- Validation : check-shims + check-dogfood-drift + tests/smoke-test (lancés avant commit).
+
+## 2026-06-02 00:27 — auto
+- Fichiers modifiés :
+  - template/.claude/skills/aic/SKILL.md.jinja
