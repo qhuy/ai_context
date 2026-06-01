@@ -80,11 +80,15 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 index_file=".ai/.feature-index.json"
-if [[ ! -f "$index_file" ]]; then
-  bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
-fi
-if [[ ! -f "$index_file" ]]; then
-  echo "❌ index feature introuvable: $index_file" >&2
+index_tmp="$(mktemp "${TMPDIR:-/tmp}/ai-context-feature-index.XXXXXX")"
+cleanup_index_tmp() { rm -f "$index_tmp"; }
+trap cleanup_index_tmp EXIT
+if bash "$script_dir/build-feature-index.sh" > "$index_tmp" 2>/dev/null; then
+  index_file="$index_tmp"
+elif [[ -f "$index_file" ]]; then
+  echo "⚠️  index temporaire impossible à générer, fallback lecture du cache existant" >&2
+else
+  echo "❌ index feature introuvable: $index_file (lance: bash .ai/scripts/build-feature-index.sh --write)" >&2
   exit 1
 fi
 

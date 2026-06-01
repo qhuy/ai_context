@@ -70,3 +70,15 @@
 - Impact indirect : README runtime/template et smoke-test restent compatibles avec la traceability product pendant l'ajout des contrats workflow/quality.
 - Aucun changement sur `product-status`, `product-portfolio`, `product-review` ni sur les contrats initiative/roadmap.
 - Validation : `check-features` et smoke-test PASS.
+
+## 2026-05-14 — implement / rapports product read-only
+
+- Intent : rendre effectif le contrat déjà documenté "les scripts produit sont read-only".
+- Fichiers/surfaces : `check-product-links.sh`, `product-status.sh`, `product-portfolio.sh`, `product-review.sh` et leurs templates.
+- Décision : les scripts product génèrent un index temporaire via stdout de `build-feature-index.sh`; en cas d'échec, ils peuvent lire un cache existant avec warning, mais ne lancent plus `--write`.
+- Test : ajout de `tests/unit/test-product-reports-read-only.sh`.
+- Validation : `test-product-reports-read-only` PASS, `check-product-links --strict` PASS, `aic.sh product-status` PASS, `aic.sh product-portfolio` PASS, `aic.sh product-review product/ai-context-stability-migration` PASS.
+
+## 2026-06-01 12:33 — auto
+- Fichiers modifiés :
+  - copier.yml

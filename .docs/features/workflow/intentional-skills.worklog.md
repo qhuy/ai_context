@@ -116,3 +116,7 @@
 - Impact indirect : ajout de workflows on-demand `subagent-contract`, `codex-hooks-parity` et `mcp-policy` sans modifier les wrappers de skills intentionnels.
 - Clarification README/runtime : ces contrats restent activables explicitement et compatibles multi-agent.
 - Validation : `check-shims`, `check-features`, strict docs des nouvelles fiches et smoke-test PASS.
+
+## 2026-06-01 12:33 — auto
+- Fichiers modifiés :
+  - copier.yml

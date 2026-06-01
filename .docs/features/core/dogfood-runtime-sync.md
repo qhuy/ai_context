@@ -20,10 +20,10 @@ touches:
   - .docs/FEATURE_TEMPLATE.md
 progress:
   phase: implement
-  step: "runtime dogfoodé incluant les skills Codex"
+  step: "runtime dogfoodé + frames locaux ignorés"
   blockers: []
   resume_hint: "vérifier check-shims, dogfood drift, measure-context-size et smoke-test complet"
-  updated: 2026-05-07
+  updated: 2026-06-01
 ---
 
 # Synchronisation dogfooding du runtime
@@ -116,3 +116,4 @@ Faire consommer au repo source `ai_context` la même couche runtime que celle g�
 - 2026-05-04 : dogfooding du contexte lean Codex : `.ai/index.md` minimal, `.ai/context-ignore.md`, shims minces et `check-shims.sh` enrichi pour bloquer le retour de charges on-demand dans Pack A.
 - 2026-05-04 : dogfooding du check "bible feature" (`check-feature-docs.sh`) et du template de fiche enrichi (`doc.level`, `doc.requires.*`, sections noyau + modules conditionnels).
 - 2026-05-06 : `dogfood-update.sh` et `check-dogfood-drift.sh` synchronisent désormais `.agents/**`, afin que les skills Codex intentionnels restent alignés avec les skills Claude et le rendu Copier.
+- 2026-05-14 : le drift check ignore les frames locaux datés `.docs/frames/YYYY-MM-DD-*.md`, qui sont des artefacts de cadrage projet et non du runtime rendu. Le template `0000-template.md` reste comparé pour détecter les dérives.

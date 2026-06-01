@@ -67,3 +67,7 @@
 - Intent : sécuriser l'override `/aic done`.
 - Décision : `done` ne patch plus directement `status: done`; l'override délègue à `.ai/workflows/feature-done.md`.
 - Validation : incluse dans la passe `workflow/intentional-skills`.
+
+## 2026-06-01 12:33 — auto
+- Fichiers modifiés :
+  - copier.yml

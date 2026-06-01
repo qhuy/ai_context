@@ -1,0 +1,24 @@
+# Worklog — product/ai-context-stability-migration
+
+## 2026-05-14 — création
+
+- Feature créée via cadrage `aic-frame` officialisé.
+- Scope : product.
+- Intent initial : piloter la stabilisation et la migration de `ai_context` après audits exhaustifs et décisionnels.
+- Frame durable : `.docs/frames/2026-05-14-ai-context-stability-migration.md`
+- Première reprise recommandée : cadrer `quality/read-only-checks-contract` et `core/index-contract-v2` avec compatibilité downstream explicite.
+
+## 2026-05-14 — suivi / P0 index + read-only
+
+- `core/index-contract-v2` est en review : ordre stable, stdout non mutant, cache idempotent hors `generated_at`, index vide valide.
+- `quality/read-only-checks-contract` est en review : diagnostics, rapports, quality gate et CI alignés sur `--no-write` ou index temporaire.
+- `product/product-portfolio-loop` aligne les rapports product sur le contrat read-only.
+- Migration downstream documentée dans `docs/upgrading.md`, `MIGRATION.md`, `CHANGELOG.md` et `README_AI_CONTEXT.md`.
+- next : choisir la prochaine tranche entre alignement schema/checker/parser fallback et rationalisation des workflows/skills.
+
+## 2026-05-14 — suivi / fallback feature mesh
+
+- `core/feature-mesh-contract-alignment` est en review : le fallback sans `yq` conserve maintenant `product.portfolio.*`.
+- Impact produit : les scores `product-portfolio` restent cohérents sur environnements minimalistes.
+- CI source : test fallback ajouté au workflow check.
+- next : poursuivre soit sur rationalisation workflow/skills, soit sur réorganisation des tests si l'objectif est de sécuriser la suite avant nouveaux changements.

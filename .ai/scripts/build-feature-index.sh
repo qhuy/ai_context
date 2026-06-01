@@ -60,6 +60,25 @@ extract_scalar_awk() {
     | sed -E 's/^[[:space:]]*//; s/["'"'"']//g; s/[[:space:]]+$//'
 }
 
+extract_product_portfolio_scalar_awk() {
+  local file="$1" key="$2"
+  awk -v key="$key" '
+    /^---$/ { fence++; next }
+    fence == 2 { exit }
+    fence != 1 { next }
+    /^product:[[:space:]]*$/ { in_product=1; next }
+    in_product && /^[^[:space:]]/ { in_product=0; in_portfolio=0 }
+    in_product && /^  portfolio:[[:space:]]*$/ { in_portfolio=1; next }
+    in_portfolio && /^  [A-Za-z0-9_.-]+:/ { in_portfolio=0 }
+    in_portfolio && $0 ~ ("^    " key ":[[:space:]]*") {
+      line=$0
+      sub("^    " key ":[[:space:]]*", "", line)
+      print line
+      exit
+    }
+  ' "$file" | sed -E 's/^[[:space:]]*//; s/^"//; s/"$//; s/^'\''//; s/'\''$//; s/[[:space:]]+$//'
+}
+
 feature_to_json() {
   local file="$1"
   local rel="${file#"$repo_root/"}"
@@ -125,6 +144,21 @@ feature_to_json() {
     product_leading_indicator=$(awk '/^product:/{flag=1; next} flag && /^  leading_indicator:/{sub(/^  leading_indicator:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
     product_decision_state=$(awk '/^product:/{flag=1; next} flag && /^  decision_state:/{sub(/^  decision_state:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
     product_next_decision_date=$(awk '/^product:/{flag=1; next} flag && /^  next_decision_date:/{sub(/^  next_decision_date:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_portfolio_appetite=$(extract_product_portfolio_scalar_awk "$file" "appetite")
+    product_portfolio_confidence=$(extract_product_portfolio_scalar_awk "$file" "confidence")
+    product_portfolio_expected_impact=$(extract_product_portfolio_scalar_awk "$file" "expected_impact")
+    product_portfolio_urgency=$(extract_product_portfolio_scalar_awk "$file" "urgency")
+    product_portfolio_strategic_fit=$(extract_product_portfolio_scalar_awk "$file" "strategic_fit")
+    product_portfolio_json=$(jq -n \
+      --arg appetite "$product_portfolio_appetite" \
+      --arg confidence "$product_portfolio_confidence" \
+      --arg expected_impact "$product_portfolio_expected_impact" \
+      --arg urgency "$product_portfolio_urgency" \
+      --arg strategic_fit "$product_portfolio_strategic_fit" \
+      '{
+        appetite: $appetite, confidence: $confidence, expected_impact: $expected_impact,
+        urgency: $urgency, strategic_fit: $strategic_fit
+      } | with_entries(select(.value != ""))')
     product_json=$(jq -n \
       --arg type "$product_type" \
       --arg initiative "$product_initiative" \
@@ -136,12 +170,13 @@ feature_to_json() {
       --arg leading_indicator "$product_leading_indicator" \
       --arg decision_state "$product_decision_state" \
       --arg next_decision_date "$product_next_decision_date" \
+      --argjson portfolio "$product_portfolio_json" \
       '{
         type: $type, initiative: $initiative, contribution: $contribution, evidence: $evidence,
         bet: $bet, target_user: $target_user, success_metric: $success_metric,
         leading_indicator: $leading_indicator, decision_state: $decision_state,
-        next_decision_date: $next_decision_date
-      } | with_entries(select(.value != ""))')
+        next_decision_date: $next_decision_date, portfolio: $portfolio
+      } | with_entries(select(if (.value | type) == "object" then (.value | length) > 0 else .value != "" end))')
     # progress.* : parsing best-effort en fallback awk (yq recommandé pour précision)
     phase=$(awk '/^progress:/{flag=1; next} flag && /^  phase:/{sub(/^  phase:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/["'"'"']//g; s/[[:space:]]+$//')
     step=$(awk '/^progress:/{flag=1; next} flag && /^  step:/{sub(/^  step:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
@@ -201,12 +236,22 @@ start_ts=$(date +%s 2>/dev/null || echo 0)
 features_json="[]"
 count=0
 if [[ -d "$features_dir" ]]; then
+  files=()
   entries=()
   # find -print0 pour supporter les noms avec espaces/caractères spéciaux
   while IFS= read -r -d '' f; do
-    entries+=("$(feature_to_json "$f")")
-    count=$((count + 1))
+    files+=("$f")
   done < <(find "$features_dir" -mindepth 2 -maxdepth 2 -type f -name '*.md' ! -name '*.worklog.md' -print0 2>/dev/null)
+
+  # Ordre contractuel stable. Le tri newline-based couvre les chemins usuels
+  # du repo, espaces inclus ; les retours ligne dans les noms de fichiers ne
+  # sont pas un format supporté par le feature mesh.
+  if [[ ${#files[@]} -gt 0 ]]; then
+    while IFS= read -r f; do
+      entries+=("$(feature_to_json "$f")")
+      count=$((count + 1))
+    done < <(printf '%s\n' "${files[@]}" | LC_ALL=C sort)
+  fi
 
   if [[ ${#entries[@]} -gt 0 ]]; then
     features_json=$(printf '%s\n' "${entries[@]}" | jq -s .)
@@ -231,6 +276,15 @@ log_debug "features scannées : $count"
 
 write_index() {
   mkdir -p "$(dirname "$index_file")"
+  if [[ -f "$index_file" ]]; then
+    local existing_contract output_contract
+    existing_contract=$(jq -S 'del(.generated_at)' "$index_file" 2>/dev/null || true)
+    output_contract=$(printf '%s\n' "$output" | jq -S 'del(.generated_at)' 2>/dev/null || true)
+    if [[ -n "$existing_contract" && "$existing_contract" == "$output_contract" ]]; then
+      log_debug "index inchangé : $index_file"
+      return 0
+    fi
+  fi
   local tmp
   tmp=$(mktemp "${index_file}.XXXXXX")
   printf '%s\n' "$output" > "$tmp"

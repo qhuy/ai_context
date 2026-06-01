@@ -23,9 +23,15 @@ if [[ "$mode" != "--warn" && "$mode" != "--strict" ]]; then
 fi
 
 index_file=".ai/.feature-index.json"
-bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
-if [[ ! -f "$index_file" ]]; then
+index_tmp="$(mktemp "${TMPDIR:-/tmp}/aic-feature-index.XXXXXX")"
+trap 'rm -f "$index_tmp"' EXIT
+if bash "$script_dir/build-feature-index.sh" > "$index_tmp" 2>/dev/null; then
+  index_file="$index_tmp"
+elif [[ -f "$index_file" ]]; then
+  echo "  ⚠️  génération index temporaire impossible, lecture du cache existant" >&2
+else
   echo "  ⚠️  pas d'index feature, rien à vérifier" >&2
+  echo "     Action : vérifier les fiches puis lancer explicitement 'bash .ai/scripts/build-feature-index.sh --write' si un cache est nécessaire." >&2
   exit 0
 fi
 

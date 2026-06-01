@@ -28,6 +28,12 @@ cd "$repo_root"
 index_file=".ai/.feature-index.json"
 mode="--warn"
 staged_mode=0
+index_tmp=""
+
+cleanup_index_tmp() {
+  [[ -n "$index_tmp" ]] && rm -f "$index_tmp"
+}
+trap cleanup_index_tmp EXIT
 
 for arg in "$@"; do
   case "$arg" in
@@ -43,8 +49,12 @@ done
 strict=0
 [[ "$mode" == "--strict" ]] && strict=1
 
-bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
-if [[ ! -f "$index_file" ]]; then
+index_tmp=$(mktemp "${TMPDIR:-/tmp}/ai-context-feature-index.XXXXXX")
+if bash "$script_dir/build-feature-index.sh" > "$index_tmp" 2>/dev/null; then
+  index_file="$index_tmp"
+elif [[ -f "$index_file" ]]; then
+  echo "  ⚠️  index temporaire impossible à générer, fallback lecture du cache existant" >&2
+else
   echo "  ⚠️  pas d'index feature, rien a verifier" >&2
   exit 0
 fi

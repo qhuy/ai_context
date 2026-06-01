@@ -29,6 +29,7 @@ repo_root="$(cd "$script_dir/../.." && pwd)"
 cd "$repo_root"
 
 index_file=".ai/.feature-index.json"
+index_tmp=""
 config_file=".ai/config.yml"
 mode="${1:---warn}"
 
@@ -102,12 +103,16 @@ if [[ -f "$config_file" ]]; then
   fi
 fi
 
-# Rebuild index si besoin
-if [[ ! -f "$index_file" ]]; then
-  bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
-fi
-if [[ ! -f "$index_file" ]]; then
+# Génère un index temporaire pour préserver le contrat read-only.
+index_tmp="$(mktemp "${TMPDIR:-/tmp}/aic-feature-index.XXXXXX")"
+trap '[[ -n "${index_tmp:-}" ]] && rm -f "$index_tmp"' EXIT
+if bash "$script_dir/build-feature-index.sh" > "$index_tmp" 2>/dev/null; then
+  index_file="$index_tmp"
+elif [[ -f "$index_file" ]]; then
+  echo "  ⚠️  génération index temporaire impossible, lecture du cache existant" >&2
+else
   echo "  ⚠️  pas d'index feature, rien à vérifier" >&2
+  echo "     Action : vérifier les fiches puis lancer explicitement 'bash .ai/scripts/build-feature-index.sh --write' si un cache est nécessaire." >&2
   exit 0
 fi
 

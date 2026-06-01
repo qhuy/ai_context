@@ -21,7 +21,17 @@ if [[ -z "$target" || "$target" != product/* ]]; then
 fi
 
 index_file=".ai/.feature-index.json"
-bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
+index_tmp="$(mktemp "${TMPDIR:-/tmp}/aic-feature-index.XXXXXX")"
+trap 'rm -f "$index_tmp"' EXIT
+if bash "$script_dir/build-feature-index.sh" > "$index_tmp" 2>/dev/null; then
+  index_file="$index_tmp"
+elif [[ -f "$index_file" ]]; then
+  echo "  ⚠️  génération index temporaire impossible, lecture du cache existant" >&2
+else
+  echo "index feature introuvable: $index_file" >&2
+  echo "Action : vérifier les fiches puis lancer explicitement 'bash .ai/scripts/build-feature-index.sh --write' si un cache est nécessaire." >&2
+  exit 1
+fi
 
 if ! jq -e --arg target "$target" '.features[] | select((.scope + "/" + .id) == $target and .scope == "product")' "$index_file" >/dev/null; then
   echo "initiative introuvable: $target" >&2

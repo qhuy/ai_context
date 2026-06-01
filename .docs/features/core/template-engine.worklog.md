@@ -280,3 +280,7 @@
 ## 2026-06-01 12:33 — auto
 - Fichiers modifiés :
   - copier.yml
+
+## 2026-06-01 14:22 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/review-delta.sh.jinja

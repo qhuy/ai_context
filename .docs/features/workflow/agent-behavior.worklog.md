@@ -34,3 +34,7 @@
   - usage de `doc.level=brief|standard|full` selon risque et durabilite du contrat.
 - Impact : comportement agentique clarifie dans l'entrypoint lean ; aucun changement runtime.
 - Validation portée par les checks Q3.
+
+## 2026-06-01 12:33 — auto
+- Fichiers modifiés :
+  - copier.yml

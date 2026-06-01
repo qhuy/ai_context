@@ -50,3 +50,7 @@
 - Impact indirect : README runtime/template mentionnent les politiques MCP et subagents sans charger `.ai/guardrails.md` par defaut.
 - Aucun changement sur la procedure project-guardrails.
 - Validation : `check-shims`, `check-features` et smoke-test PASS.
+
+## 2026-06-01 12:33 — auto
+- Fichiers modifiés :
+  - copier.yml

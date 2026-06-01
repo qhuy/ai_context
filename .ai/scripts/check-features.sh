@@ -11,9 +11,11 @@
 #   - chaque depends_on pointe vers un fichier existant
 #   - chaque touches / touches_shared pointe vers un chemin existant (fichier, dossier, ou glob)
 #
-# Rafraîchit .ai/.feature-index.json si tout passe.
+# Rafraîchit .ai/.feature-index.json si tout passe, sauf --no-write.
 #
-# Usage : bash .ai/scripts/check-features.sh
+# Usage :
+#   bash .ai/scripts/check-features.sh
+#   bash .ai/scripts/check-features.sh --no-write
 
 set -euo pipefail
 
@@ -26,6 +28,21 @@ enable_globstar
 cd "$script_dir/../.."
 
 FEATURES_DIR="$AI_CONTEXT_FEATURES_DIR"
+write_index=1
+
+for arg in "$@"; do
+  case "$arg" in
+    --no-write) write_index=0 ;;
+    -h|--help)
+      sed -n '1,18p' "$0" | sed 's/^# \{0,1\}//'
+      exit 0
+      ;;
+    *)
+      echo "Usage: bash .ai/scripts/check-features.sh [--no-write]" >&2
+      exit 2
+      ;;
+  esac
+done
 
 fail=0
 ok() { printf "  \033[32m✓\033[0m %s\n" "$1"; }
@@ -165,10 +182,22 @@ done
 
 echo
 if [[ "$fail" -eq 0 ]]; then
-  bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
+  index_tmp=""
+  if [[ "$write_index" -eq 1 ]]; then
+    bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
+    cycle_idx="$script_dir/../.feature-index.json"
+  else
+    index_tmp=$(mktemp "${TMPDIR:-/tmp}/ai-context-feature-index.XXXXXX")
+    if ! bash "$script_dir/build-feature-index.sh" > "$index_tmp" 2>/dev/null; then
+      rm -f "$index_tmp"
+      ko "index temporaire impossible à générer"
+      echo "❌ FAIL"
+      exit 1
+    fi
+    cycle_idx="$index_tmp"
+  fi
 
   # Détection des cycles dans depends_on (via l'index JSON)
-  cycle_idx="$script_dir/../.feature-index.json"
   if [[ -f "$cycle_idx" ]] && command -v jq >/dev/null 2>&1; then
     cycle=$(jq -r '
       (.features | map({key: (.scope + "/" + .id), value: (.depends_on // [])}) | from_entries) as $graph
@@ -190,10 +219,12 @@ if [[ "$fail" -eq 0 ]]; then
     ' "$cycle_idx" 2>/dev/null)
     if [[ -n "$cycle" ]]; then
       ko "cycle détecté dans depends_on : $cycle"
+      [[ -n "$index_tmp" ]] && rm -f "$index_tmp"
       echo "❌ FAIL"
       exit 1
     fi
   fi
+  [[ -n "$index_tmp" ]] && rm -f "$index_tmp"
 
   echo "✅ PASS"
   exit 0

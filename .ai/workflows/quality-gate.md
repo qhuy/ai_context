@@ -14,7 +14,7 @@ Exécuter **dans cet ordre**, ne pas s'arrêter au premier fail :
 bash .ai/scripts/check-shims.sh
 bash .ai/scripts/check-agent-config.sh
 bash .ai/scripts/check-ai-references.sh
-bash .ai/scripts/check-features.sh
+bash .ai/scripts/check-features.sh --no-write
 bash .ai/scripts/check-feature-docs.sh     # warnings par défaut ; --strict <scope/id> près de DONE
 bash .ai/scripts/check-feature-coverage.sh   # --warn (défaut)
 ```
@@ -42,7 +42,7 @@ Format markdown, même structure à chaque fois :
 | check-shims | ✅ / ❌ | <sortie courte> |
 | check-agent-config | ✅ / ⚠️ / ❌ | <configs agents et scripts référencés> |
 | check-ai-references | ✅ / ❌ | <sortie> |
-| check-features | ✅ / ❌ | <sortie> |
+| check-features --no-write | ✅ / ❌ | <sortie> |
 | check-feature-docs | ✅ / ⚠️ / ❌ | <sections manquantes ou strict OK> |
 | check-feature-coverage | ✅ / ⚠️ | <N orphelins> |
 | measure-context-size | ℹ️ | <chars total> |
@@ -60,4 +60,4 @@ GO / NO-GO
 - **Aucun fix dans cette procédure** — si un check fail, rendre la main à l'utilisateur avec action à faire. Le fix se fait hors gate.
 - GO exige **zéro** ❌ ; les ⚠️ n'empêchent pas GO mais sont listés.
 - Ne jamais cacher un fail. Rapport complet même si long.
-- Idempotent : relancer la procédure ne change rien dans le repo (lecture seule sauf rebuild éventuel de l'index).
+- Idempotent : relancer la procédure ne change rien dans le repo. Les rebuilds d'index doivent être lancés explicitement hors gate.

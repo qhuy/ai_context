@@ -203,3 +203,7 @@
 ## 2026-06-01 12:33 — auto
 - Fichiers modifiés :
   - tests/unit/test-dogfood-drift-extra.sh
+
+## 2026-06-01 14:22 — auto
+- Fichiers modifiés :
+  - .ai/scripts/review-delta.sh

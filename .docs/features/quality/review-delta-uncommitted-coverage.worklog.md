@@ -118,3 +118,14 @@
 - Contexte : `quality/index-lock-contract` modifie uniquement le helper `with_index_lock` partage.
 - Impact : aucun changement du calcul de delta ; le helper commun ne lance plus de commande protegee sans verrou apres timeout.
 - Validation portée par `quality/index-lock-contract`.
+
+## 2026-05-14 — impact read-only-checks-contract
+
+- `review-delta.sh` ne reconstruit plus `.ai/.feature-index.json` implicitement.
+- Le rapport utilise un index temporaire hors repo ; les sections committed/uncommitted et la compat `--committed-only` restent inchangées.
+- Validation : `test-review-delta-uncommitted.sh` PASS, `test-review-delta-shared.sh` PASS, test no-write ciblé PASS.
+
+## 2026-06-01 14:22 — auto
+- Fichiers modifiés :
+  - .ai/scripts/review-delta.sh
+  - template/.ai/scripts/review-delta.sh.jinja

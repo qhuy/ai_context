@@ -29,7 +29,7 @@ progress:
   step: "implémentation livrée + 6 tests PASS, prêt à commit"
   blockers: []
   resume_hint: "commit feat(quality) puis valider en utilisation réelle sur un commit suivant"
-  updated: 2026-05-07
+  updated: 2026-06-01
 ---
 
 # Couvrir le delta uncommitted dans review-delta.sh

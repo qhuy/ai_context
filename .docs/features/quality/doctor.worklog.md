@@ -34,3 +34,9 @@
 - Impact direct : `doctor` execute maintenant le check non destructif `check-agent-config.sh` avant les checks de references.
 - Parite template : `template/.ai/scripts/doctor.sh.jinja` alignee.
 - Validation : `bash .ai/scripts/doctor.sh` PASS.
+
+## 2026-05-14 — impact read-only-checks-contract
+
+- `doctor.sh` utilise désormais `check-features.sh --no-write` pour respecter son contrat non destructif.
+- Le comportement strict/default reste inchangé côté verdict ; seul le rebuild implicite de `.ai/.feature-index.json` est supprimé.
+- Validation portée par `quality/read-only-checks-contract`.

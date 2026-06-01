@@ -54,3 +54,8 @@
   - tests/unit/test-project-overlay.sh
   - tests/unit/test-review-delta-shared.sh
   - tests/unit/test-targeted-regressions.sh
+
+## 2026-06-01 14:22 — auto
+- Fichiers modifiés :
+  - .ai/scripts/review-delta.sh
+  - template/.ai/scripts/review-delta.sh.jinja

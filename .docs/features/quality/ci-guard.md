@@ -15,7 +15,7 @@ progress:
   step: "freshness documentaire rafraîchie après dogfood"
   blockers: []
   resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-05-03
+  updated: 2026-06-01
 ---
 
 # CI guard
@@ -27,7 +27,8 @@ Rejouer en CI les validations critiques pour rattraper les contournements locaux
 ## Comportement attendu
 
 - Trigger : `push` + `pull_request`.
-- Workflow généré : matrix `ubuntu-latest` + `macos-latest`, install jq/yq/shellcheck → `check-shims.sh` → `check-features.sh`.
+- Workflow généré : matrix `ubuntu-latest` + `macos-latest`, install jq/yq/shellcheck → `check-shims.sh` → `check-features.sh --no-write`.
+- Le workflow source du repo lance aussi les tests unitaires des contrats critiques d'index et de read-only.
 - `check-feature-docs.sh` est exécuté en mode warning par défaut pour détecter les fiches faibles sans bloquer les projets legacy.
 - Workflow template repo : install jq/yq/copier → `tests/smoke-test.sh`.
 - Opt-in via `enable_ci_guard: true` (default) du copier.yml.
@@ -53,3 +54,4 @@ Filet de sécurité au-dessus de `git-hooks` (qui peuvent être contournés loca
 - 2026-04-28 : `template-smoke-test.yml` étendu en matrix `ubuntu-latest` + `macos-latest` (au lieu d'Ubuntu seul). Install cross-platform de copier avec gestion du `--break-system-packages` sur macOS (PEP 668), shellcheck + jq cross-platform, yq pin v4.44.3, déclencheurs étendus à `.ai/scripts/**` et `.ai/schema/**` pour rattraper les changements dogfoodés. Ajout `workflow_dispatch` pour permettre un relancement manuel. Cible : prévenir les régressions Copier/Jinja avant tag de release.
 - 2026-05-04 : ajout de `check-feature-docs.sh` au workflow généré et dogfoodé en mode non strict. Objectif : signaler la dette documentaire "bible feature" sans casser les projets existants.
 - 2026-05-03 : freshness documentaire rafraîchie après dogfood ; aucun changement de contrat CI.
+- 2026-05-14 : le workflow check utilise `check-features.sh --no-write` pour valider le mesh sans régénérer `.ai/.feature-index.json` dans le workspace CI. Le workflow source lance en plus les tests unitaires `index contract`, `read-only checks` et `product reports read-only`.

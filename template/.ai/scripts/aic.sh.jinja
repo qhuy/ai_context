@@ -78,6 +78,17 @@ status_label() {
   fi
 }
 
+build_feature_index_tmp() {
+  local tmp
+  tmp="$(mktemp "${TMPDIR:-/tmp}/ai-context-feature-index.XXXXXX")"
+  if bash "$script_dir/build-feature-index.sh" >"$tmp" 2>/dev/null; then
+    printf '%s\n' "$tmp"
+    return 0
+  fi
+  rm -f "$tmp"
+  return 1
+}
+
 yaml_scalar() {
   local file="$1"
   local key="$2"
@@ -212,8 +223,8 @@ infer_scope_from_text() {
 print_active_feature_hints() {
   local limit="${1:-6}"
   local scope_filter="${2:-}"
-  local index_file="$repo_root/.ai/.feature-index.json"
-  bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
+  local index_file=""
+  index_file="$(build_feature_index_tmp 2>/dev/null || true)"
   if [[ -f "$index_file" ]] && command -v jq >/dev/null 2>&1; then
     jq -r --argjson limit "$limit" --arg scope_filter "$scope_filter" '
       [.features[]
@@ -222,6 +233,10 @@ print_active_feature_hints() {
         | "- `" + .path + "` — " + .scope + "/" + .id + ": " + (.title // "sans titre")
       ][0:$limit][]' "$index_file" 2>/dev/null || true
   fi
+  if [[ -n "$index_file" ]]; then
+    rm -f "$index_file"
+  fi
+  return 0
 }
 
 run_frame() {
@@ -329,8 +344,7 @@ run_status() {
 
   local index_file total draft active blocked done staged modified hooks_path git_hooks claude_hooks
 
-  bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
-  index_file="$repo_root/.ai/.feature-index.json"
+  index_file="$(build_feature_index_tmp 2>/dev/null || true)"
 
   total=0
   draft=0
@@ -373,7 +387,7 @@ run_status() {
   fi
 
   local check_features check_shims check_product freshness coverage measure_total next_action
-  check_features=$(status_label bash "$script_dir/check-features.sh")
+  check_features=$(status_label bash "$script_dir/check-features.sh" --no-write)
   check_shims=$(status_label bash "$script_dir/check-shims.sh")
   check_product=$(status_label bash "$script_dir/check-product-links.sh")
   coverage=$(status_label bash "$script_dir/check-feature-coverage.sh")
@@ -387,7 +401,7 @@ run_status() {
 
   next_action="Travailler normalement ; avant commit, lance: bash .ai/scripts/aic.sh review"
   if [[ "$check_features" != "OK" ]]; then
-    next_action="Corriger les frontmatter: bash .ai/scripts/check-features.sh"
+    next_action="Corriger les frontmatter: bash .ai/scripts/check-features.sh --no-write"
   elif [[ "$check_shims" != "OK" ]]; then
     next_action="Réparer les shims: bash .ai/scripts/check-shims.sh"
   elif [[ "$check_product" != "OK" ]]; then
@@ -433,6 +447,10 @@ Checks
 Prochaine action minimale
 - $next_action
 EOF
+  if [[ -n "$index_file" ]]; then
+    rm -f "$index_file"
+  fi
+  return 0
 }
 
 run_diagnose() {
@@ -568,7 +586,7 @@ run_repair() {
   fi
 
   local check_features check_shims check_product coverage freshness staged
-  check_features=$(status_label bash "$script_dir/check-features.sh")
+  check_features=$(status_label bash "$script_dir/check-features.sh" --no-write)
   check_shims=$(status_label bash "$script_dir/check-shims.sh")
   check_product=$(status_label bash "$script_dir/check-product-links.sh")
   coverage=$(status_label bash "$script_dir/check-feature-coverage.sh")
@@ -594,7 +612,7 @@ Checks :
 
 Actions recommandées :
 EOF
-  [[ "$check_features" != "OK" ]] && echo "- Corriger les frontmatter: \`bash .ai/scripts/check-features.sh\`"
+  [[ "$check_features" != "OK" ]] && echo "- Corriger les frontmatter: \`bash .ai/scripts/check-features.sh --no-write\`"
   [[ "$check_shims" != "OK" ]] && echo "- Réparer les shims racine depuis \`.ai/index.md\`: \`bash .ai/scripts/check-shims.sh\`"
   [[ "$check_product" != "OK" ]] && echo "- Corriger les liens produit: \`bash .ai/scripts/check-product-links.sh --strict\`"
   [[ "$coverage" != "OK" ]] && echo "- Ajouter/ajuster les \`touches:\` ou créer une fiche feature pour les orphelins."
@@ -618,7 +636,7 @@ run_ship() {
   if inside_git_repo; then
     modified=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
   fi
-  check_features=$(status_label bash "$script_dir/check-features.sh")
+  check_features=$(status_label bash "$script_dir/check-features.sh" --no-write)
   check_shims=$(status_label bash "$script_dir/check-shims.sh")
   check_product=$(status_label bash "$script_dir/check-product-links.sh")
   coverage=$(status_label bash "$script_dir/check-feature-coverage.sh")

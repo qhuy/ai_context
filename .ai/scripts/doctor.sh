@@ -117,8 +117,8 @@ else
 fi
 
 if [[ -f ".ai/scripts/check-features.sh" ]]; then
-  if bash .ai/scripts/check-features.sh >/dev/null 2>&1; then
-    ok "check-features OK"
+  if bash .ai/scripts/check-features.sh --no-write >/dev/null 2>&1; then
+    ok "check-features OK (--no-write)"
   else
     ko "check-features failed"
     add_action "corriger le mesh puis relancer bash .ai/scripts/check-features.sh"

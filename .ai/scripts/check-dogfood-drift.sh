@@ -76,12 +76,12 @@ compare_tree() {
     return
   fi
   while IFS= read -r rel; do
-    is_ignored_runtime_extra "$rel" && continue
+    is_ignored_runtime_extra "$label" "$rel" && continue
     compare_file "$label/$rel" "$src/$rel" "$dst/$rel"
   done < <(cd "$src" && find . -type f | sed 's#^\./##' | sort)
 
   while IFS= read -r rel; do
-    is_ignored_runtime_extra "$rel" && continue
+    is_ignored_runtime_extra "$label" "$rel" && continue
     if [[ ! -e "$src/$rel" ]]; then
       echo "extra-runtime: $label/$rel"
       diff_found=1
@@ -90,11 +90,20 @@ compare_tree() {
 }
 
 is_ignored_runtime_extra() {
-  case "$1" in
+  local label="$1"
+  local rel="$2"
+  case "$rel" in
     .feature-index.json|.progress-history.jsonl|.session-edits.log|.session-edits.flushed|.context-relevance.jsonl|.context-relevance.jsonl.old|scripts/dogfood-update.sh|scripts/check-dogfood-drift.sh|project|project/*)
       return 0
       ;;
   esac
+  if [[ "$label" == ".docs/frames" ]]; then
+    case "$rel" in
+      [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.md)
+        return 0
+        ;;
+    esac
+  fi
   return 1
 }
 
@@ -116,6 +125,7 @@ echo "source-only ignored:"
 echo "- .github/workflows/ai-context-check.yml"
 echo "- .github/workflows/template-smoke-test.yml"
 echo "- README.md / CHANGELOG.md / PROJECT_STATE.md / MIGRATION.md"
+echo "- .docs/frames/YYYY-MM-DD-*.md"
 echo "- tests/**"
 echo "- template/**"
 

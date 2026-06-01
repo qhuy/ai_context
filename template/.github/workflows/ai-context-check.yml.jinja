@@ -76,7 +76,7 @@ jobs:
         run: bash .ai/scripts/check-ai-references.sh
 
       - name: check-features
-        run: bash .ai/scripts/check-features.sh
+        run: bash .ai/scripts/check-features.sh --no-write
 
       - name: check-feature-docs
         run: bash .ai/scripts/check-feature-docs.sh
