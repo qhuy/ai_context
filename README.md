@@ -92,6 +92,7 @@ La surface utilisateur canonique est `aic`.
 | Besoin | Claude | Codex / terminal |
 |---|---|---|
 | Cadrer avant d'écrire | `/aic-frame` | `bash .ai/scripts/aic.sh frame "<objectif>"` pour bootstrap |
+| Structurer le développement | `/aic-dev-plan` | skill local `aic-dev-plan` |
 | Savoir où reprendre | `/aic-status` | `bash .ai/scripts/aic.sh status` |
 | Diagnostiquer un blocage | `/aic-diagnose` | `bash .ai/scripts/aic.sh diagnose "<symptôme>"` |
 | Charger le contexte d'un fichier | `/aic-document-feature` | `bash .ai/scripts/aic.sh document-feature <path>` |

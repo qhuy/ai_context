@@ -103,6 +103,7 @@ _message_after_copy: |
                               `/aic rouvre feature-mesh pour ajouter status stable`)
     /aic undo               → annule la dernière bascule auto (consomme .progress-history.jsonl)
     /aic-frame              → cadrage avant implémentation : plan + métier + technique + validation
+    /aic-dev-plan           → structurer l'exécution multi-techno avant code
     /aic-status             → où en est-on ? features en cours, blockers, stale, delta
     /aic-diagnose           → pourquoi ça bloque ? bottleneck principal + prochaine action
     /aic-document-feature   → documenter, auditer ou préparer une fiche feature
