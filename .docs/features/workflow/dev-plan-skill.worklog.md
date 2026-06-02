@@ -21,11 +21,6 @@
 - Checks post-propagation : smoke PASS, dogfood-drift PASS.
 - `touches` fiche corrigés vers paths spécifiques (était wildcards `**`).
 
-## 2026-06-02 12:03 — auto
-- Fichiers modifiés :
-  - .agents/skills/aic-dev-plan/SKILL.md
-  - .agents/skills/aic-dev-plan/workflow.md
-  - .ai/workflows/dev-plan.md
-  - .claude/skills/aic-dev-plan/SKILL.md
-  - .claude/skills/aic-dev-plan/workflow.md
-  - README_AI_CONTEXT.md
+## 2026-06-02 — clôture
+- Evidence : commit 64a1ca1, smoke PASS, dogfood-drift PASS, check-shims PASS, check-ai-references PASS.
+- Status → done, phase → done.

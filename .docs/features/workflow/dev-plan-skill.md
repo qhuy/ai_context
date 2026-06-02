@@ -2,7 +2,7 @@
 id: dev-plan-skill
 scope: workflow
 title: Structurer les développements multi-techno
-status: draft
+status: done
 depends_on:
   - workflow/intentional-skills
   - workflow/subagent-contract
@@ -32,10 +32,10 @@ doc:
     rollout: true
     observability: false
 progress:
-  phase: implement
-  step: "runtime + template propagés ; smoke PASS, dogfood-drift PASS ; prêt à clôturer via aic-ship"
+  phase: done
+  step: ""
   blockers: []
-  resume_hint: "lancer aic-ship pour quality gate final et proposition de commit"
+  resume_hint: ""
   updated: 2026-06-02
 ---
 
