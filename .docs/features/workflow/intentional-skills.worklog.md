@@ -127,3 +127,8 @@
   - .claude/skills/aic/SKILL.md
   - template/.agents/skills/aic/SKILL.md.jinja
   - template/.claude/skills/aic/SKILL.md.jinja
+
+## 2026-06-02 10:13 — auto
+- Fichiers modifiés :
+  - .claude/skills/aic-ship/SKILL.md
+  - template/.claude/skills/aic-ship/SKILL.md.jinja

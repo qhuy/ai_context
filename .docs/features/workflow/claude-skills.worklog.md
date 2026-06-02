@@ -45,3 +45,7 @@
 ## 2026-06-02 00:27 — auto
 - Fichiers modifiés :
   - template/.claude/skills/aic/SKILL.md.jinja
+
+## 2026-06-02 10:13 — auto
+- Fichiers modifiés :
+  - template/.claude/skills/aic-ship/SKILL.md.jinja

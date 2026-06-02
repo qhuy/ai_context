@@ -233,3 +233,8 @@
 - Fichiers modifiés :
   - .agents/skills/aic/SKILL.md
   - .claude/skills/aic/SKILL.md
+
+## 2026-06-02 10:13 — auto
+- Fichiers modifiés :
+  - .agents/skills/aic-ship/SKILL.md
+  - .claude/skills/aic-ship/SKILL.md

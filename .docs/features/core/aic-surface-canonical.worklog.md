@@ -77,3 +77,8 @@
 ## 2026-06-01 12:33 — auto
 - Fichiers modifiés :
   - copier.yml
+
+## 2026-06-02 10:13 — auto
+- Fichiers modifiés :
+  - template/.agents/skills/aic-ship/SKILL.md.jinja
+  - template/.claude/skills/aic-ship/SKILL.md.jinja

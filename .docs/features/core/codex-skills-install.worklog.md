@@ -121,3 +121,8 @@ feat(core): installer les skills Codex par défaut
 - Fichiers modifiés :
   - .agents/skills/aic/SKILL.md
   - template/.agents/skills/aic/SKILL.md.jinja
+
+## 2026-06-02 10:13 — auto
+- Fichiers modifiés :
+  - .agents/skills/aic-ship/SKILL.md
+  - template/.agents/skills/aic-ship/SKILL.md.jinja
