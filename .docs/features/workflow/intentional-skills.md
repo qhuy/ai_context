@@ -26,11 +26,13 @@ touches:
   - .agents/skills/aic-document-feature/**
   - .agents/skills/aic-feature-*/**
   - .agents/skills/aic-quality-gate/**
+  - .agents/skills/aic-ship/**
   - template/.agents/skills/aic/**
   - template/.agents/skills/aic-frame/**
   - template/.agents/skills/aic-document-feature/**
   - template/.agents/skills/aic-feature-*/**
   - template/.agents/skills/aic-quality-gate/**
+  - template/.agents/skills/aic-ship/**
   - .ai/index.md
   - template/.ai/index.md.jinja
   - template/README_AI_CONTEXT.md.jinja
@@ -118,7 +120,7 @@ Les primitives procédurales vivent sous `.ai/workflows/`. Elles restent disponi
 - Utiliser `aic-document-feature` comme point d'entrée documentaire générique, sans logique projet spécifique.
 - Garde-fous comportementaux dans le body de chaque primitive Codex `aic-feature-*` / `aic-quality-gate` : STOP+redirect si la primitive n'est pas nommée explicitement. Le matching lexical implicite ne doit pas déclencher la primitive ; chemin propre = intention publique → workflow canonique, jamais intention publique → primitive.
 - Trigger déterministe pour `aic-frame` : `QUALITY_GATE.md` chargé seulement si `progress.phase` ∈ {review, done}, ou intention nommée (ship / done / review / quality-gate), ou change touchant contrat (API, schema), sécurité, CI, doc canonique.
-- Descriptions publiques (`aic-ship`, `aic-status`) enrichies avec les mots-clés captés implicitement par les primitives. Pour `aic-ship` : formulation stricte « s'appuie sur `.ai/workflows/feature-done.md` » — pas de mention d'invocation primitive.
+- Descriptions publiques (`aic-ship`, `aic-status`) enrichies avec les mots-clés captés implicitement par les primitives. Pour `aic-ship` : la description référence `.ai/workflows/quality-gate.md` (backend réel, gate avant `feature-done`) — pas de mention d'invocation primitive.
 
 ## Validation
 
@@ -147,3 +149,4 @@ Les primitives procédurales vivent sous `.ai/workflows/`. Elles restent disponi
 - 2026-05-06 : ajout de `/aic-document-feature` côté Claude et Codex. Le skill reste générique `ai_context`, documente le mesh feature et laisse `legacy` comme scope custom activable par les repos consommateurs.
 - 2026-05-06 : resserrage post-audit skills. `/aic done` délègue désormais à `feature-done`, `aic-frame` charge `.ai/agent/*` et `QUALITY_GATE` seulement on-demand, et les primitives Codex `aic-feature-*` / `aic-quality-gate` sont explicitement marquées internes/fallback.
 - 2026-05-06 (round 4) : cross-check Claude/Codex sur 4 rounds, application du plan consolidé. Garde-fous comportementaux ajoutés dans les 6 wrappers Codex (runtime + template) avec règle STOP+redirect sur matching lexical implicite. Trigger `aic-frame` rendu déterministe (phase + intention + type-change). Descriptions `aic-ship` (couvre done/clôture/livraison) et `aic-status` (couvre status/reprise/phase/état) enrichies sans rompre la chaîne intention publique → workflow canonique.
+- 2026-06-02 : correction du wording `aic-ship` — la description référence désormais `.ai/workflows/quality-gate.md` (backend réel, gate avant `feature-done`) au lieu de `feature-done.md`. Appliqué aux 4 surfaces (runtime + template, Claude + Codex) ; `touches` étendu à `.agents/skills/aic-ship/**` (+ template). Cross-scope `core` (dogfood-runtime-sync, codex-skills-install, aic-surface-canonical, template-engine) → freshness propagée.
