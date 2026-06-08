@@ -82,3 +82,9 @@
 - Fichiers modifiés :
   - template/.agents/skills/aic-ship/SKILL.md.jinja
   - template/.claude/skills/aic-ship/SKILL.md.jinja
+
+## 2026-06-08 — freshness PROJECT_STATE v0.13.0 (audit DOC-1)
+- Intent : corriger l'écart doc↔réalité relevé par l'audit hebdo (DOC-1) — `PROJECT_STATE.md` restait bloqué sur v0.12.0 alors que v0.13.0 est releasée (CHANGELOG + tag `v0.13.0`), en violation de la checklist `RELEASE.md:57`.
+- Fichiers/surfaces : `PROJECT_STATE.md` (version publiée, section « État actuel » v0.13.0, liste des tags). Aucun changement de surface `aic`.
+- Décision : ajouter une section « État actuel (v0.13.0) » (contrat read-only des checks, index contract v2, surface CLI `aic` breaking, installation Codex `.agents/`) et conserver l'état v0.12.0 en rappel.
+- Validation : `check-ai-references`, `check-features --no-write`, `check-dogfood-drift.sh` (PROJECT_STATE root-only, non templaté).

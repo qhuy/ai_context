@@ -3,7 +3,7 @@
 **But** : template `copier` qui industrialise le setup AI context (multi-agent : Claude / Codex / Cursor / Gemini / Copilot) d'un nouveau projet.
 **Remote** : [github.com/qhuy/ai_context](https://github.com/qhuy/ai_context) (public)
 **Local** : chemin de développement local, non versionné.
-**Dernière version publiée** : v0.12.0 — « Agent UX, product traceability & robust updates » (voir [CHANGELOG.md](CHANGELOG.md))
+**Dernière version publiée** : v0.13.0 — « Contrat read-only des checks, index contract v2 & surface CLI `aic` » (voir [CHANGELOG.md](CHANGELOG.md))
 
 > Ce fichier est un **point d'entrée rapide**. Pour l'historique détaillé des versions, consulter [CHANGELOG.md](CHANGELOG.md). Pour adopter le template sur un projet existant, [MIGRATION.md](MIGRATION.md). Pour l'architecture visuelle, diagramme mermaid dans [README.md](README.md).
 
@@ -49,7 +49,14 @@
 - `template/.ai/workflows/` — procédures internes agent-agnostic partagées par Claude et Codex : `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `quality-gate`, `feature-done`, `project-guardrails`.
 - `tests/smoke-test.sh` — 28 assertions end-to-end.
 
-## État actuel (v0.12.0)
+## État actuel (v0.13.0)
+
+- **Contrat read-only des checks** — `check-features.sh --no-write` valide le mesh sans écrire l'index ; `doctor`, `quality-gate`, la CI, `check-feature-freshness`, `check-feature-coverage`, `review-delta`, `pr-report` et les rapports product consomment un index temporaire ou le cache existant (warning si absent).
+- **Index contract v2** — `build-feature-index.sh --write` ne réécrit `.ai/.feature-index.json` que si le contrat JSON change (hors `generated_at`) ; ordre des features stable ; `schema_version` + `project_id` exposés ; fallback parser sans `yq` (extraction `product.portfolio.*`).
+- **Surface CLI `aic` (breaking)** — la surface publique devient `aic.sh frame/status/diagnose/document-feature/review/ship`, alignée avec les skills `aic-*`. Les anciens verbes publics de cadrage/brief/document-delta/ship-report sont supprimés (pas d'aliases).
+- **Installation Codex** — quand `codex` est dans `agents`, le template génère `.agents/skills/` (wrappers `aic-*`, `aic-feature-*`, `aic-quality-gate`) délégant aux workflows canoniques `.ai/workflows/*`.
+
+### État v0.12.0 (rappel)
 
 - **Feature mesh** — frontmatter validé, détection cycles, warn si active dépend de deprecated, scope enum, touches morte bloquante, `touches_shared` pour surfaces de review non bloquantes.
 - **Continuité inter-session** — frontmatter `progress:` + worklog append-only par feature + `resume-features.sh` 4 buckets.
@@ -58,7 +65,7 @@
 - **i18n** — reminder FR/EN selon `commit_language`.
 - **Presets techniques** — règles stack optionnelles via `tech_profile` (`dotnet-clean-cqrs`, `react-next`, `fullstack-dotnet-react`).
 - **Fiabilité** — `_lib.sh` helpers, matching `touches:` / `touches_shared:` centralisé, lock atomique sur index, globstar, dépendances vérifiées, JSON escaping via jq.
-- **Tags versionnés** — `v0.7.2`, `v0.8.0`, `v0.9.0`, `v0.10.0`, `v0.11.0`, `v0.12.0` — `copier update --vcs-ref=v0.12.0` possible.
+- **Tags versionnés** — `v0.7.2`, `v0.8.0`, `v0.9.0`, `v0.10.0`, `v0.11.0`, `v0.12.0`, `v0.13.0` — `copier update --vcs-ref=v0.13.0` possible.
 - **Documentation** — README avec mermaid + FAQ + use cases, MIGRATION.md progressif, skills self-contained.
 - **Guardrails projet** — `.ai/guardrails.md` cadre les non-goals + glossaire métier (référencé via Pack A, coût tokens nul à chaque tour). Le point d'entrée recommandé est `/aic-frame`; la procédure interne vit dans `.ai/workflows/project-guardrails.md`.
 - **Skills intentionnels** — `/aic-frame` cadre avant implémentation (plan, métier, technique, validation), `/aic-status` reprend, `/aic-review` relit le delta, `/aic-ship` prépare la sortie. Les skills procéduraux restent en backend.
