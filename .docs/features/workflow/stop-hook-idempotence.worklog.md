@@ -39,3 +39,20 @@
 ## 2026-05-07 14:20 — auto
 - Fichiers modifiés :
   - .ai/scripts/auto-worklog-log.sh
+
+## 2026-06-18 — DONE
+
+### Contexte clôture
+- Implémentation déjà livrée et live depuis `2b66ae6` (`is_structural_feature_edit` dans `_lib.sh:105`, branché dans `auto-worklog-log.sh:76` et `auto-progress.sh:103`). Fiche restée `draft` par oubli de clôture — métadonnée périmée (« prêt à commit » alors que déjà committé).
+- Clôture déclenchée après vérification factuelle : le code tourne, le test E2E passe.
+
+### Evidence
+- Tests : `bash tests/unit/test-stop-hook-idempotence.sh` ✅ (9/9 PASS)
+
+### Résumé livré
+- Le hook Stop n'ajoute plus d'entrée auto-worklog ni ne bump `progress.updated` quand les seuls édits sont non-structurels (fiche `.md`, `*.worklog.md`, `*.lock`, caches `.ai/.*`).
+- Filtre `is_structural_feature_edit` appliqué dans le logger PostToolUse (option a) après `features_matching_path` — matcher et contrat append-only intacts.
+- `progress.updated` retrouve sa sémantique « date du dernier change structurel » ; worklogs allégés.
+
+### Commit suggéré
+docs(workflow): clôture stop-hook-idempotence (impl. déjà live)

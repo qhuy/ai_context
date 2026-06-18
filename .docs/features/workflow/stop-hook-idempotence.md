@@ -2,7 +2,7 @@
 id: stop-hook-idempotence
 scope: workflow
 title: Rendre le hook Stop idempotent sur tour sans édit structurel
-status: draft
+status: done
 depends_on: []
 touches:
   - .ai/scripts/auto-worklog-log.sh
@@ -26,11 +26,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "implémentation livrée, 9/9 cas test E2E PASS, prêt à commit"
+  phase: done
+  step: ""
   blockers: []
-  resume_hint: "commit feat(workflow) ; Phase 2 entièrement livrée"
-  updated: 2026-05-07
+  resume_hint: "feature clôturée le 2026-06-18 (impl. live depuis 2b66ae6)"
+  updated: 2026-06-18
 ---
 
 # Rendre le hook Stop idempotent sur tour sans édit structurel
