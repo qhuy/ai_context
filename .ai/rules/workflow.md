@@ -25,6 +25,13 @@ Attendre confirmation utilisateur avant de changer de scope primaire.
 - Sortie obligatoire : résumé, fichiers lus/modifiés, risques, checks lancés ou non lancés.
 - Détail : `.ai/workflows/subagent-contract.md`.
 
+## Isolation des tâches concurrentes (worktree)
+
+- Une tâche lancée en parallèle d'une autre session d'agent = un `git worktree` dédié, jamais le checkout principal partagé : `git worktree add ../<repo>.worktrees/<tache> origin/<base>`.
+- Pourquoi : checkout partagé + hook `Stop` `auto-worklog-flush.sh` ⇒ churn worklog, WIP mélangé, risque de travail en double.
+- Avant d'écrire dans le checkout principal, vérifier les sessions actives : `ps aux | grep 'claude --output-format'` (ou l'équivalent Codex).
+- Le checkout principal reste sur la branche d'intégration, propre, pour lecture et opérations git.
+
 ## Hooks Codex
 
 - Opt-in uniquement ; les hooks Git et checks `.ai/scripts/*` restent la garantie stable.
