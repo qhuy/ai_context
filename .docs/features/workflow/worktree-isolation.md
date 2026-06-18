@@ -23,9 +23,9 @@ doc:
     observability: false
 progress:
   phase: implement
-  step: "section worktree ajoutée à la règle workflow (canonique + dogfood)"
+  step: "règle worktree + cycle de vie (fetch/-b/teardown/ff-only) alignés canonique + dogfood"
   blockers: []
-  resume_hint: "vérifier check-dogfood-drift + check-shims ; règle inline lean, pas de fichier .ai/workflows/ de détail"
+  resume_hint: "règle amendée après challenge (detached HEAD corrigé) ; vérifier check-dogfood-drift + check-shims ; teardown reste manuel"
   updated: 2026-06-18
 ---
 
@@ -45,11 +45,12 @@ Quand deux sessions d'agent travaillent dans le même working tree, elles se mar
 
 - Une section `## Isolation des tâches concurrentes (worktree)` dans la règle workflow canonique `template/.ai/rules/workflow.md.jinja` et son dogfood `.ai/rules/workflow.md`.
 - Règle lean (≤ ~6 lignes), tool-agnostique, propagée aux consommateurs via `copier update`.
+- Cycle de vie complet : `git fetch` + `git worktree add -b <tache>` (vraie branche, pas HEAD détachée), refresh `merge --ff-only` du checkout principal, teardown manuel `git worktree remove` + suppression de branche en fin de tâche.
 
 ### Hors périmètre
 
 - Modifier le hook `auto-worklog-flush.sh` ou son idempotence (voir `workflow/stop-hook-idempotence`).
-- Automatiser la création / le nettoyage (`git worktree prune`) des worktrees : règle d'opération seule, aucun script.
+- Automatiser le cycle de vie (script de scaffolding, `git worktree prune` planifié, hook de teardown) : la règle reste manuelle et déclarative. Le teardown manuel (`git worktree remove` + suppression de branche) est en revanche inclus comme étape attendue.
 - Figer une copie de la règle directement dans un shim consommateur.
 
 ### Granularité / nommage
@@ -70,12 +71,14 @@ Cette fiche couvre uniquement la règle d'isolation des sessions concurrentes. L
 
 ## Comportement attendu
 
-Une 2ᵉ tâche démarre alors qu'une session tourne sur le checkout principal : l'agent crée `git worktree add ../<repo>.worktrees/<tache> origin/<base>`, travaille isolé, et le hook `Stop` n'écrit que dans le worktree de la tâche → zéro churn sur le tree partagé.
+Une 2ᵉ tâche démarre alors qu'une session tourne sur le checkout principal : l'agent fait `git fetch origin && git worktree add -b <tache> ../<repo>.worktrees/<tache> origin/<base>` (vraie branche depuis une base fraîche), travaille isolé, et le hook `Stop` n'écrit que dans le worktree de la tâche → zéro churn sur le tree partagé. En fin de tâche, il retire le worktree et la branche mergée, et resynchronise le checkout principal (`git fetch && git merge --ff-only origin/<base>`).
 
 ## Contrats
 
-- Tâche concurrente ⇒ worktree dédié `../<repo>.worktrees/<tache>` basé sur `origin/<base>`.
+- Tâche concurrente ⇒ worktree dédié `../<repo>.worktrees/<tache>`, créé via `git fetch origin && git worktree add -b <tache> … origin/<base>` (base fraîche, branche nommée — jamais une HEAD détachée).
 - Avant d'écrire dans le checkout principal : vérifier les sessions actives (`ps aux | grep 'claude --output-format'`, ou l'équivalent Codex).
+- Checkout principal maintenu à jour par fast-forward only (`git fetch && git merge --ff-only origin/<base>`) ; jamais de WIP dessus.
+- Fin de tâche ⇒ `git worktree remove <path>` + suppression de la branche mergée (pas de worktree orphelin).
 - Aucune divergence entre la règle canonique et le dogfood (gardé par `check-dogfood-drift.sh`).
 
 ## Validation
@@ -89,6 +92,8 @@ Une 2ᵉ tâche démarre alors qu'une session tourne sur le checkout principal :
 
 - `ps aux | grep 'claude --output-format'` peut rater une session non-Claude : atténué par l'annotation « ou l'équivalent Codex » et par la règle « worktree par défaut » (non conditionnée au grep).
 - Édition d'un seul des deux fichiers de règle ⇒ `check-dogfood-drift.sh` rouge : acceptance impose les deux.
+- `git worktree add <path> origin/<base>` **sans `-b`** ⇒ HEAD détachée (vérifié empiriquement) : commits récupérables uniquement par reflog. Mitigé par le `-b <tache>` désormais obligatoire dans la règle.
+- Teardown oublié ⇒ worktrees orphelins (`prunable`) et bases périmées. Mitigé par l'étape de fin de tâche, mais reste manuel (pas de garde automatique).
 
 ## Cross-refs
 
@@ -100,3 +105,4 @@ Une 2ᵉ tâche démarre alors qu'une session tourne sur le checkout principal :
 ## Historique / décisions
 
 - 2026-06-18 : création suite au cas réel de double implémentation timezone en parallèle ; règle d'isolation worktree ajoutée à la règle workflow canonique et dogfoodée.
+- 2026-06-18 : challenge utilisateur sur la staleness. Vérifié que `git worktree add origin/<base>` produit une HEAD détachée → correction `-b <tache>` + `git fetch` préalable. Distinction posée : la staleness n'est pas intrinsèque au worktree (le checkout principal n'avance pas seul après un merge remote ; le worktree + sa branche survivent au ticket). Cycle de vie ajouté (refresh `merge --ff-only`, teardown `worktree remove` + branche), initialement classé hors périmètre.

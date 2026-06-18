@@ -27,10 +27,11 @@ Attendre confirmation utilisateur avant de changer de scope primaire.
 
 ## Isolation des tâches concurrentes (worktree)
 
-- Une tâche lancée en parallèle d'une autre session d'agent = un `git worktree` dédié, jamais le checkout principal partagé : `git worktree add ../<repo>.worktrees/<tache> origin/<base>`.
+- Une tâche lancée en parallèle d'une autre session d'agent = un `git worktree` dédié, jamais le checkout principal partagé : `git fetch origin && git worktree add -b <tache> ../<repo>.worktrees/<tache> origin/<base>` (`-b` ⇒ vraie branche, pas une HEAD détachée).
 - Pourquoi : checkout partagé + hook `Stop` `auto-worklog-flush.sh` ⇒ churn worklog, WIP mélangé, risque de travail en double.
 - Avant d'écrire dans le checkout principal, vérifier les sessions actives : `ps aux | grep 'claude --output-format'` (ou l'équivalent Codex).
-- Le checkout principal reste sur la branche d'intégration, propre, pour lecture et opérations git.
+- Le checkout principal reste sur la branche d'intégration, propre, pour lecture et opérations git ; le garder à jour : `git fetch && git merge --ff-only origin/<base>`.
+- Fin de tâche : `git worktree remove <path>` puis supprimer la branche mergée (sinon worktrees orphelins et bases périmées).
 
 ## Hooks Codex
 
