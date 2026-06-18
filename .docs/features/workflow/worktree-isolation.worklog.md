@@ -11,3 +11,8 @@
 - Vérifié empiriquement : `git worktree add <path> origin/<base>` (sans `-b`) ⇒ HEAD détachée. Bug de la commande initiale.
 - Correctifs règle (canonique + dogfood) : `git fetch` préalable, `-b <tache>` (vraie branche), refresh `git merge --ff-only origin/<base>` du checkout principal, teardown manuel `git worktree remove` + suppression de branche.
 - Périmètre ajusté : teardown manuel désormais inclus ; automatisation (scripts/prune planifié/hook) reste hors périmètre.
+
+## 2026-06-18 12:38 — auto
+- Fichiers modifiés :
+  - .ai/rules/workflow.md
+  - template/.ai/rules/workflow.md.jinja
