@@ -96,7 +96,12 @@ run_rsync "$out/AGENTS.md" "AGENTS.md"
 run_rsync "$out/CLAUDE.md" "CLAUDE.md"
 run_rsync "$out/README_AI_CONTEXT.md" "README_AI_CONTEXT.md"
 run_rsync "$out/.docs/FEATURE_TEMPLATE.md" ".docs/FEATURE_TEMPLATE.md"
-run_rsync "$out/.docs/frames/" ".docs/frames/"
+# Les frames datés .docs/frames/AAAA-MM-JJ-*.md sont des artefacts de cadrage
+# projet, pas du runtime rendu (le template ne fournit que 0000-template.md).
+# On les exclut de la synchro : sous --delete, un fichier exclu est protégé de
+# la suppression. Cohérent avec l'ignore de check-dogfood-drift.sh.
+run_rsync "$out/.docs/frames/" ".docs/frames/" \
+  --exclude='[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.md'
 
 cat <<'NOTE'
 

@@ -15,16 +15,19 @@ touches:
   - .githooks/**
   - .docs/frames/**
   - tests/unit/test-dogfood-drift-extra.sh
+  - tests/unit/test-dogfood-update-preserves-frames.sh
   - AGENTS.md
   - CLAUDE.md
   - README_AI_CONTEXT.md
   - .docs/FEATURE_TEMPLATE.md
+touches_shared:
+  - tests/smoke-test.sh
 progress:
   phase: implement
   step: "runtime dogfoodé + frames locaux ignorés"
   blockers: []
   resume_hint: "vérifier check-shims, dogfood drift, measure-context-size et smoke-test complet"
-  updated: 2026-06-02
+  updated: 2026-06-19
 ---
 
 # Synchronisation dogfooding du runtime
@@ -118,3 +121,4 @@ Faire consommer au repo source `ai_context` la même couche runtime que celle g�
 - 2026-05-04 : dogfooding du check "bible feature" (`check-feature-docs.sh`) et du template de fiche enrichi (`doc.level`, `doc.requires.*`, sections noyau + modules conditionnels).
 - 2026-05-06 : `dogfood-update.sh` et `check-dogfood-drift.sh` synchronisent désormais `.agents/**`, afin que les skills Codex intentionnels restent alignés avec les skills Claude et le rendu Copier.
 - 2026-05-14 : le drift check ignore les frames locaux datés `.docs/frames/YYYY-MM-DD-*.md`, qui sont des artefacts de cadrage projet et non du runtime rendu. Le template `0000-template.md` reste comparé pour détecter les dérives.
+- 2026-06-19 : fix — `dogfood-update.sh --apply` supprimait les frames datés via `rsync --delete` (le rendu ne fournit que `0000-template.md`), incohérent avec l'ignore du drift check (asymétrie destructive sur des fichiers committés project-owned). Ajout de `--exclude='[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.md'` à la sync des frames (sous `--delete`, un exclu est protégé de la suppression). Test de non-régression `tests/unit/test-dogfood-update-preserves-frames.sh` qui exerce le vrai `--apply` sur une copie jetable.

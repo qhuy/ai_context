@@ -48,6 +48,10 @@ echo "[0d/28] tests unitaires (dogfood drift destination-only)"
 bash tests/unit/test-dogfood-drift-extra.sh
 echo
 
+echo "[0d2/28] tests unitaires (dogfood update préserve les frames datés)"
+bash tests/unit/test-dogfood-update-preserves-frames.sh
+echo
+
 echo "[0e/28] tests unitaires (review delta + touches_shared)"
 bash tests/unit/test-review-delta-shared.sh
 echo
