@@ -31,7 +31,7 @@ Exposer côté Claude uniquement les intentions lisibles, et déplacer les étap
 
 ### Inclus
 
-- Le catalogue des skills publics `/aic*` : `/aic`, `/aic-frame`, `/aic-status`, `/aic-diagnose`, `/aic-document-feature`, `/aic-review`, `/aic-ship` (`SKILL.md` + `workflow.md` sous `template/.claude/skills/**`).
+- Le catalogue des skills publics `/aic*` : `/aic`, `/aic-onboard`, `/aic-frame`, `/aic-status`, `/aic-diagnose`, `/aic-document-feature`, `/aic-review`, `/aic-ship` (`SKILL.md` + `workflow.md` sous `template/.claude/skills/**`).
 - Les procédures internes sous `template/.ai/workflows/**` : `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `document-feature`, `quality-gate`, `feature-done`, `project-guardrails`.
 - Le routage skill public → procédure interne (quel skill invoque quel workflow).
 
@@ -64,6 +64,7 @@ Exposer côté Claude uniquement les intentions lisibles, et déplacer les étap
 | Skill | Rôle | Quand l'invoquer |
 |---|---|---|
 | `/aic` | Override conversationnel de l'auto-progression (`/aic <phrase>`, `/aic undo`) | Quand l'auto-progression se trompe ou pour cas exceptionnels |
+| `/aic-onboard` | Peuple/maintient/migre l'overlay projet `.ai/project` comme registre de scopes (init/sync/migrate) | Sur un projet sans overlay, ou overlay incomplet/ancien à enrichir ou migrer |
 | `/aic-frame` | Cadrage : objectif, position, métier, technique, plan, validation | Avant une feature ou une décision insuffisamment cadrée |
 | `/aic-status` | État actionnable : en cours, blockers, stale, delta, prochaine reprise | Début de session ou reprise après interruption |
 | `/aic-diagnose` | Diagnostic du bottleneck principal | Quand ça bloque, quand la demande est floue ou contradictoire |
@@ -118,3 +119,4 @@ Exposer côté Claude uniquement les intentions lisibles, et déplacer les étap
 - **2026-05-04** — Les workflows internes référencent désormais `check-feature-docs.sh` et son strict ciblé. La surface skill publique ne change pas : l'usage reste intentionnel via `/aic-frame`, `/aic-review` et `/aic-ship`.
 - **2026-05-06** — Ajout de `/aic-document-feature` comme skill public Claude. Il pointe vers `.ai/workflows/document-feature.md` et reste générique, avec `legacy` documenté comme scope custom non scaffoldé.
 - **2026-05-06** — Alignement sécurité : `/aic done` et `/aic force done` délèguent à `feature-done` au lieu de patcher directement `status: done`, afin de préserver quality gate, build/tests et docs strictes.
+- **2026-06-19** — Ajout de `/aic-onboard` au catalogue public (8ᵉ skill exposé). Peuple/maintient/migre l'overlay projet `.ai/project` comme registre de scopes ; pointe vers la procédure interne `.ai/workflows/project-overlay-sync.md`. Voir `workflow/project-overlay-onboarding` et `core/project-overlay-scope-registry`.

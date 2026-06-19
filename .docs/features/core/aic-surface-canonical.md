@@ -55,7 +55,7 @@ comme interface utilisateur recommandee.
 ## Objectif
 
 Reduire l'ambiguite entre Claude, Codex et les agents non-hookes. Un utilisateur
-doit voir une seule taxonomie : `aic`, `aic-frame`, `aic-status`,
+doit voir une seule taxonomie : `aic`, `aic-onboard`, `aic-frame`, `aic-status`,
 `aic-diagnose`, `aic-document-feature`, `aic-review`, `aic-ship`.
 
 ## Périmètre
@@ -146,3 +146,5 @@ Aucune dependance frontmatter.
 
 - 2026-05-06 : decision de faire une migration breaking sans alias legacy, avec
   un commit dedie au sous-chantier.
+- 2026-06-19 : ajout de `aic-onboard` a la taxonomie canonique (init/sync/migrate
+  de l'overlay projet). Voir `workflow/project-overlay-onboarding`.

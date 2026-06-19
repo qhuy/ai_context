@@ -130,3 +130,11 @@
 ## 2026-06-01 22:26 — auto
 - Fichiers modifiés :
   - tests/unit/test-pr-report-glob-match.sh
+
+## 2026-06-19 14:09 — auto
+- Fichiers modifiés :
+  - tests/unit/test-project-overlay.sh
+
+## 2026-06-19 14:24 — auto
+- Fichiers modifiés :
+  - tests/unit/test-project-overlay.sh

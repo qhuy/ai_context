@@ -8,3 +8,13 @@
 - Prérequis livré : `core/project-overlay-scope-registry` (contrat de forme, committé 0b6e685)
 - `touches: []` au départ (fichiers du skill pas encore créés) — à figer en `aic-dev-plan`
 - Source : cadrage `aic-frame` → `.docs/frames/2026-06-19-project-overlay-scope-registry.md`
+
+## 2026-06-19 — implémentation (autopilote)
+- Procédure canonique `template/.ai/workflows/project-overlay-sync.md.jinja` : modes init/sync/migrate, détection inférable, interview du non-inférable, garde-fous migrate (préserver/proposer/idempotent), durable vs volatile.
+- Skill `aic-onboard` (mince → pointe vers la procédure) en parité Claude (`template/.claude/skills/aic-onboard/`) + Codex (`template/.agents/skills/aic-onboard/`).
+- Runtime régénéré via `dogfood-update.sh --apply` ; `.claude/skills/aic-onboard/`, `.agents/skills/aic-onboard/`, `.ai/workflows/project-overlay-sync.md` générés.
+- Smoke-test étendu : `aic-onboard` ajouté à la liste des skills publics, `project-overlay-sync` à la liste des workflows internes.
+- Catalogues mis à jour : `workflow/claude-skills`, `core/aic-surface-canonical`.
+- Bug détecté hors scope : `dogfood-update.sh --apply` supprime les frames datés de `.docs/frames/` (restaurés via git) → tâche flaggée pour `core/dogfood-runtime-sync`.
+- Checks verts : drift ✅, shims ✅, check-features ✅, smoke-test ✅.
+- `touches` figés sur les paths réels ; phase → done.

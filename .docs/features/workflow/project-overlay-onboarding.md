@@ -7,8 +7,15 @@ depends_on:
   - core/project-overlay-scope-registry
   - workflow/intentional-skills
   - workflow/claude-skills
-touches: []
+touches:
+  - "template/.claude/skills/aic-onboard/**"
+  - "template/.agents/skills/aic-onboard/**"
+  - "template/.ai/workflows/project-overlay-sync.md.jinja"
+  - ".claude/skills/aic-onboard/**"
+  - ".agents/skills/aic-onboard/**"
+  - ".ai/workflows/project-overlay-sync.md"
 touches_shared:
+  - "tests/smoke-test.sh"
   - ".docs/frames/2026-06-19-project-overlay-scope-registry.md"
 product:
   initiative: product/ai-context-stability-migration
@@ -22,10 +29,10 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: spec
-  step: "fiche créée — à planifier via aic-dev-plan"
+  phase: done
+  step: "skill aic-onboard livré (Claude + Codex), procédure canonique, smoke-test étendu, drift vert"
   blockers: []
-  resume_hint: "Lancer aic-dev-plan : surfaces (.claude/skills/aic-onboard, .agents/skills/aic-onboard, .ai/workflows/project-overlay-sync.md + jinjas), détection des scopes, script d'interview, garde-fous migrate. Le contrat de forme est livré par core/project-overlay-scope-registry."
+  resume_hint: "DONE côté implémentation. Validation end-to-end naturelle : exercer aic-onboard sur un vrai consumer multi-app. Décision migrate-legacy déjà couverte par la procédure."
   updated: 2026-06-19
 ---
 
