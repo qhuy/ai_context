@@ -1828,10 +1828,21 @@ EOF
   # Update vers HEAD (scénario Git réel, volontairement basé sur le repo tagué)
   update_log="/tmp/ai-context-copier-update-$$.log"
   if ! ( cd "$UPD_OUT" && copier update --defaults --trust --vcs-ref=HEAD -A >"$update_log" 2>&1 ); then
-    echo "  ✗ copier update v0.11.0 → HEAD a échoué"
-    sed -n '1,160p' "$update_log"
-    rm -rf "$UPD_OUT"
-    exit 1
+    # Copier 9.x sur Python 3.14 peut crasher dans son _cleanup (rmtree du clone
+    # temporaire .git/objects : OSError "Directory not empty") APRÈS avoir appliqué
+    # l'update. Ce n'est pas un échec d'update — on tolère cette signature précise
+    # uniquement ; tout autre échec reste bloquant (cf. décision 2026-05-03 : pas
+    # de masquage par `|| true`). Les assertions d'outcome ci-dessous (fichier
+    # custom préservé, check-shims, propagation aic-undo.sh) restent le verdict.
+    if grep -q "Updating to template version" "$update_log" \
+       && grep -qE "_cleanup|Directory not empty|copier\._vcs\.clone" "$update_log"; then
+      echo "  ⚠ copier update : crash de cleanup post-update toléré (copier+py3.14 ; outcome vérifié ci-dessous)"
+    else
+      echo "  ✗ copier update v0.11.0 → HEAD a échoué"
+      sed -n '1,160p' "$update_log"
+      rm -rf "$UPD_OUT"
+      exit 1
+    fi
   fi
   rm -f "$update_log"
 

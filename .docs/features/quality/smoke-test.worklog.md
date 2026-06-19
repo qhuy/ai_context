@@ -138,3 +138,18 @@
 ## 2026-06-19 14:24 — auto
 - Fichiers modifiés :
   - tests/unit/test-project-overlay.sh
+
+## 2026-06-19 14:53 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh
+
+## 2026-06-19 17:52 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh
+  - tests/unit/test-dogfood-update-preserves-frames.sh
+
+## 2026-06-19 — [28c] tolère le crash de cleanup Copier (py3.14)
+- Symptôme : smoke rouge à [28c] — `copier update` sort non-zéro car Copier 9.14.3 + Python 3.14 crashe dans `_cleanup` (rmtree du clone temp `.git/objects`, OSError Directory not empty). L'update est pourtant appliqué.
+- Fix : tolérer uniquement cette signature (« Updating to template version » + `_cleanup`/`Directory not empty`/`copier._vcs.clone`) ; tout autre échec reste bloquant. Assertions d'outcome inchangées (verdict réel).
+- Vérif : signature confrontée à un log de crash réel (match ✅) ; smoke complet PASS ; CI non concernée (pas de copier, pas de smoke en CI).
+- Origine : task_0a39c907, découvert pendant le fix dogfood-update.
