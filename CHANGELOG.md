@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [Unreleased]
+
+### Nouveau
+- Overlay projet **registre de scopes** : `.ai/project/<scope>/index.md` (un dossier + index privé par app/couche/préoccupation), avec un contrat de forme documenté (`paths`, `meta`, `conventions`, `derived`) et un stamp global `overlay_contract_version`. Le contrat de chargement descend d'un niveau, sur match de path, par pointeur explicite. Voir `core/project-overlay-scope-registry`.
+- Skill **`aic-onboard`** (Claude + Codex) : peuple, maintient ou migre l'overlay projet (modes `init`/`sync`/`migrate` auto-détectés) — détecte les scopes inférables, interroge les conventions tribales, scaffolde après confirmation, écrit uniquement sous `.ai/project/**`. Procédure canonique `.ai/workflows/project-overlay-sync.md`. Voir `workflow/project-overlay-onboarding`.
+
+### Migration
+- Migration de l'overlay vers le registre de scopes : deux temps (`copier update` apporte le skill + le contrat ; `aic-onboard` migre l'overlay project-owned). Opt-in, non bloquant, non destructif, idempotent. Voir `docs/upgrading.md` → « Overlay projet : registre de scopes ».
+
 ## [0.13.0] — 2026-06-01
 
 > Release de l'initiative `ai-context-stability-migration` (contrat read-only des

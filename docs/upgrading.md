@@ -117,6 +117,27 @@ Migration recommandée :
 
 Voir aussi `.ai/OWNERSHIP.md` dans les repos générés.
 
+## Overlay projet : registre de scopes (`aic-onboard`)
+
+À partir de cette version, `.ai/project/**` peut être structuré en **registre de scopes** : un dossier `.ai/project/<scope>/` par app/couche/préoccupation (`bo-front`, `bo-back`, `sql`, `infra`…), chacun avec un `index.md` privé (routeur + manifeste). Le contrat de forme est documenté dans `.ai/templates/project-overlay/README.md`. Le skill `aic-onboard` peuple et maintient cette structure.
+
+### Migration en deux temps
+
+`copier update` ne peut pas migrer `.ai/project/**` : ce dossier est project-owned (`_skip_if_exists`). La migration est donc **séparée et opt-in** :
+
+1. **`copier update`** apporte le skill `aic-onboard`, le contrat de forme et cet upgrade — sans toucher à ton overlay existant.
+2. **Lancer `aic-onboard`** (Claude ou Codex) qui détecte l'état de `.ai/project/` et choisit le mode :
+   - `init` : pas d'overlay → détecte les scopes, interroge les conventions, scaffolde.
+   - `sync` : overlay déjà au format registre → enrichit/affûte par scope.
+   - `migrate` : overlay ancien (plat `.ai/project/<x>.md`, `config.yml` seul, ou règles legacy) → réorganise vers le registre.
+
+### Garde-fous
+
+- **Non bloquant** : un overlay plat ou absent continue de fonctionner. Migre quand tu veux.
+- **Non destructif** : `migrate` relocalise le contenu curé (il ne le régénère pas), propose un diff et reste réversible par git.
+- **Idempotent** : le stamp `overlay_contract_version` (front-matter de `.ai/project/index.md`) rend une seconde exécution sans effet.
+- **État volatile** (sprint courant, environnement actif) : jamais figé en prose — dérivé à la demande ou posé comme valeur unique dans `.ai/project/config.yml`.
+
 ## Migration vers le contexte lean Codex
 
 Pour les projets existants, accepter en priorité les mises à jour de :
