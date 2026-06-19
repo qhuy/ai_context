@@ -2,7 +2,7 @@
 id: project-overlay-onboarding
 scope: workflow
 title: Skill aic-onboard — init/sync/migrate de l'overlay projet
-status: draft
+status: active
 depends_on:
   - core/project-overlay-scope-registry
   - workflow/intentional-skills

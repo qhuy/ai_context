@@ -18,3 +18,6 @@
 - Bug détecté hors scope : `dogfood-update.sh --apply` supprime les frames datés de `.docs/frames/` (restaurés via git) → tâche flaggée pour `core/dogfood-runtime-sync`.
 - Checks verts : drift ✅, shims ✅, check-features ✅, smoke-test ✅.
 - `touches` figés sur les paths réels ; phase → done.
+
+## 2026-06-19 — correctif statut
+- `status: draft → active` : oubli au commit 39c0fa2, la feature est implémentée et live (incohérent avec `phase: done`). Aligné sur `core/project-overlay-scope-registry`.
