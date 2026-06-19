@@ -73,4 +73,59 @@ rsync -a \
   bash .ai/scripts/check-dogfood-drift.sh >/dev/null
 )
 
+# ── Registre de scopes : dogfood-drift tolère project/<scope>/index.md ──────
+rsync -a \
+  --exclude='.git' \
+  --exclude='.ai/.feature-index.json' \
+  --exclude='.ai/.progress-history.jsonl' \
+  --exclude='.ai/.session-edits.log' \
+  --exclude='.ai/.session-edits.flushed' \
+  --exclude='.ai/.context-relevance.jsonl' \
+  --exclude='.ai/.context-relevance.jsonl.old' \
+  ./ "$tmp/repo-scope/"
+(
+  cd "$tmp/repo-scope"
+  mkdir -p .ai/project/bo-front .ai/project/sql
+  printf -- '---\noverlay_contract_version: 1\n---\n\n# Project Overlay\n' > .ai/project/index.md
+  cat > .ai/project/bo-front/index.md <<'MD'
+---
+scope: bo-front
+paths:
+  - src/bo-front/**
+meta:
+  stack: React 18
+  test_cmd: pnpm test
+---
+# Scope bo-front
+## Conventions
+- Composants dans src/components/.
+MD
+  printf '# Scope sql\n' > .ai/project/sql/index.md
+  if ! bash .ai/scripts/check-dogfood-drift.sh >/dev/null; then
+    echo "✗ check-dogfood-drift doit ignorer .ai/project/<scope>/index.md"
+    exit 1
+  fi
+)
+
+# ── Registre de scopes : check-ai-references accepte un lien vers <scope>/index.md ──
+(
+  cd "$out"
+  mkdir -p .ai/project/payments
+  printf '# Scope payments\n## Conventions\n- ...\n' > .ai/project/payments/index.md
+  cat > .ai/project/index.md <<'MD'
+---
+overlay_contract_version: 1
+---
+
+# Project Overlay
+
+Voir [payments](.ai/project/payments/index.md) pour les règles de paiement.
+MD
+  if ! bash .ai/scripts/check-ai-references.sh >/dev/null; then
+    echo "✗ check-ai-references doit accepter les liens existants sous .ai/project/<scope>/**"
+    bash .ai/scripts/check-ai-references.sh
+    exit 1
+  fi
+)
+
 echo "✅ test-project-overlay PASS"

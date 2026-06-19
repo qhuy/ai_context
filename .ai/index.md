@@ -50,7 +50,7 @@ Si le scope est incertain, utiliser cette table puis charger **un seul** fichier
 
 ## Project Overlay
 
-Si `.ai/project/index.md` existe, le lire maintenant. Ne pas précharger le reste de `.ai/project/**` : ce fichier projet décide seul quelles règles locales charger.
+Si `.ai/project/index.md` existe, le lire maintenant. Ne pas précharger le reste de `.ai/project/**` : ce fichier projet décide seul quelles règles locales charger. Si ce fichier route un path vers `.ai/project/<scope>/index.md`, charger cet index de scope sur match de path — descente d'un niveau, par pointeur explicite, jamais de récursion aveugle.
 
 ## On Demand
 

@@ -42,3 +42,7 @@ Entrée recommandée :
 ```
 
 Les agents lisent `.ai/project/index.md` seulement s'il existe. Ils ne chargent pas récursivement `.ai/project/**` ; l'index projet liste les fichiers locaux utiles selon la tâche.
+
+## Registre de scopes
+
+`.ai/project/<scope>/` est le pendant project-owned de `.ai/rules/<scope>.md` (upstream-managed, intouchable sans drift). Chaque scope du projet (app, couche, préoccupation) peut posséder son propre dossier avec un `index.md` privé jouant le rôle de routeur + manifeste : paths du scope, conventions durables, pointeurs vers éléments volatils. Voir `.ai/templates/project-overlay/README.md` pour le contrat de forme complet.
