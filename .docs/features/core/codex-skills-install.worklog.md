@@ -126,3 +126,30 @@ feat(core): installer les skills Codex par défaut
 - Fichiers modifiés :
   - .agents/skills/aic-ship/SKILL.md
   - template/.agents/skills/aic-ship/SKILL.md.jinja
+
+## 2026-06-19 12:39 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-dogfood-drift.sh
+
+## 2026-06-19 14:24 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-dogfood-drift.sh
+
+## 2026-06-19 14:53 — auto
+- Fichiers modifiés :
+  - template/.agents/skills/aic-onboard/SKILL.md.jinja
+  - template/.agents/skills/aic-onboard/workflow.md.jinja
+  - tests/smoke-test.sh
+
+## 2026-06-19 15:14 — auto
+- Fichiers modifiés :
+  - CHANGELOG.md
+
+## 2026-06-19 17:52 — auto
+- Fichiers modifiés :
+  - .ai/scripts/dogfood-update.sh
+  - tests/smoke-test.sh
+
+## 2026-06-19 18:03 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh

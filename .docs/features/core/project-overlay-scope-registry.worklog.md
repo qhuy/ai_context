@@ -50,3 +50,16 @@
   - .ai/templates/project-overlay/README.md
   - template/.ai/templates/project-overlay/README.md.jinja
   - tests/unit/test-project-overlay.sh
+
+## 2026-06-19 14:53 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh
+
+## 2026-06-19 17:52 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh
+  - tests/unit/test-dogfood-update-preserves-frames.sh
+
+## 2026-06-19 18:03 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh

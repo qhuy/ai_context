@@ -132,3 +132,12 @@
 - Fichiers modifiés :
   - .claude/skills/aic-ship/SKILL.md
   - template/.claude/skills/aic-ship/SKILL.md.jinja
+
+## 2026-06-19 12:39 — auto
+- Fichiers modifiés :
+  - .ai/index.md
+  - template/.ai/index.md.jinja
+
+## 2026-06-19 14:53 — auto
+- Fichiers modifiés :
+  - template/.ai/workflows/project-overlay-sync.md.jinja

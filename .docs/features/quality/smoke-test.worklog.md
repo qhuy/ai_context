@@ -153,3 +153,7 @@
 - Fix : tolérer uniquement cette signature (« Updating to template version » + `_cleanup`/`Directory not empty`/`copier._vcs.clone`) ; tout autre échec reste bloquant. Assertions d'outcome inchangées (verdict réel).
 - Vérif : signature confrontée à un log de crash réel (match ✅) ; smoke complet PASS ; CI non concernée (pas de copier, pas de smoke en CI).
 - Origine : task_0a39c907, découvert pendant le fix dogfood-update.
+
+## 2026-06-19 18:03 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh

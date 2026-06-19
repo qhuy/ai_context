@@ -49,3 +49,9 @@
 ## 2026-06-02 10:13 — auto
 - Fichiers modifiés :
   - template/.claude/skills/aic-ship/SKILL.md.jinja
+
+## 2026-06-19 14:53 — auto
+- Fichiers modifiés :
+  - template/.ai/workflows/project-overlay-sync.md.jinja
+  - template/.claude/skills/aic-onboard/SKILL.md.jinja
+  - template/.claude/skills/aic-onboard/workflow.md.jinja

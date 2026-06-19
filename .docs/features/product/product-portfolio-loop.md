@@ -59,7 +59,7 @@ progress:
   step: "rapports product alignés et testés read-only"
   blockers: []
   resume_hint: "relire le delta product et décider si le scoring portfolio doit être durci dans une feature dédiée"
-  updated: 2026-06-01
+  updated: 2026-06-19
 ---
 
 # Product Traceability Loop

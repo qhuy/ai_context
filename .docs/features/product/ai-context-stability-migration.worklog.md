@@ -28,3 +28,8 @@
 - `docs/upgrading.md` : nouvelle section « Overlay projet : registre de scopes (`aic-onboard`) » documentant la migration deux-temps (copier update apporte le skill + contrat ; `aic-onboard` migre l'overlay project-owned).
 - Garde-fous documentés : non bloquant, non destructif, idempotent (`overlay_contract_version`), durable vs volatile.
 - Clôture le 3ᵉ maillon du chantier overlay : `core/project-overlay-scope-registry` (contrat) + `workflow/project-overlay-onboarding` (skill) + ce rattachement produit.
+
+## 2026-06-19 15:14 — auto
+- Fichiers modifiés :
+  - CHANGELOG.md
+  - docs/upgrading.md

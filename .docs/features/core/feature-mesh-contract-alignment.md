@@ -39,7 +39,7 @@ progress:
   step: "fallback product.portfolio implémenté et testé"
   blockers: []
   resume_hint: "relire le delta core puis décider si kill_criteria doit aussi être couvert par le fallback"
-  updated: "2026-05-14"
+  updated: 2026-06-19
 ---
 
 # Alignement schema et parser du feature mesh

@@ -82,3 +82,26 @@
 ## 2026-06-01 12:33 — auto
 - Fichiers modifiés :
   - copier.yml
+
+## 2026-06-19 12:39 — auto
+- Fichiers modifiés :
+  - .ai/index.md
+  - .ai/scripts/check-dogfood-drift.sh
+  - template/.ai/index.md.jinja
+
+## 2026-06-19 14:24 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-dogfood-drift.sh
+
+## 2026-06-19 14:53 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh
+
+## 2026-06-19 17:52 — auto
+- Fichiers modifiés :
+  - .ai/scripts/dogfood-update.sh
+  - tests/smoke-test.sh
+
+## 2026-06-19 18:03 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh

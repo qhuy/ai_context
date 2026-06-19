@@ -34,7 +34,7 @@ progress:
   step: ""
   blockers: []
   resume_hint: "Feature cloturee le 2026-05-12."
-  updated: 2026-06-01
+  updated: 2026-06-19
 ---
 
 # Couverture ciblee des regressions critiques

@@ -27,3 +27,7 @@
 - Repositionnement de `aic.sh frame` comme bootstrap de contexte, avec alias explicites `frame-bootstrap` et `frame-context`.
 - Documentation utilisateur clarifiée dans `README.md`, `README_AI_CONTEXT.md` et le template README.
 - Validations PASS : `bash -n .ai/scripts/aic.sh`, `bash -n template/.ai/scripts/aic.sh.jinja`, `bash .ai/scripts/aic.sh frame "test cadrage"`, `check-features`, `check-feature-docs --strict workflow/aic-frame-external-reference`, `check-dogfood-drift`, `check-agent-config`, `check-ai-references`, `check-feature-coverage`, `check-shims`, `measure-context-size`, `tests/smoke-test.sh`.
+
+## 2026-06-19 11:47 — auto
+- Fichiers modifiés :
+  - .docs/frames/2026-06-19-project-overlay-scope-registry.md

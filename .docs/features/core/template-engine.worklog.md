@@ -320,3 +320,25 @@
 - Fichiers modifiés :
   - template/.agents/skills/aic-ship/SKILL.md.jinja
   - template/.claude/skills/aic-ship/SKILL.md.jinja
+
+## 2026-06-19 12:39 — auto
+- Fichiers modifiés :
+  - template/.ai/OWNERSHIP.md.jinja
+  - template/.ai/index.md.jinja
+  - template/.ai/templates/project-overlay/README.md.jinja
+
+## 2026-06-19 14:24 — auto
+- Fichiers modifiés :
+  - template/.ai/templates/project-overlay/README.md.jinja
+
+## 2026-06-19 14:53 — auto
+- Fichiers modifiés :
+  - template/.agents/skills/aic-onboard/SKILL.md.jinja
+  - template/.agents/skills/aic-onboard/workflow.md.jinja
+  - template/.ai/workflows/project-overlay-sync.md.jinja
+  - template/.claude/skills/aic-onboard/SKILL.md.jinja
+  - template/.claude/skills/aic-onboard/workflow.md.jinja
+
+## 2026-06-19 15:14 — auto
+- Fichiers modifiés :
+  - docs/upgrading.md

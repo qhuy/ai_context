@@ -20,7 +20,7 @@ progress:
   step: "couche agent sortie du Pack A Codex"
   blockers: []
   resume_hint: "vérifier check-shims, measure-context-size et smoke-test après changement Pack A"
-  updated: 2026-06-01
+  updated: 2026-06-19
 ---
 
 # Couche comportementale agent légère

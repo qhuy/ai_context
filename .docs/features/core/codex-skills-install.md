@@ -29,7 +29,7 @@ progress:
   step: ""
   blockers: []
   resume_hint: "feature clôturée le 2026-05-04"
-  updated: 2026-06-02
+  updated: 2026-06-19
 ---
 
 # Installer les skills Codex avec ai_context

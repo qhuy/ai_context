@@ -88,3 +88,20 @@
 - Fichiers modifiés :
   - .ai/scripts/pr-report.sh
   - template/.ai/scripts/pr-report.sh.jinja
+
+## 2026-06-19 14:09 — auto
+- Fichiers modifiés :
+  - tests/unit/test-project-overlay.sh
+
+## 2026-06-19 14:24 — auto
+- Fichiers modifiés :
+  - tests/unit/test-project-overlay.sh
+
+## 2026-06-19 15:14 — auto
+- Fichiers modifiés :
+  - CHANGELOG.md
+  - docs/upgrading.md
+
+## 2026-06-19 17:52 — auto
+- Fichiers modifiés :
+  - tests/unit/test-dogfood-update-preserves-frames.sh

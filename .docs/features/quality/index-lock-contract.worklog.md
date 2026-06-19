@@ -67,3 +67,15 @@ feat(quality): corriger le contrat de lock index
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-06-19 14:53 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh
+
+## 2026-06-19 17:52 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh
+
+## 2026-06-19 18:03 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh

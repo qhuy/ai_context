@@ -38,3 +38,8 @@
 ## 2026-06-01 12:33 — auto
 - Fichiers modifiés :
   - copier.yml
+
+## 2026-06-19 12:39 — auto
+- Fichiers modifiés :
+  - .ai/index.md
+  - template/.ai/index.md.jinja

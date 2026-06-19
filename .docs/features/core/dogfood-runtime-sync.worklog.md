@@ -259,3 +259,7 @@
 - Bug : `dogfood-update.sh --apply` supprimait `.docs/frames/AAAA-MM-JJ-*.md` (rsync `--delete`, rendu ne fournit que `0000-template.md`). Asymétrie avec le drift check qui les ignore. Détecté pendant le chantier overlay (frames restaurés via git).
 - Fix : `--exclude='[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.md'` sur la sync des frames (ligne ~99 de dogfood-update.sh).
 - Test : `tests/unit/test-dogfood-update-preserves-frames.sh` (exerce le vrai `--apply` sur copie jetable, skip si copier absent) ; enregistré dans `tests/smoke-test.sh` ([0d2]) ; CI le globe déjà via `tests/unit/*.sh`.
+
+## 2026-06-19 17:52 — auto
+- Fichiers modifiés :
+  - .ai/scripts/dogfood-update.sh

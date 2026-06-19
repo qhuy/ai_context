@@ -146,3 +146,42 @@
 ## 2026-06-01 22:26 — auto
 - Fichiers modifiés :
   - tests/unit/test-pr-report-glob-match.sh
+
+## 2026-06-19 12:39 — auto
+- Fichiers modifiés :
+  - .ai/OWNERSHIP.md
+  - .ai/index.md
+  - .ai/scripts/check-dogfood-drift.sh
+  - .ai/templates/project-overlay/README.md
+  - template/.ai/OWNERSHIP.md.jinja
+  - template/.ai/index.md.jinja
+  - template/.ai/templates/project-overlay/README.md.jinja
+
+## 2026-06-19 14:09 — auto
+- Fichiers modifiés :
+  - tests/unit/test-project-overlay.sh
+
+## 2026-06-19 14:24 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-dogfood-drift.sh
+  - .ai/templates/project-overlay/README.md
+  - template/.ai/templates/project-overlay/README.md.jinja
+  - tests/unit/test-project-overlay.sh
+
+## 2026-06-19 14:53 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh
+
+## 2026-06-19 15:14 — auto
+- Fichiers modifiés :
+  - docs/upgrading.md
+
+## 2026-06-19 17:52 — auto
+- Fichiers modifiés :
+  - .ai/scripts/dogfood-update.sh
+  - tests/smoke-test.sh
+  - tests/unit/test-dogfood-update-preserves-frames.sh
+
+## 2026-06-19 18:03 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh

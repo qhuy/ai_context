@@ -17,3 +17,7 @@
 - Documentation release : `CHANGELOG.md` mentionne l'amélioration du fallback.
 - Validations : `test-build-feature-index-fallback` PASS, `test-build-feature-index-contract` PASS, `test-read-only-checks-contract` PASS, `test-product-reports-read-only` PASS, `check-features --no-write` PASS, `check-feature-docs --strict core/feature-mesh-contract-alignment` PASS, `check-ai-references` PASS, `check-dogfood-drift` PASS.
 - next : revue du delta et décision sur `kill_criteria` ; non bloquant car aucun rapport ne le consomme aujourd'hui.
+
+## 2026-06-19 15:14 — auto
+- Fichiers modifiés :
+  - CHANGELOG.md

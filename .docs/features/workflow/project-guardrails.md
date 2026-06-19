@@ -21,7 +21,7 @@ progress:
   step: "guardrails conservé hors Pack A"
   blockers: []
   resume_hint: "vérifier que project-guardrails reste on-demand dans index, workflow et smoke-test"
-  updated: 2026-06-01
+  updated: 2026-06-19
 ---
 
 # Procédure project-guardrails

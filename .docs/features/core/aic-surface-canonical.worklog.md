@@ -88,3 +88,24 @@
 - Fichiers/surfaces : `PROJECT_STATE.md` (version publiée, section « État actuel » v0.13.0, liste des tags). Aucun changement de surface `aic`.
 - Décision : ajouter une section « État actuel (v0.13.0) » (contrat read-only des checks, index contract v2, surface CLI `aic` breaking, installation Codex `.agents/`) et conserver l'état v0.12.0 en rappel.
 - Validation : `check-ai-references`, `check-features --no-write`, `check-dogfood-drift.sh` (PROJECT_STATE root-only, non templaté).
+
+## 2026-06-19 14:53 — auto
+- Fichiers modifiés :
+  - template/.agents/skills/aic-onboard/SKILL.md.jinja
+  - template/.agents/skills/aic-onboard/workflow.md.jinja
+  - template/.claude/skills/aic-onboard/SKILL.md.jinja
+  - template/.claude/skills/aic-onboard/workflow.md.jinja
+  - tests/smoke-test.sh
+
+## 2026-06-19 15:14 — auto
+- Fichiers modifiés :
+  - CHANGELOG.md
+  - docs/upgrading.md
+
+## 2026-06-19 17:52 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh
+
+## 2026-06-19 18:03 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh
