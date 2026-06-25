@@ -38,3 +38,20 @@
 - Compatibilité Claude/Codex : bascule warn→fail dans `check-features.sh` (source unique appelée par hooks Claude ET git hooks Codex) ; `aic migrate` bash pur ; shims régénérés cohérents par le rendu dogfood.
 - Co-impact même scope core (documenté ici ; fiches co-détentrices inchangées car couvertes par les `touches` de cette feature et `check-feature-freshness --staged` est OK) : `index-contract-v2` (index gagne `type`, additif), `feature-mesh` (frontmatter gagne `type` + warn check-features), `feature-index-cache` (cache tolère `type`), `template-engine` (nouveau `.jinja` + bannière copier).
 - Note staging : 4 fichiers étaient modifiés avant la session (bumps `progress.updated` + entrées worklog auto de `aic-surface-canonical`/`template-engine`) ; drift bénin de hooks, inclus dans ce commit faute de séparation propre.
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-features.sh
+  - CHANGELOG.md
+  - MIGRATION.md
+  - copier.yml
+  - docs/upgrading.md
+  - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
+
+## 2026-06-25 — revue adverse « tout est carré ? » + durcissement
+- Vérification adverse read-only (5 dimensions + synthèse) : verdict « carré avec réserves », zéro defect technique, non-cassant prouvé en isolation, parité template↔rendu OK.
+- Réserves traitées :
+  - **Test de régression ajouté** : `tests/unit/test-okf-type.sh` (non-cassant sous set -euo pipefail, warn type absent/hors-enum sans abort, idempotence migrate, garde-fou enum). Comble l'absence de couverture unitaire ciblée (la suite passe de 18 à 19).
+  - Doc corrigée : contrat « fallback awk/sed si yq » → migrate est bash pur (awk, sans yq ni sed) ; `progress.step` « 18 → 19 tests ».
+- Drift de hooks absorbé : ~39 fichiers `.docs/features/**` (bumps `progress.updated` + entrées worklog auto) générés par auto-progress/auto-worklog pendant la session — bénins, commités pour rendre l'arbre propre.
+- Angles non couverts à exercer avant Phase 1 (issus de la critique de complétude) : `copier update` incrémental sur un consumer **existant** (pré-type) ; robustesse backfill sur frontmatter atypiques (CRLF, type imbriqué) ; chemin git-hook **Codex** réel ; non-staleness du cache feature-index après re-typage.

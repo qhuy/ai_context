@@ -82,3 +82,10 @@
 ## 2026-06-01 12:33 — auto
 - Fichiers modifiés :
   - copier.yml
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - template/.ai/schema/feature.schema.json
+  - template/.ai/scripts/aic.sh.jinja
+  - template/.ai/scripts/build-feature-index.sh.jinja
+  - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja

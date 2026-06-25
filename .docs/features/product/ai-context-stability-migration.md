@@ -52,7 +52,7 @@ progress:
   step: "P0 index/read-only et fallback portfolio en review"
   blockers: []
   resume_hint: "prochaine tranche recommandée : rationalisation workflow/skills ou test-suite-reorg selon priorité"
-  updated: "2026-05-14"
+  updated: 2026-06-25
 type: feature
 ---
 

@@ -118,3 +118,7 @@
 
 - Correction de la régression perf introduite par la dédup : le canonique court-circuite maintenant aussi les `touches:` sans glob (`src`, `src/`, fichiers exacts), au lieu de passer par `_glob_pattern_supported` pour chaque ligne de table.
 - Objectif : conserver la source unique de vérité du matcher sans perdre le temps de réponse du rapport large.
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/aic.sh.jinja

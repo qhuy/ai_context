@@ -14,7 +14,7 @@ progress:
   step: "V1 livrée — 2 squelettes + exclusion + smoke-test étendu ; freshness template renforcé"
   blockers: []
   resume_hint: "créer 2 fichiers .jinja dans template/docs/ rendus uniquement si tech_profile ∈ {react-next, fullstack-dotnet-react} ; structure par catégorie + 1 composant commenté d'exemple"
-  updated: 2026-06-01
+  updated: 2026-06-25
 type: feature
 ---
 

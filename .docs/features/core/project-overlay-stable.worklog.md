@@ -146,3 +146,8 @@
 ## 2026-06-01 22:26 — auto
 - Fichiers modifiés :
   - tests/unit/test-pr-report-glob-match.sh
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - copier.yml
+  - docs/upgrading.md

@@ -38,7 +38,7 @@ progress:
   step: "arbitrage AI Debate 0015 livré : niveaux low/standard/high, incertitudes, template frames, external_refs.frame et wrapper frame bootstrap"
   blockers: []
   resume_hint: "Feature clôturée ; reprendre seulement pour itération post-usage."
-  updated: 2026-05-12
+  updated: 2026-06-25
 type: feature
 ---
 

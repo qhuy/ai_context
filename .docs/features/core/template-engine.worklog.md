@@ -333,3 +333,15 @@
 ## 2026-06-18 12:38 — auto
 - Fichiers modifiés :
   - template/.ai/rules/workflow.md.jinja
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - copier.yml
+  - docs/upgrading.md
+  - template/.ai/schema/feature.schema.json
+  - template/.ai/scripts/_lib.sh.jinja
+  - template/.ai/scripts/aic.sh.jinja
+  - template/.ai/scripts/build-feature-index.sh.jinja
+  - template/.ai/scripts/check-features.sh.jinja
+  - template/.ai/scripts/migrate-okf-type.sh.jinja
+  - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja

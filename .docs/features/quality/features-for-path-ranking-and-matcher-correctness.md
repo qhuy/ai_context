@@ -30,7 +30,7 @@ progress:
   step: "implémentation livrée, 49 cas test PASS, prêt à commit"
   blockers: []
   resume_hint: "commit feat(quality) puis valider en utilisation réelle"
-  updated: 2026-06-01
+  updated: 2026-06-25
 type: feature
 ---
 

@@ -57,7 +57,7 @@ progress:
   step: "checks, rapports, surface aic, CI et docs migration alignés read-only"
   blockers: []
   resume_hint: "relire le delta puis décider si le comportement legacy de check-features sans flag doit être déprécié en release N+1"
-  updated: 2026-06-01
+  updated: 2026-06-25
 type: feature
 ---
 

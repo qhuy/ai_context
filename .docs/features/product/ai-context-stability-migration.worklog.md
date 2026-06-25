@@ -22,3 +22,8 @@
 - Impact produit : les scores `product-portfolio` restent cohérents sur environnements minimalistes.
 - CI source : test fallback ajouté au workflow check.
 - next : poursuivre soit sur rationalisation workflow/skills, soit sur réorganisation des tests si l'objectif est de sécuriser la suite avant nouveaux changements.
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - CHANGELOG.md
+  - docs/upgrading.md

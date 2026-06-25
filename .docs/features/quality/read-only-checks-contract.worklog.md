@@ -88,3 +88,12 @@
 - Fichiers modifiés :
   - .ai/scripts/pr-report.sh
   - template/.ai/scripts/pr-report.sh.jinja
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-features.sh
+  - CHANGELOG.md
+  - MIGRATION.md
+  - docs/upgrading.md
+  - template/.ai/scripts/aic.sh.jinja
+  - template/.ai/scripts/check-features.sh.jinja

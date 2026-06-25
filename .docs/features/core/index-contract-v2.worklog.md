@@ -28,3 +28,9 @@
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - template/.ai/schema/feature.schema.json
+  - template/.ai/scripts/_lib.sh.jinja
+  - template/.ai/scripts/build-feature-index.sh.jinja

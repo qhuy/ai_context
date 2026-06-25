@@ -30,6 +30,7 @@ touches:
   - CHANGELOG.md
 touches_shared:
   - tests/smoke-test.sh
+  - tests/unit/test-okf-type.sh
 product: {}
 external_refs:
   okf_spec: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md
@@ -46,7 +47,7 @@ doc:
 type: feature
 progress:
   phase: review
-  step: "Phase 0 implémentée et validée (smoke-test + 18 tests unitaires + dogfood-drift) en régime warn-only"
+  step: "Phase 0 implémentée et validée (smoke-test + 19 tests unitaires dont test-okf-type + dogfood-drift) en régime warn-only"
   blockers: []
   resume_hint: "Phase 0 livrée. Reste : confirmer HANDOFF quality/product/workflow, puis planifier le release d'enforce vN+1 (type dans required[] + check exit 1 ; si bump schema_version un jour, mettre à jour l'assertion == \"1\" du smoke-test)"
   updated: 2026-06-25
@@ -122,7 +123,7 @@ Du point de vue de ce repo (dogfood) : les ~40 fiches existantes reçoivent `typ
 - **Frontmatter feature** (`.ai/schema/feature.schema.json`) : ajout `type` (string, enum `feature|contract|workflow|reference`) et `description` (string). En vN : optionnels. En vN+1 : `type` ajouté à `required[]`. `additionalProperties` reste `true` (préservation des extensions, conforme OKF).
 - **Index dérivé** (`.ai/.feature-index.json` via `build-feature-index.sh`) : ajout **additif** du champ `type` par feature (défaut `feature` à la lecture quand absent). **Pas de bump `schema_version`** — l'ajout est rétro-compatible (contrat de l'index) et un bump casserait l'assertion `schema_version == "1"` du smoke-test. `description` n'est **pas** exposé dans l'index (frontmatter + schema seulement). Pas de `migrations_pending` : le rappel de backfill passe par le warn per-fiche de `check-features` + la bannière `_message_after_update`.
 - **Validation** (`check-features.sh`) : `type` absent ou hors-enum ⇒ `warn` en vN, `ko`/`exit 1` en vN+1. Les autres invariants (clés requises, anti-path-traversal, cycles) inchangés.
-- **Commande** : `aic migrate okf-type [--apply] [--type=<valeur>]` — dry-run par défaut, idempotente, fallback awk/sed si `yq` absent, n'écrase jamais un `type` existant.
+- **Commande** : `aic migrate okf-type [--apply] [--type=<valeur>]` — dry-run par défaut, idempotente, **bash pur (awk, aucune dépendance `yq` ni `sed`)**, n'écrase jamais un `type` existant.
 - **OKF côté producteur** : chaque fiche conforme = concept OKF valide ; `okf_version: "0.1"` au root de bundle ; champs maison (`scope`, `depends_on`, `progress`, etc.) = extension keys ignorés par un consommateur OKF, préservés en round-trip.
 
 ## Validation

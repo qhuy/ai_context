@@ -238,3 +238,7 @@
 - Fichiers modifiés :
   - .agents/skills/aic-ship/SKILL.md
   - .claude/skills/aic-ship/SKILL.md
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-features.sh
