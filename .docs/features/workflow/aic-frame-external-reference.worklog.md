@@ -27,3 +27,11 @@
 - Repositionnement de `aic.sh frame` comme bootstrap de contexte, avec alias explicites `frame-bootstrap` et `frame-context`.
 - Documentation utilisateur clarifiée dans `README.md`, `README_AI_CONTEXT.md` et le template README.
 - Validations PASS : `bash -n .ai/scripts/aic.sh`, `bash -n template/.ai/scripts/aic.sh.jinja`, `bash .ai/scripts/aic.sh frame "test cadrage"`, `check-features`, `check-feature-docs --strict workflow/aic-frame-external-reference`, `check-dogfood-drift`, `check-agent-config`, `check-ai-references`, `check-feature-coverage`, `check-shims`, `measure-context-size`, `tests/smoke-test.sh`.
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/aic.sh.jinja
+
+## 2026-06-25 — impact OKF (additif, hors comportement)
+- `aic.sh(.jinja)` étendu par `core/okf-strict-profile` : sous-dispatch `migrate okf-type` ; le défaut `migrate` et la commande `frame` restent inchangés.
+- Aucun impact sur le cadrage `aic frame` / `execution_ref` : extension rétro-compatible. Feature reste `done`.
