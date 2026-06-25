@@ -17,6 +17,7 @@ progress:
   blockers: []
   resume_hint: "écrire assertion smoke-test pour pre-commit (staged → bascule phase spec→implement via git commit)"
   updated: 2026-05-03
+type: feature
 ---
 
 # Git hooks

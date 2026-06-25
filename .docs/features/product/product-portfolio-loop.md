@@ -60,6 +60,7 @@ progress:
   blockers: []
   resume_hint: "relire le delta product et décider si le scoring portfolio doit être durci dans une feature dédiée"
   updated: 2026-06-01
+type: feature
 ---
 
 # Product Traceability Loop

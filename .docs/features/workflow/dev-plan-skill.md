@@ -37,6 +37,7 @@ progress:
   blockers: []
   resume_hint: ""
   updated: 2026-06-02
+type: feature
 ---
 
 # Structurer les développements multi-techno

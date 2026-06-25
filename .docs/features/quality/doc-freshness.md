@@ -21,6 +21,7 @@ progress:
   blockers: []
   resume_hint: "vérifier check-feature-freshness --warn et staged strict avant commit"
   updated: 2026-06-01
+type: feature
 ---
 
 # Fraicheur documentaire des features

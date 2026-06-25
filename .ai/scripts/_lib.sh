@@ -48,6 +48,7 @@ read_schema_enum() {
 
 STATUS_ENUM="$(read_schema_enum '.properties.status.enum' 'draft active done deprecated archived')"
 PHASE_ENUM="$(read_schema_enum '.properties.progress.properties.phase.enum' 'spec implement test review done blocked')"
+TYPE_ENUM="$(read_schema_enum '.properties.type.enum' 'feature contract workflow reference')"
 
 # Retourne la liste JSON des status visibles dans le reminder.
 # Par défaut : active + draft (les features en cours / à venir).
@@ -169,6 +170,15 @@ is_valid_phase() {
   local p="$1"
   for valid in $PHASE_ENUM; do
     [[ "$p" == "$valid" ]] && return 0
+  done
+  return 1
+}
+
+# Profil strict OKF : valide le champ frontmatter `type` (nature de l'asset).
+is_valid_type() {
+  local t="$1"
+  for valid in $TYPE_ENUM; do
+    [[ "$t" == "$valid" ]] && return 0
   done
   return 1
 }

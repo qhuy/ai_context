@@ -41,7 +41,8 @@ progress:
   step: "surface aic implementee et smoke complet PASS"
   blockers: []
   resume_hint: "Relire le delta puis faire le commit dedie du sous-chantier si le scope convient."
-  updated: 2026-06-02
+  updated: 2026-06-08
+type: feature
 ---
 
 # Surface utilisateur canonique aic

@@ -15,6 +15,7 @@ progress:
   blockers: []
   resume_hint: "relancer tests/smoke-test.sh après toute évolution du Pack A ou de check-shims"
   updated: 2026-06-01
+type: feature
 ---
 
 # Smoke-test

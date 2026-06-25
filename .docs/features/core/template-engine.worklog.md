@@ -320,3 +320,16 @@
 - Fichiers modifiés :
   - template/.agents/skills/aic-ship/SKILL.md.jinja
   - template/.claude/skills/aic-ship/SKILL.md.jinja
+
+## 2026-06-05 09:50 — auto
+- Fichiers modifiés :
+  - template/.cursor/rules/back.mdc.jinja
+  - template/.cursor/rules/front.mdc.jinja
+
+## 2026-06-18 10:58 — auto
+- Fichiers modifiés :
+  - template/.ai/rules/workflow.md.jinja
+
+## 2026-06-18 12:38 — auto
+- Fichiers modifiés :
+  - template/.ai/rules/workflow.md.jinja

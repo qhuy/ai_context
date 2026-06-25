@@ -33,6 +33,7 @@ progress:
   blockers: []
   resume_hint: "Valider les checks puis décider si l'intégration stricte dans aic-ship/feature-done passe par un chantier workflow dédié."
   updated: 2026-06-10
+type: feature
 ---
 
 # Revue applicative métier modulaire

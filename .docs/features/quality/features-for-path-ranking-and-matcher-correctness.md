@@ -31,6 +31,7 @@ progress:
   blockers: []
   resume_hint: "commit feat(quality) puis valider en utilisation réelle"
   updated: 2026-06-01
+type: feature
 ---
 
 # Ranker features-for-path et corriger le matcher globstar bash 3.2

@@ -39,6 +39,7 @@ progress:
   blockers: []
   resume_hint: "Feature clôturée ; reprendre seulement pour itération post-usage."
   updated: 2026-05-12
+type: feature
 ---
 
 # Rendre aic-frame exploitable comme cadrage durable référençable

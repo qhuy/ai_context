@@ -53,6 +53,7 @@ progress:
   blockers: []
   resume_hint: "prochaine tranche recommandée : rationalisation workflow/skills ou test-suite-reorg selon priorité"
   updated: "2026-05-14"
+type: feature
 ---
 
 # Stabilisation et migration ai_context

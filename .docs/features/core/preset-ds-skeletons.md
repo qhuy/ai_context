@@ -15,6 +15,7 @@ progress:
   blockers: []
   resume_hint: "créer 2 fichiers .jinja dans template/docs/ rendus uniquement si tech_profile ∈ {react-next, fullstack-dotnet-react} ; structure par catégorie + 1 composant commenté d'exemple"
   updated: 2026-06-01
+type: feature
 ---
 
 # Squelettes bootstrap pour DS registry et atomic map

@@ -22,6 +22,7 @@ progress:
   blockers: []
   resume_hint: "vérifier que project-guardrails reste on-demand dans index, workflow et smoke-test"
   updated: 2026-06-01
+type: feature
 ---
 
 # Procédure project-guardrails

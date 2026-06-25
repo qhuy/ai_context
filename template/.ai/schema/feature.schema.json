@@ -23,6 +23,13 @@
       "type": "string",
       "enum": ["draft", "active", "done", "deprecated", "archived"]
     },
+    "type": {
+      "type": "string",
+      "enum": ["feature", "contract", "workflow", "reference"]
+    },
+    "description": {
+      "type": "string"
+    },
     "depends_on": {
       "type": "array",
       "items": {

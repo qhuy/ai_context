@@ -19,6 +19,7 @@ progress:
   blockers: []
   resume_hint: "valider que /aic-review peut s'appuyer sur .ai/workflows/feature-audit.md sans exposer de skill procédural"
   updated: 2026-05-03
+type: feature
 ---
 
 # Procédure feature-audit

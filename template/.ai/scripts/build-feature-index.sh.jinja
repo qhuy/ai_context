@@ -85,7 +85,7 @@ feature_to_json() {
   local folder_scope
   folder_scope=$(basename "$(dirname "$file")")
 
-  local id scope status touches_json touches_shared_json deps_json external_refs_json
+  local id scope status type touches_json touches_shared_json deps_json external_refs_json
   local phase="" step="" blockers_json="[]" resume_hint="" updated=""
   local product_json="{}"
   external_refs_json="{}"
@@ -96,6 +96,7 @@ feature_to_json() {
     id=$(echo "$fm" | yq -r '.id // ""')
     scope=$(echo "$fm" | yq -r '.scope // ""')
     status=$(echo "$fm" | yq -r '.status // ""')
+    type=$(echo "$fm" | yq -r '.type // ""')
     touches_json=$(echo "$fm" | yq -o=json -I=0 '.touches // []')
     touches_shared_json=$(echo "$fm" | yq -o=json -I=0 '.touches_shared // []')
     deps_json=$(echo "$fm" | yq -o=json -I=0 '.depends_on // []')
@@ -110,6 +111,7 @@ feature_to_json() {
     id=$(extract_scalar_awk "$file" "id")
     scope=$(extract_scalar_awk "$file" "scope")
     status=$(extract_scalar_awk "$file" "status")
+    type=$(extract_scalar_awk "$file" "type")
     touches_json=$(extract_list_awk "$file" "touches" | jq -R . | jq -s .)
     touches_shared_json=$(extract_list_awk "$file" "touches_shared" | jq -R . | jq -s .)
     deps_json=$(extract_list_awk "$file" "depends_on" | jq -R . | jq -s .)
@@ -205,10 +207,15 @@ feature_to_json() {
     echo "⚠️  $rel : status='$status' hors enum ($STATUS_ENUM)" >&2
   fi
 
+  # Profil strict OKF : type par défaut 'feature' si la fiche ne le déclare pas
+  # (lecture tolérante pendant la fenêtre de grâce vN ; ajout additif au contrat d'index).
+  [[ -z "$type" ]] && type="feature"
+
   jq -n \
     --arg id "$id" \
     --arg scope "$scope" \
     --arg status "$status" \
+    --arg type "$type" \
     --arg path "$rel" \
     --argjson touches "$touches_json" \
     --argjson touches_shared "$touches_shared_json" \
@@ -221,7 +228,7 @@ feature_to_json() {
     --arg resume_hint "$resume_hint" \
     --arg updated "$updated" \
     '{
-      id: $id, scope: $scope, status: $status, path: $path,
+      id: $id, scope: $scope, status: $status, type: $type, path: $path,
       touches: $touches, touches_shared: $touches_shared, depends_on: $depends_on,
       product: $product, external_refs: $external_refs,
       progress: {

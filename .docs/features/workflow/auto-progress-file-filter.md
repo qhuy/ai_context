@@ -31,6 +31,7 @@ progress:
   blockers: []
   resume_hint: "commit feat(workflow) ; #5 stop-hook-idempotence consommera le helper dans un turn dédié"
   updated: 2026-06-01
+type: feature
 ---
 
 # Filtrer la transition spec→implement par type de fichier édité

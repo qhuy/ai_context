@@ -25,6 +25,7 @@ progress:
   blockers: []
   resume_hint: "vérifier check-shims, dogfood drift, measure-context-size et smoke-test complet"
   updated: 2026-06-02
+type: feature
 ---
 
 # Synchronisation dogfooding du runtime

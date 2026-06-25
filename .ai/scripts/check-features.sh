@@ -124,6 +124,20 @@ for f in "${files[@]}"; do
     warn "$f : progress.phase='$declared_phase' hors enum ($PHASE_ENUM)"
   fi
 
+  # Profil strict OKF — champ `type` (Phase 0 : optionnel + warn ; deviendra requis en vN+1).
+  # Jamais bloquant ici : un consommateur qui vient de faire `copier update` ne doit pas
+  # voir sa CI casser tant qu'il n'a pas lancé `aic migrate okf-type --apply`.
+  # Guard `grep -q` (en condition `if`, exempté de set -e) : le champ est souvent absent
+  # et `set -o pipefail` ferait échouer une extraction directe — le warn deviendrait un abort.
+  if echo "$fm" | grep -qE '^type:'; then
+    declared_type=$(echo "$fm" | grep -E '^type:' | sed -E 's/^type:[[:space:]]*//; s/["'"'"']//g' | tr -d '[:space:]')
+    if ! is_valid_type "$declared_type"; then
+      warn "$f : type='$declared_type' hors enum ($TYPE_ENUM)"
+    fi
+  else
+    warn "$f : champ 'type' absent (profil OKF) — lance : bash .ai/scripts/aic.sh migrate okf-type --apply"
+  fi
+
   deps=$(awk '/^depends_on:/{flag=1; next} flag && /^  *-/{print; next} flag && /^[^[:space:]]/{flag=0}' "$f" \
     | sed -E 's/^[[:space:]]*-[[:space:]]*//; s/["'"'"']//g')
   while IFS= read -r dep; do

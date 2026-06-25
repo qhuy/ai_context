@@ -49,6 +49,7 @@ progress:
   blockers: []
   resume_hint: "commit FR conventional puis attendre evidence DONE pour bumper phase=done"
   updated: 2026-06-02
+type: feature
 ---
 
 # Skills intentionnels

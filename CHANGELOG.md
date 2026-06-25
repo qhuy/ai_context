@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## [Unreleased] — profil strict OKF (Phase 0)
+
+> Première étape du profil strict OKF (`core/okf-strict-profile`) : les fiches feature
+> deviennent des concepts Open Knowledge Format valides, sans rien perdre du modèle riche.
+> **Non-cassant** : `type` est optionnel à l'introduction, requis seulement au release d'enforce suivant.
+
+- Frontmatter : nouveaux champs optionnels `type` (enum `feature|contract|workflow|reference`) et `description`.
+- `check-features.sh` : avertit (warn, jamais `exit 1`) quand `type` est absent ou hors enum — la CI reste verte.
+- `build-feature-index.sh` : expose `type` par feature (défaut `feature` si absent). Pas de bump `schema_version` (ajout additif rétro-compatible).
+- Nouvelle commande `aic migrate okf-type [--apply] [--type=…]` : backfill idempotent, bash pur (compatible Claude et Codex), n'écrase jamais un `type` présent.
+- `FEATURE_TEMPLATE` : les nouvelles fiches naissent avec `type: feature`.
+
+### Migration
+- Après `copier update`, si `check-features` signale des `type` manquants : `bash .ai/scripts/aic.sh migrate okf-type --apply`, puis commit. Rollback = `git revert` (fiches project-owned).
+
 ## [0.13.0] — 2026-06-01
 
 > Release de l'initiative `ai-context-stability-migration` (contrat read-only des

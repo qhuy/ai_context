@@ -38,6 +38,7 @@ progress:
   blockers: []
   resume_hint: "commit feat(quality) puis valider en utilisation réelle (run report --last 50 après quelques tours pour voir précision/rappel)"
   updated: 2026-05-07
+type: feature
 ---
 
 # Tracker minimal de pertinence du contexte injecté

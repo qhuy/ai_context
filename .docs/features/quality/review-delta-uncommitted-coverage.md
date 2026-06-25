@@ -30,6 +30,7 @@ progress:
   blockers: []
   resume_hint: "commit feat(quality) puis valider en utilisation réelle sur un commit suivant"
   updated: 2026-06-01
+type: feature
 ---
 
 # Couvrir le delta uncommitted dans review-delta.sh

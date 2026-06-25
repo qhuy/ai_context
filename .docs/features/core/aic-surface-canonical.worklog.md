@@ -88,3 +88,7 @@
 - Fichiers/surfaces : `PROJECT_STATE.md` (version publiée, section « État actuel » v0.13.0, liste des tags). Aucun changement de surface `aic`.
 - Décision : ajouter une section « État actuel (v0.13.0) » (contrat read-only des checks, index contract v2, surface CLI `aic` breaking, installation Codex `.agents/`) et conserver l'état v0.12.0 en rappel.
 - Validation : `check-ai-references`, `check-features --no-write`, `check-dogfood-drift.sh` (PROJECT_STATE root-only, non templaté).
+
+## 2026-06-08 16:51 — auto
+- Fichiers modifiés :
+  - PROJECT_STATE.md

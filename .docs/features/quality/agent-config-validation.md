@@ -36,6 +36,7 @@ progress:
   blockers: []
   resume_hint: "prêt à review ; shellcheck non lancé car absent localement"
   updated: 2026-06-01
+type: feature
 ---
 
 # Validation non destructive des configs agents

@@ -25,6 +25,7 @@ progress:
   blockers: []
   resume_hint: "ajouter une intégration CI (commentaire PR automatique) — passer en review une fois la surface aic stabilisée"
   updated: 2026-06-01
+type: feature
 ---
 
 # PR report

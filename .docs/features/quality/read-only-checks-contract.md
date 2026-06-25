@@ -58,6 +58,7 @@ progress:
   blockers: []
   resume_hint: "relire le delta puis décider si le comportement legacy de check-features sans flag doit être déprécié en release N+1"
   updated: 2026-06-01
+type: feature
 ---
 
 # Contrat read-only des checks et diagnostics

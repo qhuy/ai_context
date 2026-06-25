@@ -40,6 +40,7 @@ progress:
   blockers: []
   resume_hint: "Relire le README comme un nouvel utilisateur : promesse, quickstart, limites runtime, commandes aic, migration."
   updated: "2026-05-06"
+type: feature
 ---
 
 # README accessible et vendeur

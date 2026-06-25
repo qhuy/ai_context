@@ -33,6 +33,7 @@ progress:
   blockers: []
   resume_hint: "prêt à review ; ne pas ajouter .codex/ par défaut sans décision séparée"
   updated: 2026-05-12
+type: feature
 ---
 
 # Pilote hooks Codex déterministes

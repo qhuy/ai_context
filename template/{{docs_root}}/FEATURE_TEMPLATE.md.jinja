@@ -3,6 +3,11 @@ id: <feature-id-kebab-case>
 scope: <product | back | front | architecture | security>
 title: <Titre court de la feature>
 status: draft
+# Profil strict OKF (core/okf-strict-profile) : nature de l'asset documenté.
+# feature | contract | workflow | reference. Optionnel aujourd'hui, requis à terme.
+type: feature
+# Optionnel : une phrase de résumé (champ OKF `description`). La forme longue reste ## Résumé.
+description: ""
 depends_on: []
 touches: []
 # Optionnel : surfaces partagées utiles au reporting/review, non bloquantes

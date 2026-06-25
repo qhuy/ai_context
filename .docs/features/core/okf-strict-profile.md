@@ -11,9 +11,17 @@ depends_on:
   - core/graph-aware-injection
 touches:
   - .ai/schema/feature.schema.json
+  - template/.ai/schema/feature.schema.json
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja
   - .ai/scripts/check-features.sh
+  - template/.ai/scripts/check-features.sh.jinja
   - .ai/scripts/build-feature-index.sh
+  - template/.ai/scripts/build-feature-index.sh.jinja
+  - .ai/scripts/migrate-okf-type.sh
+  - template/.ai/scripts/migrate-okf-type.sh.jinja
   - .ai/scripts/aic.sh
+  - template/.ai/scripts/aic.sh.jinja
   - .docs/FEATURE_TEMPLATE.md
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
   - copier.yml
@@ -35,11 +43,12 @@ doc:
     api_contract: true
     rollout: true
     observability: false
+type: feature
 progress:
-  phase: spec
-  step: "cadrage validé ; Phase 0 (type+description) à implémenter en régime warn-only"
+  phase: review
+  step: "Phase 0 implémentée et validée (smoke-test + 18 tests unitaires + dogfood-drift) en régime warn-only"
   blockers: []
-  resume_hint: "Implémenter Phase 0 vN warn-only : schema type/description optionnels, build-index défaut type:feature + bump schema_version, check-features warn, migrate-okf-type.sh + dispatch aic, puis dogfood avant tag"
+  resume_hint: "Phase 0 livrée. Reste : confirmer HANDOFF quality/product/workflow, puis planifier le release d'enforce vN+1 (type dans required[] + check exit 1 ; si bump schema_version un jour, mettre à jour l'assertion == \"1\" du smoke-test)"
   updated: 2026-06-25
 ---
 
@@ -111,7 +120,7 @@ Du point de vue de ce repo (dogfood) : les ~40 fiches existantes reçoivent `typ
 ## Contrats
 
 - **Frontmatter feature** (`.ai/schema/feature.schema.json`) : ajout `type` (string, enum `feature|contract|workflow|reference`) et `description` (string). En vN : optionnels. En vN+1 : `type` ajouté à `required[]`. `additionalProperties` reste `true` (préservation des extensions, conforme OKF).
-- **Index dérivé** (`.ai/.feature-index.json` via `build-feature-index.sh`) : défaut `type: feature` appliqué à la lecture quand absent ; **bump `schema_version`** ; champ `migrations_pending: ["okf-type"]` tant que des fiches non migrées subsistent. Les consommateurs de l'index NE DOIVENT PAS comparer `schema_version` par égalité stricte (à vérifier).
+- **Index dérivé** (`.ai/.feature-index.json` via `build-feature-index.sh`) : ajout **additif** du champ `type` par feature (défaut `feature` à la lecture quand absent). **Pas de bump `schema_version`** — l'ajout est rétro-compatible (contrat de l'index) et un bump casserait l'assertion `schema_version == "1"` du smoke-test. `description` n'est **pas** exposé dans l'index (frontmatter + schema seulement). Pas de `migrations_pending` : le rappel de backfill passe par le warn per-fiche de `check-features` + la bannière `_message_after_update`.
 - **Validation** (`check-features.sh`) : `type` absent ou hors-enum ⇒ `warn` en vN, `ko`/`exit 1` en vN+1. Les autres invariants (clés requises, anti-path-traversal, cycles) inchangés.
 - **Commande** : `aic migrate okf-type [--apply] [--type=<valeur>]` — dry-run par défaut, idempotente, fallback awk/sed si `yq` absent, n'écrase jamais un `type` existant.
 - **OKF côté producteur** : chaque fiche conforme = concept OKF valide ; `okf_version: "0.1"` au root de bundle ; champs maison (`scope`, `depends_on`, `progress`, etc.) = extension keys ignorés par un consommateur OKF, préservés en round-trip.
@@ -121,7 +130,7 @@ Du point de vue de ce repo (dogfood) : les ~40 fiches existantes reçoivent `typ
 - **Acceptance** :
   - (a) Une fiche sans `type` ⇒ `check-features.sh` `warn` et `exit 0` en vN.
   - (b) `aic migrate okf-type --apply` rend toutes les fiches conformes et est **idempotent** (re-run = aucun changement).
-  - (c) `build-feature-index.sh` produit un index bien formé avec `schema_version` bumpé ; l'injection Claude (hooks `.claude/settings.json`) et le chemin git-hook Codex restent inchangés.
+  - (c) `build-feature-index.sh` produit un index bien formé exposant `type` par feature, déterministe (idempotent hors `generated_at`, `schema_version` inchangé à `"1"`) ; l'injection Claude (hooks `.claude/settings.json`) et le chemin git-hook Codex restent inchangés.
   - (d) Le message d'échec d'enforce (vN+1) cite explicitement `aic migrate okf-type --apply`.
   - (e) `yq` absent : la migration fonctionne quand même (fallback).
 - **Checks** : `bash .ai/scripts/dogfood-update.sh` (dry-run), `bash .ai/scripts/check-features.sh --no-write`, `bash .ai/scripts/check-feature-docs.sh core/okf-strict-profile`, `bash .ai/scripts/check-shims.sh`, `bash tests/smoke-test.sh`, quality gate avant DONE.
@@ -135,7 +144,7 @@ Aucun contrôle d'accès applicatif : la feature ne touche ni authentification n
 
 - **Donnée concernée** : le frontmatter des fiches feature (le champ `type` ajouté, `description` optionnel). C'est une donnée éditoriale versionnée en git, pas une base.
 - **Migration / backfill** : `aic migrate okf-type --apply` insère `type: feature` dans les fiches existantes du consommateur. Idempotent, n'écrase pas un `type` présent, ne réordonne pas les clés.
-- **Compatibilité** : pendant la fenêtre de grâce (vN → vN+1), `build-feature-index.sh` applique un défaut `type: feature` à la lecture pour qu'aucun consommateur de l'index ne voie de valeur nulle. Le `schema_version` est bumpé pour signaler le changement de contrat.
+- **Compatibilité** : pendant la fenêtre de grâce (vN → vN+1), `build-feature-index.sh` applique un défaut `type: feature` à la lecture pour qu'aucun consommateur de l'index ne voie de valeur nulle. Ajout **additif**, donc `schema_version` reste `"1"` (pas de bump).
 - **Rétention / confidentialité** : sans objet (donnée de structure documentaire, pas de PII).
 
 ## UX
@@ -150,14 +159,14 @@ Les copies de ces trois points sont des livrables (claires, en français, action
 
 ## Observabilité
 
-- **Signaux de migration** : `migrations_pending: ["okf-type"]` dans `.ai/.feature-index.json` permet à un consommateur d'afficher un rappel tant que le backfill n'est pas fait.
+- **Signaux de migration** : le warn per-fiche de `check-features` (`champ 'type' absent`), qui s'efface dès le backfill, plus la bannière `_message_after_update`, tiennent lieu de rappel. (`migrations_pending` écarté : redondant avec le warn, et coûteux en état inter-boucle dans `build-feature-index`.)
 - **Sortie des checks** : `check-features.sh` distingue `warn` (vN) et `ko` (vN+1) ; le compte de fiches non conformes est visible dans la sortie.
 - **Dogfood drift** : `dogfood-update.sh` / `check-dogfood-drift.sh` détectent une dérive entre le template source et le runtime appliqué avant livraison.
 - Pas de métrique runtime ni d'alerte externe : l'observabilité reste au niveau des sorties CLI/CI.
 
 ## Déploiement / rollback
 
-- **Cadence** : 2 releases. **vN (introduce)** — `type`/`description` optionnels, `check-features` en `warn`, défaut index + bump `schema_version` + `migrations_pending`, commande `aic migrate okf-type`, bannière `_message_after_update`, docs (`MIGRATION.md`, `docs/upgrading.md`, `CHANGELOG.md`). **vN+1 (enforce)** — `type` dans `required[]`, `check-features` en `exit 1`, `migrations_pending` vidé.
+- **Cadence** : 2 releases. **vN (introduce)** — `type`/`description` optionnels, `check-features` en `warn`, `type` additif dans l'index (sans bump `schema_version`), commande `aic migrate okf-type`, bannière `_message_after_update`, docs (`MIGRATION.md`, `docs/upgrading.md`, `CHANGELOG.md`). **vN+1 (enforce)** — `type` dans `required[]`, `check-features` en `exit 1`.
 - **Migration progressive** : la fenêtre de grâce est le temps passé par un consommateur sur vN avant d'adopter vN+1. Backfill un-coup via `aic migrate okf-type --apply`.
 - **Plan de rollback** : les fiches sont project-owned et la migration est git-trackée ⇒ `git revert` du commit de backfill suffit ; `.copier-answers.yml` permet d'épingler la ref de template précédente si besoin de redescendre sous vN.
 - **Vérifications post-déploiement** : sur ce repo, dogfood complet (`dogfood-update.sh` → `aic migrate okf-type --apply` → `check-features.sh --no-write` → `tests/smoke-test.sh`) avant tag. Côté consommateur : CI verte en vN, message d'erreur actionnable en vN+1.
@@ -166,18 +175,19 @@ Les copies de ces trois points sont des livrables (claires, en français, action
 ## Risques
 
 - **Risques connus** :
-  - Un consommateur de `.ai/.feature-index.json` qui compare `schema_version` par égalité stricte casserait au bump → **à vérifier à l'implémentation** (`feature-index-cache`, `read-only-checks-contract`).
+  - **(Résolu)** `tests/smoke-test.sh` asserte `schema_version == "1"` → décision de **ne pas bumper** en Phase 0 (ajout additif). Tout futur bump devra mettre à jour cette assertion (surface quality).
+  - **(Résolu, appris au smoke)** `check-features.sh` tourne sous `set -euo pipefail` : extraire un champ optionnel via `$(… | grep …)` abort le script quand le champ manque. Corrigé par un guard `grep -q` en condition `if`. Tout futur check d'un champ optionnel doit suivre ce motif.
   - Drift de taxonomie `type` si l'enum n'est pas tenu fermé → mitigé par enum documenté + warn hors-enum.
   - Doublon sémantique potentiel `touches[]` (binding code, bloquant) vs un futur `resource` OKF → clarifier avant d'introduire `resource` (hors Phase 0).
   - Parité `template/**` jumelle : tout ajout doit être répliqué dans `template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja` et le schema template, sous peine de dérive.
-- **Décisions ouvertes** : valeur courante de `schema_version` et présence éventuelle d'égalités strictes ailleurs (à valider avant le bump).
+- **Décisions ouvertes** : reclassement éventuel des fiches non-`feature` (contrats/workflows backfillés en `feature` par défaut) si l'axe `type` doit être affiné — sans impact fonctionnel (enum tolérant en warn).
 - **Points à revalider** : déclencheurs de Phase 1 / Phase 2 (apparition d'un consommateur OKF réel ou passage d'OKF en ≥ 1.0).
 
 ## Cross-refs
 
 - `core/feature-mesh` : définit le contrat de frontmatter et le graphe `depends_on` que cette feature étend (ajout de `type`/`description`).
-- `core/index-contract-v2` : contrat de l'index JSON ; le bump `schema_version` et `migrations_pending` s'y inscrivent.
-- `core/feature-index-cache` : cache dérivé ; doit tolérer le nouveau champ et le bump de version sans égalité stricte.
+- `core/index-contract-v2` : contrat de l'index JSON ; le champ `type` y est ajouté de façon **additive** (sans bump `schema_version`).
+- `core/feature-index-cache` : cache dérivé ; tolère le nouveau champ `type` (ajout additif, déterminisme préservé).
 - `core/template-engine` : cycle copier install/update et parité `template/**` ; porte la bannière `_message_after_update` et la livraison aux consumers.
 - `core/graph-aware-injection` : consommateur de l'index ; doit rester insensible à l'ajout de `type` (injection inchangée sous Claude et Codex).
 - **HANDOFF émis** (cross-scope, à confirmer par les scopes cibles) :

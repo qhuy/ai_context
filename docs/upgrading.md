@@ -17,6 +17,19 @@ Copier lit `.copier-answers.yml` pour retrouver les réponses initiales. Il te m
 
 Pourquoi `--vcs-ref=HEAD` : Copier cible souvent le dernier tag publié par défaut. Si `main` contient une version plus récente que le dernier tag, `copier update` seul peut proposer une mise à jour vers une version plus ancienne que le HEAD GitHub.
 
+## Profil OKF — backfill du champ `type`
+
+Depuis le profil strict OKF (`core/okf-strict-profile`), les fiches feature portent un champ `type` (`feature | contract | workflow | reference`). Il est **optionnel** dans un premier temps : après `copier update`, `check-features.sh` se contente d'avertir si une fiche n'a pas de `type` — la CI ne casse pas.
+
+Aligner les fiches existantes (non destructif, idempotent) :
+
+```bash
+bash .ai/scripts/aic.sh migrate okf-type            # dry-run : liste les fiches sans type
+bash .ai/scripts/aic.sh migrate okf-type --apply    # ajoute `type: feature` là où il manque
+```
+
+`type` deviendra **requis** dans une version ultérieure (`check-features` échouera alors si absent). Rollback : `git revert` du commit de backfill (les fiches t'appartiennent). Commande identique sous Claude et Codex.
+
 ## Prévisualiser sans toucher au repo
 
 Sur un worktree sale, `copier update` refuse de démarrer. C'est sain pour éviter les merges implicites, mais pénible pour estimer l'effort. Utilise plutôt :

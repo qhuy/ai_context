@@ -14,6 +14,7 @@ progress:
   blockers: []
   resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
   updated: 2026-04-28
+type: feature
 ---
 
 # Détection de cycles

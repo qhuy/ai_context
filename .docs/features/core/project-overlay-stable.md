@@ -33,6 +33,7 @@ progress:
   blockers: []
   resume_hint: "Vérifier que .ai/project reste project-owned, optionnel et ignoré par les checks de drift."
   updated: 2026-06-01
+type: feature
 ---
 
 # Overlay projet stable

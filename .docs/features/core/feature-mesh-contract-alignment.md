@@ -40,6 +40,7 @@ progress:
   blockers: []
   resume_hint: "relire le delta core puis décider si kill_criteria doit aussi être couvert par le fallback"
   updated: "2026-05-14"
+type: feature
 ---
 
 # Alignement schema et parser du feature mesh

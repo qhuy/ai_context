@@ -33,6 +33,7 @@ progress:
   blockers: []
   resume_hint: "prêt à review ; vérifier le wording multi-agent si besoin"
   updated: 2026-05-12
+type: feature
 ---
 
 # Contrat subagents multi-agent

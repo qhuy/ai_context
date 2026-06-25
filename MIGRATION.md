@@ -14,6 +14,24 @@ Guide pour adopter le template sur un projet déjà mature (code, docs, éventue
 
 ---
 
+## Profil strict OKF — champ `type`
+
+Les fiches feature deviennent des concepts Open Knowledge Format valides : un champ `type` (`feature | contract | workflow | reference`) est ajouté au frontmatter.
+
+- **Introduction** : `type` optionnel ; `check-features.sh` avertit sans casser la CI si une fiche n'en a pas.
+- **Enforce (version ultérieure)** : `type` requis ; `check-features.sh` échoue si absent.
+
+Backfill non destructif et idempotent (bash pur, identique sous Claude et Codex) :
+
+```bash
+bash .ai/scripts/aic.sh migrate okf-type            # dry-run
+bash .ai/scripts/aic.sh migrate okf-type --apply    # ajoute type: feature là où il manque
+```
+
+Rollback : `git revert` du commit de backfill (les fiches t'appartiennent).
+
+---
+
 ## Migration de surface `aic` (v0.13+)
 
 La surface utilisateur canonique est désormais `aic` / `aic-*`. Les anciens

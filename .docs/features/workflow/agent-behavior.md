@@ -21,6 +21,7 @@ progress:
   blockers: []
   resume_hint: "vérifier check-shims, measure-context-size et smoke-test après changement Pack A"
   updated: 2026-06-01
+type: feature
 ---
 
 # Couche comportementale agent légère

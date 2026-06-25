@@ -43,6 +43,7 @@ progress:
   blockers: []
   resume_hint: "relire le delta core puis décider si le fallback sans yq/product portfolio devient une feature séparée"
   updated: 2026-06-01
+type: feature
 ---
 
 # Contrat v2 de l'index feature

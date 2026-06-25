@@ -124,6 +124,8 @@ _message_after_copy: |
 _message_after_update: |
   ♻️  AI context mis à jour depuis le template.
   Vérifier : bash .ai/scripts/check-shims.sh && bash .ai/scripts/check-features.sh
+  Profil OKF : si check-features signale un champ 'type' absent sur tes fiches,
+  lance le backfill non destructif : bash .ai/scripts/aic.sh migrate okf-type --apply
 
 # ─────────────────── Questions ───────────────────
 

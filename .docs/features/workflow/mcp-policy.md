@@ -33,6 +33,7 @@ progress:
   blockers: []
   resume_hint: "prêt à review ; garder MCP opt-in"
   updated: 2026-05-12
+type: feature
 ---
 
 # Politique MCP minimale
