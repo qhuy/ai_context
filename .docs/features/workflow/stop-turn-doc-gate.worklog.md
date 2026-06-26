@@ -14,3 +14,6 @@
   - Tests : `tests/unit/test-stop-turn-doc-gate.sh` (7 cas) + extension `test-read-only-checks-contract.sh` + enregistrement `tests/smoke-test.sh`.
 - Découverte clé : les hooks Stop tournent **en parallèle** (doc officielle). D'où le sequencer : sans lui, `auto-worklog-flush` auto-touche le worklog et neutralise le gate.
 - Reste avant DONE : `tests/smoke-test.sh` complet + `check-dogfood-drift.sh` ; traiter les obligations freshness staged multi-features (`_lib.sh` couvert par ~8 fiches).
+
+## 2026-06-26 — couverture incidente (workflow/feature-consolidation-nudge)
+- Surface partagée touchée (.claude/settings.json, jinjas template, ou .ai/workflows/feature-update.md) couverte par le glob `touches:` de cette feature. Aucun changement de comportement propre.

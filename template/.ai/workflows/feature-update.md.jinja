@@ -15,9 +15,10 @@
 - Changement de `step` libre significatif
 
 **PAS besoin d'appeler** pour :
-- Le log des fichiers modifiés (auto, via hook `PostToolUse` + `Stop`)
-- Le bump de `progress.updated` (auto à chaque fin de tour où un fichier d'une feature a été touché)
-- Les entrées de worklog de type "Fichiers modifiés" (auto-générées)
+- Le log des fichiers modifiés (auto, via hook `PostToolUse` + `Stop` : entrée worklog "Fichiers modifiés")
+- La bascule de phase `spec → implement` (auto via `auto-progress.sh`, qui stampe alors `progress.updated`)
+
+Note : depuis le fix anti-churn (`workflow/auto-worklog`), `progress.updated` n'est **plus** bumpé à chaque tour — seulement sur transition de phase (auto) ou via cette procédure (édit manuel).
 
 Tant qu'il n'y a rien de neuf côté intent, le hook automatique suffit.
 
@@ -77,3 +78,4 @@ bash .ai/scripts/build-feature-index.sh --write
 - `progress.updated` DOIT être la date du jour (pas copiée de l'ancienne valeur).
 - Si `progress.phase` passe à `done` dans cette procédure → **STOP** et rediriger vers `.ai/workflows/feature-done.md` (validations supplémentaires).
 - Si `blockers` reste non vide > 3 updates → signaler qu'il faut peut-être splitter la feature.
+- **Réinterroger la raison d'être** : à chaque édition d'une fiche, vérifier qu'elle garde un objectif / DONE / validations DISTINCTS de ses voisines (même scope, même famille d'id). Si une voisine couvre le même triplet → consolider/fusionner plutôt qu'enrichir, ou supprimer si redondante. Le hook `fiche-consolidation-nudge.sh` rappelle ce contrôle en contexte (advisory, non bloquant). Cf. `workflow/feature-consolidation-nudge` et `workflow/feature-granularity`.

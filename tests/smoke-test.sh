@@ -75,6 +75,10 @@ echo "[0j/28] tests unitaires (auto-worklog flush sans churn date)"
 bash tests/unit/test-auto-worklog-flush.sh
 echo
 
+echo "[0k/28] tests unitaires (nudge consolidation fiches)"
+bash tests/unit/test-fiche-consolidation-nudge.sh
+echo
+
 echo "[1/28] copier copy (profil par défaut)"
 copier copy --defaults --trust \
   --data project_name=smoke-project \
