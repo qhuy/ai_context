@@ -29,10 +29,10 @@ doc:
     observability: false
 progress:
   phase: review
-  step: "pilote documenté, validation config branchée côté quality"
+  step: "pilote documenté + recette parité fraîcheur fin de turn (stop-turn-doc-gate)"
   blockers: []
   resume_hint: "prêt à review ; ne pas ajouter .codex/ par défaut sans décision séparée"
-  updated: 2026-05-12
+  updated: 2026-06-26
 type: feature
 ---
 
@@ -105,6 +105,9 @@ Un projet peut activer des hooks Codex pour alerter ou bloquer une commande dang
 
 `workflow/git-hooks` reste le point de convergence universel. `workflow/subagent-contract` fixe les règles quand un hook ou une tâche déclenche du travail délégué.
 
+`workflow/stop-turn-doc-gate` : le gate Stop de fraîcheur est Claude-only ; sa parité Codex est documentée ici (recette opt-in « Parité fraîcheur fin de turn » dans `.ai/workflows/codex-hooks-parity.md`). Garantie universelle = `commit-msg --staged --strict` ; signal working-tree plus précoce = primitive agnostique `check-feature-freshness.sh --worktree --strict`, branché opt-in dans un hook Codex de fin de turn. Pas de `.codex/` livré par défaut (décision inchangée).
+
 ## Historique / décisions
 
 - 2026-05-12 : création suite à la veille officielle OpenAI Codex hooks.
+- 2026-06-26 : ajout de la recette « Parité fraîcheur fin de turn » (workflow/stop-turn-doc-gate). Le gate Stop étant Claude-only, on documente la parité Codex à deux niveaux — `commit-msg --staged --strict` universel (toujours actif) + hook Codex opt-in appelant le primitive `check-feature-freshness.sh --worktree --strict`. Surface Codex `Stop` (config.toml `[hooks]`) notée « à valider » ; aucun `.codex/` livré par défaut (décision inchangée).

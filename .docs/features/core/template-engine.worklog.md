@@ -353,3 +353,6 @@
 ## 2026-06-26 11:34 — auto
 - Fichiers modifiés :
   - template/.ai/quality/QUALITY_GATE.md.jinja
+
+## 2026-06-26 — couverture incidente (workflow/codex-hooks-parity)
+- Mirroir `template/.ai/workflows/codex-hooks-parity.md.jinja` (couvert par le glob template) suite à l'édit runtime. Aucun changement du moteur de template.

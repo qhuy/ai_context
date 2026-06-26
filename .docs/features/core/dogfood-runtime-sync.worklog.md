@@ -258,3 +258,6 @@
 ## 2026-06-26 11:43 — auto
 - Fichiers modifiés :
   - .ai/workflows/quality-gate.md
+
+## 2026-06-26 — couverture incidente (workflow/codex-hooks-parity)
+- Édition de `.ai/workflows/codex-hooks-parity.md` (+ jinja mirroir) — couvert par le glob `.ai/**` / `template/**` de cette feature. Parité runtime↔template préservée (recette parité fraîcheur Codex). Aucun changement du contrat dogfood.
