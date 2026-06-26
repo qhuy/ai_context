@@ -71,6 +71,10 @@ echo "[0i/28] tests unitaires (gate Stop fin de tour)"
 bash tests/unit/test-stop-turn-doc-gate.sh
 echo
 
+echo "[0j/28] tests unitaires (auto-worklog flush sans churn date)"
+bash tests/unit/test-auto-worklog-flush.sh
+echo
+
 echo "[1/28] copier copy (profil par défaut)"
 copier copy --defaults --trust \
   --data project_name=smoke-project \
@@ -987,7 +991,7 @@ echo "  ✓ resume-features buckets corrects (text + json)"
 rm "$OUT/.docs/features/back/inprog.md" "$OUT/.docs/features/back/blocked.md"
 
 echo
-echo "[17/28] auto-worklog : log + flush appendent au worklog et bumpent updated"
+echo "[17/28] auto-worklog : log + flush appendent au worklog (sans bumper updated)"
 mkdir -p "$OUT/.docs/features/back" "$OUT/src"
 echo "// foo" > "$OUT/src/foo.ts"
 cat > "$OUT/.docs/features/back/autofeat.md" <<'FEAT'
@@ -1033,13 +1037,13 @@ if ! grep -q "Fichiers modifiés" "$OUT/.docs/features/back/autofeat.worklog.md"
   cat "$OUT/.docs/features/back/autofeat.worklog.md"
   exit 1
 fi
-today=$(date +%Y-%m-%d)
-if ! grep -qE "^  updated: $today" "$OUT/.docs/features/back/autofeat.md"; then
-  echo "  ✗ progress.updated pas bumpé à $today"
+# Fix churn date : le flush ne bumpe PLUS progress.updated (reste 2020-01-01).
+if ! grep -qE "^  updated: 2020-01-01" "$OUT/.docs/features/back/autofeat.md"; then
+  echo "  ✗ le flush ne doit pas bumper progress.updated (churn date)"
   grep -E "^  updated:" "$OUT/.docs/features/back/autofeat.md"
   exit 1
 fi
-echo "  ✓ auto-worklog log+flush OK"
+echo "  ✓ auto-worklog log+flush OK (worklog appendé, updated non bumpé)"
 rm "$OUT/.docs/features/back/autofeat.md" "$OUT/.docs/features/back/autofeat.worklog.md"
 
 echo

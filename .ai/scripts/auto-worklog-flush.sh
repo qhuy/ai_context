@@ -23,7 +23,6 @@ index_file="$repo_root/.ai/.feature-index.json"
 [[ ! -s "$log_file" ]] && exit 0
 [[ ! -f "$index_file" ]] && exit 0
 
-today=$(date +%Y-%m-%d)
 timestamp=$(date +"%Y-%m-%d %H:%M")
 
 # Grouper log par feature : feature -> liste fichiers (uniques)
@@ -42,8 +41,6 @@ while IFS= read -r key; do
   feature_path=$(jq -r --arg k "$key" '.features[] | select(.scope + "/" + .id == $k) | .path' "$index_file" 2>/dev/null)
   [[ -z "$feature_path" || ! -f "$repo_root/$feature_path" ]] && continue
 
-  feature_md="$repo_root/$feature_path"
-  scope="${key%%/*}"
   id="${key##*/}"
   worklog="$repo_root/$(dirname "$feature_path")/$id.worklog.md"
 
@@ -59,23 +56,13 @@ while IFS= read -r key; do
     done <<< "$files"
   } >> "$worklog"
 
-  # Bump progress.updated dans le frontmatter (conservateur : n'ajoute pas le bloc s'il n'existe pas)
-  if grep -qE '^progress:' "$feature_md"; then
-    if grep -qE '^  updated:' "$feature_md"; then
-      # Replace existing updated line
-      tmp=$(mktemp "${feature_md}.XXXXXX")
-      awk -v today="$today" '
-        BEGIN{in_fm=0; in_prog=0; c=0}
-        /^---$/{c++; print; if(c==2) in_fm=0; else in_fm=1; next}
-        in_fm && /^progress:/{in_prog=1; print; next}
-        in_fm && in_prog && /^  updated:/{print "  updated: " today; next}
-        in_fm && in_prog && /^[^[:space:]]/{in_prog=0}
-        {print}
-      ' "$feature_md" > "$tmp" && mv "$tmp" "$feature_md"
-    fi
-    # Si progress: existe mais pas updated:, on ne l'ajoute pas (structure trop fragile en awk).
-    # `.ai/workflows/feature-update.md` s'en occupera au prochain passage manuel.
-  fi
+  # NOTE (workflow/auto-worklog — fix churn date) : le flush ne bumpe PLUS
+  # progress.updated dans le frontmatter. Bumper la date à chaque flush créait
+  # des "commits juste pour changer la date" sur toutes les features couvrant un
+  # fichier touché (treadmill, cf. quality/doc-freshness audit U4). `updated:`
+  # n'est désormais stampé que sur événement significatif : transition de phase
+  # (auto-progress.sh) ou édit manuel (.ai/workflows/feature-update.md). Le worklog
+  # append ci-dessus reste la trace réelle, sans churn de frontmatter.
 done <<< "$features"
 
 # Rebuild index pour que `.ai/workflows/feature-resume.md` reflète les nouveaux updated

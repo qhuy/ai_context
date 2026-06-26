@@ -98,3 +98,6 @@
 ## 2026-06-26 11:43 — auto
 - Fichiers modifiés :
   - tests/unit/test-stop-turn-doc-gate.sh
+
+## 2026-06-26 — couverture incidente (workflow/auto-worklog fix churn date)
+- Surface partagée touchée (tests/smoke-test.sh, gabarit flush, ou tests/unit) couverte par le glob `touches:` de cette feature. Aucun changement de comportement propre.
