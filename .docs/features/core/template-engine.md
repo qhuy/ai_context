@@ -17,7 +17,8 @@ progress:
   step: "template sécurise le cycle install→update Copier"
   blockers: []
   resume_hint: "Valider les commandes repair-copier-metadata/template-diff et smoke-test"
-  updated: 2026-06-19
+  updated: 2026-06-26
+type: feature
 ---
 
 # Moteur de template copier

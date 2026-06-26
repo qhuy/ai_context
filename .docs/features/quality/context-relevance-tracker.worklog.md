@@ -90,3 +90,6 @@
 ## 2026-06-19 14:24 — auto
 - Fichiers modifiés :
   - .ai/scripts/check-dogfood-drift.sh
+## 2026-06-26 11:34 — auto
+- Fichiers modifiés :
+  - .claude/settings.json

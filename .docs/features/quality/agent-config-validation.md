@@ -35,7 +35,8 @@ progress:
   step: "check-agent-config livré et smoke-test PASS"
   blockers: []
   resume_hint: "prêt à review ; shellcheck non lancé car absent localement"
-  updated: 2026-06-01
+  updated: 2026-06-26
+type: feature
 ---
 
 # Validation non destructive des configs agents

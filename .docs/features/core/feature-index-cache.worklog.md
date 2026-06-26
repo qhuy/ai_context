@@ -91,3 +91,13 @@
 - HANDOFF reçu depuis `quality/features-for-path-ranking-and-matcher-correctness` et `quality/pr-report`.
 - Le cache/index n'est pas modifié ; seul le consommateur canonique `path_matches_touch` évite le coût de validation glob pour les `touches:` exacts ou dossiers.
 - Aucun changement de format `.ai/.feature-index.json`.
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/_lib.sh.jinja
+  - template/.ai/scripts/build-feature-index.sh.jinja
+
+## 2026-06-26 11:17 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja

@@ -77,5 +77,19 @@ feat(quality): corriger le contrat de lock index
   - tests/smoke-test.sh
 
 ## 2026-06-19 18:03 — auto
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-06-25 — impact OKF (additif, hors comportement)
+- `_lib.sh(.jinja)` étendu par `core/okf-strict-profile` : ajout de `TYPE_ENUM` + `is_valid_type` (helpers du profil OKF).
+- Aucun impact sur le contrat de lock (`with_index_lock`) : ajout strictement additif, comportement inchangé. Feature reste `done`.
+
+## 2026-06-26 11:17 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-06-26 11:34 — auto
 - Fichiers modifiés :
   - tests/smoke-test.sh

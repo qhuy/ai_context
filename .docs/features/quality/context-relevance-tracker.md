@@ -37,7 +37,8 @@ progress:
   step: "implémentation livrée, 8/8 cas test PASS, prêt à commit"
   blockers: []
   resume_hint: "commit feat(quality) puis valider en utilisation réelle (run report --last 50 après quelques tours pour voir précision/rappel)"
-  updated: 2026-06-19
+  updated: 2026-06-26
+type: feature
 ---
 
 # Tracker minimal de pertinence du contexte injecté

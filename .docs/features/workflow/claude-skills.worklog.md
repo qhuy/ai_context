@@ -55,3 +55,8 @@
   - template/.ai/workflows/project-overlay-sync.md.jinja
   - template/.claude/skills/aic-onboard/SKILL.md.jinja
   - template/.claude/skills/aic-onboard/workflow.md.jinja
+## 2026-06-26 — impact workflow/stop-turn-doc-gate
+- `template/.ai/workflows/quality-gate.md.jinja` (+ runtime) : ajout d'une ligne inspecteur `check-feature-freshness.sh --worktree --warn` (fraîcheur fin de tour, informatif). Aucune logique de skill modifiée.
+
+## 2026-06-26 — couverture incidente (workflow/codex-hooks-parity)
+- `template/.ai/workflows/codex-hooks-parity.md.jinja` (couvert par le glob `touches:`) : recette parité fraîcheur Codex. Aucune logique de skill modifiée.

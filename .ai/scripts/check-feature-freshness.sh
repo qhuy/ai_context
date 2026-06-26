@@ -1,15 +1,22 @@
 #!/bin/bash
 # check-feature-freshness.sh — Verifie que la doc feature suit les edits code.
 #
-# Deux controles complementaires :
+# Trois controles complementaires :
 #   - --staged : compare les fichiers stages avec les features dont `touches:`
 #     les couvre. Si du code couvert change, la fiche feature ou son worklog
 #     doit etre stage dans le meme commit.
+#   - --worktree : meme logique de presence que --staged, mais sur tout le
+#     working tree (staged + non-stage + untracked), restreinte aux chemins
+#     "substantiels" (perimetre coverage). Sert au gate Stop de fin de tour :
+#     du code couvert modifie sans fiche/worklog modifie => echec en --strict.
+#     Presence-based, jamais base sur des timestamps de commit (cf. --worktree
+#     vs historique : l'historique ne voit pas les edits non commites).
 #   - historique : compare le dernier commit des fichiers couverts par `touches:`
 #     avec le dernier commit de la fiche/worklog.
 #
 # Usage :
 #   bash .ai/scripts/check-feature-freshness.sh --staged --strict
+#   bash .ai/scripts/check-feature-freshness.sh --worktree --strict
 #   bash .ai/scripts/check-feature-freshness.sh --warn
 #   bash .ai/scripts/check-feature-freshness.sh --strict
 
@@ -28,6 +35,7 @@ cd "$repo_root"
 index_file=".ai/.feature-index.json"
 mode="--warn"
 staged_mode=0
+worktree_mode=0
 index_tmp=""
 
 cleanup_index_tmp() {
@@ -39,8 +47,9 @@ for arg in "$@"; do
   case "$arg" in
     --warn|--strict) mode="$arg" ;;
     --staged) staged_mode=1 ;;
+    --worktree) worktree_mode=1 ;;
     *)
-      echo "Usage: bash .ai/scripts/check-feature-freshness.sh [--staged] [--warn|--strict]" >&2
+      echo "Usage: bash .ai/scripts/check-feature-freshness.sh [--staged|--worktree] [--warn|--strict]" >&2
       exit 2
       ;;
   esac
@@ -134,6 +143,70 @@ run_staged_check() {
   fi
 
   echo "  Features couvertes par du code stage sans fiche/worklog stage :"
+  sort -u "$failures" | while IFS=$'\t' read -r file feature feature_path; do
+    echo "    - $feature ($feature_path) ← $file"
+  done
+
+  if [[ "$strict" -eq 1 ]]; then
+    echo
+    echo "❌ FAIL (--strict)"
+    return 1
+  fi
+
+  echo
+  echo "✅ OK (--warn)"
+  return 0
+}
+
+run_worktree_check() {
+  local changed
+  changed=$(collect_uncommitted_paths)
+
+  echo "═══ check-feature-freshness (worktree) ═══"
+
+  if [[ -z "$changed" ]]; then
+    echo "  aucun fichier modifie dans le working tree"
+    echo
+    echo "✅ OK"
+    return 0
+  fi
+
+  local failures
+  failures=$(mktemp "${TMPDIR:-/tmp}/ai-context-freshness-wt.XXXXXX")
+  trap 'rm -f "$failures"' RETURN
+
+  # Fiches/worklogs feature presents dans le change set (staged ou non).
+  local changed_docs
+  changed_docs=$(printf '%s\n' "$changed" | while IFS= read -r rel; do
+    if is_feature_doc_path "$rel"; then
+      printf '%s\n' "$rel"
+    fi
+  done)
+
+  local rel scope id feature_path
+  while IFS= read -r rel; do
+    [[ -z "$rel" ]] && continue
+    is_feature_doc_path "$rel" && continue
+    # Anti-bruit : seuls les chemins "substantiels" (perimetre coverage)
+    # declenchent l'obligation. Evite de bloquer sur config/doc/non-code.
+    path_in_coverage_scope "$rel" || continue
+
+    while IFS=$'\t' read -r scope id feature_path; do
+      [[ -z "$scope" || -z "$id" || -z "$feature_path" ]] && continue
+      if ! staged_has_doc_for_feature "$changed_docs" "$feature_path" "$scope" "$id"; then
+        printf '%s\t%s/%s\t%s\n' "$rel" "$scope" "$id" "$feature_path" >> "$failures"
+      fi
+    done < <(features_matching_path "$index_file" "$rel")
+  done <<< "$changed"
+
+  if [[ ! -s "$failures" ]]; then
+    echo "  fichiers working-tree couverts : OK"
+    echo
+    echo "✅ OK"
+    return 0
+  fi
+
+  echo "  Features couvertes par du code modifie (working tree) sans fiche/worklog modifie :"
   sort -u "$failures" | while IFS=$'\t' read -r file feature feature_path; do
     echo "    - $feature ($feature_path) ← $file"
   done
@@ -259,7 +332,9 @@ run_history_check() {
   return 0
 }
 
-if [[ "$staged_mode" -eq 1 ]]; then
+if [[ "$worktree_mode" -eq 1 ]]; then
+  run_worktree_check
+elif [[ "$staged_mode" -eq 1 ]]; then
   run_staged_check
 else
   run_history_check

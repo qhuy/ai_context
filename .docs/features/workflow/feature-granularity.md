@@ -26,6 +26,7 @@ progress:
   blockers: []
   resume_hint: "feature clôturée le 2026-05-04"
   updated: 2026-05-06
+type: feature
 ---
 
 # Granularité anti fourre-tout des fiches feature

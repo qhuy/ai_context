@@ -28,7 +28,8 @@ progress:
   step: "template feature aligné sur workflows internes"
   blockers: []
   resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-04-28
+  updated: 2026-06-25
+type: feature
 ---
 
 # Feature mesh

@@ -16,6 +16,7 @@ progress:
   blockers: []
   resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
   updated: 2026-06-01
+type: feature
 ---
 
 # CI guard

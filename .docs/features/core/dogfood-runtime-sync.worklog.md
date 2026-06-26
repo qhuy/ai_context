@@ -263,3 +263,29 @@
 ## 2026-06-19 17:52 — auto
 - Fichiers modifiés :
   - .ai/scripts/dogfood-update.sh
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-features.sh
+
+## 2026-06-26 11:17 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - .ai/scripts/check-feature-freshness.sh
+
+## 2026-06-26 11:34 — auto
+- Fichiers modifiés :
+  - .ai/quality/QUALITY_GATE.md
+  - .ai/scripts/stop-doc-gate.sh
+  - .ai/scripts/stop-sequence.sh
+  - .claude/settings.json
+
+## 2026-06-26 11:43 — auto
+- Fichiers modifiés :
+  - .ai/workflows/quality-gate.md
+
+## 2026-06-26 — couverture incidente (workflow/codex-hooks-parity)
+- Édition de `.ai/workflows/codex-hooks-parity.md` (+ jinja mirroir) — couvert par le glob `.ai/**` / `template/**` de cette feature. Parité runtime↔template préservée (recette parité fraîcheur Codex). Aucun changement du contrat dogfood.
+
+## 2026-06-26 15:03 — auto
+- Fichiers modifiés :
+  - .ai/workflows/codex-hooks-parity.md

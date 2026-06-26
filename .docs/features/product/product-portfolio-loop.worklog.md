@@ -103,5 +103,13 @@
   - tests/smoke-test.sh
 
 ## 2026-06-19 18:03 — auto
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - template/.ai/schema/feature.schema.json
+  - template/.ai/scripts/aic.sh.jinja
+  - template/.ai/scripts/build-feature-index.sh.jinja
+  - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
+
+## 2026-06-26 11:34 — auto
 - Fichiers modifiés :
   - tests/smoke-test.sh

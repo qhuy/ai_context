@@ -64,3 +64,18 @@
 - Décision actée après investigation : **`--warn` reste le steady-state**, `--strict` n'est pas imposé sur freshness ni check-feature-docs.
 - Freshness « stale » (≈29) = artefact de timestamps : le code touché par une feature (via `touches:`) est plus récent que sa fiche ; en repo actif, viser 0 est un treadmill (re-stale au commit suivant). Non bloquant par design.
 - check-feature-docs : 97 warnings répartis sur ~20 fiches **legacy**. Les features livrées en 0.13.0 (read-only-checks-contract, index-contract-v2, feature-mesh-contract-alignment, ai-context-stability-migration, index-lock-contract) passent toutes `--strict` (vérifié). Le résidu est de la dette doc legacy ; un remplissage mécanique créerait des sections creuses (anti-valeur) → à compléter au cas par cas si une fiche legacy est rouverte.
+
+## 2026-06-26 11:17 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-feature-freshness.sh
+
+## 2026-06-26 11:34 — auto
+- Fichiers modifiés :
+  - .ai/quality/QUALITY_GATE.md
+  - template/.ai/quality/QUALITY_GATE.md.jinja
+
+## 2026-06-26 — mode --worktree (HANDOFF workflow/stop-turn-doc-gate)
+- Ajout du mode `check-feature-freshness.sh --worktree` (+ jinja) : fraîcheur **présence-based** sur tout le working tree (staged ∪ non-stagé ∪ untracked via `collect_uncommitted_paths`), filtré « substantiel » via `path_in_coverage_scope` (config `coverage`). Sert au gate Stop de fin de tour.
+- Distinct du mode historique (timestamps) : pas de treadmill staleness, cohérent avec la politique `--warn` du 2026-06-01.
+- Section « Fraîcheur en fin de tour » ajoutée à `QUALITY_GATE.md` (+ jinja).
+- Validation : `test-stop-turn-doc-gate` PASS, `test-check-feature-freshness` PASS, smoke-test PASS, dogfood-drift PASS.

@@ -22,6 +22,7 @@ progress:
   blockers: []
   resume_hint: "check-shims + check-dogfood-drift + smoke verts, puis commit FR conventional"
   updated: 2026-06-02
+type: feature
 ---
 
 # Auto-progression invisible (+ skill `/aic` en override)

@@ -52,7 +52,7 @@ Commandes maintenance :
   doctor       diagnostic non destructif (dépendances, hooks, index, checks)
   resume       buckets EN COURS / BLOQUÉES / STALE / À FAIRE
   audit        audit-features.sh (discover <scope>)
-  migrate      migration frontmatter (--apply explicite)
+  migrate      migration frontmatter ; 'migrate okf-type' backfille le champ type OKF (--apply explicite)
   pr-report    rapport markdown/json d'impact feature depuis un diff git
   measure      taille contexte injecté par les hooks
   check        check-features.sh (frontmatter + scope + depends_on + touches)
@@ -884,7 +884,12 @@ case "$cmd" in
   doctor)     exec bash "$script_dir/doctor.sh" "$@" ;;
   resume)     exec bash "$script_dir/resume-features.sh" "$@" ;;
   audit)      exec bash "$script_dir/audit-features.sh" "$@" ;;
-  migrate)    exec bash "$script_dir/migrate-features.sh" "$@" ;;
+  migrate)
+    case "${1:-}" in
+      okf-type) shift; exec bash "$script_dir/migrate-okf-type.sh" "$@" ;;
+      *)        exec bash "$script_dir/migrate-features.sh" "$@" ;;
+    esac
+    ;;
   pr-report)  exec bash "$script_dir/pr-report.sh" "$@" ;;
   review)     exec bash "$script_dir/review-delta.sh" "$@" ;;
   measure)    exec bash "$script_dir/measure-context-size.sh" "$@" ;;

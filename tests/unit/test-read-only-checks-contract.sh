@@ -16,7 +16,7 @@ fail() {
 }
 
 mkdir -p "$tmp/.ai/scripts" "$tmp/.ai/schema" "$tmp/.docs/features/core" "$tmp/src"
-for script in _lib.sh aic.sh build-feature-index.sh check-features.sh check-feature-freshness.sh check-feature-coverage.sh check-shims.sh check-product-links.sh review-delta.sh pr-report.sh doctor.sh measure-context-size.sh; do
+for script in _lib.sh aic.sh build-feature-index.sh check-features.sh check-feature-freshness.sh check-feature-coverage.sh check-shims.sh check-product-links.sh review-delta.sh pr-report.sh doctor.sh measure-context-size.sh stop-doc-gate.sh; do
   cp "$repo_root/.ai/scripts/$script" "$tmp/.ai/scripts/$script"
 done
 cp "$repo_root/.ai/schema/feature.schema.json" "$tmp/.ai/schema/feature.schema.json"
@@ -82,6 +82,12 @@ MD
   set -e
   [[ "$rc" -ne 0 ]] || fail "check-feature-freshness --staged --strict aurait dû échouer sans doc staged"
   [[ ! -e .ai/.feature-index.json ]] || fail "check-feature-freshness --staged a créé l'index"
+
+  bash .ai/scripts/check-feature-freshness.sh --worktree --warn >/dev/null
+  [[ ! -e .ai/.feature-index.json ]] || fail "check-feature-freshness --worktree a créé l'index"
+
+  printf '{"stop_hook_active":false}' | bash .ai/scripts/stop-doc-gate.sh >/dev/null 2>&1 || true
+  [[ ! -e .ai/.feature-index.json ]] || fail "stop-doc-gate a créé l'index"
 
   bash .ai/scripts/review-delta.sh >/dev/null
   [[ ! -e .ai/.feature-index.json ]] || fail "review-delta a créé l'index"

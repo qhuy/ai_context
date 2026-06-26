@@ -20,6 +20,7 @@ progress:
   blockers: []
   resume_hint: "évaluer extraction future vers ai-context doctor (CLI) avec flags --json/--strict"
   updated: 2026-04-28
+type: feature
 ---
 
 # Doctor (diagnostic)

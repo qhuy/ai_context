@@ -342,3 +342,38 @@
 ## 2026-06-19 15:14 — auto
 - Fichiers modifiés :
   - docs/upgrading.md
+## 2026-06-05 09:50 — auto
+- Fichiers modifiés :
+  - template/.cursor/rules/back.mdc.jinja
+  - template/.cursor/rules/front.mdc.jinja
+
+## 2026-06-18 10:58 — auto
+- Fichiers modifiés :
+  - template/.ai/rules/workflow.md.jinja
+
+## 2026-06-18 12:38 — auto
+- Fichiers modifiés :
+  - template/.ai/rules/workflow.md.jinja
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - copier.yml
+  - docs/upgrading.md
+  - template/.ai/schema/feature.schema.json
+  - template/.ai/scripts/_lib.sh.jinja
+  - template/.ai/scripts/aic.sh.jinja
+  - template/.ai/scripts/build-feature-index.sh.jinja
+  - template/.ai/scripts/check-features.sh.jinja
+  - template/.ai/scripts/migrate-okf-type.sh.jinja
+  - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
+
+## 2026-06-26 11:17 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-06-26 11:34 — auto
+- Fichiers modifiés :
+  - template/.ai/quality/QUALITY_GATE.md.jinja
+
+## 2026-06-26 — couverture incidente (workflow/codex-hooks-parity)
+- Mirroir `template/.ai/workflows/codex-hooks-parity.md.jinja` (couvert par le glob template) suite à l'édit runtime. Aucun changement du moteur de template.

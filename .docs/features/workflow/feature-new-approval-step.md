@@ -27,6 +27,7 @@ progress:
   blockers: []
   resume_hint: "Relire la propagation template/runtime puis clôturer si les checks passent."
   updated: 2026-05-06
+type: feature
 ---
 
 # Validation explicite avant création et développement feature

@@ -50,6 +50,17 @@ Cette règle est **systématique** — pas de seuil de complexité, pas de "trop
 - `bash .ai/scripts/check-feature-docs.sh` signale les sections manquantes ou trop vides ; `--strict` est à utiliser avant DONE sur les features nouvelles ou risquées.
 - En CI, le mode `--warn` reste informatif pour éviter les faux positifs sur l'historique importé ; le blocage strict se fait au commit.
 
+## Fraîcheur en fin de tour (gate Stop — Claude)
+
+Ferme la fenêtre « édité → vérifié → *done* annoncé, mais ni commité ni doc à jour » — le moment exact où ni le gate commit (`--staged`) ni le mode historique ne voient l'édit.
+
+- Le hook `Stop` unique `bash .ai/scripts/stop-sequence.sh` lance d'abord le gate read-only `stop-doc-gate.sh` (→ `check-feature-freshness.sh --worktree --strict` sur tout le working tree : staged + non-stagé + untracked) puis l'archivage. Le gate **bloque la fin de tour** si un chemin **substantiel** (périmètre `coverage` : `roots` + `extensions`) couvert par une feature a changé sans que sa fiche ou son worklog soit modifié dans le même working tree.
+- Signal **présence-based**, jamais basé sur des timestamps de commit : il vise l'édit non encore commité, pas la « staleness » d'historique (qui reste en `--warn`, cf. ci-dessus).
+- **Sévérité différenciée** : fraîcheur = **bloquant** ; orphelin (chemin substantiel couvert par **aucune** feature) = **avertissement** non bloquant (créer/rattacher une fiche est un jugement scope/id non automatisable).
+- Anti-boucle : `stop_hook_active` relâche le gate ; échappatoire tracée : `AIC_DOC_GATE=off` (WIP multi-tour, refactor pur).
+- **Garantie stable = git + CI**, pas le hook agent. Le gate Stop est une couche de forcing **Claude-only** ; les agents non-Claude restent couverts par `.githooks/commit-msg` (`--staged --strict`) et la CI. Comme les hooks Stop tournent **en parallèle** (ordre non garanti), l'ordre gate → archivage est assuré en les **sérialisant** dans `stop-sequence.sh` (sinon `auto-worklog-flush` auto-toucherait le worklog et neutraliserait le gate).
+- Read-only : index temporaire (`mktemp`), aucune écriture de `.ai/.feature-index.json`.
+
 ## Commits — Conventional Commits (BLOQUANT)
 
 Tous les commits respectent le format :

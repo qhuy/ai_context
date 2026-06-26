@@ -27,6 +27,7 @@ progress:
   blockers: []
   resume_hint: "règle amendée après challenge (detached HEAD corrigé) ; vérifier check-dogfood-drift + check-shims ; teardown reste manuel"
   updated: 2026-06-18
+type: feature
 ---
 
 # Isolation worktree des tâches d'agent concurrentes

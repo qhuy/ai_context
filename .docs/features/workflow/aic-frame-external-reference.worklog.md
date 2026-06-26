@@ -31,3 +31,10 @@
 ## 2026-06-19 11:47 — auto
 - Fichiers modifiés :
   - .docs/frames/2026-06-19-project-overlay-scope-registry.md
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/aic.sh.jinja
+
+## 2026-06-25 — impact OKF (additif, hors comportement)
+- `aic.sh(.jinja)` étendu par `core/okf-strict-profile` : sous-dispatch `migrate okf-type` ; le défaut `migrate` et la commande `frame` restent inchangés.
+- Aucun impact sur le cadrage `aic frame` / `execution_ref` : extension rétro-compatible. Feature reste `done`.

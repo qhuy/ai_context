@@ -44,3 +44,12 @@
 ## 2026-06-01 — _lib.sh touché (perf matcher, sans impact sur ce périmètre)
 
 - `_lib.sh` (+ `.jinja`) modifié pour le fast-path no-glob de `path_matches_touch` (perf : saute `_glob_pattern_supported`). `is_structural_feature_edit` (le périmètre de cette feature) est inchangé. Entrée de traçabilité freshness.
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-06-26 11:17 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja

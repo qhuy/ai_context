@@ -21,3 +21,7 @@
 ## 2026-06-19 15:14 — auto
 - Fichiers modifiés :
   - CHANGELOG.md
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - CHANGELOG.md
+  - template/.ai/scripts/build-feature-index.sh.jinja

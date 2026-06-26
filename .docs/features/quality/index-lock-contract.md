@@ -26,7 +26,8 @@ progress:
   step: ""
   blockers: []
   resume_hint: "feature clôturée le 2026-05-12"
-  updated: 2026-06-19
+  updated: 2026-06-26
+type: feature
 ---
 
 # Corriger le contrat de lock de l'index feature

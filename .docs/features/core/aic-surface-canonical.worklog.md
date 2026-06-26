@@ -107,5 +107,18 @@
   - tests/smoke-test.sh
 
 ## 2026-06-19 18:03 — auto
+## 2026-06-08 16:51 — auto
+- Fichiers modifiés :
+  - PROJECT_STATE.md
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - CHANGELOG.md
+  - MIGRATION.md
+  - copier.yml
+  - docs/upgrading.md
+  - template/.ai/scripts/aic.sh.jinja
+
+## 2026-06-26 11:34 — auto
 - Fichiers modifiés :
   - tests/smoke-test.sh

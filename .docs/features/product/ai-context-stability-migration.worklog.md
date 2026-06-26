@@ -30,6 +30,7 @@
 - Clôture le 3ᵉ maillon du chantier overlay : `core/project-overlay-scope-registry` (contrat) + `workflow/project-overlay-onboarding` (skill) + ce rattachement produit.
 
 ## 2026-06-19 15:14 — auto
+## 2026-06-25 12:34 — auto
 - Fichiers modifiés :
   - CHANGELOG.md
   - docs/upgrading.md

@@ -2,12 +2,19 @@
 
 ## [Unreleased]
 
+> Profil strict OKF Phase 0 (`core/okf-strict-profile`) : les fiches feature deviennent
+> des concepts Open Knowledge Format valides, sans rien perdre du modèle riche.
+> **Non-cassant** : `type` optionnel à l'introduction, requis seulement au release d'enforce suivant.
+
 ### Nouveau
 - Overlay projet **registre de scopes** : `.ai/project/<scope>/index.md` (un dossier + index privé par app/couche/préoccupation), avec un contrat de forme documenté (`paths`, `meta`, `conventions`, `derived`) et un stamp global `overlay_contract_version`. Le contrat de chargement descend d'un niveau, sur match de path, par pointeur explicite. Voir `core/project-overlay-scope-registry`.
 - Skill **`aic-onboard`** (Claude + Codex) : peuple, maintient ou migre l'overlay projet (modes `init`/`sync`/`migrate` auto-détectés) — détecte les scopes inférables, interroge les conventions tribales, scaffolde après confirmation, écrit uniquement sous `.ai/project/**`. Procédure canonique `.ai/workflows/project-overlay-sync.md`. Voir `workflow/project-overlay-onboarding`.
+- **Gate Stop de fraîcheur documentaire** (`workflow/stop-turn-doc-gate`) : un hook `Stop` (Claude) bloque la fin de tour si du code couvert par une feature est modifié dans le working tree sans mettre à jour sa fiche/worklog. Nouveau mode `check-feature-freshness.sh --worktree` (présence-based), orchestré par `stop-sequence.sh` (sérialise gate puis archivage). Échappatoire `AIC_DOC_GATE=off` ; garantie stable cross-agent = `commit-msg`/CI ; parité Codex opt-in documentée (`workflow/codex-hooks-parity`).
+- Profil strict OKF (Phase 0) : frontmatter — nouveaux champs optionnels `type` (enum `feature|contract|workflow|reference`) et `description`. `check-features.sh` avertit (warn, jamais `exit 1`) quand `type` est absent ou hors enum. `build-feature-index.sh` expose `type` (défaut `feature`, pas de bump `schema_version`). Nouvelle commande `aic migrate okf-type [--apply] [--type=…]` (backfill idempotent, bash pur). `FEATURE_TEMPLATE` : `type: feature` par défaut.
 
 ### Migration
 - Migration de l'overlay vers le registre de scopes : deux temps (`copier update` apporte le skill + le contrat ; `aic-onboard` migre l'overlay project-owned). Opt-in, non bloquant, non destructif, idempotent. Voir `docs/upgrading.md` → « Overlay projet : registre de scopes ».
+- Profil strict OKF : après `copier update`, si `check-features` signale des `type` manquants → `bash .ai/scripts/aic.sh migrate okf-type --apply`, puis commit. Rollback = `git revert` (fiches project-owned).
 
 ## [0.13.0] — 2026-06-01
 

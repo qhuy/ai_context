@@ -161,3 +161,12 @@
 - `_lib.sh::path_matches_touch` (+ `.jinja`) court-circuite désormais les `touches:` sans glob ni backslash avant `_glob_pattern_supported`, pour éviter les forks `tr/wc` sur les chemins exacts et préfixes dossier.
 - Les patterns contenant un backslash restent sur le chemin lent afin de conserver la politique unsupported `warn/strict`.
 - Sémantique inchangée : les tests existants couvrent exact, dossier, slash final, `dir/**`, glob multi-niveaux et backslash unsupported.
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-06-26 11:17 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja

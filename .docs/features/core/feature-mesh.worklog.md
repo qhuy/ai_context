@@ -30,3 +30,9 @@
 - HANDOFF : édition du frontmatter de 6 fiches hors core (product/quality/workflow) = pure maintenance du contrat mesh, aucun changement de comportement de ces features. Confirmé par l'utilisateur (option « narrow touches d'abord »).
 - Suivi : appliquer la même convention à `_lib.sh` et autres configs partagées si la cascade se reproduit.
 - Validation : index rebuild → `copier.yml` bloquant sur 4 core uniquement ; `check-features --no-write` PASS.
+
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-features.sh
+  - template/.ai/scripts/check-features.sh.jinja
+  - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja

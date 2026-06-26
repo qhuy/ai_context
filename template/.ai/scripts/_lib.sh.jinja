@@ -48,6 +48,7 @@ read_schema_enum() {
 
 STATUS_ENUM="$(read_schema_enum '.properties.status.enum' 'draft active done deprecated archived')"
 PHASE_ENUM="$(read_schema_enum '.properties.progress.properties.phase.enum' 'spec implement test review done blocked')"
+TYPE_ENUM="$(read_schema_enum '.properties.type.enum' 'feature contract workflow reference')"
 
 # Retourne la liste JSON des status visibles dans le reminder.
 # Par défaut : active + draft (les features en cours / à venir).
@@ -157,6 +158,93 @@ collect_uncommitted_paths() {
   done < <(git status --porcelain=v1 -z --untracked-files=all 2>/dev/null) | sort -u
 }
 
+# ─── Périmètre "substantiel" (réutilise la config coverage) ───
+# Sert au mode --worktree de check-feature-freshness et au gate Stop
+# (stop-doc-gate.sh) : un chemin touché ne déclenche le contrôle de fraîcheur
+# que s'il est "substantiel" — sous une racine de code, extension de code, hors
+# dossier exclu. Source et défauts alignés sur check-feature-coverage.sh
+# (section coverage: de .ai/project/config.yml en override, sinon .ai/config.yml).
+
+# _coverage_config_file — chemin de config coverage (override projet prioritaire).
+_coverage_config_file() {
+  if [[ -f ".ai/project/config.yml" ]]; then
+    printf '%s\n' ".ai/project/config.yml"
+  else
+    printf '%s\n' ".ai/config.yml"
+  fi
+}
+
+# _read_coverage_list <key> [config_file] — émet une entrée par ligne pour une
+# liste YAML sous coverage: (roots|extensions|exclude_dirs). Vide si absente.
+# Même parseur awk que check-feature-coverage.sh (pas de dépendance yq).
+_read_coverage_list() {
+  local key="$1"
+  local config_file="${2:-$(_coverage_config_file)}"
+  [[ -f "$config_file" ]] || return 0
+  awk -v key="$key" '
+    /^coverage:[[:space:]]*$/ { in_cov=1; next }
+    in_cov && /^[^[:space:]]/ { in_cov=0; in_list=0 }
+    in_cov && $0 ~ ("^[[:space:]]*" key ":[[:space:]]*$") { in_list=1; next }
+    in_list {
+      if ($0 ~ /^[[:space:]]*-[[:space:]]*/) {
+        sub(/^[[:space:]]*-[[:space:]]*/, "", $0)
+        gsub(/[[:space:]]+$/, "", $0)
+        gsub(/^["'\'']|["'\'']$/, "", $0)
+        if (length($0) > 0) print $0
+        next
+      }
+      if ($0 ~ /^[[:space:]]*$/) next
+      in_list=0
+    }
+  ' "$config_file"
+}
+
+# path_in_coverage_scope <rel_path> [config_file] — 0 si le chemin est
+# "substantiel" (sous une racine coverage, extension de code, hors dossier
+# exclu), 1 sinon. Défauts identiques à check-feature-coverage.sh.
+path_in_coverage_scope() {
+  local path="${1#./}"
+  local config_file="${2:-$(_coverage_config_file)}"
+  local roots exts excludes
+  roots="$(_read_coverage_list roots "$config_file")"
+  exts="$(_read_coverage_list extensions "$config_file")"
+  excludes="$(_read_coverage_list exclude_dirs "$config_file")"
+  [[ -z "$roots" ]] && roots=$'src\napp\nlib'
+  [[ -z "$exts" ]] && exts=$'cs\ncshtml\nts\ntsx\njs\njsx\npy\nrb\ngo\nrs\njava\nkt\nswift\nphp'
+  [[ -z "$excludes" ]] && excludes=$'bin\nobj\nnode_modules\ndist\nbuild\n.next\nwwwroot\ncoverage\nTestResults'
+
+  local under_root=1 root
+  while IFS= read -r root; do
+    [[ -z "$root" ]] && continue
+    root="${root%/}"
+    if [[ "$path" == "$root" || "$path" == "$root"/* ]]; then
+      under_root=0
+      break
+    fi
+  done <<< "$roots"
+  [[ "$under_root" -eq 0 ]] || return 1
+
+  local has_ext=1 ext
+  while IFS= read -r ext; do
+    [[ -z "$ext" ]] && continue
+    if [[ "$path" == *".$ext" ]]; then
+      has_ext=0
+      break
+    fi
+  done <<< "$exts"
+  [[ "$has_ext" -eq 0 ]] || return 1
+
+  local excl
+  while IFS= read -r excl; do
+    [[ -z "$excl" ]] && continue
+    case "/$path/" in
+      *"/$excl/"*) return 1 ;;
+    esac
+  done <<< "$excludes"
+
+  return 0
+}
+
 is_valid_status() {
   local s="$1"
   for valid in $STATUS_ENUM; do
@@ -169,6 +257,15 @@ is_valid_phase() {
   local p="$1"
   for valid in $PHASE_ENUM; do
     [[ "$p" == "$valid" ]] && return 0
+  done
+  return 1
+}
+
+# Profil strict OKF : valide le champ frontmatter `type` (nature de l'asset).
+is_valid_type() {
+  local t="$1"
+  for valid in $TYPE_ENUM; do
+    [[ "$t" == "$valid" ]] && return 0
   done
   return 1
 }

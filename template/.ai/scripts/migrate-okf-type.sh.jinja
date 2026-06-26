@@ -1,0 +1,95 @@
+#!/bin/bash
+# migrate-okf-type.sh — Backfill du champ frontmatter `type` (profil strict OKF).
+#
+# Usage :
+#   bash .ai/scripts/migrate-okf-type.sh                  # dry-run
+#   bash .ai/scripts/migrate-okf-type.sh --apply          # écrit `type: feature` là où il manque
+#   bash .ai/scripts/migrate-okf-type.sh --apply --type=contract
+#
+# Idempotent : n'écrase jamais un `type` déjà déclaré. Bash pur (aucune dépendance yq),
+# runtime-agnostique — comportement identique sous Claude et Codex.
+
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=_lib.sh
+. "$script_dir/_lib.sh"
+
+enable_globstar
+
+repo_root="$(cd "$script_dir/../.." && pwd)"
+cd "$repo_root"
+
+apply=0
+type_value="feature"
+for arg in "$@"; do
+  case "$arg" in
+    --apply) apply=1 ;;
+    --type=*) type_value="${arg#--type=}" ;;
+    *) echo "⚠️  argument ignoré : $arg" >&2 ;;
+  esac
+done
+
+if ! is_valid_type "$type_value"; then
+  echo "❌ type '$type_value' hors enum ($TYPE_ENUM)" >&2
+  exit 1
+fi
+
+features_dir="$AI_CONTEXT_FEATURES_DIR"
+if [[ ! -d "$features_dir" ]]; then
+  echo "⚠️  $features_dir absent, rien à migrer"
+  exit 0
+fi
+
+files=()
+while IFS= read -r -d '' f; do
+  files+=("$f")
+done < <(find "$features_dir" -mindepth 2 -maxdepth 2 -type f -name '*.md' ! -name '*.worklog.md' -print0)
+
+if [[ "{% raw %}${#files[@]}{% endraw %}" -eq 0 ]]; then
+  echo "⚠️  aucune feature trouvée sous $features_dir"
+  exit 0
+fi
+
+echo "═══ migrate-okf-type ═══"
+echo "mode: $([[ "$apply" -eq 1 ]] && echo "apply" || echo "dry-run") | type: $type_value"
+echo
+
+changed=0
+for f in "${files[@]}"; do
+  fm="$(awk '/^---$/{c++;next} c==1{print}' "$f")"
+  body="$(awk 'BEGIN{c=0} /^---$/{c++;next} c>=2{print}' "$f")"
+  [[ -n "$fm" ]] || continue
+
+  # Idempotence : ne touche pas une fiche qui déclare déjà un `type` top-level.
+  if echo "$fm" | grep -qE '^type:'; then
+    continue
+  fi
+
+  new_fm="${fm}"$'\n'"type: $type_value"
+  changed=$((changed + 1))
+  echo "- $f"
+  echo "    • add type: $type_value"
+
+  if [[ "$apply" -eq 1 ]]; then
+    {
+      echo "---"
+      echo "$new_fm"
+      echo "---"
+      echo "$body"
+    } > "$f"
+  fi
+done
+
+echo
+if [[ "$changed" -eq 0 ]]; then
+  echo "✓ Toutes les fiches déclarent déjà un type"
+  exit 0
+fi
+
+if [[ "$apply" -eq 1 ]]; then
+  bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
+  echo "✓ Backfill type appliqué sur $changed fiche(s)"
+else
+  echo "ℹ️ Dry-run: $changed fiche(s) sans type (relancer avec --apply)."
+fi

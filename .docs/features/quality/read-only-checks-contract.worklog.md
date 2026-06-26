@@ -105,3 +105,30 @@
 ## 2026-06-19 17:52 — auto
 - Fichiers modifiés :
   - tests/unit/test-dogfood-update-preserves-frames.sh
+## 2026-06-25 12:34 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-features.sh
+  - CHANGELOG.md
+  - MIGRATION.md
+  - docs/upgrading.md
+  - template/.ai/scripts/aic.sh.jinja
+  - template/.ai/scripts/check-features.sh.jinja
+
+## 2026-06-26 11:17 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-feature-freshness.sh
+
+## 2026-06-26 11:34 — auto
+- Fichiers modifiés :
+  - tests/unit/test-read-only-checks-contract.sh
+  - tests/unit/test-stop-turn-doc-gate.sh
+
+## 2026-06-26 — gate Stop read-only (HANDOFF workflow/stop-turn-doc-gate)
+- Le nouveau gate `stop-doc-gate.sh` et le mode `check-feature-freshness.sh --worktree` honorent le contrat : index temporaire `mktemp`, aucune écriture de `.ai/.feature-index.json`. Seul l'archivage (déclenché après le gate par `stop-sequence.sh`) mute, comme avant.
+- `tests/unit/test-read-only-checks-contract.sh` étendu : assertions no-write pour `--worktree --warn` et `stop-doc-gate.sh`.
+- Validation : `test-read-only-checks-contract` PASS.
+
+## 2026-06-26 11:43 — auto
+- Fichiers modifiés :
+  - .ai/workflows/quality-gate.md
+  - tests/unit/test-stop-turn-doc-gate.sh

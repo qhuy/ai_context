@@ -48,7 +48,8 @@ progress:
   step: "round 4 appliqué, validation PASS, prêt à commit"
   blockers: []
   resume_hint: "commit FR conventional puis attendre evidence DONE pour bumper phase=done"
-  updated: 2026-06-19
+  updated: 2026-06-26
+type: feature
 ---
 
 # Skills intentionnels

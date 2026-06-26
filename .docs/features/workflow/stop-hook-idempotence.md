@@ -31,6 +31,7 @@ progress:
   blockers: []
   resume_hint: "feature clôturée le 2026-06-18 (impl. live depuis 2b66ae6)"
   updated: 2026-06-18
+type: feature
 ---
 
 # Rendre le hook Stop idempotent sur tour sans édit structurel
