@@ -126,3 +126,6 @@
 ## 2026-06-26 15:48 — auto
 - Fichiers modifiés :
   - CHANGELOG.md
+
+## 2026-06-26 — couverture incidente (workflow/auto-worklog fix churn date)
+- Surface partagée touchée (tests/smoke-test.sh, gabarit flush, ou tests/unit) couverte par le glob `touches:` de cette feature. Aucun changement de comportement propre.
