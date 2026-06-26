@@ -55,3 +55,8 @@
   - Doc corrigée : contrat « fallback awk/sed si yq » → migrate est bash pur (awk, sans yq ni sed) ; `progress.step` « 18 → 19 tests ».
 - Drift de hooks absorbé : ~39 fichiers `.docs/features/**` (bumps `progress.updated` + entrées worklog auto) générés par auto-progress/auto-worklog pendant la session — bénins, commités pour rendre l'arbre propre.
 - Angles non couverts à exercer avant Phase 1 (issus de la critique de complétude) : `copier update` incrémental sur un consumer **existant** (pré-type) ; robustesse backfill sur frontmatter atypiques (CRLF, type imbriqué) ; chemin git-hook **Codex** réel ; non-staleness du cache feature-index après re-typage.
+
+## 2026-06-26 11:17 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja

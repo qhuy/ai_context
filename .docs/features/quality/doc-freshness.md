@@ -20,7 +20,7 @@ progress:
   step: "quality gate alignée sur Pack A lean"
   blockers: []
   resume_hint: "vérifier check-feature-freshness --warn et staged strict avant commit"
-  updated: 2026-06-01
+  updated: 2026-06-26
 type: feature
 ---
 

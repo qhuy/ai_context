@@ -132,3 +132,7 @@
 - Fichiers modifiés :
   - .claude/skills/aic-ship/SKILL.md
   - template/.claude/skills/aic-ship/SKILL.md.jinja
+
+## 2026-06-26 11:43 — auto
+- Fichiers modifiés :
+  - .ai/workflows/quality-gate.md

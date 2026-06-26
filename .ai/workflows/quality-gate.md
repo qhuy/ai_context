@@ -17,6 +17,7 @@ bash .ai/scripts/check-ai-references.sh
 bash .ai/scripts/check-features.sh --no-write
 bash .ai/scripts/check-feature-docs.sh     # warnings par défaut ; --strict <scope/id> près de DONE
 bash .ai/scripts/check-feature-coverage.sh   # --warn (défaut)
+bash .ai/scripts/check-feature-freshness.sh --worktree --warn   # fraîcheur fin de tour (informatif ; bloquant via hook Stop côté Claude)
 ```
 
 ### Phase 2 — Observabilité
@@ -45,6 +46,7 @@ Format markdown, même structure à chaque fois :
 | check-features --no-write | ✅ / ❌ | <sortie> |
 | check-feature-docs | ✅ / ⚠️ / ❌ | <sections manquantes ou strict OK> |
 | check-feature-coverage | ✅ / ⚠️ | <N orphelins> |
+| check-feature-freshness --worktree | ✅ / ⚠️ | <features dont le code working-tree change sans doc> |
 | measure-context-size | ℹ️ | <chars total> |
 | feature.progress | ✅ / ❌ | phase=<X>, blockers=<N> |
 

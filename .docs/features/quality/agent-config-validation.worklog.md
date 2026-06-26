@@ -49,3 +49,7 @@ Source session : automation veille-techno
 ## 2026-06-01 12:33 — auto
 - Fichiers modifiés :
   - .github/workflows/ai-context-check.yml
+
+## 2026-06-26 11:43 — auto
+- Fichiers modifiés :
+  - .ai/workflows/quality-gate.md

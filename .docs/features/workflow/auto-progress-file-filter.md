@@ -30,7 +30,7 @@ progress:
   step: "implémentation livrée, 22 cas test PASS, prêt à commit"
   blockers: []
   resume_hint: "commit feat(workflow) ; #5 stop-hook-idempotence consommera le helper dans un turn dédié"
-  updated: 2026-06-25
+  updated: 2026-06-26
 type: feature
 ---
 

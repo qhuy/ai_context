@@ -51,18 +51,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .ai/scripts/auto-worklog-flush.sh",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "bash .ai/scripts/auto-progress.sh",
-            "timeout": 5
-          },
-          {
-            "type": "command",
-            "command": "bash .ai/scripts/context-relevance-log.sh summary",
-            "timeout": 5
+            "command": "bash .ai/scripts/stop-sequence.sh",
+            "timeout": 20
           }
         ]
       }

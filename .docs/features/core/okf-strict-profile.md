@@ -50,7 +50,7 @@ progress:
   step: "Phase 0 implémentée et validée (smoke-test + 19 tests unitaires dont test-okf-type + dogfood-drift) en régime warn-only"
   blockers: []
   resume_hint: "Phase 0 livrée. Reste : confirmer HANDOFF quality/product/workflow, puis planifier le release d'enforce vN+1 (type dans required[] + check exit 1 ; si bump schema_version un jour, mettre à jour l'assertion == \"1\" du smoke-test)"
-  updated: 2026-06-25
+  updated: 2026-06-26
 ---
 
 # Profil strict OKF des fiches feature

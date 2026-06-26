@@ -242,3 +242,19 @@
 ## 2026-06-25 12:34 — auto
 - Fichiers modifiés :
   - .ai/scripts/check-features.sh
+
+## 2026-06-26 11:17 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - .ai/scripts/check-feature-freshness.sh
+
+## 2026-06-26 11:34 — auto
+- Fichiers modifiés :
+  - .ai/quality/QUALITY_GATE.md
+  - .ai/scripts/stop-doc-gate.sh
+  - .ai/scripts/stop-sequence.sh
+  - .claude/settings.json
+
+## 2026-06-26 11:43 — auto
+- Fichiers modifiés :
+  - .ai/workflows/quality-gate.md

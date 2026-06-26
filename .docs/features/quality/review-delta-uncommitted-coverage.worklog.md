@@ -138,3 +138,8 @@
 ## 2026-06-25 12:34 — auto
 - Fichiers modifiés :
   - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-06-26 11:17 — auto
+- Fichiers modifiés :
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja

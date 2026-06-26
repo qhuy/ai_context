@@ -89,3 +89,7 @@
   - template/.ai/scripts/aic.sh.jinja
   - template/.ai/scripts/build-feature-index.sh.jinja
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
+
+## 2026-06-26 11:34 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh

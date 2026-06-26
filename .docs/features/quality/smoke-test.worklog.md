@@ -130,3 +130,13 @@
 ## 2026-06-01 22:26 — auto
 - Fichiers modifiés :
   - tests/unit/test-pr-report-glob-match.sh
+
+## 2026-06-26 11:34 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh
+  - tests/unit/test-read-only-checks-contract.sh
+  - tests/unit/test-stop-turn-doc-gate.sh
+
+## 2026-06-26 11:43 — auto
+- Fichiers modifiés :
+  - tests/unit/test-stop-turn-doc-gate.sh

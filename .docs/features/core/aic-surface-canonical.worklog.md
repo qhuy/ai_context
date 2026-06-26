@@ -100,3 +100,7 @@
   - copier.yml
   - docs/upgrading.md
   - template/.ai/scripts/aic.sh.jinja
+
+## 2026-06-26 11:34 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh

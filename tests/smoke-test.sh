@@ -63,6 +63,10 @@ echo "[0h/28] tests unitaires (agent config)"
 bash tests/unit/test-check-agent-config.sh
 echo
 
+echo "[0i/28] tests unitaires (gate Stop fin de tour)"
+bash tests/unit/test-stop-turn-doc-gate.sh
+echo
+
 echo "[1/28] copier copy (profil par défaut)"
 copier copy --defaults --trust \
   --data project_name=smoke-project \

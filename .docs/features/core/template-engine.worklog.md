@@ -345,3 +345,11 @@
   - template/.ai/scripts/check-features.sh.jinja
   - template/.ai/scripts/migrate-okf-type.sh.jinja
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
+
+## 2026-06-26 11:17 — auto
+- Fichiers modifiés :
+  - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-06-26 11:34 — auto
+- Fichiers modifiés :
+  - template/.ai/quality/QUALITY_GATE.md.jinja
