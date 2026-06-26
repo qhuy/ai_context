@@ -31,3 +31,7 @@ Source session : automation veille-techno
 - `stop-doc-gate.sh` reste Claude-only (protocole `decision:block` / `stop_hook_active`). Surface Codex `Stop` (config.toml `[hooks]`, ~/.codex/hooks.json) documentée « à valider contre la surface live » ; pas de `.codex/` livré par défaut (décision inchangée).
 - Cross-ref ajouté vers `workflow/stop-turn-doc-gate` (pas de `depends_on` réciproque pour éviter un cycle).
 - Validation : voir commit (check-features, check-feature-docs --strict, check-agent-config, dogfood-drift, smoke-test).
+
+## 2026-06-26 15:03 — auto
+- Fichiers modifiés :
+  - .ai/workflows/codex-hooks-parity.md
