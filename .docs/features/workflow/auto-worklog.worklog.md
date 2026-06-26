@@ -24,3 +24,7 @@
 - Fiche `workflow/auto-worklog` mise à jour (Périmètre, Invariants, Comportement, Décisions, Validation, Historique).
 - Test : `tests/unit/test-auto-worklog-flush.sh` (worklog appendé + `updated:` inchangé + log consommé) ; enregistré dans `tests/smoke-test.sh` [0j].
 - Validation : test PASS, `bash -n`, dogfood-drift + smoke-test (voir commit).
+
+## 2026-06-26 16:56 — auto
+- Fichiers modifiés :
+  - .ai/scripts/auto-worklog-flush.sh

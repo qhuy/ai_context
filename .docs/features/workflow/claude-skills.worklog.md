@@ -60,3 +60,6 @@
 
 ## 2026-06-26 — couverture incidente (workflow/codex-hooks-parity)
 - `template/.ai/workflows/codex-hooks-parity.md.jinja` (couvert par le glob `touches:`) : recette parité fraîcheur Codex. Aucune logique de skill modifiée.
+
+## 2026-06-26 — couverture incidente (workflow/feature-consolidation-nudge)
+- Surface partagée touchée (.claude/settings.json, jinjas template, ou .ai/workflows/feature-update.md) couverte par le glob `touches:` de cette feature. Aucun changement de comportement propre.
