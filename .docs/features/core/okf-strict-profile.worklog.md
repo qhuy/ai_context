@@ -60,3 +60,7 @@
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-06-26 15:48 — auto
+- Fichiers modifiés :
+  - CHANGELOG.md

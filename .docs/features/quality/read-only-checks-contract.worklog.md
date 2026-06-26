@@ -132,3 +132,7 @@
 - Fichiers modifiés :
   - .ai/workflows/quality-gate.md
   - tests/unit/test-stop-turn-doc-gate.sh
+
+## 2026-06-26 15:48 — auto
+- Fichiers modifiés :
+  - CHANGELOG.md

@@ -158,3 +158,7 @@ feat(core): installer les skills Codex par défaut
 ## 2026-06-26 11:34 — auto
 - Fichiers modifiés :
   - tests/smoke-test.sh
+
+## 2026-06-26 15:48 — auto
+- Fichiers modifiés :
+  - CHANGELOG.md
