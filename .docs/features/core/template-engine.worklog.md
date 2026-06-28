@@ -394,3 +394,7 @@
 ## 2026-06-28 20:51 — auto
 - Fichiers modifiés :
   - template/.ai/scripts/build-feature-index.sh.jinja
+
+## 2026-06-28 — squelette guardrails consommateur (Phase 0 audit : A4)
+- Ajout `template/.ai/guardrails.md.jinja` : squelette générique (non-goals/glossaire à compléter + règle B0 recommandée), rendu dans tout projet consommateur. Corrige A4 côté downstream (l'`index.md.jinja` référençait `.ai/guardrails.md` sans le fournir). Vérifié : `copier copy` produit bien `.ai/guardrails.md`.
+- Fichiers : template/.ai/guardrails.md.jinja

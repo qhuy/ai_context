@@ -93,7 +93,7 @@ is_ignored_runtime_extra() {
   local label="$1"
   local rel="$2"
   case "$rel" in
-    .feature-index.json|.progress-history.jsonl|.session-edits.log|.session-edits.flushed|.context-relevance.jsonl|.context-relevance.jsonl.old|scripts/dogfood-update.sh|scripts/check-dogfood-drift.sh|project|project/*)
+    .feature-index.json|.progress-history.jsonl|.session-edits.log|.session-edits.flushed|.context-relevance.jsonl|.context-relevance.jsonl.old|scripts/dogfood-update.sh|scripts/check-dogfood-drift.sh|guardrails.md|project|project/*)
       return 0
       ;;
   esac
@@ -126,6 +126,7 @@ echo "- .github/workflows/ai-context-check.yml"
 echo "- .github/workflows/template-smoke-test.yml"
 echo "- README.md / CHANGELOG.md / PROJECT_STATE.md / MIGRATION.md"
 echo "- .docs/frames/YYYY-MM-DD-*.md"
+echo "- .ai/guardrails.md (projet-spécifique, comme .ai/project/**)"
 echo "- tests/**"
 echo "- template/**"
 

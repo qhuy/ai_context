@@ -136,3 +136,6 @@
 - Fichiers modifiés :
   - .ai/scripts/build-feature-index.sh
   - template/.ai/scripts/build-feature-index.sh.jinja
+
+## 2026-06-28 — couverture incidente (Phase 0 audit : exclusion guardrails dans check-dogfood-drift)
+- Surface partagée touchée (`.ai/scripts/check-dogfood-drift.sh` : ajout `.ai/guardrails.md` aux exclusions). Aucun changement de comportement propre à cette feature. (Coût de sur-couverture `touches:` — cf. quality/touches-breadth-guard.)

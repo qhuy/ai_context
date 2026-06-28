@@ -1,0 +1,28 @@
+# Garde-fous — {{ project_name }}
+
+> Couche de cadrage produit. Chargée **à la demande** (Pack A) uniquement pour : non-goals,
+> glossaire métier, gouvernance du backlog. Ne pas précharger. **Fichier projet-spécifique —
+> à compléter** par le projet.
+
+## Non-goals
+
+Lister ce que le projet refuse explicitement de faire (anti-scope), pour éviter que les agents
+ne dérivent vers du hors-périmètre. Exemples :
+
+- Ne pas remplacer l'outil de roadmap / ticketing de l'équipe (les **relier**, pas les dupliquer).
+- Ne pas dupliquer une spec externe (BMAD, Spec Kit, tickets) — y faire référence via `external_refs`.
+
+## Glossaire métier
+
+Définir ici les termes ambigus du domaine, pour lever toute ambiguïté entre agents et humains.
+
+## Gouvernance du backlog
+
+### B0 — Budget méta-process (recommandé)
+
+Toute nouvelle fiche de scope `workflow` ou à objet **méta-process** (outillage du process, pas
+valeur livrée à l'utilisateur) ne peut être créée qu'en **clôturant simultanément** une fiche méta
+existante (`done` / `archived`).
+
+**But** : garder le feature mesh comme un **registre de livrables**, pas un journal de process qui
+prolifère.

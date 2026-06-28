@@ -314,3 +314,13 @@
 ## 2026-06-28 20:51 — auto
 - Fichiers modifiés :
   - .ai/scripts/build-feature-index.sh
+
+## 2026-06-28 22:05 — auto
+- Fichiers modifiés :
+  - .docs/frames/2026-06-28-audit-strategique-remediation.md
+
+## 2026-06-28 — guardrails.md projet-spécifique + exclusion drift (Phase 0 audit : B0 + A4)
+- Création `.ai/guardrails.md` (runtime, projet-spécifique) : non-goals ai_context, glossaire, et règle de gouvernance **B0** (budget méta-process) décidée dans le frame 2026-06-28. Corrige A4 (fichier référencé par l'index Pack A mais absent).
+- `check-dogfood-drift.sh` : `.ai/guardrails.md` ajouté aux exclusions (projet-spécifique, même catégorie que `.ai/project/**`) + ligne de transparence en sortie. Drift ✅ aligné.
+- Squelette template couvert par core/template-engine (`template/.ai/guardrails.md.jinja`).
+- Fichiers : .ai/guardrails.md, .ai/scripts/check-dogfood-drift.sh
