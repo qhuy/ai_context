@@ -38,3 +38,6 @@
 ## 2026-06-25 — impact OKF (additif, hors comportement)
 - `aic.sh(.jinja)` étendu par `core/okf-strict-profile` : sous-dispatch `migrate okf-type` ; le défaut `migrate` et la commande `frame` restent inchangés.
 - Aucun impact sur le cadrage `aic frame` / `execution_ref` : extension rétro-compatible. Feature reste `done`.
+
+## 2026-06-28 — couverture incidente (frame remédiation : avancement A1/A2)
+- `.docs/frames/2026-06-28-audit-strategique-remediation.md` mis à jour (avancement Phase 1). Aucun changement de comportement.

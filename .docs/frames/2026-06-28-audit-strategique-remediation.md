@@ -5,7 +5,7 @@ scope_probable: "product/ai-context-stability-migration"
 route: "manual"
 level: "high"
 evidence: "Audit multi-agents 2026-06-28 (6 cartographies + 5 recherches zeitgeist sourcées + 3 critiques adverses, 312 lectures). Dashboard : artifact claude.ai/code/artifact/abd891d3-a2bf-40ce-80cd-cc183f0def27"
-next_hint: "Phase 0 CLOSE (B0+A4 dans .ai/guardrails.md ; B1/B2b done ; B2a recommit) — commits b9bb81d/df84876/be9b0e2. Reprendre par Phase 1 : A1 (body-leak, chip task_702c5f98) puis A2 (activer le moat : core.hooksPath=.githooks + vérif doctor)."
+next_hint: "Phase 0 + A1 + A2 + A4 livrés (commits b9bb81d→919ae39). Reprendre Phase 1 : A3/A5-A13. PRIORITÉ REMONTÉE : touches-breadth (quality/touches-breadth-guard) — la sur-couverture taxe chaque fix de fichier partagé (12 fiches en couverture incidente pour le seul A1, moat actif)."
 created_at: "2026-06-28"
 updated_at: "2026-06-28"
 ---
@@ -33,7 +33,12 @@ d'accrétion non gouvernée sur un bus factor de 1.
   - B2a : `product/readme-positioning` passée `decision_state: commit`, re-datée, absorbe A5/A10/C1 — commit `df84876`.
   - Frame conteneur posé — commit `b9bb81d`.
   - Friction observée : exclure guardrails du drift a obligé 5 fiches (sur-couverture `touches:`) → evidence concrète pour `quality/touches-breadth-guard`.
-- **Reste** : Phase 1 (bac A, A1+A2 en tête), Phase 2 (C1→C2), Phase 3 (D), Phase 4 (C3 + later).
+- **2026-06-28 — Phase 1 entamée.**
+  - A2 : moat git réactivé sur le dogfood (`core.hooksPath=.githooks`), `doctor` le vérifie, rejet d'un `feat:` sans fiche prouvé — commit `908d14b`.
+  - A1 : parseur fallback de `build-feature-index` borné au frontmatter (fin du body-leak) + flow-style + test + parité jinja — commit `919ae39`.
+  - A4 : déjà livré en Phase 0.
+  - **Signal fort** : A1 a exigé 12 fiches en couverture incidente (sur-couverture `touches:`). Le moat étant désormais actif, cette taxe bloque chaque fix de fichier partagé → **remonter `quality/touches-breadth-guard` avant le reste de la Phase 1.**
+- **Reste** : Phase 1 (A3, A5–A13), Phase 2 (C1→C2), Phase 3 (D), Phase 4 (C3 + later).
 
 ## Niveau de cadrage
 
