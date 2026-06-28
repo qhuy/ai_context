@@ -39,3 +39,6 @@
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-06-26 — couverture incidente (core/feature-index-cache fix robustesse)
+- Surface partagée touchée (build-feature-index.sh + jinja, tests, ou tests/smoke-test.sh) couverte par le glob `touches:` de cette feature. Aucun changement de comportement propre.

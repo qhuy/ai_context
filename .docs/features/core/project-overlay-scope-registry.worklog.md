@@ -81,3 +81,6 @@
 - Fichiers modifiés :
   - tests/smoke-test.sh
   - tests/unit/test-check-touches-breadth.sh
+
+## 2026-06-26 — couverture incidente (core/feature-index-cache fix robustesse)
+- Surface partagée touchée (build-feature-index.sh + jinja, tests, ou tests/smoke-test.sh) couverte par le glob `touches:` de cette feature. Aucun changement de comportement propre.

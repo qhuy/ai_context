@@ -12,6 +12,7 @@ touches:
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/pr-report.sh.jinja
   - .ai/scripts/pr-report.sh
+  - tests/unit/test-build-feature-index-robust.sh
 progress:
   phase: review
   step: "bootstrap dog-fooding (v0.9 historique)"
@@ -97,3 +98,4 @@ type: feature
 - 2026-05-03 : index enrichi avec `touches_shared` et helpers `_lib.sh` dédiés (`features_matching_shared_path`, `features_related_to_path`). `features_matching_path` reste volontairement limité aux `touches` directs pour préserver la sémantique bloquante.
 - 2026-05-03 : index enrichi avec l'objet optionnel `product` afin que les scripts read-only puissent calculer status, portfolio et review sans reparsing spécifique.
 - 2026-05-04 : index enrichi avec l'objet optionnel `external_refs` pour exposer les liens BMAD, Spec Kit, tickets ou docs externes aux rapports et outils downstream.
+- 2026-06-26 : **fix robustesse** — l'invariant « fiche invalide exclue + warning, build jamais arrêté » (déjà documenté) n'était PAS implémenté côté `yq` : un frontmatter YAML malformé (ex. titre non quoté finissant par `:`) faisait planter `build-feature-index` et, en cascade, tous les hooks qui l'appellent (`features-for-path`, `pre-turn-reminder`, auto-worklog…), bloquant toute édition. Fix : validation `yq -e` du frontmatter AVANT extraction (warn + `return 1` si illisible) + isolation par fiche dans la boucle (`if entry=$(feature_to_json …)`), sous `set -e`. Le fallback awk était déjà tolérant. Test : `tests/unit/test-build-feature-index-robust.sh`. `check-features` reste le validateur strict (signale + exit 1, sans cascade).
