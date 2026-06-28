@@ -23,8 +23,8 @@ touches:
   - template/.ai/scripts/product-portfolio.sh.jinja
   - template/.claude/skills/aic-*/**
   - template/.agents/skills/aic-*/**
+touches_shared:
   - tests/smoke-test.sh
-touches_shared: []
 product: {}
 external_refs: {}
 doc:

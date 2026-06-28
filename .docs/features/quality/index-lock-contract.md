@@ -7,8 +7,8 @@ depends_on: []
 touches:
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
+touches_shared:
   - tests/smoke-test.sh
-touches_shared: []
 product: {}
 external_refs:
   ai_debate: "/Users/huy/Documents/Perso/ai_debate/.ai-debate/discussions/0013-qualite-code-ai-context.md#q1"

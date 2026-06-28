@@ -9,10 +9,10 @@ touches:
   - template/.agents/skills/**
   - .ai/scripts/dogfood-update.sh
   - .ai/scripts/check-dogfood-drift.sh
-  - tests/smoke-test.sh
   - README.md
   - CHANGELOG.md
-touches_shared: []
+touches_shared:
+  - tests/smoke-test.sh
 product: {}
 external_refs: {}
 doc:

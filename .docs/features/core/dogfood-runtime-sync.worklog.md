@@ -296,3 +296,9 @@
 ## 2026-06-26 16:56 — auto
 - Fichiers modifiés :
   - .ai/scripts/auto-worklog-flush.sh
+
+## 2026-06-26 17:25 — auto
+- Fichiers modifiés :
+  - .ai/scripts/fiche-consolidation-nudge.sh
+  - .ai/workflows/feature-update.md
+  - .claude/settings.json
