@@ -37,3 +37,6 @@
 - Fichiers modifiés :
   - .ai/scripts/build-feature-index.sh
   - template/.ai/scripts/build-feature-index.sh.jinja
+
+## 2026-06-26 — couverture incidente (CHANGELOG clôture session)
+- `CHANGELOG.md` (entrées [Unreleased] des features de la session) couvert par le glob `touches:` de cette feature. Aucun changement de comportement propre. (CHANGELOG.md = candidat touches_shared, cf. quality/touches-breadth-guard.)
