@@ -100,3 +100,7 @@ feat(quality): corriger le contrat de lock index
 ## 2026-06-26 16:56 — auto
 - Fichiers modifiés :
   - tests/smoke-test.sh
+
+## 2026-06-26 17:25 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh

@@ -143,3 +143,7 @@
 ## 2026-06-26 16:56 — auto
 - Fichiers modifiés :
   - tests/unit/test-auto-worklog-flush.sh
+
+## 2026-06-26 17:25 — auto
+- Fichiers modifiés :
+  - tests/unit/test-fiche-consolidation-nudge.sh

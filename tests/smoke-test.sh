@@ -79,6 +79,10 @@ echo "[0k/28] tests unitaires (nudge consolidation fiches)"
 bash tests/unit/test-fiche-consolidation-nudge.sh
 echo
 
+echo "[0l/28] tests unitaires (garde-fou sur-couverture touches:)"
+bash tests/unit/test-check-touches-breadth.sh
+echo
+
 echo "[1/28] copier copy (profil par défaut)"
 copier copy --defaults --trust \
   --data project_name=smoke-project \

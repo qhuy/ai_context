@@ -207,3 +207,8 @@
 - Fichiers modifiés :
   - tests/smoke-test.sh
   - tests/unit/test-auto-worklog-flush.sh
+
+## 2026-06-26 17:25 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh
+  - tests/unit/test-fiche-consolidation-nudge.sh

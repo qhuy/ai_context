@@ -32,11 +32,11 @@ touches:
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
   - README_AI_CONTEXT.md
   - template/README_AI_CONTEXT.md.jinja
-  - tests/smoke-test.sh
 touches_shared:
   - copier.yml
   - README.md
   - CHANGELOG.md
+  - tests/smoke-test.sh
 product:
   type: initiative
   bet: "Relier les décisions produit, les artefacts externes et les features dev améliore la qualité des décisions sans créer de roadmap parallèle."

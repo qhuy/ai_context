@@ -154,3 +154,8 @@
 
 ## 2026-06-26 — couverture incidente (workflow/feature-consolidation-nudge)
 - Surface partagée touchée (.claude/settings.json, jinjas template, ou .ai/workflows/feature-update.md) couverte par le glob `touches:` de cette feature. Aucun changement de comportement propre.
+
+## 2026-06-26 17:25 — auto
+- Fichiers modifiés :
+  - .ai/workflows/feature-update.md
+  - template/.ai/workflows/feature-update.md.jinja
