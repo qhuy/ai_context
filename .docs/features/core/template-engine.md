@@ -11,6 +11,7 @@ touches:
   - docs/upgrading.md
   - docs/variables.md
   - .ai/scripts/aic.sh
+touches_shared:
   - template/**
 progress:
   phase: review

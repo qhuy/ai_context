@@ -8,6 +8,8 @@ depends_on:
   - core/feature-mesh
   - workflow/git-hooks
 touches:
+  - tests/smoke-test.sh
+touches_shared:
   - tests/**
 progress:
   phase: review

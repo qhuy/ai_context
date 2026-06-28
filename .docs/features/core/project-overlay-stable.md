@@ -17,7 +17,7 @@ touches:
   - ".ai/scripts/dogfood-update.sh"
   - "docs/upgrading.md"
   - "README.md"
-  - "tests/**"
+  - "tests/unit/test-project-overlay.sh"
 doc:
   level: standard
   requires:

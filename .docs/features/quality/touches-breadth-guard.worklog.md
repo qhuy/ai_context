@@ -12,3 +12,9 @@
 - Run live : le guard surface README_AI_CONTEXT.md (13 features), README.md (10), `_lib.sh`/`aic.sh` (7), CHANGELOG.md (6)… + globs B (`.ai/**`, `template/**`, `tests/**`). `smoke-test.sh` est sorti du signal A après reclassement (confirme l'effet).
 - Incident corrigé : le titre de cette fiche se terminait par `touches:` (deux-points non quoté) → YAML cassé → `build-feature-index.sh` plantait et cascade sur les hooks. Titre quoté. NB : build-feature-index gagnerait à ignorer/avertir sur une fiche malformée plutôt que crasher (suivi).
 - Suivi : reclasser incrémentalement les fichiers flagués quand on touche leur feature (piloté par le guard + le nudge de consolidation).
+
+## 2026-06-28 — 2e vague de reclassement (globs catch-all, Signal B)
+- `template/**` (template-engine) → touches_shared ; `tests/**` (smoke-test → tests/smoke-test.sh ; project-overlay-scope-registry/stable → tests/unit/test-project-overlay.sh).
+- Signal B ne liste plus que les globs légitimes (.ai/**, .githooks/**). Dé-taxe vérifiée : édit .jinja n'exige plus template-engine. check-features ✅.
+- Non reclassé (co-propriété légitime) : build-feature-index.sh/.jinja sur index-contract-v2/feature-mesh-contract-alignment/okf-strict-profile.
+- Fichiers : 4 fiches reclassées + cette fiche.

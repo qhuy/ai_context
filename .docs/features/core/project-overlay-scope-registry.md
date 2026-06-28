@@ -12,7 +12,7 @@ touches:
   - "template/.ai/OWNERSHIP.md.jinja"
   - ".ai/templates/project-overlay/README.md"
   - "template/.ai/templates/project-overlay/README.md.jinja"
-  - "tests/**"
+  - "tests/unit/test-project-overlay.sh"
 touches_shared:
   - ".ai/scripts/check-dogfood-drift.sh"
   - ".ai/scripts/check-ai-references.sh"
