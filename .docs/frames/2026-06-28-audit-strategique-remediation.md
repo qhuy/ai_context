@@ -5,7 +5,7 @@ scope_probable: "product/ai-context-stability-migration"
 route: "manual"
 level: "high"
 evidence: "Audit multi-agents 2026-06-28 (6 cartographies + 5 recherches zeitgeist sourcées + 3 critiques adverses, 312 lectures). Dashboard : artifact claude.ai/code/artifact/abd891d3-a2bf-40ce-80cd-cc183f0def27"
-next_hint: "Exécuter Phase 0 (gouvernance) avant tout : poser la règle de budget + clore les décisions product. Puis Phase 1 (stabiliser) en commençant par A1 (body-leak, chip task_702c5f98) et A2 (activer le moat)."
+next_hint: "Phase 0 CLOSE (B0+A4 dans .ai/guardrails.md ; B1/B2b done ; B2a recommit) — commits b9bb81d/df84876/be9b0e2. Reprendre par Phase 1 : A1 (body-leak, chip task_702c5f98) puis A2 (activer le moat : core.hooksPath=.githooks + vérif doctor)."
 created_at: "2026-06-28"
 updated_at: "2026-06-28"
 ---
@@ -23,6 +23,17 @@ Verdict de l'audit : ingénierie réelle et disciplinée ; philosophie de contex
 du temps voire en avance ; mais surface > maturité, moat (enforcement déterministe) ni activé ni
 mis en avant, stratégie de fichiers rattrapée par `AGENTS.md` + le natif Claude Code, et trajectoire
 d'accrétion non gouvernée sur un bus factor de 1.
+
+## Avancement
+
+- **2026-06-28 — Phase 0 (Gouverner) CLOSE.**
+  - B0 adopté et ancré dans `.ai/guardrails.md` (+ squelette template pour les consommateurs) — commit `be9b0e2`. Corrige aussi **A4** (référence guardrails cassée).
+  - B1 : `product/ai-context-stability-migration` clôturée (`done`) + critère de sortie écrit — commit `df84876`.
+  - B2b : `product/product-portfolio-loop` clôturée (`done`) — commit `df84876`.
+  - B2a : `product/readme-positioning` passée `decision_state: commit`, re-datée, absorbe A5/A10/C1 — commit `df84876`.
+  - Frame conteneur posé — commit `b9bb81d`.
+  - Friction observée : exclure guardrails du drift a obligé 5 fiches (sur-couverture `touches:`) → evidence concrète pour `quality/touches-breadth-guard`.
+- **Reste** : Phase 1 (bac A, A1+A2 en tête), Phase 2 (C1→C2), Phase 3 (D), Phase 4 (C3 + later).
 
 ## Niveau de cadrage
 

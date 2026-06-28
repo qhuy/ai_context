@@ -324,3 +324,6 @@
 - `check-dogfood-drift.sh` : `.ai/guardrails.md` ajouté aux exclusions (projet-spécifique, même catégorie que `.ai/project/**`) + ligne de transparence en sortie. Drift ✅ aligné.
 - Squelette template couvert par core/template-engine (`template/.ai/guardrails.md.jinja`).
 - Fichiers : .ai/guardrails.md, .ai/scripts/check-dogfood-drift.sh
+
+## 2026-06-28 — frame remédiation : avancement Phase 0
+- `.docs/frames/2026-06-28-audit-strategique-remediation.md` : section Avancement + next_hint mis à jour (Phase 0 close). Aucun changement runtime.
