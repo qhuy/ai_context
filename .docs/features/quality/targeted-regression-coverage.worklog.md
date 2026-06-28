@@ -111,3 +111,8 @@
 - Fichiers modifiés :
   - tests/smoke-test.sh
   - tests/unit/test-fiche-consolidation-nudge.sh
+
+## 2026-06-28 20:34 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh
+  - tests/unit/test-check-touches-breadth.sh

@@ -159,3 +159,7 @@
 - Fichiers modifiés :
   - .ai/workflows/feature-update.md
   - template/.ai/workflows/feature-update.md.jinja
+
+## 2026-06-28 20:34 — auto
+- Fichiers modifiés :
+  - .ai/workflows/quality-gate.md

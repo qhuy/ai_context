@@ -302,3 +302,8 @@
   - .ai/scripts/fiche-consolidation-nudge.sh
   - .ai/workflows/feature-update.md
   - .claude/settings.json
+
+## 2026-06-28 20:34 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-touches-breadth.sh
+  - .ai/workflows/quality-gate.md

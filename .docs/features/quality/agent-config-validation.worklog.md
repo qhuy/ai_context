@@ -56,3 +56,7 @@ Source session : automation veille-techno
 
 ## 2026-06-26 — couverture incidente (quality/touches-breadth-guard)
 - `.ai/workflows/quality-gate.md` (+ jinja) touché (ajout du check check-touches-breadth en Phase 1), couvert par le glob `touches:` de cette feature. Aucun changement de comportement propre.
+
+## 2026-06-28 20:34 — auto
+- Fichiers modifiés :
+  - .ai/workflows/quality-gate.md
