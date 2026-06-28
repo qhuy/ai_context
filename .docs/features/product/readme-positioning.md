@@ -13,8 +13,8 @@ product:
   target_user: "Développeurs et équipes qui veulent rendre Claude/Codex fiables sur un repo mature"
   success_metric: "Un lecteur comprend en moins de cinq minutes le problème, la promesse, l'installation, le workflow quotidien et les limites actuelles."
   leading_indicator: "Le README expose d'abord la valeur, puis le quickstart, puis la référence technique."
-  decision_state: explore
-  next_decision_date: 2026-05-20
+  decision_state: commit
+  next_decision_date: 2026-07-31
   kill_criteria:
     - "Le README devient marketing au détriment des commandes nécessaires."
     - "Le README cache les limites réelles entre Claude, Codex et les autres agents."
@@ -35,11 +35,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "README réécrit et validations ciblées en cours"
+  phase: implement
+  step: "repositionnement étendu : canonicité README, honnêteté multi-agent en tête, AGENTS.md source unique"
   blockers: []
-  resume_hint: "Relire le README comme un nouvel utilisateur : promesse, quickstart, limites runtime, commandes aic, migration."
-  updated: "2026-05-06"
+  resume_hint: "exécuter A5 (canonicité README_AI_CONTEXT), A10 (honnêteté multi-agent dès la 1ère ligne) puis cadrer C1 (AGENTS.md source unique) — cf. frame 2026-06-28"
+  updated: "2026-06-28"
 type: feature
 ---
 
@@ -125,3 +125,4 @@ Un lecteur doit pouvoir répondre rapidement à quatre questions :
 ## Historique / décisions
 
 - 2026-05-06 : création du chantier après validation de la surface `aic`.
+- 2026-06-28 : `decision_state` explore→commit. Le bet « README vendeur » est validé (le README réécrit existe et tient) ; le chantier reste ouvert et absorbe les items du frame de remédiation 2026-06-28 — A5 (canonicité de `README_AI_CONTEXT.md`, sorti de la racine), A10 (honnêteté multi-agent remontée dès la 1ère ligne, Codex requalifié « pilote »), et le futur cadrage C1 (`AGENTS.md` source unique + symlink/import). `next_decision_date` re-datée au 2026-07-31.

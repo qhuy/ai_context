@@ -2,7 +2,7 @@
 id: ai-context-stability-migration
 scope: product
 title: Stabilisation et migration ai_context
-status: active
+status: done
 depends_on:
   - core/feature-mesh
   - core/feature-index-cache
@@ -25,7 +25,7 @@ product:
   success_metric: "Les changements read-only/index/workflows disposent d'un chemin de migration documenté, de tests branchés et d'une compatibilité Copier validée."
   leading_indicator: "Les features techniques liées déclarent product.initiative, documentent la migration downstream et passent leurs checks ciblés."
   decision_state: commit
-  next_decision_date: 2026-05-21
+  next_decision_date: 2026-06-28
   kill_criteria:
     - "Le programme devient une refonte globale sans découpage livrable."
     - "Les changements cassent copier update ou les hooks existants sans migration documentée."
@@ -48,11 +48,11 @@ doc:
     rollout: true
     observability: false
 progress:
-  phase: implement
-  step: "P0 index/read-only et fallback portfolio en review"
+  phase: done
+  step: "initiative clôturée — P0 read-only/index/fallback/OKF livré (v0.13)"
   blockers: []
-  resume_hint: "prochaine tranche recommandée : rationalisation workflow/skills ou test-suite-reorg selon priorité"
-  updated: 2026-06-26
+  resume_hint: "clôturée ; le durcissement continu est porté par .docs/frames/2026-06-28-audit-strategique-remediation.md, pas par une initiative stabilisation perpétuelle"
+  updated: 2026-06-28
 type: feature
 ---
 
@@ -198,3 +198,4 @@ Les signaux attendus sont les checks locaux, les tests CI et les rapports de mig
 - 2026-05-14 : deux passes d'audit ont confirmé que les priorités ne sont pas une analyse supplémentaire mais un programme de stabilisation/migration.
 - 2026-05-14 : décision de commencer par read-only/cache/index avant les nettoyages documentaires généraux.
 - 2026-05-14 : décision de ne pas supprimer de fonctionnalité sans période de compatibilité downstream.
+- 2026-06-28 : **clôture (done)**. Le périmètre P0 est livré en v0.13 (`quality/read-only-checks-contract`, `core/index-contract-v2`, `core/feature-mesh-contract-alignment`, fallback portfolio, profil OKF). Critère de sortie retenu : une « stabilisation » ne peut rester `active` en permanence pendant qu'on empile des features — elle se clôt quand son P0 est shippé. Le durcissement continu (audit stratégique 2026-06-28) est porté par `.docs/frames/2026-06-28-audit-strategique-remediation.md`, pas par une initiative perpétuelle. Critères mesurables du cycle suivant (cf. frame, bac D) : ratio `fix:feat(quality)` < 1:1 et 0 draft gelé > 30 j.

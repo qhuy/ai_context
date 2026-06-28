@@ -2,7 +2,7 @@
 id: product-portfolio-loop
 scope: product
 title: Product Traceability Loop
-status: active
+status: done
 depends_on:
   - workflow/agent-behavior
   - core/feature-mesh
@@ -43,8 +43,8 @@ product:
   target_user: "Développeurs solo et équipes produit/tech qui utilisent ai_context"
   success_metric: "Une initiative product peut être suivie via status, portfolio/review et external_refs en sortie CLI/index stable."
   leading_indicator: "Smoke-test couvre product-status, product-portfolio et product-review sur un scaffold Copier."
-  decision_state: explore
-  next_decision_date: 2026-05-17
+  decision_state: commit
+  next_decision_date: 2026-06-28
   kill_criteria:
     - "Le product mesh impose une roadmap parallèle ou augmente le reminder."
     - "Les rapports ne permettent pas de relier initiative, dev et evidence."
@@ -55,11 +55,11 @@ product:
     urgency: medium
     strategic_fit: high
 progress:
-  phase: review
-  step: "rapports product alignés et testés read-only"
+  phase: done
+  step: "couche traceability product read-only livrée et testée"
   blockers: []
-  resume_hint: "relire le delta product et décider si le scoring portfolio doit être durci dans une feature dédiée"
-  updated: 2026-06-26
+  resume_hint: "clos ; durcissement scoring portfolio + WARN CI next_decision_date dépassée = feature dédiée si priorisés (cf. frame 2026-06-28, bac B5)"
+  updated: 2026-06-28
 type: feature
 ---
 
@@ -148,3 +148,4 @@ initiative product -> refs externes -> features dev liées -> evidence -> décis
 - 2026-05-04 : lean Codex confirmé : la traceability product reste on-demand et n'augmente pas le Pack A ; le smoke continue de couvrir le rendu product sans imposer de chargement produit au démarrage.
 - 2026-05-04 : le nouveau template feature documente explicitement les décisions produit/fonctionnelles dans `Décisions`, `Périmètre`, `Validation` et les modules conditionnels. `external_refs` et les initiatives product restent des liens de traceability, pas des duplications de specs externes.
 - 2026-05-14 : alignement effectif du contrat read-only. `check-product-links`, `product-status`, `product-portfolio` et `product-review` consomment un index temporaire ou un cache existant, mais ne reconstruisent plus `.ai/.feature-index.json` implicitement.
+- 2026-06-28 : **clôture (done)**. La boucle de traceability (frontmatter product, `external_refs`, rapports `product-status`/`product-portfolio`/`product-review` read-only, testés) est livrée et stable. Le durcissement du scoring portfolio et le WARN CI sur `next_decision_date` dépassée pour les initiatives `active` (bac B5 du frame 2026-06-28) repartent en feature dédiée si priorisés — pas en ré-ouverture de cette fiche.
