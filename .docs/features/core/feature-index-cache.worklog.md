@@ -113,3 +113,9 @@
 - Fichiers modifiés :
   - .ai/scripts/build-feature-index.sh
   - template/.ai/scripts/build-feature-index.sh.jinja
+
+## 2026-06-28 — fix fallback body-leak + flow-style (A1)
+- `extract_scalar_awk` / `extract_list_awk` bornés au 1er bloc frontmatter (`---...---`) : fin du body-leak (le corps markdown ne peut plus injecter status/depends_on/touches). `extract_list_awk` gère aussi le flow-style `key: [a, b]`.
+- Parité : même fix dans `template/.ai/scripts/build-feature-index.sh.jinja` (aucun hazard {% raw %}). drift ✅.
+- Test : `tests/unit/test-build-feature-index-fallback-frontmatter.sh` (yq masqué). contract/fallback/robust toujours ✅.
+- Fichiers : .ai/scripts/build-feature-index.sh, template/.ai/scripts/build-feature-index.sh.jinja, tests/unit/test-build-feature-index-fallback-frontmatter.sh

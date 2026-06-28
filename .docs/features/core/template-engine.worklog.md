@@ -398,3 +398,6 @@
 ## 2026-06-28 — squelette guardrails consommateur (Phase 0 audit : A4)
 - Ajout `template/.ai/guardrails.md.jinja` : squelette générique (non-goals/glossaire à compléter + règle B0 recommandée), rendu dans tout projet consommateur. Corrige A4 côté downstream (l'`index.md.jinja` référençait `.ai/guardrails.md` sans le fournir). Vérifié : `copier copy` produit bien `.ai/guardrails.md`.
 - Fichiers : template/.ai/guardrails.md.jinja
+
+## 2026-06-28 — couverture incidente (A1 : fix fallback build-feature-index)
+- `template/.ai/scripts/build-feature-index.sh.jinja` touché (glob `template/**`). Aucun changement propre au moteur de template. (Taxe sur-couverture `touches:` — cf. quality/touches-breadth-guard.)

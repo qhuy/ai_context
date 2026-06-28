@@ -166,3 +166,6 @@
 ## 2026-06-28 21:09 — auto
 - Fichiers modifiés :
   - CHANGELOG.md
+
+## 2026-06-28 — couverture incidente (A1 : fix fallback build-feature-index)
+- Surface partagée touchée (`tests/unit/**` ou `build-feature-index.sh.jinja`) via glob `touches:`. Aucun changement de comportement propre à cette feature. (Taxe de sur-couverture `touches:` — cf. quality/touches-breadth-guard.)

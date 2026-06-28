@@ -228,3 +228,6 @@
 
 ## 2026-06-28 — couverture incidente (Phase 0 audit : exclusion guardrails dans check-dogfood-drift)
 - Surface partagée touchée (`.ai/scripts/check-dogfood-drift.sh` : ajout `.ai/guardrails.md` aux exclusions). Aucun changement de comportement propre à cette feature. (Coût de sur-couverture `touches:` — cf. quality/touches-breadth-guard.)
+
+## 2026-06-28 — couverture incidente (A1 : fix fallback build-feature-index)
+- Surface partagée touchée (`tests/unit/**` ou `build-feature-index.sh.jinja`) via glob `touches:`. Aucun changement de comportement propre à cette feature. (Taxe de sur-couverture `touches:` — cf. quality/touches-breadth-guard.)

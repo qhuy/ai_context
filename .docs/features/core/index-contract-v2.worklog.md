@@ -47,3 +47,6 @@
 - Fichiers modifiés :
   - .ai/scripts/build-feature-index.sh
   - template/.ai/scripts/build-feature-index.sh.jinja
+
+## 2026-06-28 — couverture incidente (A1 : fix fallback build-feature-index)
+- `build-feature-index.sh.jinja` touché via glob `touches:`. Aucun changement propre à cette feature. (Taxe sur-couverture `touches:` — cf. quality/touches-breadth-guard.)

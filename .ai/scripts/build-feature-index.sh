@@ -45,8 +45,21 @@ extract_frontmatter() {
 
 extract_list_awk() {
   local file="$1" key="$2"
+  # Borné au 1er bloc frontmatter (---...---) : ne lit JAMAIS le corps markdown
+  # (sinon un `key:` dans le body injecte de fausses valeurs). Gère block-style
+  # (- item) ET flow-style (key: [a, b]).
   awk -v k="^${key}:" '
-    $0 ~ k {flag=1; next}
+    /^---$/ { fence++; next }
+    fence != 1 { next }
+    $0 ~ k {
+      if ($0 ~ /\[.*\]/) {
+        line=$0; sub(/^[^[]*\[/, "", line); sub(/\].*/, "", line)
+        n=split(line, arr, ",")
+        for (i=1; i<=n; i++) { gsub(/^[[:space:]]+|[[:space:]]+$/, "", arr[i]); if (arr[i] != "") print "- " arr[i] }
+        flag=0; next
+      }
+      flag=1; next
+    }
     flag && /^  *-/ {print; next}
     flag && /^[^[:space:]]/ {flag=0}
   ' "$file" \
@@ -56,7 +69,12 @@ extract_list_awk() {
 
 extract_scalar_awk() {
   local file="$1" key="$2"
-  awk -v k="^${key}:" '$0 ~ k {sub(k, ""); print; exit}' "$file" \
+  # Borné au 1er bloc frontmatter (---...---) : ne lit JAMAIS le corps markdown.
+  awk -v k="^${key}:" '
+    /^---$/ { fence++; next }
+    fence == 1 && $0 ~ k { sub(k, ""); print; exit }
+    fence >= 2 { exit }
+  ' "$file" \
     | sed -E 's/^[[:space:]]*//; s/["'"'"']//g; s/[[:space:]]+$//'
 }
 
