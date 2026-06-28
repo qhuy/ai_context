@@ -75,3 +75,7 @@
 
 ## 2026-06-26 — couverture incidente (CHANGELOG clôture session)
 - `CHANGELOG.md` (entrées [Unreleased] des features de la session) couvert par le glob `touches:` de cette feature. Aucun changement de comportement propre. (CHANGELOG.md = candidat touches_shared, cf. quality/touches-breadth-guard.)
+
+## 2026-06-28 21:09 — auto
+- Fichiers modifiés :
+  - CHANGELOG.md
