@@ -13,10 +13,10 @@ touches:
   - .ai/scripts/auto-worklog-flush.sh
 progress:
   phase: review
-  step: "fix churn date — le flush ne bumpe plus progress.updated"
+  step: "anti-churn : le flush saute le bloc auto si la feature est documentée manuellement ce tour"
   blockers: []
-  resume_hint: "fix churn livré ; suivi possible = option 1 (dériver updated: au build-index)"
-  updated: 2026-06-26
+  resume_hint: "anti-churn marker (.session-docs.log) livré ; suivi possible = option 1 (dériver updated: au build-index)"
+  updated: 2026-06-28
 type: feature
 ---
 
@@ -92,3 +92,4 @@ Trigger amont : `claude-skills` (les skills déclenchent des éditions). Source 
 - 2026-04-24 : `auto-worklog-flush.sh` ne **vide** plus `.session-edits.log`, il le **déplace** vers `.session-edits.flushed`. Permet à `auto-progress.sh` (nouveau script Stop chaîné) de consommer la trace post-flush sans race condition. Comportement vis-à-vis du worklog inchangé (toujours auto-update factuel uniquement : `progress.updated` + ligne `Fichiers modifiés`).
 - 2026-04-24 : `auto-worklog-log.sh` délègue le matching `touches:` à `_lib.sh` pour rester aligné avec `features-for-path.sh` et le hook git `pre-commit`.
 - 2026-06-26 : **fix churn date** (réouverture, cadrage `aic-frame` option 2). `auto-worklog-flush.sh` ne bumpe plus `progress.updated` — constat consumer : 63 fiches modifiées juste pour la date. La date n'est désormais stampée que sur transition de phase (`auto-progress.sh`) ou édit manuel (`feature-update.md`). Régression : `tests/unit/test-auto-worklog-flush.sh`. HANDOFF léger `quality/doc-freshness` (sémantique staleness) ; option 1 (dériver `updated:` au build-index) laissée en suivi.
+- 2026-06-28 : **anti-churn bloc auto** (item A9 du frame `2026-06-28-audit-strategique-remediation`). Constat : le flush appendait un bloc `## DATE — auto / Fichiers modifiés` même quand la feature avait déjà été **documentée manuellement** dans le même tour → doublon, bruit git à chaque commit. Fix : `auto-worklog-log.sh` marque dans `.ai/.session-docs.log` (volatile, gitignoré) toute feature dont la fiche ou le worklog est édité ; `auto-worklog-flush.sh` saute le bloc auto pour ces features, puis nettoie le marqueur. **Le filet de sécurité reste intact** : une feature éditée en code sans doc reçoit toujours son bloc auto (test cas 7). Décision : ne pas dédupliquer cross-session (préserver le log par tour pour les sessions silencieuses) — on cible uniquement le doublon intra-tour. Régression : `tests/unit/test-auto-worklog-flush.sh` (cas 4-7). Parité jinja conservée.

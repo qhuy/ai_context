@@ -28,3 +28,8 @@
 ## 2026-06-26 16:56 — auto
 - Fichiers modifiés :
   - .ai/scripts/auto-worklog-flush.sh
+
+## 2026-06-28 — anti-churn bloc auto (A9)
+- `auto-worklog-log.sh` marque dans `.ai/.session-docs.log` toute feature dont la fiche/worklog est éditée manuellement ; `auto-worklog-flush.sh` saute le bloc auto pour ces features puis nettoie le marqueur. Filet de sécurité préservé (feature code-only → bloc auto).
+- Parité jinja + gitignore (runtime+template). Test : cas 4-7 de test-auto-worklog-flush.sh. drift ✅, check-features ✅.
+- Fichiers : auto-worklog-log.sh(+jinja), auto-worklog-flush.sh(+jinja), .ai/.gitignore(+template), tests/unit/test-auto-worklog-flush.sh

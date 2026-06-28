@@ -56,3 +56,6 @@
 
 ### Commit suggéré
 docs(workflow): clôture stop-hook-idempotence (impl. déjà live)
+
+## 2026-06-28 — couverture incidente (A9 : anti-churn auto-worklog)
+- Surface partagée touchée (auto-worklog-log/flush, .ai/.gitignore ou tests/unit/**) via glob/touches:. Aucun changement de comportement propre à cette feature. (Taxe sur-couverture — cf. quality/touches-breadth-guard.)

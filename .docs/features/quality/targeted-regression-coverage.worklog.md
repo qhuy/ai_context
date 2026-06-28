@@ -131,3 +131,6 @@
 
 ## 2026-06-28 — couverture incidente (A1 : fix fallback build-feature-index)
 - Surface partagée touchée (`tests/unit/**` ou `build-feature-index.sh.jinja`) via glob `touches:`. Aucun changement de comportement propre à cette feature. (Taxe de sur-couverture `touches:` — cf. quality/touches-breadth-guard.)
+
+## 2026-06-28 — couverture incidente (A9 : anti-churn auto-worklog)
+- Surface partagée touchée (auto-worklog-log/flush, .ai/.gitignore ou tests/unit/**) via glob/touches:. Aucun changement de comportement propre à cette feature. (Taxe sur-couverture — cf. quality/touches-breadth-guard.)

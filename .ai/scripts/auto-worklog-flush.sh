@@ -19,19 +19,31 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_root="$(cd "$script_dir/../.." && pwd)"
 log_file="$repo_root/.ai/.session-edits.log"
 index_file="$repo_root/.ai/.feature-index.json"
+docs_log="$repo_root/.ai/.session-docs.log"
 
-[[ ! -s "$log_file" ]] && exit 0
-[[ ! -f "$index_file" ]] && exit 0
+# Anti-churn : features documentées manuellement ce tour (marquées par
+# auto-worklog-log.sh). Le flush n'ajoute PAS de bloc auto redondant pour elles ;
+# le filet de sécurité reste actif pour les features éditées en code sans doc.
+documented=""
+[[ -f "$docs_log" ]] && documented="$(sort -u "$docs_log" 2>/dev/null)"
+
+[[ ! -s "$log_file" ]] && { rm -f "$docs_log" 2>/dev/null; exit 0; }
+[[ ! -f "$index_file" ]] && { rm -f "$docs_log" 2>/dev/null; exit 0; }
 
 timestamp=$(date +"%Y-%m-%d %H:%M")
 
 # Grouper log par feature : feature -> liste fichiers (uniques)
 # jq : slurpfile lit tout le fichier JSONL comme array
 features=$(jq -rs 'group_by(.feature) | .[] | .[0].feature' "$log_file" 2>/dev/null | sort -u)
-[[ -z "$features" ]] && { : > "$log_file"; exit 0; }
+[[ -z "$features" ]] && { : > "$log_file"; rm -f "$docs_log" 2>/dev/null; exit 0; }
 
 while IFS= read -r key; do
   [[ -z "$key" ]] && continue
+
+  # Anti-churn : feature déjà documentée manuellement ce tour → pas de bloc auto.
+  if [[ -n "$documented" ]] && printf '%s\n' "$documented" | grep -qxF "$key"; then
+    continue
+  fi
 
   # Liste unique des fichiers modifiés pour cette feature
   files=$(jq -rs --arg k "$key" '[.[] | select(.feature == $k) | .file] | unique | .[]' "$log_file" 2>/dev/null)
@@ -73,5 +85,6 @@ bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
 # .session-edits.flushed ne grossit pas car PostToolUse n'écrit que dans
 # .session-edits.log (recréé propre au prochain edit).
 mv "$log_file" "$repo_root/.ai/.session-edits.flushed" 2>/dev/null || : > "$log_file"
+rm -f "$docs_log" 2>/dev/null || true
 
 exit 0

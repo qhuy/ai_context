@@ -7,6 +7,9 @@
 # Trace consommée par auto-progress.sh entre flush et progression (volatile)
 .session-edits.flushed
 
+# Marqueur volatile des features documentées manuellement dans le tour (anti-churn flush)
+.session-docs.log
+
 # Historique append-only des transitions auto-progress (pour /aic undo)
 .progress-history.jsonl
 

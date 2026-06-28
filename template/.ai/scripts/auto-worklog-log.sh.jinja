@@ -30,6 +30,23 @@ case "$file_path" in
   /*) rel="${file_path#"$repo_root/"}" ;;
 esac
 
+# Anti-churn (workflow/auto-worklog) : si l'édit porte sur la DOC d'une feature
+# (fiche ou worklog), marquer la feature comme "documentée manuellement ce tour".
+# Le flush Stop n'ajoutera alors PAS de bloc auto redondant pour cette feature
+# (le filet de sécurité reste actif pour les features éditées en code sans doc).
+case "$rel" in
+  .docs/features/*/*.worklog.md|.docs/features/*/*.md)
+    fkey="${rel#.docs/features/}"            # <scope>/<id>(.worklog).md
+    fscope="${fkey%%/*}"
+    fid="${fkey#*/}"; fid="${fid%.worklog.md}"; fid="${fid%.md}"
+    if [[ -n "$fscope" && "$fscope" != "$fkey" && -n "$fid" ]]; then
+      docs_log="$repo_root/.ai/.session-docs.log"
+      mkdir -p "$(dirname "$docs_log")"
+      printf '%s/%s\n' "$fscope" "$fid" >> "$docs_log"
+    fi
+    ;;
+esac
+
 [[ ! -f "$index_file" ]] && exit 0
 
 # Matches enrichis (scope, id, feature_path) — garde feature_path pour
