@@ -128,3 +128,6 @@
 ## 2026-06-28 20:34 — auto
 - Fichiers modifiés :
   - tests/smoke-test.sh
+
+## 2026-06-26 — couverture incidente (core/feature-index-cache fix robustesse)
+- Surface partagée touchée (build-feature-index.sh + jinja, tests, ou tests/smoke-test.sh) couverte par le glob `touches:` de cette feature. Aucun changement de comportement propre.

@@ -101,3 +101,10 @@
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-06-26 — fix robustesse build-feature-index (fiches YAML malformées)
+- Symptôme (vécu en session) : une fiche au titre non quoté finissant par `:` → YAML invalide → `build-feature-index.sh` (chemin `yq`) plantait sous `set -e`, et la cascade cassait `features-for-path`, `pre-turn-reminder`, auto-worklog → deadlock d'édition (l'outil Edit déclenche le hook qui re-plante).
+- Fix (+ jinja, parité conservée) : validation `yq -e -o=json` du frontmatter AVANT extraction (warn + `return 1` si illisible) + isolation par fiche dans la boucle de build. L'index reste valide et contient les fiches saines. Honore l'invariant déjà documenté de la fiche.
+- Test : `tests/unit/test-build-feature-index-robust.sh` (smoke [0m]) — build exit 0, fiche malformée exclue + warning (yq), fiches valides présentes, JSON valide, gated sur yq v4.
+- `check-features` vérifié : reste strict (signale la fiche + exit 1) sans cascade-crash → bonne division resilient (build-index) / strict (check-features).
+- Validation : `bash -n`, build réel 53 features OK, dogfood-drift + smoke (voir commit).

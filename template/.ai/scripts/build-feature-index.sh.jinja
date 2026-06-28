@@ -93,6 +93,13 @@ feature_to_json() {
   if [[ $has_yq -eq 1 ]]; then
     local fm
     fm=$(extract_frontmatter "$file")
+    # Robustesse : valider que le frontmatter parse en YAML AVANT d'extraire.
+    # Une fiche malformée est ignorée (warn + return 1) plutôt que de faire
+    # planter tout l'index — et en cascade tous les hooks qui l'appellent.
+    if ! printf '%s' "$fm" | yq -e -o=json '.' >/dev/null 2>&1; then
+      echo "⚠️  build-feature-index : frontmatter YAML illisible, fiche ignorée : $rel" >&2
+      return 1
+    fi
     id=$(echo "$fm" | yq -r '.id // ""')
     scope=$(echo "$fm" | yq -r '.scope // ""')
     status=$(echo "$fm" | yq -r '.status // ""')
@@ -255,8 +262,12 @@ if [[ -d "$features_dir" ]]; then
   # sont pas un format supporté par le feature mesh.
   if [[ {% raw %}${#files[@]}{% endraw %} -gt 0 ]]; then
     while IFS= read -r f; do
-      entries+=("$(feature_to_json "$f")")
-      count=$((count + 1))
+      # Isolation par fiche : une fiche illisible (return 1 + warn dans
+      # feature_to_json) est ignorée sans aborter tout l'index (set -e).
+      if entry="$(feature_to_json "$f")"; then
+        entries+=("$entry")
+        count=$((count + 1))
+      fi
     done < <(printf '%s\n' "${files[@]}" | LC_ALL=C sort)
   fi
 
