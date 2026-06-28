@@ -108,3 +108,8 @@
 - Test : `tests/unit/test-build-feature-index-robust.sh` (smoke [0m]) — build exit 0, fiche malformée exclue + warning (yq), fiches valides présentes, JSON valide, gated sur yq v4.
 - `check-features` vérifié : reste strict (signale la fiche + exit 1) sans cascade-crash → bonne division resilient (build-index) / strict (check-features).
 - Validation : `bash -n`, build réel 53 features OK, dogfood-drift + smoke (voir commit).
+
+## 2026-06-28 20:51 — auto
+- Fichiers modifiés :
+  - .ai/scripts/build-feature-index.sh
+  - template/.ai/scripts/build-feature-index.sh.jinja
