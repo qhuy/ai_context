@@ -5,7 +5,7 @@ scope_probable: "product/ai-context-stability-migration"
 route: "manual"
 level: "high"
 evidence: "Audit multi-agents 2026-06-28 (6 cartographies + 5 recherches zeitgeist sourcées + 3 critiques adverses, 312 lectures). Dashboard : artifact claude.ai/code/artifact/abd891d3-a2bf-40ce-80cd-cc183f0def27"
-next_hint: "Phase 0 + A1 + A2 + A4 livrés (commits b9bb81d→919ae39). Reprendre Phase 1 : A3/A5-A13. PRIORITÉ REMONTÉE : touches-breadth (quality/touches-breadth-guard) — la sur-couverture taxe chaque fix de fichier partagé (12 fiches en couverture incidente pour le seul A1, moat actif)."
+next_hint: "Phase 0 + A1 + A2 + A4 + A9 + touches-breadth 2e vague livrés (commits b9bb81d→1148553). Reprendre Phase 1 : A3 (README advisory), A5 (canonicité README), A6 (shellcheck .githooks/tests), A7, A8, A10-A13. Signal-A touches-breadth (README*/_lib.sh/aic.sh) = vagues suivantes au fil de l'eau."
 created_at: "2026-06-28"
 updated_at: "2026-06-28"
 ---
@@ -38,7 +38,10 @@ d'accrétion non gouvernée sur un bus factor de 1.
   - A1 : parseur fallback de `build-feature-index` borné au frontmatter (fin du body-leak) + flow-style + test + parité jinja — commit `919ae39`.
   - A4 : déjà livré en Phase 0.
   - **Signal fort** : A1 a exigé 12 fiches en couverture incidente (sur-couverture `touches:`). Le moat étant désormais actif, cette taxe bloque chaque fix de fichier partagé → **remonter `quality/touches-breadth-guard` avant le reste de la Phase 1.**
-- **Reste** : Phase 1 (A3, A5–A13), Phase 2 (C1→C2), Phase 3 (D), Phase 4 (C3 + later).
+- **2026-06-28 — Phase 1 (suite).**
+  - touches-breadth 2ᵉ vague : globs catch-all `template/**`/`tests/**` reclassés `touches:` → `touches_shared:`/affinés ; Signal B ne liste plus que les globs légitimes — commit `0099802`.
+  - A9 : churn auto-worklog supprimée — le flush saute le bloc auto si la feature est documentée manuellement ce tour (marqueur `.session-docs.log`), filet de sécurité préservé — commit `1148553`.
+- **Reste** : Phase 1 (A3, A5–A8, A10–A13), touches-breadth Signal-A (au fil de l'eau), Phase 2 (C1→C2), Phase 3 (D), Phase 4 (C3 + later).
 
 ## Niveau de cadrage
 

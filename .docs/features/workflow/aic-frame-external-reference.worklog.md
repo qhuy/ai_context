@@ -41,3 +41,6 @@
 
 ## 2026-06-28 — couverture incidente (frame remédiation : avancement A1/A2)
 - `.docs/frames/2026-06-28-audit-strategique-remediation.md` mis à jour (avancement Phase 1). Aucun changement de comportement.
+
+## 2026-06-28 — couverture incidente (frame remédiation : avancement 2e vague + A9)
+- `.docs/frames/2026-06-28-audit-strategique-remediation.md` mis à jour. Aucun changement de comportement.
