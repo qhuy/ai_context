@@ -399,3 +399,6 @@
 
 ## 2026-06-29 — couverture parité incidente (finding #6 : docstring auto-worklog-flush)
 - Correction commentaire-seul de `auto-worklog-flush.sh` + miroir `.jinja` (parité maintenue). Couverture via `.ai/**` / `template/**` ; aucun changement de contrat de sync propre.
+
+## 2026-06-29 — couverture incidente (finding #6 : fraîcheur du frame)
+- `updated_at` + `next_hint` du frame de remédiation rafraîchis. Aucun changement de contrat de sync propre.

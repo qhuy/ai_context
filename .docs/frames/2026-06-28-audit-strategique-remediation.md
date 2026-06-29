@@ -5,9 +5,9 @@ scope_probable: "product/ai-context-stability-migration"
 route: "manual"
 level: "high"
 evidence: "Audit multi-agents 2026-06-28 (6 cartographies + 5 recherches zeitgeist sourcées + 3 critiques adverses, 312 lectures). Dashboard : artifact claude.ai/code/artifact/abd891d3-a2bf-40ce-80cd-cc183f0def27"
-next_hint: "Phase 0 + A1/A2/A4/A9 + touches-breadth 2e vague + C1 (core) livrés (commits b9bb81d→387dbce). C1 reste avant DONE : note migration CHANGELOG/upgrading + check-shims dynamique par agents + HANDOFF pitch readme-positioning. Puis Phase 1 : A3/A5-A8/A10-A13. Phase 2 : C2 (contrat d'index). Phase 3 : D (diagnose churn quality)."
+next_hint: "Phase 0 + A1/A2/A4/A8/A9 + C2 (contrat d'index) + touches-breadth (Signal A inclus) + finding #3 review hebdo (check-features YAML strict) livrés. C1 reste avant DONE : note migration CHANGELOG/upgrading + check-shims dynamique par agents + HANDOFF pitch readme-positioning. Reste Phase 1 : A3/A5-A7/A10-A13 (mineurs docs/README/lint). Phase 3 : D (diagnose churn quality)."
 created_at: "2026-06-28"
-updated_at: "2026-06-28"
+updated_at: "2026-06-29"
 ---
 
 # Frame 2026-06-28 — Remédiation de l'audit stratégique

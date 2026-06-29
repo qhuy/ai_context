@@ -67,3 +67,6 @@
 
 ## 2026-06-29 — couverture incidente (clôture frame : C2a-doc + A7)
 - Frame mis a jour (C2a resolu, cloture session). Aucun changement de comportement.
+
+## 2026-06-29 — couverture incidente (finding #6 : fraîcheur du frame)
+- Frame remediation : `updated_at` 2026-06-28 → 2026-06-29 + `next_hint` aligné (A8/C2/finding #3 sortis de la todo, items mineurs conservés). Aucun changement de comportement.
