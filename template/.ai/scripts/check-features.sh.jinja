@@ -105,6 +105,18 @@ for f in "${files[@]}"; do
     continue
   fi
 
+  # YAML strict (parité build-feature-index.sh) : une fiche dont le frontmatter
+  # ne parse pas est silencieusement EXCLUE de l'index par le builder (warn +
+  # skip), et avec elle ses touches: — les gates freshness/commit cessent alors
+  # de couvrir ses fichiers, sans bruit. Le gate doit BLOQUER ici. Conditionné à
+  # yq (même condition que le drop côté builder ; le fallback awk ne valide pas).
+  if command -v yq >/dev/null 2>&1; then
+    if ! printf '%s' "$fm" | yq -e -o=json '.' >/dev/null 2>&1; then
+      ko "$f : frontmatter YAML invalide (illisible par yq) — la fiche serait exclue de l'index"
+      continue
+    fi
+  fi
+
   for key in id scope title status depends_on touches; do
     if ! echo "$fm" | grep -qE "^$key:"; then
       ko "$f : clé frontmatter '$key' manquante"

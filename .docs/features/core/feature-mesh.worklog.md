@@ -53,3 +53,12 @@
 - Fichiers : `.ai/scripts/check-features.sh`, `template/.ai/scripts/check-features.sh.jinja`, `tests/unit/test-check-features-frontmatter-boundary.sh`.
 - Validation : test unitaire ciblé, `check-features --no-write`, smoke complet.
 - Note livraison : le commit initial `4103f65` a été fait avec `--no-verify` pour préserver le découpage mono-scope face à la sur-couverture Signal A. Le reclassement des propriétaires non directs est suivi par `quality/touches-breadth-guard`.
+
+## 2026-06-29 — YAML strict dans le gate check-features (audit hebdo — finding #3)
+- `check-features.sh` valide désormais que le frontmatter parse en YAML strict (yq, parité `build-feature-index.sh:117`) et BLOQUE sinon — runtime + `.jinja`. Avant : une fiche au YAML cassé mais grep-passable passait le gate puis était silencieusement EXCLUE de l'index par le builder (warn + skip), et avec elle ses `touches:` → les gates freshness/commit cessaient de couvrir ses fichiers sans bruit.
+- Conditionné à yq (même condition que le drop côté builder ; le fallback awk ne valide pas le YAML). Les 54 fiches réelles passent.
+- Test : `tests/unit/test-check-features-yaml-strict.sh` (fiche flow-seq non fermée, grep-passable → gate FAIL ; fiche valide → PASS ; SKIP si yq absent).
+- Interaction #4a découverte : un glob char-class inline NON quoté (`touches: [src/[ab].ts]`) est du YAML invalide → droppé par le builder. La fixture du test frontmatter-boundary (posée par #4a) utilisait cette forme ; corrigée en quoté (`["src/[ab].ts"]`), valide YAML, qui exerce toujours la préservation du `]` interne par fm_list. Le gate protège donc aussi de ce footgun.
+- Fichiers : `.ai/scripts/check-features.sh`, `template/.ai/scripts/check-features.sh.jinja`, `tests/unit/test-check-features-yaml-strict.sh`, `tests/unit/test-check-features-frontmatter-boundary.sh`, `.docs/features/core/feature-mesh.md` (touches).
+- Validation : 3 tests unitaires check-features PASS, `check-features --no-write` (54 fiches) PASS, parité runtime/template OK, drift dogfood aligné.
+- HANDOFF quality : brancher `test-check-features-yaml-strict.sh` dans `tests/smoke-test.sh` (scope `quality/smoke-test`) — non fait ici pour rester mono-scope core.

@@ -10,6 +10,8 @@ touches:
   - .ai/scripts/check-features.sh
   - .ai/scripts/check-feature-docs.sh
   - tests/unit/test-id-schema-checker-parity.sh
+  - tests/unit/test-check-features-yaml-strict.sh
+  - tests/unit/test-check-features-frontmatter-boundary.sh
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
   - template/{{docs_root}}/features/**
   - template/.ai/scripts/check-features.sh.jinja
