@@ -51,3 +51,6 @@
 
 ## 2026-06-28 — couverture incidente (frame remédiation : C1 cadré + fiche)
 - `.docs/frames/2026-06-28-audit-strategique-remediation.md` mis à jour (C1 cadré, fiche créée). Aucun changement de comportement.
+
+## 2026-06-29 — couverture incidente (frame remediation : C1 core livre)
+- Frame mis a jour (C1 implemente). Aucun changement de comportement.

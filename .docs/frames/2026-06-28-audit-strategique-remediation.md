@@ -5,7 +5,7 @@ scope_probable: "product/ai-context-stability-migration"
 route: "manual"
 level: "high"
 evidence: "Audit multi-agents 2026-06-28 (6 cartographies + 5 recherches zeitgeist sourcées + 3 critiques adverses, 312 lectures). Dashboard : artifact claude.ai/code/artifact/abd891d3-a2bf-40ce-80cd-cc183f0def27"
-next_hint: "Phase 0 + A1 + A2 + A4 + A9 + touches-breadth 2e vague livrés ; C1 CADRÉ (fiche core/agents-md-shim-canonical, phase spec). Prochaine action C1 = GATE : vérifier empiriquement le support @import par agent (Claude d'abord) AVANT tout code. Reste Phase 1 : A3/A5-A8/A10-A13. Phase 2 : C2. Phase 3 : D."
+next_hint: "Phase 0 + A1/A2/A4/A9 + touches-breadth 2e vague + C1 (core) livrés (commits b9bb81d→387dbce). C1 reste avant DONE : note migration CHANGELOG/upgrading + check-shims dynamique par agents + HANDOFF pitch readme-positioning. Puis Phase 1 : A3/A5-A8/A10-A13. Phase 2 : C2 (contrat d'index). Phase 3 : D (diagnose churn quality)."
 created_at: "2026-06-28"
 updated_at: "2026-06-28"
 ---
@@ -41,7 +41,11 @@ d'accrétion non gouvernée sur un bus factor de 1.
 - **2026-06-28 — Phase 1 (suite).**
   - touches-breadth 2ᵉ vague : globs catch-all `template/**`/`tests/**` reclassés `touches:` → `touches_shared:`/affinés ; Signal B ne liste plus que les globs légitimes — commit `0099802`.
   - A9 : churn auto-worklog supprimée — le flush saute le bloc auto si la feature est documentée manuellement ce tour (marqueur `.session-docs.log`), filet de sécurité préservé — commit `1148553`.
-- **Reste** : Phase 1 (A3, A5–A8, A10–A13), touches-breadth Signal-A (au fil de l'eau), Phase 2 (C1→C2), Phase 3 (D), Phase 4 (C3 + later).
+- **2026-06-29 — Phase 2 (C1) entamée et livrée (core).**
+  - Gate `@import` franchi (Claude/Gemini OK ; Cursor/Copilot lisent AGENTS.md nativement) — commit `3228ffa`.
+  - Import model livré : AGENTS.md neutralisé (base) ; CLAUDE.md/GEMINI.md = `@AGENTS.md` ; Cursor/Copilot tailored (fallback) ; check-shims/drift/smoke ✅ — commit `387dbce`. Dé-taxe touches-breadth confirmée (2 fiches incidentes vs 12 pour A1).
+  - C1 reste avant DONE : note migration (CHANGELOG/upgrading) + check-shims dynamique par agents + HANDOFF pitch readme-positioning.
+- **Reste** : finir C1 (migration doc), Phase 1 (A3, A5–A8, A10–A13), touches-breadth Signal-A, Phase 2 (C2), Phase 3 (D), Phase 4 (C3 + later).
 
 ## Niveau de cadrage
 

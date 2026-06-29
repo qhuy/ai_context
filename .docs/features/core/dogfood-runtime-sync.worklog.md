@@ -355,3 +355,6 @@
 
 ## 2026-06-29 — couverture incidente (C1 : shims derives d AGENTS.md)
 - Surface partagee touchee (shims AGENTS.md/CLAUDE.md ou gabarits). Aucun changement de comportement propre a cette feature.
+
+## 2026-06-29 — couverture incidente (frame remediation : C1 core livre)
+- Frame mis a jour (C1 implemente). Aucun changement de comportement.
