@@ -87,6 +87,14 @@ echo "[0m/28] tests unitaires (build-feature-index robuste aux fiches malformée
 bash tests/unit/test-build-feature-index-robust.sh
 echo
 
+echo "[0n/28] tests unitaires (check-features borné au frontmatter)"
+bash tests/unit/test-check-features-frontmatter-boundary.sh
+echo
+
+echo "[0o/28] tests unitaires (feat: fiche pertinente)"
+bash tests/unit/test-check-commit-features-relevance.sh
+echo
+
 echo "[1/28] copier copy (profil par défaut)"
 copier copy --defaults --trust \
   --data project_name=smoke-project \

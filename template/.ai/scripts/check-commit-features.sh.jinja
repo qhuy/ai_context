@@ -69,16 +69,49 @@ if ! echo "$msg" | grep -qE "$valid_types"; then
   exit 1
 fi
 
-# ─── feat: → features/ obligatoire ───
+# ─── feat: → fiche feature obligatoire ET pertinente ───
 type=$(echo "$msg" | sed -E 's/^([a-z]+).*/\1/')
 if [[ "$type" == "feat" ]]; then
   staged=$(git diff --cached --name-only 2>/dev/null || git diff --name-only)
-  if ! echo "$staged" | grep -qE "^$FEATURES_DIR/"; then
+  staged_feature_docs=$(printf '%s\n' "$staged" | grep -E "^$FEATURES_DIR/.+\\.md$" || true)
+  if [[ -z "$staged_feature_docs" ]]; then
     echo "❌ Commit 'feat:' sans fichier touché dans $FEATURES_DIR/" >&2
     echo "   Toute nouvelle feature DOIT avoir son fichier dans $FEATURES_DIR/<scope>/<id>.md" >&2
     echo "   Utiliser $FEATURE_TEMPLATE comme squelette." >&2
     echo "   Si ce n'est pas une feature, utiliser un autre type : fix/refactor/chore/..." >&2
     exit 1
+  fi
+
+  staged_non_feature=$(printf '%s\n' "$staged" | grep -vE "^$FEATURES_DIR/.+\\.md$" || true)
+  if [[ -n "$staged_non_feature" ]]; then
+    index_tmp="$(mktemp "${TMPDIR:-/tmp}/aic-commit-features.XXXXXX")"
+    trap 'rm -f "$index_tmp"' EXIT
+    if ! bash "$script_dir/build-feature-index.sh" > "$index_tmp" 2>/dev/null; then
+      echo "❌ Commit 'feat:' : impossible de générer l'index temporaire pour vérifier la fiche liée." >&2
+      echo "   Corrige les fiches feature puis relance le commit." >&2
+      exit 1
+    fi
+
+    relevant_doc=0
+    while IFS= read -r rel; do
+      [[ -z "$rel" ]] && continue
+      while IFS=$'\t' read -r scope id feature_path; do
+        [[ -z "$scope" || -z "$id" || -z "$feature_path" ]] && continue
+        worklog_path="$(dirname "$feature_path")/$id.worklog.md"
+        if printf '%s\n' "$staged_feature_docs" | grep -Fxq "$feature_path" \
+          || printf '%s\n' "$staged_feature_docs" | grep -Fxq "$worklog_path"; then
+          relevant_doc=1
+          break 2
+        fi
+      done < <(features_matching_path "$index_tmp" "$rel")
+    done <<< "$staged_non_feature"
+
+    if [[ "$relevant_doc" -ne 1 ]]; then
+      echo "❌ Commit 'feat:' avec fiche feature staged, mais aucune ne couvre les fichiers non-doc du commit." >&2
+      echo "   Mets à jour la fiche dont touches: couvre le fichier modifié, ou corrige touches:." >&2
+      echo "   Si le changement est purement documentaire, utiliser docs: plutôt que feat:." >&2
+      exit 1
+    fi
   fi
 fi
 
