@@ -377,3 +377,9 @@
 
 ## 2026-06-29 — couverture incidente (frame remediation : C2b livre)
 - Frame mis a jour (C2b fait, C2a = enhancement a cadrer). Aucun changement de comportement.
+
+## 2026-06-29 — fix regression : .session-docs.log dans les exclusions drift
+- Le marqueur volatil .ai/.session-docs.log (introduit par A9/auto-worklog) etait gitignore mais PAS dans les exclusions de check-dogfood-drift → drift le flaguait extra-runtime, cassant test-dogfood-drift-extra ET test-project-overlay (qui rsync le repo + lancent drift).
+- Fix : ajout .session-docs.log au rsync --exclude ET a is_ignored_runtime_extra de check-dogfood-drift.sh (a cote des autres .session-*).
+- Verif : 27/27 unit PASS, drift aligne. (Bug de mon propre A9 — aligne les exclusions partout : gitignore + drift.)
+- Fichiers : .ai/scripts/check-dogfood-drift.sh

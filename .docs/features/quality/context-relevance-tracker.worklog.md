@@ -106,3 +106,6 @@
 
 ## 2026-06-28 — couverture incidente (A9 : anti-churn auto-worklog)
 - Surface partagée touchée (auto-worklog-log/flush, .ai/.gitignore ou tests/unit/**) via glob/touches:. Aucun changement de comportement propre à cette feature. (Taxe sur-couverture — cf. quality/touches-breadth-guard.)
+
+## 2026-06-29 — couverture incidente (fix .session-docs.log dans exclusions drift)
+- Surface partagee touchee (check-dogfood-drift.sh). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)

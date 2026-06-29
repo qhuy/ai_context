@@ -145,3 +145,6 @@
 
 ## 2026-06-29 — HANDOFF depuis core (clôture A1 : résiduel fallback build-feature-index)
 - `build-feature-index.sh` + `.jinja` touchés via glob `touches:` (bornage external_refs/product/progress du fallback). L'extraction `product.portfolio.*` consommée par cette boucle était DÉJÀ fence-aware (`extract_product_portfolio_scalar_awk`) et reste inchangée ; seuls les scalaires product inline / external_refs / progress sont bornés. Aucun impact sur le portfolio loop. (Taxe de sur-couverture `touches:` — cf. quality/touches-breadth-guard.)
+
+## 2026-06-29 — couverture incidente (fix .session-docs.log dans exclusions drift)
+- Surface partagee touchee (check-dogfood-drift.sh). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)

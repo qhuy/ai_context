@@ -231,3 +231,6 @@
 
 ## 2026-06-28 — couverture incidente (A1 : fix fallback build-feature-index)
 - Surface partagée touchée (`tests/unit/**` ou `build-feature-index.sh.jinja`) via glob `touches:`. Aucun changement de comportement propre à cette feature. (Taxe de sur-couverture `touches:` — cf. quality/touches-breadth-guard.)
+
+## 2026-06-29 — couverture incidente (fix .session-docs.log dans exclusions drift)
+- Surface partagee touchee (check-dogfood-drift.sh). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)

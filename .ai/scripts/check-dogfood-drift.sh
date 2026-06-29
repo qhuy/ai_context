@@ -30,6 +30,7 @@ rsync -a --delete \
   --exclude='.ai/.progress-history.jsonl' \
   --exclude='.ai/.session-edits.log' \
   --exclude='.ai/.session-edits.flushed' \
+  --exclude='.ai/.session-docs.log' \
   --exclude='.ai/.context-relevance.jsonl' \
   --exclude='.ai/.context-relevance.jsonl.old' \
   "$repo_root/" "$src_copy/"
@@ -93,7 +94,7 @@ is_ignored_runtime_extra() {
   local label="$1"
   local rel="$2"
   case "$rel" in
-    .feature-index.json|.progress-history.jsonl|.session-edits.log|.session-edits.flushed|.context-relevance.jsonl|.context-relevance.jsonl.old|scripts/dogfood-update.sh|scripts/check-dogfood-drift.sh|guardrails.md|project|project/*)
+    .feature-index.json|.progress-history.jsonl|.session-edits.log|.session-edits.flushed|.session-docs.log|.context-relevance.jsonl|.context-relevance.jsonl.old|scripts/dogfood-update.sh|scripts/check-dogfood-drift.sh|guardrails.md|project|project/*)
       return 0
       ;;
   esac
