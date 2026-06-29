@@ -152,3 +152,8 @@
 
 ## 2026-06-29 — couverture incidente (fix .session-docs.log dans exclusions drift)
 - Surface partagee touchee (check-dogfood-drift.sh). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)
+
+## 2026-06-29 — regressions ciblees P0 audit hebdo
+- Ajout de `test-check-features-frontmatter-boundary.sh` : reproduit le cas ou `depends_on:` / `touches:` dans le corps markdown ne doivent pas etre valides par `check-features`.
+- Ajout de `test-check-commit-features-relevance.sh` : reproduit le contournement `feat:` avec une fiche staged sans rapport.
+- Les deux tests sont branches dans `tests/smoke-test.sh`.

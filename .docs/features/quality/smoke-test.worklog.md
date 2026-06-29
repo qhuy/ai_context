@@ -198,3 +198,6 @@
 
 ## 2026-06-29 — assertion schema_version relachee (C2c)
 - L'etape index schema_version du smoke verifie desormais la presence+type (string) au lieu de pinner "1". Le pin de version vit dans test-build-feature-index-contract.sh.
+
+## 2026-06-29 — branchement tests P0 audit hebdo
+- Ajout des etapes unitaires `test-check-features-frontmatter-boundary.sh` et `test-check-commit-features-relevance.sh` en prelude du smoke.

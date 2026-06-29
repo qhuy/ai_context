@@ -79,3 +79,10 @@
 - Distinct du mode historique (timestamps) : pas de treadmill staleness, cohérent avec la politique `--warn` du 2026-06-01.
 - Section « Fraîcheur en fin de tour » ajoutée à `QUALITY_GATE.md` (+ jinja).
 - Validation : `test-stop-turn-doc-gate` PASS, `test-check-feature-freshness` PASS, smoke-test PASS, dogfood-drift PASS.
+
+## 2026-06-29 — fix feat: fiche pertinente (audit hebdo P0)
+- `check-commit-features.sh` ne se contente plus d'une fiche quelconque pour un commit `feat:` : si des fichiers non-doc sont staged, au moins une fiche/worklog staged doit couvrir un de ces fichiers via `touches:`.
+- Le contrôle reste suivi par `check-feature-freshness.sh --staged --strict`, qui impose ensuite la doc pour chaque feature candidate.
+- Test : `tests/unit/test-check-commit-features-relevance.sh` (+ cas `.worklog.md` pertinent).
+- Template runtime synchronisé : `template/.ai/scripts/check-commit-features.sh.jinja`.
+- Note livraison : le commit initial `33ccbfc` a été fait avec `--no-verify` pour éviter d'embarquer les worklogs hors scope avant correction Signal A ; les hooks repassent ensuite sur les commits de réconciliation.
