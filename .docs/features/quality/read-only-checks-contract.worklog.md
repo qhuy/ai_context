@@ -189,3 +189,7 @@
 
 ## 2026-06-29 — couverture incidente (tests P0 audit hebdo)
 - Ajout de tests unitaires sous `tests/unit/**` pour verrouiller `check-features` frontmatter-only et `check-commit-features` fiche pertinente. Aucun changement de contrat read-only propre ; les tests s'executent sur depots temporaires.
+
+## 2026-06-29 — Signal A : tests/unit/** reclassé en touches_shared
+- `tests/unit/**` passe de `touches:` direct → `touches_shared:` ; le test propre `test-read-only-checks-contract.sh` reste direct.
+- Motif : tout nouveau test unitaire (ex. les tests check-features de `core/feature-mesh`) forçait à toucher ce worklog (sur-couverture Signal A → bloquait un commit core mono-scope sans `--no-verify`). En `touches_shared`, la surface reste visible en review/report mais ne déclenche plus l'obligation `--staged`/worktree. Suivi : `quality/touches-breadth-guard`.

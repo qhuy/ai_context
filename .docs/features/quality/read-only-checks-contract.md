@@ -30,13 +30,14 @@ touches:
   - CHANGELOG.md
   - README_AI_CONTEXT.md
   - template/README_AI_CONTEXT.md.jinja
-  - tests/unit/**
+  - tests/unit/test-read-only-checks-contract.sh
   - .docs/features/quality/read-only-checks-contract.md
   - .docs/features/quality/read-only-checks-contract.worklog.md
 touches_shared:
   - .ai/scripts/check-features.sh
   - template/.ai/scripts/check-features.sh.jinja
   - tests/smoke-test.sh
+  - tests/unit/**
 product:
   initiative: product/ai-context-stability-migration
   contribution: "Rend les checks et diagnostics fiables pour les projets existants en supprimant les écritures implicites."

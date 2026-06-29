@@ -157,3 +157,7 @@
 - Ajout de `test-check-features-frontmatter-boundary.sh` : reproduit le cas ou `depends_on:` / `touches:` dans le corps markdown ne doivent pas etre valides par `check-features`.
 - Ajout de `test-check-commit-features-relevance.sh` : reproduit le contournement `feat:` avec une fiche staged sans rapport.
 - Les deux tests sont branches dans `tests/smoke-test.sh`.
+
+## 2026-06-29 — Signal A : tests/unit/** reclassé en touches_shared
+- `tests/unit/**` passe de `touches:` direct → `touches_shared:` ; le test propre `test-targeted-regressions.sh` reste direct.
+- Motif : feature clôturée (`status: done`) qui restait un aimant à churn — tout test unitaire forçait son worklog. En `touches_shared`, plus d'obligation `--staged`/worktree, visibilité review conservée. Reclassement d'hygiène touches uniquement (pas de réouverture). Suivi : `quality/touches-breadth-guard`.

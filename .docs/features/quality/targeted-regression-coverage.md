@@ -6,7 +6,7 @@ status: done
 depends_on:
   - quality/index-lock-contract
 touches:
-  - tests/unit/**
+  - tests/unit/test-targeted-regressions.sh
   - tests/smoke-test.sh
   - .ai/scripts/build-feature-index.sh
   - .ai/scripts/check-commit-features.sh
@@ -15,6 +15,7 @@ touches:
   - .ai/scripts/check-feature-docs.sh
   - .ai/scripts/check-feature-coverage.sh
 touches_shared:
+  - tests/unit/**
   - copier.yml
   - .docs/features/quality/index-lock-contract.md
 product: {}
