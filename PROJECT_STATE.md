@@ -10,6 +10,7 @@
 ## Notes mainteneur
 
 - 2026-05-07 : ce repo a servi de cible distincte pour un run supervisé depuis `ai_debate`, avec chargement prouvé de ses règles locales.
+- 2026-06-29 : audit stratégique (multi-agents) + remédiation. **Backlog et avancement tracés dans [`.docs/frames/2026-06-28-audit-strategique-remediation.md`](.docs/frames/2026-06-28-audit-strategique-remediation.md)** — son `next_hint` est le point de reprise canonique. Durcissements livrés : moat git réactivé (`core.hooksPath=.githooks`), fix body-leak du parseur fallback `build-feature-index`, anti-churn auto-worklog (`.session-docs.log`), dé-taxe `touches:` (globs catch-all → `touches_shared`), shims dérivés d'`AGENTS.md` (`CLAUDE.md`/`GEMINI.md` = `@AGENTS.md` ; voir `core/agents-md-shim-canonical`), `schema_version` opérationnalisé, divergence `id` schema↔checker réconciliée. Suite : C2a (validateur schéma — à cadrer, aucun validateur JSON-Schema dispo aujourd'hui), Phase 1 résiduelle (cf. frame).
 
 ## Comment reprendre le dev
 

@@ -148,3 +148,7 @@
 ## 2026-06-28 21:09 — auto
 - Fichiers modifiés :
   - CHANGELOG.md
+
+## 2026-06-29 — PROJECT_STATE : note mainteneur remediation (A7)
+- Ajout note 2026-06-29 pointant vers le frame de remediation (registre de reprise) + resume des durcissements de session. Vue mainteneur rendue exacte (audit A7).
+- Fichiers : PROJECT_STATE.md
