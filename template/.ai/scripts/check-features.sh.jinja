@@ -49,6 +49,36 @@ ok() { printf "  \033[32m✓\033[0m %s\n" "$1"; }
 ko() { printf "  \033[31m✗\033[0m %s\n" "$1" >&2; fail=1; }
 warn() { printf "  \033[33m⚠\033[0m %s\n" "$1" >&2; }
 
+fm_list() {
+  local file="$1"
+  local key="$2"
+  awk -v k="^${key}:" '
+    /^---$/ { fence++; next }
+    fence != 1 { next }
+    $0 ~ k {
+      if ($0 ~ /\[.*\]/) {
+        line=$0
+        sub(/^[^[]*\[/, "", line)
+        sub(/[[:space:]]*#.*$/, "", line)
+        sub(/\][[:space:]]*$/, "", line)
+        n=split(line, arr, ",")
+        for (i=1; i<=n; i++) {
+          gsub(/^[[:space:]]+|[[:space:]]+$/, "", arr[i])
+          if (arr[i] != "") print "- " arr[i]
+        }
+        flag=0
+        next
+      }
+      flag=1
+      next
+    }
+    flag && /^[[:space:]]*-/ { print; next }
+    flag && /^[^[:space:]]/ { flag=0 }
+  ' "$file" \
+    | sed -E 's/^[[:space:]]*-[[:space:]]*//; s/["'"'"']//g; s/[[:space:]]+$//' \
+    | grep -vE '^$|^\[\]$' || true
+}
+
 echo "═══ check-features ═══"
 
 if [[ ! -d "$FEATURES_DIR" ]]; then
@@ -138,8 +168,7 @@ for f in "${files[@]}"; do
     warn "$f : champ 'type' absent (profil OKF) — lance : bash .ai/scripts/aic.sh migrate okf-type --apply"
   fi
 
-  deps=$(awk '/^depends_on:/{flag=1; next} flag && /^  *-/{print; next} flag && /^[^[:space:]]/{flag=0}' "$f" \
-    | sed -E 's/^[[:space:]]*-[[:space:]]*//; s/["'"'"']//g')
+  deps=$(fm_list "$f" "depends_on")
   while IFS= read -r dep; do
     [[ -z "$dep" ]] && continue
     [[ "$dep" == "[]" ]] && continue
@@ -165,11 +194,7 @@ for f in "${files[@]}"; do
   done <<< "$deps"
 
   for touch_key in touches touches_shared; do
-    tchs=$(awk -v k="^${touch_key}:" '
-      $0 ~ k {flag=1; next}
-      flag && /^  *-/ {print; next}
-      flag && /^[^[:space:]]/ {flag=0}
-    ' "$f" | sed -E 's/^[[:space:]]*-[[:space:]]*//; s/["'"'"']//g')
+    tchs=$(fm_list "$f" "$touch_key")
     while IFS= read -r t; do
       [[ -z "$t" ]] && continue
       [[ "$t" == "[]" ]] && continue
