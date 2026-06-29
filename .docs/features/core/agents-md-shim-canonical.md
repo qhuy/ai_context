@@ -36,11 +36,11 @@ doc:
     rollout: true
     observability: false
 progress:
-  phase: spec
-  step: "cadré (aic-frame 2026-06-28) ; en attente de l'étape 1 = vérifier le support @import par agent"
+  phase: implement
+  step: "gate @import PASSÉ ; modèle par agent déterminé ; prêt à convertir AGENTS.md (base neutre) + shims"
   blockers: []
-  resume_hint: "AVANT tout code : vérifier empiriquement que Claude Code charge `@AGENTS.md` (CLAUDE.md = @AGENTS.md + pointeur). Puis Cursor/Gemini/Copilot ; fallback tailored si non supporté."
-  updated: 2026-06-28
+  resume_hint: "Implémenter : (1) rendre AGENTS.md neutre (pas 'Codex') = base ; (2) CLAUDE.md=@AGENTS.md+ligne Claude, GEMINI.md=@AGENTS.md+ligne Gemini (imports confirmés) ; (3) Cursor/Copilot = pas de shim requis (lisent AGENTS.md nativement) ou tailored minimal ; (4) étendre check-shims aux agents activés. À confirmer : Claude lit-il vraiment AGENTS.md nativement (#34235) ?"
+  updated: 2026-06-29
 ---
 
 # Shims dérivés d'AGENTS.md (base canonique + imports)
@@ -151,3 +151,4 @@ Non requis (`doc.requires.observability: false`). Preuves attendues : sorties de
 ## Historique / décisions
 
 - 2026-06-28 : création via `aic-frame` (item C1 du frame de remédiation `2026-06-28-audit-strategique-remediation`). Arbitrages tranchés : (a) nouvelle fiche dédiée ; (b) import `@AGENTS.md` + fallback tailored (symlink rejeté : aplatit le sur-mesure + fragile Windows). Gate d'implémentation : vérifier le support `@import` par agent AVANT tout code.
+- 2026-06-29 : **gate `@import` PASSÉ** (vérification 4 plateformes, sources docs officielles). Verdict par agent : **Claude Code** = `@path` import OK (récursif ≤5 hops) **et lirait AGENTS.md nativement** (#34235 rapportée résolue printemps 2026) ; **Gemini CLI** = `@path` import OK (Memory Import Processor) ; **Cursor** = `@file` en `.mdc` non fiable MAIS lit AGENTS.md nativement (racine+nested) ; **Copilot** = pas d'import inline (lien Markdown only) MAIS lit AGENTS.md nativement (depuis 2025-08). Modèle retenu : AGENTS.md = **base neutre** ; `CLAUDE.md`/`GEMINI.md` = `@AGENTS.md` + lignes agent ; Cursor/Copilot = **pas de shim requis** (lecture native) ou tailored minimal. **À confirmer** : la lecture native d'AGENTS.md par Claude Code (un seul agent l'affirme, contredit l'audit initial #34235-ouverte) — n'impacte pas l'import, mais si vrai, renforce le kill_criterion (CLAUDE.md devient optionnel, conservé pour les overrides Claude).
