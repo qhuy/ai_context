@@ -250,26 +250,29 @@ if [[ "$fail" -eq 0 ]]; then
 
   # Détection des cycles dans depends_on (via l'index JSON)
   if [[ -f "$cycle_idx" ]] && command -v jq >/dev/null 2>&1; then
+    # Tri topologique de Kahn (point fixe) : O(V+E), sans récursion. L'ancienne
+    # DFS ré-explorait chaque nœud une fois par chemin → coût exponentiel sur un
+    # DAG en diamant (audit A13 ; mesure : k=20 ≈ 76s, k≥22 timeout). On résout
+    # itérativement tout nœud dont toutes les deps sont déjà résolues ; le reste
+    # est impliqué dans un cycle. Arête pendante ignorée (filtrée aux nœuds
+    # existants) : ce n'est pas un cycle (contrat cycle-detection).
     cycle=$(jq -r '
       (.features | map({key: (.scope + "/" + .id), value: (.depends_on // [])}) | from_entries) as $graph
-      | [$graph | keys[]] as $nodes
-      | def dfs($node; $stack; $visited):
-          if ($stack | index($node)) then
-            ($stack + [$node]) | join(" → ")
-          elif ($visited | index($node)) then
-            empty
-          else
-            ($graph[$node] // [])
-            | map(dfs(.; $stack + [$node]; $visited + [$node]))
-            | add // empty
-          end;
-      $nodes
-      | map(dfs(.; []; []))
-      | map(select(. != null and . != ""))
-      | first // empty
+      | ($graph | keys) as $nodes
+      | ($graph | map_values(map(select(. as $d | $nodes | index($d))))) as $g
+      | ({ resolved: [], changed: true }
+         | until(.changed == false;
+             . as $st
+             | [ $nodes[]
+                 | select((. as $n | $st.resolved | index($n)) | not)
+                 | select(($g[.] // []) | all(. as $d | $st.resolved | index($d))) ] as $newly
+             | { resolved: ($st.resolved + $newly), changed: (($newly | length) > 0) })
+         | .resolved) as $resolved
+      | [ $nodes[] | select((. as $n | $resolved | index($n)) | not) ]
+      | if (length > 0) then (sort | join(", ")) else empty end
     ' "$cycle_idx" 2>/dev/null)
     if [[ -n "$cycle" ]]; then
-      ko "cycle détecté dans depends_on : $cycle"
+      ko "cycle détecté dans depends_on (features impliquées) : $cycle"
       [[ -n "$index_tmp" ]] && rm -f "$index_tmp"
       echo "❌ FAIL"
       exit 1

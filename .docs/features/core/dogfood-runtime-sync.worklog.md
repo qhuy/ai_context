@@ -402,3 +402,6 @@
 
 ## 2026-06-29 — couverture incidente (finding #6 : fraîcheur du frame)
 - `updated_at` + `next_hint` du frame de remédiation rafraîchis. Aucun changement de contrat de sync propre.
+
+## 2026-06-29 — couverture parité incidente (A13 : Kahn dans check-features)
+- Détection de cycles `check-features.sh` : DFS récursive exponentielle → tri topologique de Kahn (O(V+E)). Runtime + miroir `.jinja` (parité maintenue). Aucun changement de contrat de sync propre.
