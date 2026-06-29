@@ -64,3 +64,6 @@
 
 ## 2026-06-29 — couverture incidente (frame remediation : C2b livre)
 - Frame mis a jour (C2b fait, C2a = enhancement a cadrer). Aucun changement de comportement.
+
+## 2026-06-29 — couverture incidente (clôture frame : C2a-doc + A7)
+- Frame mis a jour (C2a resolu, cloture session). Aucun changement de comportement.

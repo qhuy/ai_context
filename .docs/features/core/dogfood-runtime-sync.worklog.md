@@ -386,3 +386,6 @@
 
 ## 2026-06-29 — couverture incidente (C2a-doc : role du schema)
 - Surface partagee touchee (feature.schema.json via .ai/** ou touches:). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)
+
+## 2026-06-29 — couverture incidente (clôture frame : C2a-doc + A7)
+- Frame mis a jour (C2a resolu, cloture session). Aucun changement de comportement.
