@@ -33,3 +33,7 @@
 - `auto-worklog-log.sh` marque dans `.ai/.session-docs.log` toute feature dont la fiche/worklog est éditée manuellement ; `auto-worklog-flush.sh` saute le bloc auto pour ces features puis nettoie le marqueur. Filet de sécurité préservé (feature code-only → bloc auto).
 - Parité jinja + gitignore (runtime+template). Test : cas 4-7 de test-auto-worklog-flush.sh. drift ✅, check-features ✅.
 - Fichiers : auto-worklog-log.sh(+jinja), auto-worklog-flush.sh(+jinja), .ai/.gitignore(+template), tests/unit/test-auto-worklog-flush.sh
+
+## 2026-06-29 — docstring corrigée (finding #6 audit hebdo)
+- En-tête de `auto-worklog-flush.sh` (+ jinja) corrigé : il prétendait encore « bump progress.updated dans le frontmatter », alors que le code ne le fait plus depuis le fix anti-churn (A9 / audit U4). La docstring décrit désormais le réel : append worklog uniquement ; `updated` géré par `auto-progress.sh` (transition) ou `.ai/workflows/feature-update.md`.
+- Commentaire seul, aucun changement de comportement. Parité runtime↔jinja vérifiée.

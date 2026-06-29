@@ -396,3 +396,6 @@
 
 ## 2026-06-29 — couverture runtime/template (finding #3 : YAML strict)
 - `check-features.sh` + miroir `.jinja` durcis : validation YAML stricte du frontmatter (yq, parité `build-feature-index.sh`). Parité runtime↔template vérifiée, `check-dogfood-drift` aligné. Aucun changement propre au contrat de sync ; couverture via `.ai/**`.
+
+## 2026-06-29 — couverture parité incidente (finding #6 : docstring auto-worklog-flush)
+- Correction commentaire-seul de `auto-worklog-flush.sh` + miroir `.jinja` (parité maintenue). Couverture via `.ai/**` / `template/**` ; aucun changement de contrat de sync propre.

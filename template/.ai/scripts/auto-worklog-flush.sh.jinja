@@ -2,14 +2,13 @@
 # auto-worklog-flush.sh — Hook Stop (fin de tour Claude).
 #
 # Lit .ai/.session-edits.log (JSONL), groupe par feature, append UNE entrée
-# au worklog de chaque feature affectée, bump progress.updated dans le frontmatter,
-# puis efface le log. Idempotent (log vide = no-op).
+# au worklog de chaque feature affectée, puis efface le log. Idempotent (log vide = no-op).
 #
 # Auto-update factuel uniquement :
-#   - progress.updated : date du jour
 #   - worklog : ligne "Fichiers modifiés: <liste>"
-# Ne touche JAMAIS phase / step / blockers / resume_hint / status.
-# Pour changer ces champs volontairement, utiliser `.ai/workflows/feature-update.md`.
+# NE bump PAS progress.updated (anti-churn de date — cf. NOTE plus bas et l'audit
+# quality/doc-freshness U4). Ne touche JAMAIS phase / step / blockers / resume_hint / status.
+# Pour ces champs : auto-progress.sh (transition de phase) ou .ai/workflows/feature-update.md.
 #
 # Silencieux et best-effort.
 
