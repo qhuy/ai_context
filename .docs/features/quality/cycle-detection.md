@@ -6,7 +6,8 @@ status: active
 depends_on:
   - core/feature-mesh
   - core/feature-index-cache
-touches:
+touches: []
+touches_shared:
   - template/.ai/scripts/check-features.sh.jinja
 progress:
   phase: review

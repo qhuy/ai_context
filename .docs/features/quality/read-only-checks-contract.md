@@ -13,8 +13,6 @@ touches:
   - template/.ai/scripts/aic.sh.jinja
   - .ai/scripts/doctor.sh
   - template/.ai/scripts/doctor.sh.jinja
-  - .ai/scripts/check-features.sh
-  - template/.ai/scripts/check-features.sh.jinja
   - .ai/scripts/check-feature-freshness.sh
   - template/.ai/scripts/check-feature-freshness.sh.jinja
   - .ai/scripts/check-feature-coverage.sh
@@ -36,6 +34,8 @@ touches:
   - .docs/features/quality/read-only-checks-contract.md
   - .docs/features/quality/read-only-checks-contract.worklog.md
 touches_shared:
+  - .ai/scripts/check-features.sh
+  - template/.ai/scripts/check-features.sh.jinja
   - tests/smoke-test.sh
 product:
   initiative: product/ai-context-stability-migration

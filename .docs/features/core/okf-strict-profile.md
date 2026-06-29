@@ -14,8 +14,6 @@ touches:
   - template/.ai/schema/feature.schema.json
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
-  - .ai/scripts/check-features.sh
-  - template/.ai/scripts/check-features.sh.jinja
   - .ai/scripts/build-feature-index.sh
   - template/.ai/scripts/build-feature-index.sh.jinja
   - .ai/scripts/migrate-okf-type.sh
@@ -29,6 +27,8 @@ touches:
   - docs/upgrading.md
   - CHANGELOG.md
 touches_shared:
+  - .ai/scripts/check-features.sh
+  - template/.ai/scripts/check-features.sh.jinja
   - tests/smoke-test.sh
   - tests/unit/test-okf-type.sh
 product: {}

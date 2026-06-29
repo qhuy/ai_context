@@ -186,3 +186,6 @@
 
 ## 2026-06-29 — couverture incidente (C2b : reconciliation id schema/checker)
 - Surface partagee touchee (check-features.sh via .ai/** ou touches:, ou tests/unit/**). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)
+
+## 2026-06-29 — couverture incidente (tests P0 audit hebdo)
+- Ajout de tests unitaires sous `tests/unit/**` pour verrouiller `check-features` frontmatter-only et `check-commit-features` fiche pertinente. Aucun changement de contrat read-only propre ; les tests s'executent sur depots temporaires.

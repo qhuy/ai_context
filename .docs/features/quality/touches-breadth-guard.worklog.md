@@ -18,3 +18,8 @@
 - Signal B ne liste plus que les globs légitimes (.ai/**, .githooks/**). Dé-taxe vérifiée : édit .jinja n'exige plus template-engine. check-features ✅.
 - Non reclassé (co-propriété légitime) : build-feature-index.sh/.jinja sur index-contract-v2/feature-mesh-contract-alignment/okf-strict-profile.
 - Fichiers : 4 fiches reclassées + cette fiche.
+
+## 2026-06-29 — Signal A check-features (audit hebdo P0)
+- Reclassement de `check-features.sh` / `.jinja` en `touches_shared` pour les fiches non propriétaires : `core/okf-strict-profile`, `quality/read-only-checks-contract`, `quality/cycle-detection`.
+- `core/feature-mesh` conserve l'ownership direct : c'est la feature propriétaire du contrat frontmatter et du checker.
+- Cause : le commit P0 `fix(core)` a dû bypasser le gate parce que le Signal A tirait des worklogs hors scope. Ce reclassement réduit la taxe à la racine et doit permettre au prochain edit `check-features.sh` de passer avec seulement le worklog propriétaire.
