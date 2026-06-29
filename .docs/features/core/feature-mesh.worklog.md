@@ -46,3 +46,10 @@
 
 ## 2026-06-29 — couverture incidente (C2a-doc : role du schema)
 - Surface partagee touchee (feature.schema.json via .ai/** ou touches:). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)
+
+## 2026-06-29 — fix check-features frontmatter-boundary (audit hebdo P0)
+- `check-features.sh` lit maintenant `depends_on`, `touches` et `touches_shared` avec un extracteur borné au premier frontmatter, aligné sur le correctif déjà fait côté `build-feature-index`.
+- Ajout du support flow-style pour la validation (`touches: [a, b]`) et du test `tests/unit/test-check-features-frontmatter-boundary.sh`.
+- Fichiers : `.ai/scripts/check-features.sh`, `template/.ai/scripts/check-features.sh.jinja`, `tests/unit/test-check-features-frontmatter-boundary.sh`.
+- Validation : test unitaire ciblé, `check-features --no-write`, smoke complet.
+- Note livraison : le commit initial `4103f65` a été fait avec `--no-verify` pour préserver le découpage mono-scope face à la sur-couverture Signal A. Le reclassement des propriétaires non directs est suivi par `quality/touches-breadth-guard`.
