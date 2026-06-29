@@ -2,7 +2,7 @@
 
 > **Tu DOIS lire [`.ai/index.md`](.ai/index.md) avant toute action.**
 
-Shim lean Codex : ne charge pas `.ai/quality/QUALITY_GATE.md`, `.ai/agent/*`,
+Shim lean : ne charge pas `.ai/quality/QUALITY_GATE.md`, `.ai/agent/*`,
 catalogues, références, worklogs, skills, indexes ou full diffs au démarrage.
 
 Hard rules :

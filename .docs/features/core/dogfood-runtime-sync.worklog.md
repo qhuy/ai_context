@@ -352,3 +352,6 @@
 
 ## 2026-06-28 — couverture incidente (frame remédiation : C1 cadré + fiche)
 - `.docs/frames/2026-06-28-audit-strategique-remediation.md` mis à jour (C1 cadré, fiche créée). Aucun changement de comportement.
+
+## 2026-06-29 — couverture incidente (C1 : shims derives d AGENTS.md)
+- Surface partagee touchee (shims AGENTS.md/CLAUDE.md ou gabarits). Aucun changement de comportement propre a cette feature.

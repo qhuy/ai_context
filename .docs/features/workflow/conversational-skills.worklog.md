@@ -82,3 +82,6 @@
 ## 2026-06-02 00:27 — auto
 - Fichiers modifiés :
   - template/.claude/skills/aic/SKILL.md.jinja
+
+## 2026-06-29 — couverture incidente (C1 : shims derives d AGENTS.md)
+- Surface partagee touchee (shims AGENTS.md/CLAUDE.md ou gabarits). Aucun changement de comportement propre a cette feature.

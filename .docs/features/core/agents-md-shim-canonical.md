@@ -36,10 +36,10 @@ doc:
     rollout: true
     observability: false
 progress:
-  phase: implement
-  step: "gate @import PASSÉ ; modèle par agent déterminé ; prêt à convertir AGENTS.md (base neutre) + shims"
+  phase: review
+  step: "import model livré : AGENTS.md neutre + CLAUDE.md/GEMINI.md = @AGENTS.md ; Cursor/Copilot tailored (fallback) ; checks verts"
   blockers: []
-  resume_hint: "Implémenter : (1) rendre AGENTS.md neutre (pas 'Codex') = base ; (2) CLAUDE.md=@AGENTS.md+ligne Claude, GEMINI.md=@AGENTS.md+ligne Gemini (imports confirmés) ; (3) Cursor/Copilot = pas de shim requis (lisent AGENTS.md nativement) ou tailored minimal ; (4) étendre check-shims aux agents activés. À confirmer : Claude lit-il vraiment AGENTS.md nativement (#34235) ?"
+  resume_hint: "Reste (follow-up) : (1) étendre check-shims aux agents activés via .copier-answers (aujourd'hui AGENTS.md+CLAUDE.md en dur) ; (2) confirmer la lecture native d'AGENTS.md par Claude (#34235) → si vrai, CLAUDE.md devient optionnel ; (3) HANDOFF pitch readme-positioning."
   updated: 2026-06-29
 ---
 
@@ -151,4 +151,5 @@ Non requis (`doc.requires.observability: false`). Preuves attendues : sorties de
 ## Historique / décisions
 
 - 2026-06-28 : création via `aic-frame` (item C1 du frame de remédiation `2026-06-28-audit-strategique-remediation`). Arbitrages tranchés : (a) nouvelle fiche dédiée ; (b) import `@AGENTS.md` + fallback tailored (symlink rejeté : aplatit le sur-mesure + fragile Windows). Gate d'implémentation : vérifier le support `@import` par agent AVANT tout code.
+- 2026-06-29 : **import model livré** (dogfood + template). `AGENTS.md` neutralisé (« Shim lean Codex » → « Shim lean » = base agent-neutre) ; `CLAUDE.md` = ligne `> Tu DOIS lire .ai/index.md` (dégradation gracieuse + check-shims) + `@AGENTS.md` + pointeur `.claude/settings.json` (hard rules dé-dupliquées dans AGENTS.md) ; `GEMINI.md.jinja` = `@AGENTS.md` + ligne Gemini. **Cursor/Copilot laissés tailored** (fallback assumé : lisent AGENTS.md nativement, import non fiable). Vérifs : `check-shims` ✅ (AGENTS 15 l., CLAUDE 7 l.), `check-dogfood-drift` ✅ (parité), `tests/smoke-test.sh` ✅. Follow-up : check-shims dynamique par agents activés ; confirmation #34235.
 - 2026-06-29 : **gate `@import` PASSÉ** (vérification 4 plateformes, sources docs officielles). Verdict par agent : **Claude Code** = `@path` import OK (récursif ≤5 hops) **et lirait AGENTS.md nativement** (#34235 rapportée résolue printemps 2026) ; **Gemini CLI** = `@path` import OK (Memory Import Processor) ; **Cursor** = `@file` en `.mdc` non fiable MAIS lit AGENTS.md nativement (racine+nested) ; **Copilot** = pas d'import inline (lien Markdown only) MAIS lit AGENTS.md nativement (depuis 2025-08). Modèle retenu : AGENTS.md = **base neutre** ; `CLAUDE.md`/`GEMINI.md` = `@AGENTS.md` + lignes agent ; Cursor/Copilot = **pas de shim requis** (lecture native) ou tailored minimal. **À confirmer** : la lecture native d'AGENTS.md par Claude Code (un seul agent l'affirme, contredit l'audit initial #34235-ouverte) — n'impacte pas l'import, mais si vrai, renforce le kill_criterion (CLAUDE.md devient optionnel, conservé pour les overrides Claude).
