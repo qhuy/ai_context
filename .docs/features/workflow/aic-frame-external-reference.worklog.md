@@ -58,3 +58,6 @@
 ## 2026-06-29 11:39 — auto
 - Fichiers modifiés :
   - .docs/frames/2026-06-28-audit-strategique-remediation.md
+
+## 2026-06-29 — couverture incidente (frame remediation : C2c livre)
+- Frame mis a jour (C2c fait, C2a/b routes vers feature-mesh). Aucun changement de comportement.
