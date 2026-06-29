@@ -50,3 +50,6 @@
 
 ## 2026-06-28 — couverture incidente (A1 : fix fallback build-feature-index)
 - `build-feature-index.sh.jinja` touché via glob `touches:`. Aucun changement propre à cette feature. (Taxe sur-couverture `touches:` — cf. quality/touches-breadth-guard.)
+
+## 2026-06-29 — couverture incidente (clôture A1 : résiduel fallback build-feature-index)
+- `build-feature-index.sh` + `.jinja` touchés via glob `touches:` (bornage external_refs/product/progress du fallback). Le contrat JSON émis est inchangé : aucun champ ni sémantique modifié ; correction de fidélité du parseur fallback seulement. (Taxe sur-couverture `touches:` — cf. quality/touches-breadth-guard.)

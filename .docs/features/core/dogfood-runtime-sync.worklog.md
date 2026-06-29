@@ -339,3 +339,9 @@
 
 ## 2026-06-28 — couverture incidente (frame remédiation : avancement 2e vague + A9)
 - `.docs/frames/2026-06-28-audit-strategique-remediation.md` mis à jour. Aucun changement de comportement.
+
+## 2026-06-28 23:10 — auto
+- Fichiers modifiés :
+  - .ai/scripts/auto-worklog-flush.sh
+  - .ai/scripts/auto-worklog-log.sh
+  - .docs/frames/2026-06-28-audit-strategique-remediation.md

@@ -119,3 +119,11 @@
 - Parité : même fix dans `template/.ai/scripts/build-feature-index.sh.jinja` (aucun hazard {% raw %}). drift ✅.
 - Test : `tests/unit/test-build-feature-index-fallback-frontmatter.sh` (yq masqué). contract/fallback/robust toujours ✅.
 - Fichiers : .ai/scripts/build-feature-index.sh, template/.ai/scripts/build-feature-index.sh.jinja, tests/unit/test-build-feature-index-fallback-frontmatter.sh
+
+## 2026-06-29 — fix résiduel fallback body-leak : product / external_refs / progress
+- Ferme le résiduel laissé par A1 (« à border — suivi ») : les awk inline `external_refs`, `product` (scalaires `type`…`next_decision_date`) et `progress` (`phase`/`step`/`resume_hint`/`updated`/`blockers`) scannaient encore le fichier ENTIER. Reproduit empiriquement sur la version HEAD pré-fix, fallback forcé (yq masqué) : un `product:`/`external_refs:`/`progress:` en colonne 0 dans le corps injectait `product.type=leaked-type`, `external_refs.ticket=LEAKED-123`, `progress.phase=leaked-phase`.
+- Fix : même prélude `fence` que A1 (`/^---$/{fence++; next} fence!=1{next}`) ajouté en tête de chaque awk inline → extraction bornée au 1er bloc frontmatter. `extract_product_portfolio_scalar_awk` était déjà fence-aware (intact).
+- Parité : fix identique dans `template/.ai/scripts/build-feature-index.sh.jinja` (aucun hazard {% raw %} — single-brace awk seulement). check-dogfood-drift ✅, smoke-test (copier copy + parité cache) ✅.
+- Test : `tests/unit/test-build-feature-index-fallback-frontmatter.sh` étendu — fiche-piège `objleak` (frontmatter sans product/external_refs/progress, corps les imitant) → index doit donner `product=={}`, `external_refs=={}`, `progress.phase==""`, `progress.blockers==[]`. Assertion non-tautologique : échoue sur HEAD pré-fix.
+- contract/fallback/robust/drift-extra toujours ✅. Le résiduel documenté dans la fiche est désormais clos (plus aucun champ fallback non borné).
+- Fichiers : .ai/scripts/build-feature-index.sh, template/.ai/scripts/build-feature-index.sh.jinja, tests/unit/test-build-feature-index-fallback-frontmatter.sh

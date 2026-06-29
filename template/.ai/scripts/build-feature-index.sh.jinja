@@ -141,6 +141,8 @@ feature_to_json() {
     touches_shared_json=$(extract_list_awk "$file" "touches_shared" | jq -R . | jq -s .)
     deps_json=$(extract_list_awk "$file" "depends_on" | jq -R . | jq -s .)
     external_refs_raw=$(awk '
+      /^---$/{fence++; next}
+      fence!=1{next}
       /^external_refs:/{flag=1; next}
       flag && /^  [A-Za-z0-9_.-]+:/{print; next}
       flag && /^[^[:space:]]/{flag=0}
@@ -161,16 +163,16 @@ feature_to_json() {
           | if ($p|length) >= 2 then . + {($p[0]): $p[1]} else . end
         )')
     fi
-    product_type=$(awk '/^product:/{flag=1; next} flag && /^  type:/{sub(/^  type:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
-    product_initiative=$(awk '/^product:/{flag=1; next} flag && /^  initiative:/{sub(/^  initiative:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
-    product_contribution=$(awk '/^product:/{flag=1; next} flag && /^  contribution:/{sub(/^  contribution:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
-    product_evidence=$(awk '/^product:/{flag=1; next} flag && /^  evidence:/{sub(/^  evidence:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
-    product_bet=$(awk '/^product:/{flag=1; next} flag && /^  bet:/{sub(/^  bet:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
-    product_target_user=$(awk '/^product:/{flag=1; next} flag && /^  target_user:/{sub(/^  target_user:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
-    product_success_metric=$(awk '/^product:/{flag=1; next} flag && /^  success_metric:/{sub(/^  success_metric:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
-    product_leading_indicator=$(awk '/^product:/{flag=1; next} flag && /^  leading_indicator:/{sub(/^  leading_indicator:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
-    product_decision_state=$(awk '/^product:/{flag=1; next} flag && /^  decision_state:/{sub(/^  decision_state:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
-    product_next_decision_date=$(awk '/^product:/{flag=1; next} flag && /^  next_decision_date:/{sub(/^  next_decision_date:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_type=$(awk '/^---$/{fence++; next} fence!=1{next} /^product:/{flag=1; next} flag && /^  type:/{sub(/^  type:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_initiative=$(awk '/^---$/{fence++; next} fence!=1{next} /^product:/{flag=1; next} flag && /^  initiative:/{sub(/^  initiative:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_contribution=$(awk '/^---$/{fence++; next} fence!=1{next} /^product:/{flag=1; next} flag && /^  contribution:/{sub(/^  contribution:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_evidence=$(awk '/^---$/{fence++; next} fence!=1{next} /^product:/{flag=1; next} flag && /^  evidence:/{sub(/^  evidence:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_bet=$(awk '/^---$/{fence++; next} fence!=1{next} /^product:/{flag=1; next} flag && /^  bet:/{sub(/^  bet:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_target_user=$(awk '/^---$/{fence++; next} fence!=1{next} /^product:/{flag=1; next} flag && /^  target_user:/{sub(/^  target_user:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_success_metric=$(awk '/^---$/{fence++; next} fence!=1{next} /^product:/{flag=1; next} flag && /^  success_metric:/{sub(/^  success_metric:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_leading_indicator=$(awk '/^---$/{fence++; next} fence!=1{next} /^product:/{flag=1; next} flag && /^  leading_indicator:/{sub(/^  leading_indicator:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_decision_state=$(awk '/^---$/{fence++; next} fence!=1{next} /^product:/{flag=1; next} flag && /^  decision_state:/{sub(/^  decision_state:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    product_next_decision_date=$(awk '/^---$/{fence++; next} fence!=1{next} /^product:/{flag=1; next} flag && /^  next_decision_date:/{sub(/^  next_decision_date:[[:space:]]*/, ""); print; exit} flag && /^[^[:space:]]/{flag=0}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
     product_portfolio_appetite=$(extract_product_portfolio_scalar_awk "$file" "appetite")
     product_portfolio_confidence=$(extract_product_portfolio_scalar_awk "$file" "confidence")
     product_portfolio_expected_impact=$(extract_product_portfolio_scalar_awk "$file" "expected_impact")
@@ -205,12 +207,14 @@ feature_to_json() {
         next_decision_date: $next_decision_date, portfolio: $portfolio
       } | with_entries(select(if (.value | type) == "object" then (.value | length) > 0 else .value != "" end))')
     # progress.* : parsing best-effort en fallback awk (yq recommandé pour précision)
-    phase=$(awk '/^progress:/{flag=1; next} flag && /^  phase:/{sub(/^  phase:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/["'"'"']//g; s/[[:space:]]+$//')
-    step=$(awk '/^progress:/{flag=1; next} flag && /^  step:/{sub(/^  step:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
-    resume_hint=$(awk '/^progress:/{flag=1; next} flag && /^  resume_hint:/{sub(/^  resume_hint:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
-    updated=$(awk '/^progress:/{flag=1; next} flag && /^  updated:/{sub(/^  updated:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/["'"'"']//g; s/[[:space:]]+$//')
+    phase=$(awk '/^---$/{fence++; next} fence!=1{next} /^progress:/{flag=1; next} flag && /^  phase:/{sub(/^  phase:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/["'"'"']//g; s/[[:space:]]+$//')
+    step=$(awk '/^---$/{fence++; next} fence!=1{next} /^progress:/{flag=1; next} flag && /^  step:/{sub(/^  step:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    resume_hint=$(awk '/^---$/{fence++; next} fence!=1{next} /^progress:/{flag=1; next} flag && /^  resume_hint:/{sub(/^  resume_hint:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+    updated=$(awk '/^---$/{fence++; next} fence!=1{next} /^progress:/{flag=1; next} flag && /^  updated:/{sub(/^  updated:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/["'"'"']//g; s/[[:space:]]+$//')
     # progress.blockers : liste sous progress:, items indentés de 4 espaces
     blockers_raw=$(awk '
+      /^---$/{fence++; next}
+      fence!=1{next}
       /^progress:/{flag=1; next}
       flag && /^  blockers:/{bf=1; next}
       bf && /^    -/{print; next}

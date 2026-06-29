@@ -54,6 +54,34 @@ depends_on: []
 # Flow
 MD
 
+# Fiche piège objets : le frontmatter ne déclare NI product, NI external_refs, NI
+# progress, mais le corps markdown les imite en colonne 0 (cas réaliste : une fiche
+# qui documente ces blocs). Aucune valeur ne doit fuiter dans l'index en fallback.
+cat > "$tmp/.docs/features/test/objleak.md" <<'MD'
+---
+id: objleak
+scope: test
+title: Object body leak guard
+status: active
+touches:
+  - src/real.ts
+---
+# Corps markdown
+
+Une doc qui imite des blocs frontmatter :
+
+product:
+  type: leaked-type
+  initiative: leaked-init
+external_refs:
+  ticket: LEAKED-123
+progress:
+  phase: leaked-phase
+  step: leaked-step
+  blockers:
+    - leaked blocker
+MD
+
 (
   cd "$tmp"
   # PATH minimal = pas de yq → force le parseur fallback awk/sed.
@@ -80,6 +108,16 @@ MD
     | (.touches | index("src/a.ts")) and (.touches | index("src/b.ts"))
       and (.touches | length) == 2
   ' >/dev/null || fail "flow-style : touches: [a, b] non extrait en fallback"
+
+  # — Object body-leak : product / external_refs / progress du corps ne fuient pas —
+  printf '%s\n' "$out" | jq -e '
+    .features[] | select(.id == "objleak")
+    | (.product == {})
+      and (.external_refs == {})
+      and (.progress.phase == "")
+      and (.progress.step == "")
+      and (.progress.blockers == [])
+  ' >/dev/null || fail "object body-leak : product/external_refs/progress du corps ont fuité dans l'\''index"
 
   # — Read-only : stdout ne crée pas l'index —
   [[ ! -e .ai/.feature-index.json ]] || fail "fallback stdout a créé l'index (read-only violé)"

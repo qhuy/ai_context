@@ -142,3 +142,6 @@
 
 ## 2026-06-28 — couverture incidente (A1 : fix fallback build-feature-index)
 - Surface partagée touchée (`tests/unit/**` ou `build-feature-index.sh.jinja`) via glob `touches:`. Aucun changement de comportement propre à cette feature. (Taxe de sur-couverture `touches:` — cf. quality/touches-breadth-guard.)
+
+## 2026-06-29 — HANDOFF depuis core (clôture A1 : résiduel fallback build-feature-index)
+- `build-feature-index.sh` + `.jinja` touchés via glob `touches:` (bornage external_refs/product/progress du fallback). L'extraction `product.portfolio.*` consommée par cette boucle était DÉJÀ fence-aware (`extract_product_portfolio_scalar_awk`) et reste inchangée ; seuls les scalaires product inline / external_refs / progress sont bornés. Aucun impact sur le portfolio loop. (Taxe de sur-couverture `touches:` — cf. quality/touches-breadth-guard.)
