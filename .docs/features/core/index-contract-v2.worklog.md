@@ -53,3 +53,10 @@
 
 ## 2026-06-29 — couverture incidente (clôture A1 : résiduel fallback build-feature-index)
 - `build-feature-index.sh` + `.jinja` touchés via glob `touches:` (bornage external_refs/product/progress du fallback). Le contrat JSON émis est inchangé : aucun champ ni sémantique modifié ; correction de fidélité du parseur fallback seulement. (Taxe sur-couverture `touches:` — cf. quality/touches-breadth-guard.)
+
+## 2026-06-29 — schema_version operationnalise (C2c)
+- test-build-feature-index-contract.sh : snapshot des cles emises (top-level/feature/progress) couple a schema_version. Changer une cle echoue tant que version+snapshot pas MAJ ensemble (incitation inversee).
+- smoke : assertion schema_version relachee (presence+string), le pin de version vit dans le test de contrat.
+- Verifs : contract test PASS, smoke PASS, trio build-index PASS.
+- Reste C2 (hors scope, check-features.sh / feature-mesh) : C2a appliquer le schema, C2b reconcilier divergence id/depends_on.
+- Fichiers : tests/unit/test-build-feature-index-contract.sh, tests/smoke-test.sh

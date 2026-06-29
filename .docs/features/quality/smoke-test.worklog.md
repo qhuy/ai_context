@@ -195,3 +195,6 @@
 
 ## 2026-06-28 — couverture incidente (A1 : fix fallback build-feature-index)
 - Surface partagée touchée (`tests/unit/**` ou `build-feature-index.sh.jinja`) via glob `touches:`. Aucun changement de comportement propre à cette feature. (Taxe de sur-couverture `touches:` — cf. quality/touches-breadth-guard.)
+
+## 2026-06-29 — assertion schema_version relachee (C2c)
+- L'etape index schema_version du smoke verifie desormais la presence+type (string) au lieu de pinner "1". Le pin de version vit dans test-build-feature-index-contract.sh.

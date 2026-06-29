@@ -138,3 +138,6 @@
 ## 2026-06-28 23:10 — auto
 - Fichiers modifiés :
   - tests/unit/test-auto-worklog-flush.sh
+
+## 2026-06-29 — couverture incidente (C2c : test de contrat index)
+- Surface partagee touchee (tests/unit/** via glob). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)

@@ -93,6 +93,29 @@ MD
   [[ "$order" == ".docs/features/core/a-first.md|.docs/features/quality/z-last.md" ]] \
     || fail "ordre feature instable/inattendu : $order"
 
+  # ─── Contrat de CLÉS émises, couplé à schema_version (opérationnalise la version) ───
+  # Snapshot du jeu de clés pour le schema_version courant. Si la liste change, ce
+  # test ÉCHOUE → décision consciente : bumper schema_version dans build-feature-index.sh
+  # ET mettre à jour ce snapshot (clés + version ensemble). Inverse l'incitation : on
+  # ne peut plus modifier le contrat d'index sans toucher ce test et bumper la version.
+  ver="$(printf '%s\n' "$out1" | jq -r '.schema_version')"
+  top_keys="$(printf '%s\n' "$out1" | jq -rS 'keys | join(",")')"
+  feat_keys="$(printf '%s\n' "$out1" | jq -rS '.features[0] | keys | join(",")')"
+  prog_keys="$(printf '%s\n' "$out1" | jq -rS '.features[0].progress | keys | join(",")')"
+  case "$ver" in
+    1)
+      [[ "$top_keys" == "features,generated_at,project_id,schema_version" ]] \
+        || fail "schema_version=1 mais clés top-level modifiées ($top_keys) — bumper la version + MAJ snapshot"
+      [[ "$feat_keys" == "depends_on,external_refs,id,path,product,progress,scope,status,touches,touches_shared,type" ]] \
+        || fail "schema_version=1 mais clés feature modifiées ($feat_keys) — bumper la version + MAJ snapshot"
+      [[ "$prog_keys" == "blockers,phase,resume_hint,step,updated" ]] \
+        || fail "schema_version=1 mais clés progress modifiées ($prog_keys) — bumper la version + MAJ snapshot"
+      ;;
+    *)
+      fail "schema_version=$ver inconnu de ce test — ajouter le snapshot de clés correspondant"
+      ;;
+  esac
+
   bash .ai/scripts/build-feature-index.sh --write >/dev/null
   [[ -f .ai/.feature-index.json ]] || fail "--write n'a pas créé l'index"
   before_mtime="$(mtime .ai/.feature-index.json)"

@@ -553,8 +553,10 @@ if ! jq -e '.features[] | select(.id == "sample" and .external_refs.speckit == "
   exit 1
 fi
 echo "  ✓ index expose external_refs"
-if ! jq -e '.schema_version == "1"' "$idx" >/dev/null; then
-  echo "  ✗ index manque schema_version: \"1\""
+# Présence seulement : le PIN de version vit dans test-build-feature-index-contract.sh
+# (couplé au snapshot des clés), pour ne pas décourager un bump légitime ici.
+if ! jq -e '.schema_version != null and (.schema_version | type == "string")' "$idx" >/dev/null; then
+  echo "  ✗ index manque schema_version (string)"
   exit 1
 fi
 echo "  ✓ index expose schema_version"

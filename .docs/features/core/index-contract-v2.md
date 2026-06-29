@@ -39,10 +39,10 @@ doc:
     observability: false
 progress:
   phase: review
-  step: "contrat stdout/write validé et consommé par les checks read-only"
+  step: "schema_version opérationnalisé (snapshot de clés couplé) ; contrat stdout/write validé"
   blockers: []
-  resume_hint: "relire le delta core puis décider si le fallback sans yq/product portfolio devient une feature séparée"
-  updated: 2026-06-26
+  resume_hint: "C2c fait. Reste C2 hors-scope index-contract-v2 : appliquer le schéma + réconcilier la divergence id/depends_on schema↔checker = feature d'alignement schema/checker (touche check-features.sh, scope feature-mesh)."
+  updated: 2026-06-29
 type: feature
 ---
 
@@ -96,6 +96,7 @@ Cette feature couvre le contrat d'index. Les consommateurs seront adaptés dans 
 - `--write` ne doit pas réécrire le cache si la représentation contractuelle existante est identique.
 - Le fallback sans `yq` doit être borné : soit il supporte les champs utilisés, soit il émet un warning/action explicite.
 - Les changements de format doivent être documentés dans `docs/upgrading.md`.
+- `schema_version` est **opérationnalisé** : un test de contrat snapshotte le jeu de clés émises (top-level + feature + progress) **couplé à la version** (`tests/unit/test-build-feature-index-contract.sh`). Tout changement de clés fait échouer le test tant que la version n'est pas bumpée et le snapshot mis à jour. Le smoke ne **pinne** plus la version (présence + type string seulement), pour ne pas décourager un bump légitime — le pin vit dans le test de contrat.
 
 ## Comportement attendu
 
@@ -187,3 +188,4 @@ Les signaux utiles sont les tests, warnings explicites et messages d'erreur du s
 - 2026-05-14 : création suite à l'initiative `product/ai-context-stability-migration`.
 - 2026-05-14 : décision de traiter le contrat d'index avant la généralisation des commandes read-only.
 - 2026-05-14 : première implémentation core. Tri stable des fiches avant agrégation, comparaison contractuelle via `del(.generated_at)` avant écriture du cache, et test `tests/unit/test-build-feature-index-contract.sh` couvrant stdout non mutant, ordre stable, contrat stable et `--write` idempotent.
+- 2026-06-29 : **`schema_version` opérationnalisé** (item C2c du frame de remédiation `2026-06-28-audit-strategique-remediation`). Avant : version littérale `"1"` + smoke `== "1"` → la pression du test décourageait tout bump (audit : « version gérée par évitement »). Après : `test-build-feature-index-contract.sh` snapshotte les clés top-level/feature/progress **couplées à la version** ; un changement de clés échoue tant que version + snapshot ne sont pas mis à jour ensemble (incitation **inversée**). Smoke relâché en présence-seule. Vérifs : contract test ✅, smoke ✅. **Restent hors scope index-contract-v2** : C2a (appliquer le schéma JSON) + C2b (réconcilier la divergence `id`/`depends_on` schema↔checker — schéma kebab-strict vs checker tolérant underscore, 0 fiche en violation) — touchent `check-features.sh` (scope `feature-mesh`), à router en feature d'alignement schema/checker.

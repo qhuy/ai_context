@@ -358,3 +358,9 @@
 
 ## 2026-06-29 — couverture incidente (frame remediation : C1 core livre)
 - Frame mis a jour (C1 implemente). Aucun changement de comportement.
+
+## 2026-06-29 11:39 — auto
+- Fichiers modifiés :
+  - .docs/frames/2026-06-28-audit-strategique-remediation.md
+  - AGENTS.md
+  - CLAUDE.md
