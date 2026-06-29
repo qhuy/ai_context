@@ -43,3 +43,6 @@
 - Verifs : nouveau test PASS, check-features dogfood PASS, test-okf-type PASS, drift PASS.
 - HANDOFF depuis index-contract-v2. Reste C2a (appliquer/retirer le schema).
 - Fichiers : .ai/scripts/check-features.sh, template/.ai/scripts/check-features.sh.jinja, tests/unit/test-id-schema-checker-parity.sh
+
+## 2026-06-29 — couverture incidente (C2a-doc : role du schema)
+- Surface partagee touchee (feature.schema.json via .ai/** ou touches:). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)

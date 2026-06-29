@@ -383,3 +383,6 @@
 - Fix : ajout .session-docs.log au rsync --exclude ET a is_ignored_runtime_extra de check-dogfood-drift.sh (a cote des autres .session-*).
 - Verif : 27/27 unit PASS, drift aligne. (Bug de mon propre A9 — aligne les exclusions partout : gitignore + drift.)
 - Fichiers : .ai/scripts/check-dogfood-drift.sh
+
+## 2026-06-29 — couverture incidente (C2a-doc : role du schema)
+- Surface partagee touchee (feature.schema.json via .ai/** ou touches:). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)

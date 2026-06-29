@@ -60,3 +60,9 @@
 - Verifs : contract test PASS, smoke PASS, trio build-index PASS.
 - Reste C2 (hors scope, check-features.sh / feature-mesh) : C2a appliquer le schema, C2b reconcilier divergence id/depends_on.
 - Fichiers : tests/unit/test-build-feature-index-contract.sh, tests/smoke-test.sh
+
+## 2026-06-29 — C2a-doc : role du schema clarifie (closing)
+- $comment ajoute dans feature.schema.json (runtime+template) : source d'enums + pattern id, PAS validateur full runtime. Pas de dependance ajv/check-jsonschema (ethos bash/jq/yq).
+- Verifs : JSON valide, read_schema_enum ok, check-features PASS, drift aligne.
+- Clot les 3 "contrats qui mentent" de l'audit (C2a-doc + C2b + C2c).
+- Fichiers : .ai/schema/feature.schema.json, template/.ai/schema/feature.schema.json
