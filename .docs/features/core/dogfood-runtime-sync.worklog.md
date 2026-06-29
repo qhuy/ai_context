@@ -389,3 +389,7 @@
 
 ## 2026-06-29 — couverture incidente (clôture frame : C2a-doc + A7)
 - Frame mis a jour (C2a resolu, cloture session). Aucun changement de comportement.
+
+## 2026-06-29 — couverture runtime/template (P0 audit hebdo)
+- Runtime et miroirs `.jinja` synchronises pour `check-features.sh` et `check-commit-features.sh` dans les commits P0.
+- Ajout de tests unitaires et branchement smoke ; `check-dogfood-drift.sh` repasse vert apres patch.

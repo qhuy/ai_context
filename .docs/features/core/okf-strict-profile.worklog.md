@@ -91,3 +91,7 @@
 
 ## 2026-06-29 — couverture incidente (C2a-doc : role du schema)
 - Surface partagee touchee (feature.schema.json via .ai/** ou touches:). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)
+
+## 2026-06-29 — HANDOFF quality/touches-breadth-guard
+- `check-features.sh` runtime + jinja passent de `touches:` direct à `touches_shared:` pour cette fiche : OKF reste lié en review, mais ne porte plus l'obligation de fraîcheur documentaire sur chaque évolution du checker.
+- Aucun changement de contrat OKF propre ; propriétaire direct du checker : `core/feature-mesh`.
