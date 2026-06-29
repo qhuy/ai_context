@@ -97,6 +97,33 @@ staged_has_doc_for_feature() {
   return 1
 }
 
+# blocking_coverers <rel> — contrat (a') : parmi les coverers DIRECTS (touches:)
+# d'un fichier, seul le rang de spécificité le plus élevé est BLOQUANT.
+#   - primaire unique (plus spécifique) → lui seul doit être documenté ;
+#   - tie de rang (ex-aequo, ex. plusieurs revendications exactes) → tous les
+#     ex-aequo (bloque tant que non documentés ou reclassés en touches_shared) ;
+#   - coverers moins spécifiques (glob large) → advisory, NON bloquants ;
+#   - 0 coverer direct → rien (orphelin traité ailleurs).
+# Tue la cascade sur l'infra partagée sans rendre muet le vrai co-ownership
+# (audit D + arbitrage Codex). Spécificité = _score_touch_pattern (tier,
+# prefix_len, wildcards). Émet scope\tid\tfeature_path du rang max.
+blocking_coverers() {
+  local rel="$1"
+  features_matching_path_ranked "$index_file" "$rel" 2>/dev/null \
+  | while IFS=$'\t' read -r scope id fpath touch; do
+      [[ -z "$scope" ]] && continue
+      local tier plen wc
+      IFS=$'\t' read -r tier plen wc < <(_score_touch_pattern "$touch")
+      printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$tier" "$plen" "$wc" "$scope" "$id" "$fpath"
+    done \
+  | awk -F'\t' '
+      { rows[NR]=$0; t=$1+0; p=$2+0; w=$3+0
+        if (NR==1 || t>bt || (t==bt && p>bp) || (t==bt && p==bp && w<bw)) { bt=t; bp=p; bw=w } }
+      END { for (i=1;i<=NR;i++){ split(rows[i],f,"\t")
+              if (f[1]+0==bt && f[2]+0==bp && f[3]+0==bw) print f[4]"\t"f[5]"\t"f[6] } }
+    '
+}
+
 run_staged_check() {
   local staged
   staged=$(git diff --cached --name-only --no-renames 2>/dev/null || true)
@@ -130,7 +157,7 @@ run_staged_check() {
         printf '%s\t%s/%s\t%s\n' "$rel" "$scope" "$id" "$feature_path" >> "$failures"
       fi
 
-    done < <(features_matching_path "$index_file" "$rel")
+    done < <(blocking_coverers "$rel")
   done <<< "$staged"
 
   echo "═══ check-feature-freshness (staged) ═══"
@@ -196,7 +223,7 @@ run_worktree_check() {
       if ! staged_has_doc_for_feature "$changed_docs" "$feature_path" "$scope" "$id"; then
         printf '%s\t%s/%s\t%s\n' "$rel" "$scope" "$id" "$feature_path" >> "$failures"
       fi
-    done < <(features_matching_path "$index_file" "$rel")
+    done < <(blocking_coverers "$rel")
   done <<< "$changed"
 
   if [[ ! -s "$failures" ]]; then
