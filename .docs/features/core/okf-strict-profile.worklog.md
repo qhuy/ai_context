@@ -85,3 +85,6 @@
 
 ## 2026-06-29 — couverture incidente (clôture A1 : résiduel fallback build-feature-index)
 - `build-feature-index.sh` + `.jinja` touchés via glob `touches:`. Le champ `type` (profil strict) n'est PAS concerné (déjà borné en A1 via `extract_scalar_awk`) ; ce delta borne external_refs/product/progress. Aucun changement propre à cette feature. (Taxe sur-couverture `touches:` — cf. quality/touches-breadth-guard.)
+
+## 2026-06-29 — couverture incidente (C2b : reconciliation id schema/checker)
+- Surface partagee touchee (check-features.sh via .ai/** ou touches:, ou tests/unit/**). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)

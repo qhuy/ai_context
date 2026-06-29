@@ -367,3 +367,10 @@
 
 ## 2026-06-29 — couverture incidente (frame remediation : C2c livre)
 - Frame mis a jour (C2c fait, C2a/b routes vers feature-mesh). Aucun changement de comportement.
+
+## 2026-06-29 11:57 — auto
+- Fichiers modifiés :
+  - .docs/frames/2026-06-28-audit-strategique-remediation.md
+
+## 2026-06-29 — couverture incidente (C2b : reconciliation id schema/checker)
+- Surface partagee touchee (check-features.sh via .ai/** ou touches:, ou tests/unit/**). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)

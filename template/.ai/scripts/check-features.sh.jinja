@@ -93,8 +93,8 @@ for f in "${files[@]}"; do
   # des chemins worklog et des clés "scope/id" (auto-worklog-flush, auto-progress).
   # Un id="../foo" ou scope avec espace ouvrirait un path traversal sur le worklog.
   declared_id=$(echo "$fm" | grep -E '^id:' | sed -E 's/^id:[[:space:]]*//; s/["'"'"']//g' | tr -d '[:space:]')
-  if [[ -n "$declared_id" && ! "$declared_id" =~ ^[a-z0-9][a-z0-9_-]*$ ]]; then
-    ko "$f : id='$declared_id' invalide (attendu : ^[a-z0-9][a-z0-9_-]*$ — minuscules, chiffres, tirets, underscores)"
+  if [[ -n "$declared_id" && ! "$declared_id" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+    ko "$f : id='$declared_id' invalide (attendu : kebab-case strict ^[a-z0-9]+(-[a-z0-9]+)*$, aligné sur feature.schema.json)"
     file_fail=1
   fi
   if [[ -n "$declared_scope" && ! "$declared_scope" =~ ^[a-z0-9][a-z0-9_-]*$ ]]; then

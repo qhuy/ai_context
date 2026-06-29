@@ -9,6 +9,7 @@ touches:
   - .ai/schema/feature.schema.json
   - .ai/scripts/check-features.sh
   - .ai/scripts/check-feature-docs.sh
+  - tests/unit/test-id-schema-checker-parity.sh
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
   - template/{{docs_root}}/features/**
   - template/.ai/scripts/check-features.sh.jinja
@@ -103,3 +104,4 @@ Inclus : contrat frontmatter, structure documentaire, dépendances cross-scope, 
 - 2026-05-03 : ajout du scope `product` et du lien typé `product.initiative` pour relier initiative produit et features dev sans détourner `depends_on` de son rôle technique.
 - 2026-05-04 : ajout du champ optionnel `external_refs` au frontmatter pour relier specs, stories, tickets et artefacts externes sans les dupliquer dans le mesh.
 - 2026-05-04 : passage au modèle "bible feature" progressif. Le template de fiche ajoute `doc.level`, `doc.requires.*`, `Résumé`, `Périmètre`, `Invariants`, `Décisions`, `Validation` et les modules conditionnels (`Droits / accès`, `Données`, `UX`, `Observabilité`, `Déploiement / rollback`). Nouveau `check-feature-docs.sh` séparé de `check-features.sh` : warnings par défaut pour préserver le legacy, `--strict` avant DONE.
+- 2026-06-29 : **réconciliation `id` schema↔checker** (item C2b du frame de remédiation, HANDOFF depuis `core/index-contract-v2`). Le schéma déclarait `id` en kebab-case strict (`^[a-z0-9]+(?:-[a-z0-9]+)*$`) mais `check-features.sh` tolérait l'underscore (`^[a-z0-9][a-z0-9_-]*$`) → le schéma « mentait » (audit : `foo_bar` passait le checker, violait le schéma). Checker aligné sur le schéma (ERE-équivalent `^[a-z0-9]+(-[a-z0-9]+)*$`), runtime + `.jinja`. **0 fiche sur 54 en violation** → zéro casse (vérifié). `scope` laissé tel quel (le schéma n'a pas de pattern `scope`, donc pas de divergence). Test différentiel `tests/unit/test-id-schema-checker-parity.sh` : snapshot du pattern schéma + rejet underscore + acceptation kebab → verrouille contre la re-divergence. Reste C2a (appliquer/retirer le schéma décoratif) à cadrer.

@@ -179,3 +179,10 @@
 
 ## 2026-06-29 — couverture incidente (C2c : test de contrat index)
 - Surface partagee touchee (tests/unit/** via glob). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)
+
+## 2026-06-29 11:57 — auto
+- Fichiers modifiés :
+  - tests/unit/test-build-feature-index-contract.sh
+
+## 2026-06-29 — couverture incidente (C2b : reconciliation id schema/checker)
+- Surface partagee touchee (check-features.sh via .ai/** ou touches:, ou tests/unit/**). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)

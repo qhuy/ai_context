@@ -36,3 +36,10 @@
   - .ai/scripts/check-features.sh
   - template/.ai/scripts/check-features.sh.jinja
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
+
+## 2026-06-29 — reconciliation id schema<->checker (C2b)
+- check-features.sh : regex id alignee sur le schema kebab-strict (etait tolerante a l'underscore). runtime + jinja. scope inchange (pas de pattern schema). 0 fiche en violation.
+- Test differentiel tests/unit/test-id-schema-checker-parity.sh (snapshot pattern + rejet underscore + accept kebab).
+- Verifs : nouveau test PASS, check-features dogfood PASS, test-okf-type PASS, drift PASS.
+- HANDOFF depuis index-contract-v2. Reste C2a (appliquer/retirer le schema).
+- Fichiers : .ai/scripts/check-features.sh, template/.ai/scripts/check-features.sh.jinja, tests/unit/test-id-schema-checker-parity.sh
