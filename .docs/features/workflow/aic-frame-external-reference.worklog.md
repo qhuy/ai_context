@@ -44,3 +44,10 @@
 
 ## 2026-06-28 — couverture incidente (frame remédiation : avancement 2e vague + A9)
 - `.docs/frames/2026-06-28-audit-strategique-remediation.md` mis à jour. Aucun changement de comportement.
+
+## 2026-06-28 23:10 — auto
+- Fichiers modifiés :
+  - .docs/frames/2026-06-28-audit-strategique-remediation.md
+
+## 2026-06-28 — couverture incidente (frame remédiation : C1 cadré + fiche)
+- `.docs/frames/2026-06-28-audit-strategique-remediation.md` mis à jour (C1 cadré, fiche créée). Aucun changement de comportement.

@@ -5,7 +5,7 @@ scope_probable: "product/ai-context-stability-migration"
 route: "manual"
 level: "high"
 evidence: "Audit multi-agents 2026-06-28 (6 cartographies + 5 recherches zeitgeist sourcées + 3 critiques adverses, 312 lectures). Dashboard : artifact claude.ai/code/artifact/abd891d3-a2bf-40ce-80cd-cc183f0def27"
-next_hint: "Phase 0 + A1 + A2 + A4 + A9 + touches-breadth 2e vague livrés (commits b9bb81d→1148553). Reprendre Phase 1 : A3 (README advisory), A5 (canonicité README), A6 (shellcheck .githooks/tests), A7, A8, A10-A13. Signal-A touches-breadth (README*/_lib.sh/aic.sh) = vagues suivantes au fil de l'eau."
+next_hint: "Phase 0 + A1 + A2 + A4 + A9 + touches-breadth 2e vague livrés ; C1 CADRÉ (fiche core/agents-md-shim-canonical, phase spec). Prochaine action C1 = GATE : vérifier empiriquement le support @import par agent (Claude d'abord) AVANT tout code. Reste Phase 1 : A3/A5-A8/A10-A13. Phase 2 : C2. Phase 3 : D."
 created_at: "2026-06-28"
 updated_at: "2026-06-28"
 ---
@@ -129,7 +129,7 @@ Justification :
 
 | ID | Chantier | Route | Scope primaire | Cross-scope / HANDOFF |
 |---|---|---|---|---|
-| C1 | `AGENTS.md` source unique + symlink/import ; retirer le multi-shim dupliqué (~90% identique) ; fiche de veille avec kill_criterion « si Claude Code lit AGENTS.md nativement (issue #34235), retirer le double-shim » | `aic-frame` (high) | core/aic-surface-canonical | **HANDOFF** product/readme-positioning + template |
+| C1 | `AGENTS.md` source unique + **import** (`@AGENTS.md` + fallback tailored, symlink rejeté) ; retirer le multi-shim ; veille kill_criterion « si Claude Code lit AGENTS.md nativement (issue #34235), retirer le double-shim ». **CADRÉ 2026-06-28 → fiche `core/agents-md-shim-canonical` (phase spec, gate : vérifier `@import`)** | `aic-frame` ✅ → impl | core/agents-md-shim-canonical | **HANDOFF** product/readme-positioning + core/template-engine |
 | C2 | Contrat d'index : appliquer le JSON Schema (yq) **ou** le retirer ; réconcilier la divergence `id`/`depends_on` schema↔checker ; opérationnaliser `schema_version` (snapshot des clés émises, pas `=="1"`) | `aic-frame` (high) | core/index-contract-v2 | core/feature-index-cache |
 | C3 | Natif vs bash : migrer `.ai/rules/<scope>.md` vers `paths:` natif là où 1:1 ; recentrer le bash sur la valeur unique = graphe `depends_on`/`touches_shared` (reverse-deps). **Exploratoire — frame au moment de le prendre, pas avant.** | `aic-frame` (high) | core/graph-aware-injection | workflow/pre-turn-reminder |
 

@@ -345,3 +345,10 @@
   - .ai/scripts/auto-worklog-flush.sh
   - .ai/scripts/auto-worklog-log.sh
   - .docs/frames/2026-06-28-audit-strategique-remediation.md
+
+## 2026-06-29 10:46 — auto
+- Fichiers modifiés :
+  - .ai/scripts/build-feature-index.sh
+
+## 2026-06-28 — couverture incidente (frame remédiation : C1 cadré + fiche)
+- `.docs/frames/2026-06-28-audit-strategique-remediation.md` mis à jour (C1 cadré, fiche créée). Aucun changement de comportement.
