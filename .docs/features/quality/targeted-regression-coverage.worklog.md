@@ -161,3 +161,6 @@
 ## 2026-06-29 — Signal A : tests/unit/** reclassé en touches_shared
 - `tests/unit/**` passe de `touches:` direct → `touches_shared:` ; le test propre `test-targeted-regressions.sh` reste direct.
 - Motif : feature clôturée (`status: done`) qui restait un aimant à churn — tout test unitaire forçait son worklog. En `touches_shared`, plus d'obligation `--staged`/worktree, visibilité review conservée. Reclassement d'hygiène touches uniquement (pas de réouverture). Suivi : `quality/touches-breadth-guard`.
+
+## 2026-06-29 — branchement test YAML strict dans le smoke (finding #3)
+- `test-check-features-yaml-strict.sh` ajouté à `tests/smoke-test.sh` (couverture régression du gate frontmatter). Couverture via `tests/smoke-test.sh` direct ; HANDOFF depuis `core/feature-mesh`.

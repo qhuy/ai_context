@@ -95,6 +95,10 @@ echo "[0o/28] tests unitaires (feat: fiche pertinente)"
 bash tests/unit/test-check-commit-features-relevance.sh
 echo
 
+echo "[0p/28] tests unitaires (check-features YAML strict)"
+bash tests/unit/test-check-features-yaml-strict.sh
+echo
+
 echo "[1/28] copier copy (profil par défaut)"
 copier copy --defaults --trust \
   --data project_name=smoke-project \

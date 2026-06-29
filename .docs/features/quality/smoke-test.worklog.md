@@ -201,3 +201,6 @@
 
 ## 2026-06-29 — branchement tests P0 audit hebdo
 - Ajout des etapes unitaires `test-check-features-frontmatter-boundary.sh` et `test-check-commit-features-relevance.sh` en prelude du smoke.
+
+## 2026-06-29 — branchement test YAML strict (finding #3)
+- Ajout de l'étape `[0p]` : `test-check-features-yaml-strict.sh` (le gate `check-features` bloque une fiche au frontmatter YAML invalide). HANDOFF depuis `core/feature-mesh`.
