@@ -1,12 +1,13 @@
 ---
 id: cycle-detection
 scope: quality
-title: Détection de cycles dans depends_on (DFS jq)
+title: Détection de cycles dans depends_on (tri topologique jq)
 status: active
 depends_on:
   - core/feature-mesh
   - core/feature-index-cache
-touches: []
+touches:
+  - tests/unit/test-cycle-detection-diamond.sh
 touches_shared:
   - template/.ai/scripts/check-features.sh.jinja
 progress:
@@ -22,7 +23,7 @@ type: feature
 
 ## Résumé
 
-Une DFS en `jq` parcourt le graphe `depends_on` du mesh et rejette tout cycle (A → B → A). Sans cette garde, l'injection contextuelle boucle à l'infini en chargeant récursivement les dépendances.
+Un tri topologique de Kahn en `jq` (point fixe, O(V+E)) parcourt le graphe `depends_on` du mesh et rejette tout cycle (A → B → A). Sans cette garde, l'injection contextuelle boucle à l'infini en chargeant récursivement les dépendances.
 
 ## Objectif
 
@@ -32,7 +33,7 @@ Refuser tout mesh qui contient un cycle dans le graphe `depends_on` (A → B →
 
 ### Inclus
 
-- La DFS de détection de cycles sur les arêtes `depends_on`, implémentée en `jq` dans `check-features.sh`.
+- La détection de cycles sur les arêtes `depends_on` (tri topologique de Kahn), implémentée en `jq` dans `check-features.sh`.
 - La sortie de la liste des cycles trouvés et le code de sortie non-zéro associé.
 - La couverture du script partagé `check-features.sh` (mesh + chemins optionnels `touches_shared`).
 
@@ -51,8 +52,8 @@ Refuser tout mesh qui contient un cycle dans le graphe `depends_on` (A → B →
 
 ## Comportement attendu
 
-- DFS implémenté en `jq` (pur, pas de dépendance Python/Node).
-- Sortie : liste des cycles détectés, exit non-zéro si > 0.
+- Tri topologique de Kahn en `jq` (pur, pas de dépendance Python/Node ; O(V+E), point fixe sans récursion).
+- Sortie : liste triée des features impliquées dans un cycle, exit non-zéro si > 0.
 - Invoqué par `check-features.sh` (script unique appelé en CI et `/aic-quality-gate`).
 
 ## Contrats
@@ -79,4 +80,5 @@ Validation côté `feature-mesh` ; rejoué par `smoke-test` et `ci-guard`.
 ## Historique / décisions
 
 - Choix `jq` plutôt que Python : zéro runtime supplémentaire, déjà requis par `feature-index-cache`.
-- 2026-05-03 : `check-features.sh` valide aussi les chemins optionnels `touches_shared`. Aucun changement sur la DFS de cycles, mais le fichier script partagé reste couvert par cette fiche.
+- 2026-05-03 : `check-features.sh` valide aussi les chemins optionnels `touches_shared`. Aucun changement sur la détection de cycles, mais le fichier script partagé reste couvert par cette fiche.
+- 2026-06-29 : **DFS récursive → tri topologique de Kahn** (audit A13). L'ancienne DFS threadait `$visited` par chemin (pas de mémoïsation globale) → ré-exploration exponentielle sur un DAG en diamant (mesuré : k=20 ≈ 76s, k≥22 timeout). L'invariant « O(V+E) » de cette fiche était donc **faux**. Kahn (point fixe : on résout itérativement tout nœud dont les deps sont déjà résolues ; le reste est cyclique) le rend **vrai** : diamant k=24 instantané. Message d'erreur : liste des features impliquées au lieu d'un chemin `A → B → A` (le smoke ne vérifiait que l'exit non-zéro). Garde de non-régression : `tests/unit/test-cycle-detection-diamond.sh`. Code dans `check-features.sh` (commit `fix(core)`), HANDOFF appliqué ici.
