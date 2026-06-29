@@ -45,8 +45,8 @@ d'accrétion non gouvernée sur un bus factor de 1.
   - Gate `@import` franchi (Claude/Gemini OK ; Cursor/Copilot lisent AGENTS.md nativement) — commit `3228ffa`.
   - Import model livré : AGENTS.md neutralisé (base) ; CLAUDE.md/GEMINI.md = `@AGENTS.md` ; Cursor/Copilot tailored (fallback) ; check-shims/drift/smoke ✅ — commit `387dbce`. Dé-taxe touches-breadth confirmée (2 fiches incidentes vs 12 pour A1).
   - C1 reste avant DONE : note migration (CHANGELOG/upgrading) + check-shims dynamique par agents + HANDOFF pitch readme-positioning.
-- **2026-06-29 — C2c livré.** `schema_version` opérationnalisé (snapshot de clés couplé) — commit `74896f2`. Restent C2a (appliquer/retirer le schéma) + C2b (réconcilier divergence `id`/`depends_on` schema↔checker, kebab-strict vs underscore, 0 fiche en violation) → **scope feature-mesh** (`check-features.sh`), HANDOFF requis.
-- **Reste** : finir C1 (migration doc), C2a+b (alignement schema/checker, feature-mesh), Phase 1 (A3, A5–A8, A10–A13), touches-breadth Signal-A, Phase 3 (D), Phase 4 (C3 + later).
+- **2026-06-29 — C2c + C2b livrés.** C2c : `schema_version` opérationnalisé (snapshot de clés couplé) — `74896f2`. C2b : `id` schema↔checker réconcilié (kebab-strict, 0 fiche en violation) + test différentiel — `57c7691` (HANDOFF index-contract-v2 → feature-mesh). Les 2 volets « le contrat ment » sont corrigés.
+- **Reste** : C2a (appliquer le schéma comme validateur full = enhancement à cadrer, le schéma n'est PAS décoratif), finir C1 (migration doc), Phase 1 (A3, A5–A8, A10–A13), touches-breadth Signal-A, Phase 3 (D), Phase 4 (C3 + later).
 
 ## Niveau de cadrage
 
@@ -136,7 +136,8 @@ Justification :
 |---|---|---|---|---|
 | C1 | `AGENTS.md` source unique + **import** (`@AGENTS.md` + fallback tailored, symlink rejeté) ; retirer le multi-shim ; veille kill_criterion « si Claude Code lit AGENTS.md nativement (issue #34235), retirer le double-shim ». **CADRÉ 2026-06-28 → fiche `core/agents-md-shim-canonical` (phase spec, gate : vérifier `@import`)** | `aic-frame` ✅ → impl | core/agents-md-shim-canonical | **HANDOFF** product/readme-positioning + core/template-engine |
 | C2c | Opérationnaliser `schema_version` (snapshot des clés couplé, pas `=="1"`) | — | core/index-contract-v2 | **✅ FAIT** (commit `74896f2`) |
-| C2a+b | Appliquer le JSON Schema **ou** le retirer ; réconcilier la divergence `id`/`depends_on` schema↔checker (kebab-strict vs underscore, 0 fiche en violation) | feature d'alignement schema/checker | **feature-mesh** (touche `check-features.sh`, hors index-contract-v2) | HANDOFF requis |
+| C2b | Réconcilier la divergence `id` schema↔checker (kebab-strict vs underscore, 0 fiche en violation) + test différentiel | — | core/feature-mesh | **✅ FAIT** (commit `57c7691`) |
+| C2a | Appliquer le schéma JSON comme validateur complet (vs aujourd'hui : source d'enums + pattern `id`, pas validateur full) **ou** assumer son rôle actuel | `aic-frame` (enhancement, pas un « mensonge » : le schéma N'EST PAS décoratif — il dérive les enums + le pattern id) | core/feature-mesh | À cadrer si priorisé (risque : valider full peut rejeter des fiches sur d'autres contraintes) |
 | C3 | Natif vs bash : migrer `.ai/rules/<scope>.md` vers `paths:` natif là où 1:1 ; recentrer le bash sur la valeur unique = graphe `depends_on`/`touches_shared` (reverse-deps). **Exploratoire — frame au moment de le prendre, pas avant.** | `aic-frame` (high) | core/graph-aware-injection | workflow/pre-turn-reminder |
 
 ### Bac D — Comprendre (`aic-diagnose`, pas une feature)

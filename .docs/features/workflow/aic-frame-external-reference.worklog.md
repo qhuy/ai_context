@@ -61,3 +61,6 @@
 
 ## 2026-06-29 — couverture incidente (frame remediation : C2c livre)
 - Frame mis a jour (C2c fait, C2a/b routes vers feature-mesh). Aucun changement de comportement.
+
+## 2026-06-29 — couverture incidente (frame remediation : C2b livre)
+- Frame mis a jour (C2b fait, C2a = enhancement a cadrer). Aucun changement de comportement.

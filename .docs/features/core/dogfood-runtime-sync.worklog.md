@@ -374,3 +374,6 @@
 
 ## 2026-06-29 — couverture incidente (C2b : reconciliation id schema/checker)
 - Surface partagee touchee (check-features.sh via .ai/** ou touches:, ou tests/unit/**). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)
+
+## 2026-06-29 — couverture incidente (frame remediation : C2b livre)
+- Frame mis a jour (C2b fait, C2a = enhancement a cadrer). Aucun changement de comportement.
