@@ -11,10 +11,10 @@ touches:
   - template/.ai/rules/workflow.md.jinja
   - .ai/workflows/codex-hooks-parity.md
   - template/.ai/workflows/codex-hooks-parity.md.jinja
+touches_shared:
   - README.md
   - README_AI_CONTEXT.md
   - template/README_AI_CONTEXT.md.jinja
-touches_shared: []
 product: {}
 external_refs:
   codex_hooks: "https://developers.openai.com/codex/hooks"

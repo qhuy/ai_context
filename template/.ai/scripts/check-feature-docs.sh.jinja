@@ -142,7 +142,9 @@ has_placeholder() {
   local file="$1"
   # Ignore les spans de code inline (backticks) : la notation type/chemin comme
   # `<scope>/<id>`, `Result<T>` ou `brief <path>` n'est PAS un placeholder à remplir.
-  sed 's/`[^`]*`//g' "$file" | grep -qiE 'TODO|TBD|à compléter|a completer|<[^>]+>|À renseigner|A renseigner'
+  # Un vrai placeholder a un libellé collé au `<` (`<Titre court…>`, `<product | …>`) ;
+  # une comparaison « x < y … z > n » a un espace juste après `<` → non bloquante.
+  sed 's/`[^`]*`//g' "$file" | grep -qiE 'TODO|TBD|à compléter|a completer|<[^>[:space:]][^>]*>|À renseigner|A renseigner'
 }
 
 validate_section() {

@@ -9,11 +9,11 @@ depends_on:
 touches:
   - .ai/workflows/project-guardrails.md
   - .ai/index.md
-  - README_AI_CONTEXT.md
   - template/.ai/workflows/project-guardrails.md.jinja
   - template/.ai/index.md.jinja
-  - template/README_AI_CONTEXT.md.jinja
 touches_shared:
+  - README_AI_CONTEXT.md
+  - template/README_AI_CONTEXT.md.jinja
   - copier.yml
   - tests/smoke-test.sh
 progress:

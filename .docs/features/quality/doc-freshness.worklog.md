@@ -86,3 +86,10 @@
 - Test : `tests/unit/test-check-commit-features-relevance.sh` (+ cas `.worklog.md` pertinent).
 - Template runtime synchronisé : `template/.ai/scripts/check-commit-features.sh.jinja`.
 - Note livraison : le commit initial `33ccbfc` a été fait avec `--no-verify` pour éviter d'embarquer les worklogs hors scope avant correction Signal A ; les hooks repassent ensuite sur les commits de réconciliation.
+
+## 2026-06-29 — contrat (a') : obligation par coverer primaire (audit D / arbitrage Codex)
+- La gate de fraîcheur n'exige plus le worklog de TOUTES les features couvrant un fichier, mais du **coverer primaire** (rang de spécificité `touches:` le plus élevé — helper `blocking_coverers` + `_score_touch_pattern`). Égalité de rang (revendications exactes multiples) → tous les ex-aequo ; coverers moins spécifiques (glob large) → advisory. **Moat préservé** : 0 coverer documenté reste bloquant. Tue la cascade sur l'infra partagée (audit D : 492 blocs « couverture incidente » / 44 worklogs) sans rendre muet le co-ownership légitime.
+- (b) auto-classification par fan-out **rejetée** en arbitrage Codex : un seuil quantitatif ne distingue pas l'infra incidente du co-owner réel → trou de moat. (a') = règle de gate ; la reclassification reste explicite, path-by-path.
+- Runtime + jinja (parité ✓, drift ✓). Test : `tests/unit/test-freshness-primary-coverer.sh` (5 cas moat). Non-régression : `test-check-feature-freshness.sh` ✓.
+- Démonstration : ce commit lui-même n'exige plus que doc-freshness + read-only-checks-contract (tie exact sur check-feature-freshness.sh) ; `core/dogfood-runtime-sync` (glob `.ai/**`) passe en advisory.
+- Reste (companion, suivi `quality/touches-breadth-guard`) : reclasser les dispatchers exact-multi — `aic.sh` → `core/aic-surface-canonical` seul exact, les 7 autres en `touches_shared`. HANDOFF Codex pour `aic-pilot.md` (son fichier non commité), puis aic-pilot committe propre.

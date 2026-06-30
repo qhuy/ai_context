@@ -23,3 +23,8 @@
 - Reclassement de `check-features.sh` / `.jinja` en `touches_shared` pour les fiches non propriétaires : `core/okf-strict-profile`, `quality/read-only-checks-contract`, `quality/cycle-detection`.
 - `core/feature-mesh` conserve l'ownership direct : c'est la feature propriétaire du contrat frontmatter et du checker.
 - Cause : le commit P0 `fix(core)` a dû bypasser le gate parce que le Signal A tirait des worklogs hors scope. Ce reclassement réduit la taxe à la racine et doit permettre au prochain edit `check-features.sh` de passer avec seulement le worklog propriétaire.
+
+## 2026-06-30 — Signal A dispatchers/docs publiques
+- Application du compagnon de reclassification demandé après `(a')` : exact owner unique pour `aic.sh`, `copier.yml`, `README.md`, `README_AI_CONTEXT.md`, dogfood update/drift, smoke-test et surfaces `aic-frame`.
+- Objectif : tuer les ties exact-multi qui bloquaient le commit `aic-pilot` sans transformer les vraies features consommatrices en propriétaires opportunistes.
+- Moat conservé : les propriétaires structurels gardent leur `touches:` exact et reçoivent un worklog frais ; les autres features restent visibles via `touches_shared`.

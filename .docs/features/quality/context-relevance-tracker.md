@@ -11,7 +11,6 @@ touches:
   - .ai/scripts/context-relevance-report.sh
   - .ai/scripts/features-for-path.sh
   - .ai/scripts/auto-worklog-log.sh
-  - .ai/scripts/check-dogfood-drift.sh
   - template/.ai/.gitignore
   - template/.ai/scripts/context-relevance-log.sh.jinja
   - template/.ai/scripts/context-relevance-report.sh.jinja
@@ -20,6 +19,7 @@ touches:
   - template/.claude/settings.json.jinja
   - tests/unit/test-context-relevance.sh
 touches_shared:
+  - .ai/scripts/check-dogfood-drift.sh
   - tests/smoke-test.sh
 product: {}
 external_refs: {}

@@ -15,9 +15,9 @@ touches:
   - template/.ai/workflows/quality-gate.md.jinja
   - .github/workflows/ai-context-check.yml
   - template/.github/workflows/ai-context-check.yml.jinja
+touches_shared:
   - README_AI_CONTEXT.md
   - template/README_AI_CONTEXT.md.jinja
-touches_shared:
   - tests/smoke-test.sh
 product: {}
 external_refs: {}

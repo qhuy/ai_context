@@ -5,7 +5,6 @@ title: Surface utilisateur canonique aic
 status: active
 depends_on: []
 touches:
-  - README.md
   - README_AI_CONTEXT.md
   - CHANGELOG.md
   - PROJECT_STATE.md
@@ -13,7 +12,6 @@ touches:
   - CONTRIBUTING.md
   - AUDIT_2026-05-06.md
   - docs/upgrading.md
-  - copier.yml
   - template/README_AI_CONTEXT.md.jinja
   - template/.ai/scripts/aic.sh.jinja
   - .ai/scripts/aic.sh
@@ -24,6 +22,8 @@ touches:
   - template/.claude/skills/aic-*/**
   - template/.agents/skills/aic-*/**
 touches_shared:
+  - README.md
+  - copier.yml
   - tests/smoke-test.sh
 product: {}
 external_refs: {}

@@ -8,6 +8,7 @@ touches:
   - .ai/scripts/check-feature-freshness.sh
   - .ai/scripts/check-commit-features.sh
   - tests/unit/test-check-feature-freshness.sh
+  - tests/unit/test-freshness-primary-coverer.sh
   - tests/unit/test-review-delta-shared.sh
   - .ai/quality/QUALITY_GATE.md
   - .github/workflows/ai-context-check.yml
@@ -52,7 +53,7 @@ Garantir qu'une evolution de comportement couverte par une feature ne puisse pas
 ## Invariants
 
 - Le contrôle bloquant reste fondé sur `touches:` uniquement ; `touches_shared:` ne déclenche jamais l'obligation de fiche/worklog staged.
-- Un fichier stage couvert par plusieurs fiches exige une fiche ou un worklog stage pour **chaque** feature candidate.
+- Un fichier stagé couvert par plusieurs fiches exige le worklog/fiche du **coverer primaire** (rang de spécificité `touches:` le plus élevé) ; en cas d'**égalité de rang** (revendications exactes multiples), tous les ex-aequo sont requis. Les coverers moins spécifiques (glob large) sont advisory, non bloquants. Contrat (a') — audit D / arbitrage Codex : tue la cascade sur l'infra partagée sans rendre muet le vrai co-ownership.
 - En staged strict, un fichier couvert sans doc ni worklog stage bloque le commit ; aucune feature couverte ne peut passer silencieusement.
 - Le hook `commit-msg` appelle le mode staged strict **après** la validation Conventional Commits, jamais avant.
 - La quality gate `QUALITY_GATE.md` reste bloquante avant DONE sans imposer son chargement initial (cohérence Pack A lean).
@@ -78,11 +79,13 @@ Garantir qu'une evolution de comportement couverte par une feature ne puisse pas
 - Pré-calcul des fiches/worklogs stages au lieu de rescanner tous les fichiers stages par feature candidate : évite un crash local silencieux sur les gros commits dogfood.
 - `check-feature-docs.sh` complète `check-feature-freshness.sh` : la fraîcheur garantit qu'on touche la doc, le docs check garantit que la fiche reste structurée.
 - Sévérité graduée : `--warn` par défaut (ne casse pas le legacy), `--strict` avant DONE et en CI bloquante.
+- **Obligation par coverer primaire, pas par tous (contrat a')** : parmi les coverers `touches:` directs, seul le rang de spécificité le plus élevé bloque (helper `blocking_coverers` ; spécificité via `_score_touch_pattern`). Égalité de rang ⇒ tous les ex-aequo (force la documentation ou la reclassification en `touches_shared`). Rejette l'auto-classification par fan-out (b), qui rendrait silencieux le co-ownership légitime. Le moat est préservé : 0 coverer documenté reste bloquant.
 
 ## Validation
 
 - `tests/unit/test-check-feature-freshness.sh` couvre le staged strict, le multi-feature et la non-régression du crash gros commit.
 - `tests/unit/test-review-delta-shared.sh` vérifie que `touches_shared:` reste non bloquant pour la fraîcheur staged.
+- `tests/unit/test-freshness-primary-coverer.sh` verrouille le contrat (a') : exact-primaire documenté passe, 0 doc bloque, tie 1/N bloque, tie N/N passe, dispatcher reclassé → owner seul, `--worktree` idem `--staged` sans écrire l'index.
 - Au commit local : `check-feature-freshness.sh --staged --strict` via le hook `commit-msg` (un fichier couvert sans doc/worklog stage bloque).
 - En CI : `check-feature-freshness.sh --warn` puis `--strict` selon le contexte ; `check-feature-docs.sh` en warning sur les projets legacy.
 

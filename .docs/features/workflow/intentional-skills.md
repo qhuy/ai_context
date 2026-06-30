@@ -9,35 +9,35 @@ depends_on:
 touches:
   - .ai/workflows/**
   - template/.ai/workflows/**
-  - .claude/skills/aic-frame/**
   - .claude/skills/aic-status/**
   - .claude/skills/aic/**
   - .claude/skills/aic-document-feature/**
   - .claude/skills/aic-review/**
   - .claude/skills/aic-ship/**
-  - template/.claude/skills/aic-frame/**
   - template/.claude/skills/aic-status/**
   - template/.claude/skills/aic/**
   - template/.claude/skills/aic-document-feature/**
   - template/.claude/skills/aic-review/**
   - template/.claude/skills/aic-ship/**
   - .agents/skills/aic/**
-  - .agents/skills/aic-frame/**
   - .agents/skills/aic-document-feature/**
   - .agents/skills/aic-feature-*/**
   - .agents/skills/aic-quality-gate/**
   - .agents/skills/aic-ship/**
   - template/.agents/skills/aic/**
-  - template/.agents/skills/aic-frame/**
   - template/.agents/skills/aic-document-feature/**
   - template/.agents/skills/aic-feature-*/**
   - template/.agents/skills/aic-quality-gate/**
   - template/.agents/skills/aic-ship/**
   - .ai/index.md
   - template/.ai/index.md.jinja
+touches_shared:
+  - .claude/skills/aic-frame/**
+  - template/.claude/skills/aic-frame/**
+  - .agents/skills/aic-frame/**
+  - template/.agents/skills/aic-frame/**
   - template/README_AI_CONTEXT.md.jinja
   - README_AI_CONTEXT.md
-touches_shared:
   - copier.yml
   - README.md
   - PROJECT_STATE.md

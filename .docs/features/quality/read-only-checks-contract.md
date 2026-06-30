@@ -9,8 +9,6 @@ depends_on:
   - quality/doc-freshness
   - quality/review-delta-uncommitted-coverage
 touches:
-  - .ai/scripts/aic.sh
-  - template/.ai/scripts/aic.sh.jinja
   - .ai/scripts/doctor.sh
   - template/.ai/scripts/doctor.sh.jinja
   - .ai/scripts/check-feature-freshness.sh
@@ -28,15 +26,18 @@ touches:
   - docs/upgrading.md
   - MIGRATION.md
   - CHANGELOG.md
-  - README_AI_CONTEXT.md
-  - template/README_AI_CONTEXT.md.jinja
-  - tests/unit/**
+  - tests/unit/test-read-only-checks-contract.sh
   - .docs/features/quality/read-only-checks-contract.md
   - .docs/features/quality/read-only-checks-contract.worklog.md
 touches_shared:
+  - .ai/scripts/aic.sh
+  - template/.ai/scripts/aic.sh.jinja
   - .ai/scripts/check-features.sh
   - template/.ai/scripts/check-features.sh.jinja
+  - README_AI_CONTEXT.md
+  - template/README_AI_CONTEXT.md.jinja
   - tests/smoke-test.sh
+  - tests/unit/**
 product:
   initiative: product/ai-context-stability-migration
   contribution: "Rend les checks et diagnostics fiables pour les projets existants en supprimant les écritures implicites."

@@ -102,6 +102,10 @@ run_rsync "$out/.docs/FEATURE_TEMPLATE.md" ".docs/FEATURE_TEMPLATE.md"
 # la suppression. Cohérent avec l'ignore de check-dogfood-drift.sh.
 run_rsync "$out/.docs/frames/" ".docs/frames/" \
   --exclude='[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.md'
+# Les registres pilot datés suivent la même règle : le template fournit
+# seulement 0000-template.md, les suivis projet sont conservés localement.
+run_rsync "$out/.docs/pilots/" ".docs/pilots/" \
+  --exclude='[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.md'
 
 cat <<'NOTE'
 

@@ -51,7 +51,7 @@ title: Flow
 status: active
 type: feature
 depends_on: []
-touches: [src/[ab].ts] # char-class glob must keep the inner closing bracket
+touches: ["src/[ab].ts"] # glob char-class inline : DOIT être quoté (sinon YAML invalide → fiche droppée de l'index) ; le ] interne reste préservé par fm_list
 ---
 # Flow
 MD

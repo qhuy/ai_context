@@ -8,6 +8,7 @@ depends_on:
 touches:
   - template/docs/design-system-registry.md.jinja
   - template/docs/atomic-design-map.md.jinja
+touches_shared:
   - copier.yml
 progress:
   phase: review

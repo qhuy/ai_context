@@ -18,17 +18,17 @@ touches:
   - template/.ai/scripts/build-feature-index.sh.jinja
   - .ai/scripts/migrate-okf-type.sh
   - template/.ai/scripts/migrate-okf-type.sh.jinja
-  - .ai/scripts/aic.sh
-  - template/.ai/scripts/aic.sh.jinja
   - .docs/FEATURE_TEMPLATE.md
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
-  - copier.yml
   - MIGRATION.md
   - docs/upgrading.md
   - CHANGELOG.md
 touches_shared:
+  - .ai/scripts/aic.sh
+  - template/.ai/scripts/aic.sh.jinja
   - .ai/scripts/check-features.sh
   - template/.ai/scripts/check-features.sh.jinja
+  - copier.yml
   - tests/smoke-test.sh
   - tests/unit/test-okf-type.sh
 product: {}

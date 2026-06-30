@@ -6,15 +6,16 @@ status: done
 depends_on:
   - quality/index-lock-contract
 touches:
-  - tests/unit/**
-  - tests/smoke-test.sh
+  - tests/unit/test-targeted-regressions.sh
   - .ai/scripts/build-feature-index.sh
   - .ai/scripts/check-commit-features.sh
   - template/.ai/scripts/check-commit-features.sh.jinja
-  - .ai/scripts/check-dogfood-drift.sh
   - .ai/scripts/check-feature-docs.sh
   - .ai/scripts/check-feature-coverage.sh
 touches_shared:
+  - tests/smoke-test.sh
+  - .ai/scripts/check-dogfood-drift.sh
+  - tests/unit/**
   - copier.yml
   - .docs/features/quality/index-lock-contract.md
 product: {}

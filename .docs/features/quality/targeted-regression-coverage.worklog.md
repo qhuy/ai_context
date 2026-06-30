@@ -157,3 +157,13 @@
 - Ajout de `test-check-features-frontmatter-boundary.sh` : reproduit le cas ou `depends_on:` / `touches:` dans le corps markdown ne doivent pas etre valides par `check-features`.
 - Ajout de `test-check-commit-features-relevance.sh` : reproduit le contournement `feat:` avec une fiche staged sans rapport.
 - Les deux tests sont branches dans `tests/smoke-test.sh`.
+
+## 2026-06-29 — Signal A : tests/unit/** reclassé en touches_shared
+- `tests/unit/**` passe de `touches:` direct → `touches_shared:` ; le test propre `test-targeted-regressions.sh` reste direct.
+- Motif : feature clôturée (`status: done`) qui restait un aimant à churn — tout test unitaire forçait son worklog. En `touches_shared`, plus d'obligation `--staged`/worktree, visibilité review conservée. Reclassement d'hygiène touches uniquement (pas de réouverture). Suivi : `quality/touches-breadth-guard`.
+
+## 2026-06-29 — branchement test YAML strict dans le smoke (finding #3)
+- `test-check-features-yaml-strict.sh` ajouté à `tests/smoke-test.sh` (couverture régression du gate frontmatter). Couverture via `tests/smoke-test.sh` direct ; HANDOFF depuis `core/feature-mesh`.
+
+## 2026-06-30 — heuristique placeholder de check-feature-docs.sh (script gardé)
+- `check-feature-docs.sh` (script en `touches:` direct, gardé en régression) a vu son `has_placeholder` resserré `<[^>]+>` → `<[^>[:space:]][^>]*>` pour tuer un faux positif CI (une comparaison « < 1:1 … > 30 j » lue comme placeholder). Changement porté + documenté par `core/feature-mesh` (owner du contrat), nouvelle garde `tests/unit/test-feature-docs-placeholder-heuristic.sh`. Co-documentation côté coverage (touches direct conservé, cohérent avec le modèle « scripts gardés »). Pas de réouverture (`status: done`).

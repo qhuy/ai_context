@@ -393,3 +393,24 @@
 ## 2026-06-29 — couverture runtime/template (P0 audit hebdo)
 - Runtime et miroirs `.jinja` synchronises pour `check-features.sh` et `check-commit-features.sh` dans les commits P0.
 - Ajout de tests unitaires et branchement smoke ; `check-dogfood-drift.sh` repasse vert apres patch.
+
+## 2026-06-29 — couverture runtime/template (finding #3 : YAML strict)
+- `check-features.sh` + miroir `.jinja` durcis : validation YAML stricte du frontmatter (yq, parité `build-feature-index.sh`). Parité runtime↔template vérifiée, `check-dogfood-drift` aligné. Aucun changement propre au contrat de sync ; couverture via `.ai/**`.
+
+## 2026-06-29 — couverture parité incidente (finding #6 : docstring auto-worklog-flush)
+- Correction commentaire-seul de `auto-worklog-flush.sh` + miroir `.jinja` (parité maintenue). Couverture via `.ai/**` / `template/**` ; aucun changement de contrat de sync propre.
+
+## 2026-06-29 — couverture incidente (finding #6 : fraîcheur du frame)
+- `updated_at` + `next_hint` du frame de remédiation rafraîchis. Aucun changement de contrat de sync propre.
+
+## 2026-06-29 — couverture parité incidente (A13 : Kahn dans check-features)
+- Détection de cycles `check-features.sh` : DFS récursive exponentielle → tri topologique de Kahn (O(V+E)). Runtime + miroir `.jinja` (parité maintenue). Aucun changement de contrat de sync propre.
+
+## 2026-06-29 18:56 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-feature-freshness.sh
+
+## 2026-06-30 — pilots préservés par dogfood
+- `dogfood-update.sh` préserve les registres datés `.docs/pilots/YYYY-MM-DD-*.md` sous `--delete`.
+- `check-dogfood-drift.sh` compare le template pilot `0000-template.md` et ignore les registres datés project-owned.
+- Reclassification freshness `(a')` : `dogfood-update.sh` et `check-dogfood-drift.sh` deviennent des propriétaires exacts de `core/dogfood-runtime-sync`; les features consommatrices passent en `touches_shared`.

@@ -48,7 +48,7 @@ echo "[0d/28] tests unitaires (dogfood drift destination-only)"
 bash tests/unit/test-dogfood-drift-extra.sh
 echo
 
-echo "[0d2/28] tests unitaires (dogfood update préserve les frames datés)"
+echo "[0d2/28] tests unitaires (dogfood update préserve les frames/pilots datés)"
 bash tests/unit/test-dogfood-update-preserves-frames.sh
 echo
 
@@ -93,6 +93,10 @@ echo
 
 echo "[0o/28] tests unitaires (feat: fiche pertinente)"
 bash tests/unit/test-check-commit-features-relevance.sh
+echo
+
+echo "[0p/28] tests unitaires (check-features YAML strict)"
+bash tests/unit/test-check-features-yaml-strict.sh
 echo
 
 echo "[1/28] copier copy (profil par défaut)"
@@ -182,7 +186,7 @@ if ! printf '%s' "$aic_help" | grep -q "Commandes utilisateur :"; then
   echo "  ✗ aic.sh --help ne liste pas les commandes"
   exit 1
 fi
-for expected in 'frame "<objectif>"' "status" 'diagnose ["symptôme"]' "document-feature [path]" "review" "ship" "product-status" "check-docs"; do
+for expected in 'frame "<objectif>"' "pilot" "status" 'diagnose ["symptôme"]' "document-feature [path]" "review" "ship" "product-status" "check-docs"; do
   if ! printf '%s' "$aic_help" | grep -Fq "$expected"; then
     echo "  ✗ aic.sh --help ne présente pas $expected"
     exit 1
@@ -1184,7 +1188,7 @@ rm -rf "$OUT/.git" "$OUT/.docs/features/back/specfeat.md" "$OUT/.docs/features/b
 
 echo
 echo "[19/28] skills publics + workflows internes présents"
-for s in aic aic-onboard aic-frame aic-dev-plan aic-status aic-diagnose aic-document-feature aic-review aic-ship; do
+for s in aic aic-onboard aic-frame aic-pilot aic-dev-plan aic-status aic-diagnose aic-document-feature aic-review aic-ship; do
   if [[ ! -f "$OUT/.claude/skills/$s/SKILL.md" ]]; then
     echo "  ✗ $s/SKILL.md absent"
     exit 1
@@ -1247,11 +1251,15 @@ if [[ ! -f "$OUT/.docs/frames/0000-template.md" ]]; then
   echo "  ✗ template de cadrage durable absent"
   exit 1
 fi
+if [[ ! -f "$OUT/.docs/pilots/0000-template.md" ]]; then
+  echo "  ✗ template de pilotage durable absent"
+  exit 1
+fi
 if ! grep -q "AIC Frame Bootstrap" "$OUT/.ai/scripts/aic.sh"; then
   echo "  ✗ aic.sh frame ne déclare pas le bootstrap"
   exit 1
 fi
-echo "  ✓ template frames + bootstrap CLI présents"
+echo "  ✓ templates frames/pilots + bootstrap CLI présents"
 # Lean context policy
 if [[ ! -f "$OUT/.ai/context-ignore.md" ]]; then
   echo "  ✗ .ai/context-ignore.md absent"

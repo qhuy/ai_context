@@ -1,6 +1,7 @@
 #!/bin/bash
 # Non-regression: dogfood-update.sh --apply must preserve dated project frames
-# (.docs/frames/AAAA-MM-JJ-*.md). Ils sont project-owned, ignorés par le drift
+# and pilots (.docs/{frames,pilots}/AAAA-MM-JJ-*.md). Ils sont project-owned,
+# ignorés par le drift
 # check ; l'apply ne doit pas les supprimer via rsync --delete.
 
 set -euo pipefail
@@ -12,7 +13,7 @@ if ! command -v copier >/dev/null 2>&1; then
   exit 0
 fi
 
-tmp="$(mktemp -d /tmp/aic-dogfood-frames-test-XXXXXX)"
+tmp="$(mktemp -d /tmp/aic-dogfood-runtime-artifacts-test-XXXXXX)"
 trap 'rm -rf "$tmp"' EXIT
 
 rsync -a \
@@ -26,10 +27,13 @@ rsync -a \
   ./ "$tmp/repo/"
 cd "$tmp/repo"
 
-# Frame daté project-owned présent avant l'apply.
+# Frame et pilot datés project-owned présents avant l'apply.
 frame=".docs/frames/2099-12-31-preserve-test.md"
+pilot=".docs/pilots/2099-12-31-preserve-test.md"
 mkdir -p .docs/frames
+mkdir -p .docs/pilots
 printf '# Frame de test à préserver\n' > "$frame"
+printf '# Pilot de test à préserver\n' > "$pilot"
 
 if ! bash .ai/scripts/dogfood-update.sh --apply >/dev/null 2>&1; then
   echo "✗ dogfood-update.sh --apply a échoué"
@@ -40,10 +44,18 @@ if [[ ! -f "$frame" ]]; then
   echo "✗ dogfood-update.sh --apply a supprimé le frame daté $frame"
   exit 1
 fi
+if [[ ! -f "$pilot" ]]; then
+  echo "✗ dogfood-update.sh --apply a supprimé le pilot daté $pilot"
+  exit 1
+fi
 
-# Le template de frame reste synchronisé (non daté → fait partie du runtime).
+# Les templates non datés restent synchronisés (font partie du runtime).
 if [[ ! -f .docs/frames/0000-template.md ]]; then
   echo "✗ .docs/frames/0000-template.md devrait rester présent après --apply"
+  exit 1
+fi
+if [[ ! -f .docs/pilots/0000-template.md ]]; then
+  echo "✗ .docs/pilots/0000-template.md devrait rester présent après --apply"
   exit 1
 fi
 

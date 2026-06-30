@@ -5,19 +5,20 @@ title: Overlay projet stable
 status: active
 depends_on: []
 touches:
-  - "copier.yml"
   - "template/.ai/index.md.jinja"
   - "template/.ai/OWNERSHIP.md.jinja"
   - "template/.ai/templates/project-overlay/README.md.jinja"
-  - "template/README_AI_CONTEXT.md.jinja"
   - ".ai/index.md"
   - ".ai/OWNERSHIP.md"
   - ".ai/templates/project-overlay/README.md"
+  - "docs/upgrading.md"
+  - "tests/unit/test-project-overlay.sh"
+touches_shared:
+  - "copier.yml"
+  - "template/README_AI_CONTEXT.md.jinja"
   - ".ai/scripts/check-dogfood-drift.sh"
   - ".ai/scripts/dogfood-update.sh"
-  - "docs/upgrading.md"
   - "README.md"
-  - "tests/unit/test-project-overlay.sh"
 doc:
   level: standard
   requires:

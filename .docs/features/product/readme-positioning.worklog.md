@@ -16,3 +16,7 @@
 - Impact indirect : README enrichi avec les contrats subagents, hooks Codex et MCP pour clarifier l'adoption sans changer le positionnement produit.
 - Aucun changement sur le quickstart ou la promesse principale.
 - Validation : `check-ai-references`, `check-features` et smoke-test PASS.
+
+## 2026-06-30 — README mentionne aic-pilot
+- README racine enrichi avec `aic-pilot` dans la promesse multi-agent, le bootstrap post-install et le flux recommandé.
+- Reclassification freshness `(a')` : `README.md` garde `product/readme-positioning` comme propriétaire exact unique ; les autres features le référencent en `touches_shared`.
