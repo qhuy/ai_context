@@ -14,3 +14,15 @@
 - `aic.sh` expose seulement un bootstrap `pilot` informatif : le pilotage reste skill-only et conversationnel.
 - Dogfood update/drift préservent les registres pilot datés comme les frames datés.
 - Reclassification associée au contrat freshness `(a')` : `aic-pilot` garde l'ownership exact de ses skills et registres ; les surfaces partagées (`aic.sh`, README, Copier, dogfood, smoke, frame) restent reliées en `touches_shared`.
+
+## 2026-06-30 15:41 — auto
+- Fichiers modifiés :
+  - .docs/pilots/2026-06-30-ze-solution.md
+
+## 2026-06-30 16:12 — auto
+- Fichiers modifiés :
+  - .docs/pilots/2026-06-30-ze-solution.md
+
+## 2026-06-30 16:29 — auto
+- Fichiers modifiés :
+  - .docs/pilots/2026-06-30-ze-solution.md
