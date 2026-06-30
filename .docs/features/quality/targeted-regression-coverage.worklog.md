@@ -164,3 +164,6 @@
 
 ## 2026-06-29 — branchement test YAML strict dans le smoke (finding #3)
 - `test-check-features-yaml-strict.sh` ajouté à `tests/smoke-test.sh` (couverture régression du gate frontmatter). Couverture via `tests/smoke-test.sh` direct ; HANDOFF depuis `core/feature-mesh`.
+
+## 2026-06-30 — heuristique placeholder de check-feature-docs.sh (script gardé)
+- `check-feature-docs.sh` (script en `touches:` direct, gardé en régression) a vu son `has_placeholder` resserré `<[^>]+>` → `<[^>[:space:]][^>]*>` pour tuer un faux positif CI (une comparaison « < 1:1 … > 30 j » lue comme placeholder). Changement porté + documenté par `core/feature-mesh` (owner du contrat), nouvelle garde `tests/unit/test-feature-docs-placeholder-heuristic.sh`. Co-documentation côté coverage (touches direct conservé, cohérent avec le modèle « scripts gardés »). Pas de réouverture (`status: done`).
