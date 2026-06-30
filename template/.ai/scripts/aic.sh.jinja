@@ -1,8 +1,10 @@
 #!/bin/bash
 # aic.sh — surface canonique aic pour agents hookés et non-hookés.
 #
-# But : exposer une taxonomie unique alignée avec les skills publics :
+# But : exposer une taxonomie scriptable alignée avec les skills publics :
 # frame / status / diagnose / document-feature / review / ship.
+# Le pilotage transverse reste skill-only (`aic-pilot`) car il repose sur
+# challenge humain et questions une par une.
 # Les commandes techniques restent disponibles pour maintenance, sans remplacer
 # la surface utilisateur aic-*.
 #
@@ -21,7 +23,7 @@ print_help() {
   cat <<'HELP'
 Usage: bash .ai/scripts/aic.sh <command> [args...]
 
-CLI aic — surface canonique alignée avec les skills aic-*.
+CLI aic — surface scriptable alignée avec les skills aic-*.
 
 Commandes utilisateur :
   frame "<objectif>"
@@ -31,6 +33,7 @@ Commandes utilisateur :
                alias explicite de frame
   frame-context "<objectif>"
                alias explicite de frame
+  pilot        skill-only : utiliser aic-pilot pour audit général ou suivi transverse
   status       état actionnable : features, delta, hooks, checks, prochaine action
   diagnose ["symptôme"]
                diagnostic court du goulot probable et prochaine action
@@ -286,6 +289,7 @@ run_frame() {
 Important :
 - Cette sortie est un bootstrap de contexte, pas un cadrage critique complet.
 - Pour un cadrage fiable, utiliser le skill \`aic-frame\`, qui déclare un niveau \`low|standard|high\`, gère les incertitudes et peut produire un \`execution_ref\`.
+- Pour un audit général, un backlog de constats ou un suivi transverse, utiliser le skill \`aic-pilot\`.
 
 Objectif :
 - $objective
@@ -335,6 +339,7 @@ Validation :
 Prochaine action minimale :
 - Si le changement est simple et clair, créer ou mettre à jour la fiche feature.
 - Si le cadrage doit être fiable ou durable, lancer le skill \`aic-frame\`.
+- Si la demande contient plusieurs bugs/features/décisions à suivre, lancer le skill \`aic-pilot\`.
 - Si le vrai blocage est incertain, lancer \`bash .ai/scripts/aic.sh diagnose "$objective"\`.
 EOF
 }
@@ -871,6 +876,16 @@ shift
 
 case "$cmd" in
   frame|frame-bootstrap|frame-context) run_frame "$@" ;;
+  pilot)
+    cat <<'EOF'
+## AIC Pilot
+
+`pilot` est un skill conversationnel, pas une commande CLI déterministe.
+
+Utilise `aic-pilot` pour un audit général, un backlog de constats ou un suivi transverse.
+Le skill affiche la carte globale, traite un item actif à la fois et pose une seule question décisionnelle.
+EOF
+    ;;
   status)     run_status "$@" ;;
   diagnose)   run_diagnose "$@" ;;
   document-feature) run_document_feature "$@" ;;

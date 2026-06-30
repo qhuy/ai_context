@@ -204,3 +204,7 @@
 
 ## 2026-06-29 — branchement test YAML strict (finding #3)
 - Ajout de l'étape `[0p]` : `test-check-features-yaml-strict.sh` (le gate `check-features` bloque une fiche au frontmatter YAML invalide). HANDOFF depuis `core/feature-mesh`.
+
+## 2026-06-30 — couverture smoke aic-pilot
+- Le smoke vérifie la présence du skill `aic-pilot`, du template `.docs/pilots/0000-template.md` et du bootstrap `pilot` dans `aic.sh --help`.
+- Reclassification freshness `(a')` : `tests/smoke-test.sh` garde `quality/smoke-test` comme propriétaire exact unique ; les couvertures de régression ciblée passent en `touches_shared`.

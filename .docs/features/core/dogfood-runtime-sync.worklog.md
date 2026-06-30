@@ -405,3 +405,12 @@
 
 ## 2026-06-29 — couverture parité incidente (A13 : Kahn dans check-features)
 - Détection de cycles `check-features.sh` : DFS récursive exponentielle → tri topologique de Kahn (O(V+E)). Runtime + miroir `.jinja` (parité maintenue). Aucun changement de contrat de sync propre.
+
+## 2026-06-29 18:56 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-feature-freshness.sh
+
+## 2026-06-30 — pilots préservés par dogfood
+- `dogfood-update.sh` préserve les registres datés `.docs/pilots/YYYY-MM-DD-*.md` sous `--delete`.
+- `check-dogfood-drift.sh` compare le template pilot `0000-template.md` et ignore les registres datés project-owned.
+- Reclassification freshness `(a')` : `dogfood-update.sh` et `check-dogfood-drift.sh` deviennent des propriétaires exacts de `core/dogfood-runtime-sync`; les features consommatrices passent en `touches_shared`.

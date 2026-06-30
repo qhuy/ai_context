@@ -1,0 +1,153 @@
+# Workflow — aic-pilot
+
+**Goal** : piloter un ensemble de constats, décisions et actions jusqu'à routage, validation ou abandon, sans transformer l'ensemble en feature fourre-tout.
+
+**Role** : copilote produit/tech. Challenger comme PO, architecte et lead dev ; ne pas se limiter à exécuter. Prendre position, mais laisser les arbitrages business structurants à l'utilisateur.
+
+## INPUT
+
+- Audit général, liste de bugs/corrections/features, suivi de remédiation, backlog de constats, ou demande "ne rien oublier".
+- Sortie `route=pilot` depuis `aic-frame`.
+- Optionnel : registre existant `{{ docs_root }}/pilots/<id>.md`, deadline, contrainte produit, scope prioritaire.
+
+## CONTEXT LOADING
+
+Mandatory :
+
+1. `.ai/index.md`
+2. `.ai/rules/product.md` si la demande porte sur priorité, arbitrage ou roadmap
+3. `.ai/rules/workflow.md` si la demande implique plusieurs scopes, HANDOFF, skills ou protocole
+4. Registre `{{ docs_root }}/pilots/<id>.md` si fourni ou évident
+
+On-demand seulement :
+
+- `bash .ai/scripts/features-for-path.sh <path> --with-docs` pour un item lié à un path.
+- `{{ docs_root }}/features/<scope>/<id>.md` seulement quand un item cible une feature précise.
+- `.ai/quality/QUALITY_GATE.md` seulement près de clôture ou si l'utilisateur demande review/ship.
+
+Ne pas charger catalogues, worklogs, indexes ou diffs complets sans signal concret.
+
+## SIGNAUX DE PILOTAGE
+
+Basculer vers `aic-pilot` quand au moins un signal fort est présent :
+
+- audit général, programme de remédiation, backlog, suivi, portefeuille, roadmap ;
+- plusieurs constats hétérogènes, plusieurs features potentielles, bugs et docs mélangés ;
+- demande cross-scope ou risque de créer une fiche feature globale ;
+- besoin explicite de ne rien oublier, de suivre les validations, ou de jouer un rôle chef de projet ;
+- `aic-frame` détecte que le cadrage ne peut pas tenir dans une seule intention livrable.
+
+## PHASES
+
+### 1. Installer la carte
+
+1. Reformuler l'objectif du pilotage en une phrase.
+2. Lister les items connus sous forme courte.
+3. Pour chaque item, proposer :
+   - statut : `inbox | triage | validated | blocked | handoff | doing | review | done | dropped`
+   - scope probable ;
+   - route : `feature | fix | docs | refactor | chore | diagnose | handoff | manual | dropped`
+   - preuve attendue.
+4. Identifier l'item actif recommandé.
+
+### 2. Challenger
+
+Challenger avant d'accepter un item :
+
+- Est-ce un problème prouvé ou une suspicion ?
+- Est-ce une vraie feature, un fix, une doc, une décision ou un diagnostic ?
+- L'item mélange-t-il plusieurs scopes ou livrables ?
+- Quelle preuve permet de dire "fait" ?
+- Faut-il refuser, fusionner, reporter ou splitter ?
+- Le coût de suivi dépasse-t-il la valeur ?
+
+### 3. Question active unique
+
+Afficher la carte globale si utile, puis poser une seule question décisionnelle.
+
+Format obligatoire :
+
+```markdown
+## Pilotage
+
+Carte des sujets :
+| ID | Sujet | Statut | Scope probable | Route | Preuve attendue |
+|---|---|---|---|---|---|
+| ... |
+
+Question active :
+- ...
+```
+
+Règles :
+
+- Ne pas poser plusieurs questions décisionnelles en même temps.
+- Les autres questions peuvent être visibles dans la carte, mais elles ne sont pas à traiter maintenant.
+- Après réponse utilisateur, challenger si elle crée un risque, acter la décision, puis passer à l'item suivant.
+
+### 4. Registre durable
+
+Créer ou mettre à jour un registre sous `{{ docs_root }}/pilots/<YYYY-MM-DD>-<slug>.md` quand :
+
+- plus de trois items doivent être suivis ;
+- la reprise dépassera la conversation courante ;
+- un audit ou programme de remédiation doit être partagé ;
+- l'utilisateur demande explicitement un suivi.
+
+Si le registre n'existe pas, proposer le chemin puis écrire après confirmation ou si l'utilisateur a déjà validé le pilotage durable.
+
+Le registre suit `{{ docs_root }}/pilots/0000-template.md`.
+
+### 5. Routage item
+
+Pour chaque item validé :
+
+- `feature` : proposer `scope/id`, titre, `depends_on`, `touches`, puis attendre confirmation avant création de fiche.
+- `fix` : rattacher à une feature couvrante si `touches:` matche ; sinon demander ou créer le minimum documentaire requis.
+- `docs` : nommer la doc cible et la preuve de cohérence.
+- `diagnose` : basculer vers `aic-diagnose` avec le symptôme et l'item.
+- `handoff` : produire le bloc HANDOFF et attendre confirmation avant de changer de scope primaire.
+- `manual` : formuler la décision humaine exacte.
+- `dropped` : enregistrer la raison d'abandon.
+
+## FORMAT DE SORTIE
+
+```markdown
+## Pilotage
+
+Statut : active | blocked | done
+Registre : <path | non créé>
+
+Objectif :
+- ...
+
+Carte des sujets :
+| ID | Sujet | Statut | Scope probable | Route | Preuve attendue |
+|---|---|---|---|---|---|
+| ... |
+
+Décisions actées :
+- ...
+
+Question active :
+- ...
+
+Prochaine action minimale :
+- ...
+```
+
+## DONE / BLOCKED
+
+`done` si tous les items sont `done`, `dropped`, `handoff` ou explicitement reportés avec une reprise claire.
+
+`blocked` si l'item actif demande une décision humaine, une preuve absente ou un HANDOFF non confirmé.
+
+## NON-NEGOTIABLE RULES
+
+- Ne pas créer une fiche feature globale pour un audit transverse.
+- Un seul item actif à la fois.
+- Une seule question décisionnelle à la fois.
+- Pas de batch d'implémentation multi-scope.
+- Pas de création de feature sans confirmation humaine explicite.
+- Chaque item validé doit avoir une route et une preuve attendue.
+- Si un item change le scope primaire, produire un HANDOFF avant toute édition.

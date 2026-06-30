@@ -401,3 +401,7 @@
 
 ## 2026-06-28 — couverture incidente (A1 : fix fallback build-feature-index)
 - `template/.ai/scripts/build-feature-index.sh.jinja` touché (glob `template/**`). Aucun changement propre au moteur de template. (Taxe sur-couverture `touches:` — cf. quality/touches-breadth-guard.)
+
+## 2026-06-30 — message Copier aic-pilot + ownership copier.yml
+- `_message_after_copy` mentionne `/aic-pilot` pour les audits et suivis transverses.
+- Reclassification freshness `(a')` : `copier.yml` garde `core/template-engine` comme propriétaire exact unique ; les features qui ne font qu'exposer une ligne de message passent en `touches_shared`.

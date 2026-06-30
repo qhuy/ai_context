@@ -14,10 +14,10 @@ touches:
   - .claude/skills/aic-dev-plan/**
   - template/.agents/skills/aic-dev-plan/**
   - template/.claude/skills/aic-dev-plan/**
+touches_shared:
   - README.md
   - README_AI_CONTEXT.md
   - template/README_AI_CONTEXT.md.jinja
-touches_shared:
   - copier.yml
   - tests/smoke-test.sh
 product: {}

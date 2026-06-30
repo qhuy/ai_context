@@ -12,14 +12,14 @@ touches:
   - .claude/skills/aic-frame/**
   - template/.agents/skills/aic-frame/**
   - template/.claude/skills/aic-frame/**
-  - .ai/scripts/aic.sh
-  - template/.ai/scripts/aic.sh.jinja
   - .docs/frames/**
   - template/{{docs_root}}/frames/**
+touches_shared:
+  - .ai/scripts/aic.sh
+  - template/.ai/scripts/aic.sh.jinja
   - README_AI_CONTEXT.md
   - template/README_AI_CONTEXT.md.jinja
   - README.md
-touches_shared:
   - tests/smoke-test.sh
 product: {}
 external_refs:

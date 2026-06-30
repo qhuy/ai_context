@@ -10,10 +10,10 @@ touches:
   - template/.ai/rules/workflow.md.jinja
   - .ai/workflows/subagent-contract.md
   - template/.ai/workflows/subagent-contract.md.jinja
+touches_shared:
   - README.md
   - README_AI_CONTEXT.md
   - template/README_AI_CONTEXT.md.jinja
-touches_shared: []
 product: {}
 external_refs:
   claude_code_subagents: "https://code.claude.com/docs/en/sub-agents"

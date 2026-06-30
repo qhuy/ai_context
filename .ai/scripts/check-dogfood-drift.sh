@@ -105,6 +105,13 @@ is_ignored_runtime_extra() {
         ;;
     esac
   fi
+  if [[ "$label" == ".docs/pilots" ]]; then
+    case "$rel" in
+      [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.md)
+        return 0
+        ;;
+    esac
+  fi
   return 1
 }
 
@@ -120,6 +127,7 @@ compare_file "CLAUDE.md" "$out/CLAUDE.md" "CLAUDE.md"
 compare_file "README_AI_CONTEXT.md" "$out/README_AI_CONTEXT.md" "README_AI_CONTEXT.md"
 compare_file ".docs/FEATURE_TEMPLATE.md" "$out/.docs/FEATURE_TEMPLATE.md" ".docs/FEATURE_TEMPLATE.md"
 compare_tree ".docs/frames" "$out/.docs/frames" ".docs/frames"
+compare_tree ".docs/pilots" "$out/.docs/pilots" ".docs/pilots"
 
 echo
 echo "source-only ignored:"
@@ -127,6 +135,7 @@ echo "- .github/workflows/ai-context-check.yml"
 echo "- .github/workflows/template-smoke-test.yml"
 echo "- README.md / CHANGELOG.md / PROJECT_STATE.md / MIGRATION.md"
 echo "- .docs/frames/YYYY-MM-DD-*.md"
+echo "- .docs/pilots/YYYY-MM-DD-*.md"
 echo "- .ai/guardrails.md (projet-spécifique, comme .ai/project/**)"
 echo "- tests/**"
 echo "- template/**"

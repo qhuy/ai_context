@@ -7,11 +7,11 @@ depends_on: []
 touches:
   - .agents/skills/**
   - template/.agents/skills/**
+  - CHANGELOG.md
+touches_shared:
   - .ai/scripts/dogfood-update.sh
   - .ai/scripts/check-dogfood-drift.sh
   - README.md
-  - CHANGELOG.md
-touches_shared:
   - tests/smoke-test.sh
 product: {}
 external_refs: {}

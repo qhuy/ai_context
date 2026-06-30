@@ -28,7 +28,7 @@ testé.
 | Reprendre une feature sans redemander l'historique | fiches `.docs/features/<scope>/<id>.md` + worklogs append-only |
 | Eviter le contexte géant | Pack A lean, règles on-demand, mesure de coût tokens |
 | Relier code, doc, commit et review | `touches:`, `depends_on`, checks feature, freshness staged |
-| Utiliser Claude et Codex avec le même langage | surface `aic` : frame, status, diagnose, document-feature, review, ship |
+| Utiliser Claude et Codex avec le même langage | surface `aic` : frame, pilot, status, diagnose, document-feature, review, ship |
 | Garder un projet mature propre | hooks git, checks CI, doctor, smoke-test, migration Copier |
 
 ## Pour qui
@@ -80,7 +80,7 @@ bash .ai/scripts/check-feature-docs.sh
 bash .ai/scripts/aic.sh frame "première tâche"
 ```
 
-`aic.sh frame` donne un bootstrap de contexte. Pour un cadrage critique ou durable, utiliser le skill `/aic-frame`.
+`aic.sh frame` donne un bootstrap de contexte. Pour un cadrage critique ou durable, utiliser le skill `/aic-frame`. Pour un audit général ou un suivi transverse, utiliser `/aic-pilot`.
 
 Dans Claude Code, lance ensuite `/hooks` et active les hooks proposés si tu veux
 l'injection de contexte automatique à chaque tour.
@@ -92,6 +92,7 @@ La surface utilisateur canonique est `aic`.
 | Besoin | Claude | Codex / terminal |
 |---|---|---|
 | Cadrer avant d'écrire | `/aic-frame` | `bash .ai/scripts/aic.sh frame "<objectif>"` pour bootstrap |
+| Piloter un audit ou suivi transverse | `/aic-pilot` | skill local `aic-pilot` |
 | Structurer le développement | `/aic-dev-plan` | skill local `aic-dev-plan` |
 | Savoir où reprendre | `/aic-status` | `bash .ai/scripts/aic.sh status` |
 | Diagnostiquer un blocage | `/aic-diagnose` | `bash .ai/scripts/aic.sh diagnose "<symptôme>"` |
@@ -103,6 +104,7 @@ Flux recommandé :
 
 ```text
 frame -> feature doc -> implémentation -> review -> ship -> commit
+pilot -> item actif -> frame/feature/fix/docs/handoff -> validation -> item suivant
 ```
 
 En langage naturel, ça donne :

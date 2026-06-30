@@ -36,7 +36,7 @@ Justification :
 
 Scope primaire probable :
 
-Route : `feature | doc | adr | manual | diagnose | dropped`
+Route : `feature | pilot | doc | adr | manual | diagnose | dropped`
 
 Justification :
 

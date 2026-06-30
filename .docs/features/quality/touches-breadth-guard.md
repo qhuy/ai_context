@@ -30,7 +30,7 @@ doc:
     observability: false
 progress:
   phase: review
-  step: "guard + test + wiring livrés ; 1ère vague de reclassement (smoke-test.sh) faite"
+  step: "guard + test + wiring livrés ; reclassifications incrémentales exact-multi en cours"
   blockers: []
   resume_hint: "reclasser incrémentalement les fichiers flagués (README*, _lib.sh, aic.sh, CHANGELOG…) en touches_shared quand on touche leur feature"
   updated: 2026-06-26
@@ -104,3 +104,4 @@ Rendre **visible et réductible au fil de l'eau** la sur-couverture `touches:`, 
 
 - 2026-06-26 : création (cadrage `aic-frame`, approche hybride confirmée). Guard A+B + wiring + test. 1ʳᵉ vague reclassement `tests/smoke-test.sh` → `touches_shared:` sur `core/aic-surface-canonical`, `core/codex-skills-install`, `product/product-portfolio-loop`, `quality/index-lock-contract`. Reste surfacé par le guard pour traitement incrémental (README*, `_lib.sh`, `aic.sh`, `CHANGELOG.md`, `.ai/**`, `template/**`…).
 - 2026-06-28 : **2ᵉ vague — globs catch-all (Signal B)** (frame de remédiation 2026-06-28, suite à la taxe observée : guardrails 5 fiches, fix A1 12 fiches, moat git désormais actif). Reclassés `touches:` → `touches_shared:`/affinés : `core/template-engine` `template/**` → `touches_shared` (garde `copier.yml` direct = le moteur) ; `quality/smoke-test` `tests/**` → `tests/smoke-test.sh` direct + `tests/**` shared ; `core/project-overlay-scope-registry` et `core/project-overlay-stable` `tests/**` → `tests/unit/test-project-overlay.sh` direct. Signal B ne liste plus que les globs **légitimes** (`dogfood-runtime-sync → .ai/**`, `git-hooks → .githooks/**`). Dé-taxe vérifiée : un édit `.jinja` n'exige plus `template-engine`. **Volontairement non reclassé** : `build-feature-index.sh`/`.jinja` reste direct sur `index-contract-v2`, `feature-mesh-contract-alignment`, `okf-strict-profile` — co-propriété légitime (contrat/parser/champ type), reclasser créerait de la sous-couverture. Reste : Signal A (README*, `_lib.sh`, `aic.sh`) + globs 2-segments non détectés par B (`tests/unit/**`), au fil de l'eau.
+- 2026-06-30 : **3ᵉ vague — dispatchers et docs publiques exact-multi** après livraison du contrat freshness `(a')`. Propriétaires exacts retenus : `core/aic-surface-canonical` pour `aic.sh` / `README_AI_CONTEXT`, `core/template-engine` pour `copier.yml`, `product/readme-positioning` pour `README.md`, `core/dogfood-runtime-sync` pour `dogfood-update.sh` / `check-dogfood-drift.sh`, `quality/smoke-test` pour `tests/smoke-test.sh`, `workflow/aic-frame-external-reference` pour `aic-frame` et les templates de frames. Les features consommatrices passent en `touches_shared:` pour garder le signal sans cascade.

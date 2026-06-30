@@ -1,0 +1,75 @@
+---
+pilot_id: "0000-template"
+status: "active"
+source: ""
+scope_primary: "product"
+created_at: "YYYY-MM-DD"
+updated_at: "YYYY-MM-DD"
+active_item: ""
+active_question: ""
+next_hint: ""
+---
+
+# Pilot 0000-template — Sujet
+
+## Intention
+
+Décrire l'audit, la demande large ou le programme de suivi.
+
+## Résultat attendu
+
+- Ce qui doit être vrai quand le pilotage peut être clos.
+
+## Carte des sujets
+
+| ID | Sujet | Statut | Scope probable | Route | Preuve attendue |
+|---|---|---|---|---|---|
+| P1 |  | inbox |  | manual |  |
+
+Statuts : `inbox`, `triage`, `validated`, `blocked`, `handoff`, `doing`, `review`, `done`, `dropped`.
+
+Routes : `feature`, `fix`, `docs`, `refactor`, `chore`, `diagnose`, `handoff`, `manual`, `dropped`.
+
+## Question active
+
+Contexte affiché :
+
+- Les autres questions peuvent être listées ici pour donner la carte complète.
+
+Question à traiter maintenant :
+
+- Une seule question décisionnelle.
+
+## Décisions actées
+
+| Date | Item | Décision | Raison | Suite |
+|---|---|---|---|---|
+| YYYY-MM-DD |  |  |  |  |
+
+## Handoffs
+
+```text
+HANDOFF
+  from_scope:
+  to_scope:
+  status:
+  files_touched: []
+  pending: []
+  risks: []
+```
+
+## Suivi d'exécution
+
+| Item | Action liée | Owner | Statut | Validation |
+|---|---|---|---|---|
+|  |  |  |  |  |
+
+## Validation de clôture
+
+- Tous les items sont `done`, `dropped`, `handoff` ou explicitement reportés.
+- Les features validées ont une fiche `.docs/features/<scope>/<id>.md`.
+- Les checks et preuves associées sont renseignés.
+
+## Next hint
+
+Instruction de reprise exploitable par un humain ou un agent.

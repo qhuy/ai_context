@@ -9,6 +9,7 @@
 - Intention libre : "je veux ajouter X", "améliorer Y", "prépare la feature Z".
 - Optionnel : scope, feature existante, contrainte métier/technique, deadline, besoin de sortie durable, niveau demandé `low|standard|high`.
 - Si l'intention est trop vague : poser toutes les questions nécessaires au cadrage, limitées aux décisions bloquantes. Les grouper par thème, séparer `Bloquant maintenant` de `À valider plus tard`, et ne pas produire de plan tant que les bloquantes ne sont pas résolues.
+- Si l'intention est trop large pour une seule intention livrable : débrayer vers `aic-pilot` plutôt que créer un frame ou une feature globale.
 
 ## CONTEXT LOADING
 
@@ -43,6 +44,23 @@ Signaux à inspecter :
 
 Si le signal lexical est seul, confirmer par une justification d'une ligne pour éviter les faux positifs.
 Si l'inspection révèle un contrat agentique, un format durable, un script partagé ou une surface template/runtime, passer `high`.
+
+## DÉBRAYAGE VERS AIC-PILOT
+
+Choisir `route=pilot` et recommander `aic-pilot` quand la demande porte sur :
+
+- un audit général, une remédiation globale, un backlog de constats ou un suivi transverse ;
+- plusieurs features, bugs, docs, décisions ou corrections à trier ;
+- plusieurs scopes probables sans item actif unique ;
+- un besoin explicite de ne rien oublier, suivre, prioriser ou jouer le rôle de chef de projet ;
+- une demande qui créerait une fiche feature fourre-tout si elle restait dans `aic-frame`.
+
+Dans ce cas :
+
+1. Ne pas créer de fiche feature globale.
+2. Produire une courte justification du débrayage.
+3. Donner la première carte des sujets si elle est déjà visible.
+4. Poser une seule question active ou indiquer de lancer `aic-pilot`.
 
 ## PHASES
 
@@ -87,6 +105,7 @@ Une inconnue ne peut pas rester une hypothèse si elle a une probabilité crédi
 Fournir des préconisations priorisées et une décision unique :
 
 - `feature` : créer/reprendre une feature après confirmation humaine ;
+- `pilot` : basculer vers `aic-pilot` pour piloter plusieurs items sans fausse feature globale ;
 - `doc` : produire ou mettre à jour une doc ;
 - `adr` : formaliser une décision d'architecture ;
 - `manual` : décision humaine requise ;
@@ -162,7 +181,7 @@ Aspects non couverts / à couvrir :
 Préconisations :
 1. ...
 
-Décision de routage : feature | doc | adr | manual | diagnose | dropped
+Décision de routage : feature | pilot | doc | adr | manual | diagnose | dropped
 Justification :
 - ...
 

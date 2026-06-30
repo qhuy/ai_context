@@ -6,12 +6,12 @@ status: active
 depends_on: []
 touches:
   - copier.yml
-  - README.md
-  - README_AI_CONTEXT.md
   - docs/upgrading.md
   - docs/variables.md
-  - .ai/scripts/aic.sh
 touches_shared:
+  - README.md
+  - README_AI_CONTEXT.md
+  - .ai/scripts/aic.sh
   - template/**
 progress:
   phase: review

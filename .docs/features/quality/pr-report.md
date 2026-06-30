@@ -9,12 +9,12 @@ depends_on:
 touches:
   - .ai/scripts/pr-report.sh
   - .ai/scripts/review-delta.sh
-  - .ai/scripts/aic.sh
   - template/.ai/scripts/pr-report.sh.jinja
   - template/.ai/scripts/review-delta.sh.jinja
-  - template/.ai/scripts/aic.sh.jinja
   - tests/unit/test-review-delta-shared.sh
 touches_shared:
+  - .ai/scripts/aic.sh
+  - template/.ai/scripts/aic.sh.jinja
   - README.md
   - PROJECT_STATE.md
   - CHANGELOG.md

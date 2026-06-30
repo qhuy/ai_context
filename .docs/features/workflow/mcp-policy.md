@@ -10,10 +10,10 @@ touches:
   - template/.ai/rules/workflow.md.jinja
   - .ai/workflows/mcp-policy.md
   - template/.ai/workflows/mcp-policy.md.jinja
+touches_shared:
   - README.md
   - README_AI_CONTEXT.md
   - template/README_AI_CONTEXT.md.jinja
-touches_shared: []
 product: {}
 external_refs:
   claude_code_mcp: "https://code.claude.com/docs/en/mcp"

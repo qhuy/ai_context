@@ -70,3 +70,8 @@
 
 ## 2026-06-29 — couverture incidente (finding #6 : fraîcheur du frame)
 - Frame remediation : `updated_at` 2026-06-28 → 2026-06-29 + `next_hint` aligné (A8/C2/finding #3 sortis de la todo, items mineurs conservés). Aucun changement de comportement.
+
+## 2026-06-30 — débrayage vers aic-pilot
+- `aic-frame` ajoute `route=pilot` pour les audits, suivis transverses et demandes trop larges pour une intention unique.
+- Les templates de frames acceptent désormais `pilot` comme décision de routage.
+- Reclassification freshness `(a')` : `aic-frame` et les templates `.docs/frames` restent propriétaires exacts de `workflow/aic-frame-external-reference`; `workflow/aic-pilot` référence ces surfaces en `touches_shared`.

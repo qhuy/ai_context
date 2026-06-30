@@ -8,6 +8,8 @@ depends_on:
   - workflow/agent-behavior
 touches:
   - .gitignore
+  - .ai/scripts/dogfood-update.sh
+  - .ai/scripts/check-dogfood-drift.sh
   - .ai/**
   - .agents/skills/**
   - .claude/settings.json
@@ -18,9 +20,9 @@ touches:
   - tests/unit/test-dogfood-update-preserves-frames.sh
   - AGENTS.md
   - CLAUDE.md
-  - README_AI_CONTEXT.md
   - .docs/FEATURE_TEMPLATE.md
 touches_shared:
+  - README_AI_CONTEXT.md
   - tests/smoke-test.sh
 progress:
   phase: implement

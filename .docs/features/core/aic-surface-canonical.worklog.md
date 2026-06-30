@@ -152,3 +152,8 @@
 ## 2026-06-29 — PROJECT_STATE : note mainteneur remediation (A7)
 - Ajout note 2026-06-29 pointant vers le frame de remediation (registre de reprise) + resume des durcissements de session. Vue mainteneur rendue exacte (audit A7).
 - Fichiers : PROJECT_STATE.md
+
+## 2026-06-30 — surface aic-pilot + ownership dispatcher
+- `aic.sh` documente `pilot` comme bootstrap skill-only et garde la surface CLI scriptable sans transformer le pilotage en commande déterministe.
+- `README_AI_CONTEXT.md` et son template exposent `aic-pilot` dans la surface utilisateur commune Claude/Codex.
+- Reclassification freshness `(a')` : `aic.sh`, `template/.ai/scripts/aic.sh.jinja`, `README_AI_CONTEXT.md` et `template/README_AI_CONTEXT.md.jinja` restent propriétaires exacts de `core/aic-surface-canonical`; les features consommatrices passent en `touches_shared`.
