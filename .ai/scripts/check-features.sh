@@ -79,6 +79,14 @@ fm_list() {
     | grep -vE '^$|^\[\]$' || true
 }
 
+# Clés requises dérivées du schéma (.required) via read_schema_enum (lecture jq
+# générique + fallback hardcodé si schéma/jq absent). Durcissement P3
+# (quality/feature-schema-validator) : ajouter une clé requise dans
+# feature.schema.json l'exige ici sans rééditer ce script — fin de la dérive
+# heuristique/schéma sur les clés obligatoires. Éthos conservé : bash/jq, zéro
+# dépendance validateur externe.
+REQUIRED_FIELDS="$(read_schema_enum '.required' 'id scope title status depends_on touches')"
+
 echo "═══ check-features ═══"
 
 if [[ ! -d "$FEATURES_DIR" ]]; then
@@ -117,7 +125,7 @@ for f in "${files[@]}"; do
     fi
   fi
 
-  for key in id scope title status depends_on touches; do
+  for key in $REQUIRED_FIELDS; do
     if ! echo "$fm" | grep -qE "^$key:"; then
       ko "$f : clé frontmatter '$key' manquante"
       file_fail=1

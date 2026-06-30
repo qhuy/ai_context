@@ -11,6 +11,7 @@ depends_on:
 touches:
   - .docs/features/quality/feature-schema-validator.md
   - .docs/features/quality/feature-schema-validator.worklog.md
+  - tests/unit/test-schema-driven-required.sh
 touches_shared:
   - .ai/schema/feature.schema.json
   - template/.ai/schema/feature.schema.json
@@ -31,10 +32,10 @@ doc:
     rollout: true
     observability: false
 progress:
-  phase: spec
-  step: "cadrage via pilot ze-solution (P3) ; choix du runtime validateur ouvert (recommandé : check-jsonschema, pip)"
+  phase: implement
+  step: "incrément 1 livré : clés requises dérivées du schéma (.required) dans check-features via read_schema_enum (zéro dép) ; test + parité OK"
   blockers: []
-  resume_hint: "trancher le runtime (check-jsonschema pip vs ajv node vs python jsonschema), brancher en mode warn dans check-features, garder le fallback bash si binaire absent ; tests valides/invalides ; flip fail en vN+1"
+  resume_hint: "follow-ups : (1) HANDOFF quality/smoke-test = brancher le test dans smoke [0q/28] ; (2) entrée CHANGELOG (différée, couplage) ; (3) suite optionnelle : dériver le pattern id ((?:→() et enums imbriqués product.portfolio. Runtime reste bash/jq/yq, AUCUN validateur externe (décision vs éthos schéma)"
   updated: 2026-06-30
 ---
 
@@ -87,9 +88,10 @@ contrat (`okf-strict-profile`) et de l'alignement parser (`feature-mesh-contract
 
 ## Décisions
 
-- **Validateur réel + fallback bash** (pas de remplacement brutal) : robustesse et portabilité d'abord.
-- **Runtime : ouvert**, recommandé `check-jsonschema` (pip) car Copier impose déjà Python/pip — pas de nouvel écosystème (Node) à introduire. Alternatives : `ajv` (Node), lib `jsonschema` (Python).
-- **Migration warn → fail** alignée sur `okf-strict-profile` : warn en release N, enforce en N+1.
+- **Runtime tranché (2026-06-30) : zéro dépendance, dérivation jq/yq.** Le spike a montré que le schéma documente lui-même l'éthos « bash/jq/yq, AUCUNE dépendance ajv/check-jsonschema » (`$comment`) ; recommander `check-jsonschema` aurait contredit une décision actée. Le « vrai validateur » devient donc : `check-features` lit le schéma comme **donnée** (`read_schema_enum`, générique) au lieu de listes codées en dur. Décision de recadrage prise via `aic-pilot` (P3, option « durcir via jq/yq »).
+- **Incrément 1 = clés requises dérivées du schéma** (`.required`). Avant : liste hardcodée `id scope title status depends_on touches` dans `check-features.sh`. Après : `REQUIRED_FIELDS="$(read_schema_enum '.required' ...)"`. Une clé ajoutée au schéma est exigée sans rééditer le script.
+- **Surface = `core/feature-mesh`** : `check-features.sh` est possédé par `core/feature-mesh` (`touches:`) ; cette feature (quality) en est l'initiative, le code vit côté core (cross-ref + worklog core/feature-mesh).
+- **Suite** : pattern `id` (traduire `(?:`→`(` pour ERE) et enums imbriqués (`product.portfolio`) si jugé utile — toujours bash/jq, jamais de validateur externe.
 
 ## Comportement attendu
 

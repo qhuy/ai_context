@@ -68,3 +68,10 @@
 - Message d'erreur : liste triée des features impliquées (au lieu d'un chemin `A → B → A`). Le smoke ne vérifie que l'exit non-zéro → pas de casse.
 - Runtime + `.jinja` (parité). Vérifs : vrai mesh 55 fiches PASS sans faux cycle, 2-cycle détecté end-to-end, diamant k=24 instantané.
 - HANDOFF `quality/cycle-detection` : la fiche affirmait `O(V+E)` (faux avant) — maj fiche + garde anti-régression diamant dans le commit suivant.
+
+## 2026-06-30 — clés requises dérivées du schéma (init. quality/feature-schema-validator, P3)
+- `check-features.sh` ne code plus en dur la liste des clés obligatoires : `REQUIRED_FIELDS="$(read_schema_enum '.required' 'id scope title status depends_on touches')"` (lecture jq du schéma, fallback hardcodé si schéma/jq absent). Fin de la dérive heuristique/schéma sur les clés requises ; ajouter une clé à `feature.schema.json` l'exige sans rééditer le script.
+- Éthos préservé : bash/jq, **aucune** dépendance validateur externe (cf. `$comment` du schéma). Le « vrai validateur » = schéma lu comme donnée.
+- Runtime + `.jinja` (parité dogfood vérifiée). Test dédié `tests/unit/test-schema-driven-required.sh` (clé `owner` ajoutée au schéma temp → exigée).
+- HANDOFF `quality/smoke-test` : brancher ce test dans `tests/smoke-test.sh` — non fait ici pour rester focalisé (même pattern que yaml-strict).
+- Initiative portée par `quality/feature-schema-validator` (P3 du pilot `2026-06-30-ze-solution`) ; `check-features.sh` reste surface `core/feature-mesh`, d'où cette entrée.
