@@ -5,9 +5,9 @@ source: "Analyse à froid du repo (regard neuf) + cadrage axes d'amélioration"
 scope_primary: "product"
 created_at: "2026-06-30"
 updated_at: "2026-06-30"
-active_item: "P1 fiché ; P2/P3 incr.1 livrés ; P4 différé (mesuré) ; reste P5/P6"
-active_question: "Prochain : P6 (diagnose adoption / anti --no-verify) ou P5 (dual-tree) ? P6 dépend en partie de l'evidence P1 (non encore construite)."
-next_hint: "Branche pilot/ze-solution-axes (6 commits) à PR/merger. Livré : cadrage 7 axes ; P1 fiché ; P3 incr.1 (clés requises schéma-driven, zéro dép) + smoke ; P2 incr.1 (self-suffisance AGENTS.md verrouillée). P4 DIFFÉRÉ après mesure (matching ≠ goulot ; coût = parsing yq build-index, linéaire+caché — pas de réécriture Python : contredit l'éthos). Reste : P5 (dual-tree, core, fortes deps), P6 (diagnose adoption, dépend evidence P1), P7 différé. Follow-ups P2/P3 : kill_criterion #34235, HANDOFFs smoke, CHANGELOG."
+active_item: "P4 & P5 différés (déjà résolus/mal ciblés) ; reste P1 (build) + P6"
+active_question: "Prochain vrai levier : construire P1 (harnais benchmark d'efficacité — le keystone 'prouver'), ou P6 (diagnostic friction adoption, dont ce fil a produit des preuves) ?"
+next_hint: "Branche pilot/ze-solution-axes (6 commits) à PR/merger. Livré : cadrage 7 axes ; P1 fiché ; P3 incr.1 (clés requises schéma-driven, zéro dép) + smoke ; P2 incr.1 (self-suffisance AGENTS.md verrouillée). P4 + P5 DIFFÉRÉS (dropped) : P4 mal ciblé (matching ≠ goulot, mesuré) ; P5 déjà résolu (dogfood-update génère le runtime depuis le template). Méta : P3/P4/P5 = 3/3 prémisses recadrées → le projet traite déjà plus que supposé. Reste les VRAIS leviers : P1 (construire le harnais benchmark = keystone 'prouver') et P6 (diagnostic friction adoption, preuves déjà collectées ce fil). P7 différé. Follow-ups P2/P3 : kill_criterion #34235, HANDOFFs smoke, CHANGELOG."
 ---
 
 # Pilot 2026-06-30 — « ZE SOLUTION » : axes pour faire d'ai_context la référence
@@ -41,7 +41,7 @@ avant de durcir/optimiser.
 | P2 | Pari `.ai/index.md` vs AGENTS.md lecture native — **fiche core créée** | doing | core | manual → feature core | chemin de collapse documenté + kill_criterion #34235 opérationnalisé |
 | P3 | Validateur clés requises schéma-driven (recadré : zéro dép) — **incr. 1 livré + CI** | doing | quality/core | feature | clé ajoutée au schéma → exigée : test PASS + smoke [0q/28] ✅ |
 | P4 | Noyau moteur hors bash (index/cycles/glob) | **dropped (tel que cadré)** | core | mesuré → différé | mesure faite : matching ≠ goulot ; coût = parsing yq de build-index (linéaire), négligeable+caché à échelle réaliste |
-| P5 | Taxe dual-tree (runtime généré depuis template) | triage | core | refactor | source unique ; drift-check trivial/inutile |
+| P5 | Taxe dual-tree (runtime généré depuis template) | **dropped (déjà résolu)** | core | — | `dogfood-update.sh --apply` génère DÉJÀ le runtime depuis le template ; taxe résiduelle inhérente au Jinja + mitigée par drift-check |
 | P6 | Calibrage cérémonie consommateur / anti `--no-verify` | triage | workflow (+product) | diagnose | données d'adoption ; mode soft défini |
 | P7 | Sprawl docs racine + cadence auto-audit | inbox | product/docs | docs/chore (différé) | doc racine consolidée, cadence audit bornée |
 
@@ -79,6 +79,8 @@ Question à traiter maintenant :
 | 2026-06-30 | — | Cadrage clos ; passage à l'implémentation **un scope par tour** | Ne pas mélanger code core+quality en un tour (règle dogfoodée) | P3 d'abord (isolé), puis P2 |
 | 2026-07-01 | P3/P2 | Incréments 1 livrés (dc9c4c6 / ed78af8) + smoke (885f169) | Zéro dép, éthos bash/jq/yq respecté (recadrage P3 vs check-jsonschema) | Follow-ups tracés dans les fiches |
 | 2026-07-01 | P4 | **Différé (dropped tel que cadré)** après mesure | Matching ≠ goulot (grandit à peine) ; coût = parsing yq build-index, LINÉAIRE, négligeable + caché à ≤100 fiches. Réécriture Python contredit l'éthos ET rate la cible | Si perf mord un jour : batcher le yq de build-index (in-éthos), pas de Python |
+| 2026-07-01 | P5 | **Différé (dropped, déjà résolu)** | `dogfood-update.sh --apply` génère déjà le runtime depuis le template ; la source unique existe. Taxe résiduelle inhérente au Jinja + mitigée par drift-check → rien à refactorer | Ergonomie template-first possible plus tard, faible ROI |
+| 2026-07-01 | méta | **P3/P4/P5 = 3/3 prémisses recadrées vers le bas** | Le projet traite déjà plus que la vue externe ne supposait. La vraie valeur restante demande de la PREUVE, pas de la machinerie | Concentrer sur P1 (prouver) et P6 (friction adoption) |
 
 ## Handoffs
 
