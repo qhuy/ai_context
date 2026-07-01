@@ -67,6 +67,17 @@ for shim in "${SHIMS[@]}"; do
   fi
 done
 
+# AGENTS.md doit rester AUTO-SUFFISANT : porter les hard rules inline (pas un
+# simple pointeur vers .ai/index.md), pour que l'indirection devienne optionnelle
+# si un agent lit AGENTS.md nativement (#34235 ; core/agents-md-native-collapse-path).
+if [[ -f "AGENTS.md" ]]; then
+  if grep -qiE 'hard rules|règles dures' AGENTS.md; then
+    ok "AGENTS.md auto-suffisant (hard rules inline)"
+  else
+    ko "AGENTS.md doit porter les hard rules inline (self-suffisance collapse-path, pas un simple pointeur)"
+  fi
+fi
+
 echo "[3/4] Cibles canoniques"
 for target in "${CANONICAL[@]}"; do
   if [[ -f "$target" ]]; then ok "$target"; else ko "$target manquant"; fi

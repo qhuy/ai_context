@@ -11,6 +11,7 @@ depends_on:
 touches:
   - .docs/features/core/agents-md-native-collapse-path.md
   - .docs/features/core/agents-md-native-collapse-path.worklog.md
+  - tests/unit/test-agents-md-self-sufficient.sh
 touches_shared:
   - AGENTS.md
   - CLAUDE.md
@@ -36,10 +37,10 @@ doc:
     rollout: true
     observability: false
 progress:
-  phase: spec
-  step: "cadrage via pilot ze-solution (P2, posture hedge) ; chantier = rendre AGENTS.md auto-suffisant sans casser l'invariant .ai/ source"
+  phase: implement
+  step: "incrément 1 livré : self-suffisance d'AGENTS.md verrouillée par check-shims (hard rules inline exigés) + test ; runtime + .jinja ; parité OK"
   blockers: []
-  resume_hint: "définir ce qu'AGENTS.md doit porter inline (entrée + protocole lean minimal) pour que .ai/index.md soit optionnel ; opérationnaliser le kill_criterion #34235 (veille + check) ; migration warn downstream"
+  resume_hint: "suite : (1) opérationnaliser le kill_criterion #34235 (veille/signal par agent) ; (2) doc migration warn downstream ; (3) HANDOFF quality/smoke-test = brancher test-agents-md-self-sufficient dans smoke. Invariant .ai/ source unique préservé (AGENTS.md = entrée, pas contenu)"
   updated: 2026-06-30
 ---
 
@@ -161,3 +162,9 @@ Non requis (`doc.requires.observability: false`). Preuves = sorties `check-shims
   ni retirer l'indirection). Cadre : AGENTS.md auto-suffisant = entrée + protocole lean minimal
   inline (pas de duplication de `.ai/index.md`) ; collapse gouverné par le kill_criterion #34235,
   par agent. Décision ouverte : opérationnalisation concrète du kill_criterion (veille/check).
+- 2026-06-30 : **incrément 1 livré** — self-suffisance d'AGENTS.md **verrouillée par `check-shims`** :
+  nouvelle assertion exigeant les hard rules inline dans `AGENTS.md` (échoue si réduit à un simple
+  pointeur). Runtime + `.jinja` (parité), test `tests/unit/test-agents-md-self-sufficient.sh`
+  (cas pointeur nu → échec). Surface `check-shims.sh` possédée par `core/agents-md-shim-canonical`
+  (worklog mis à jour). Invariant `.ai/ source` préservé. Reste : opérationnaliser le kill_criterion
+  + migration downstream + HANDOFF smoke.

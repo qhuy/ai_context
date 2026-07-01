@@ -16,3 +16,8 @@
 - Checks verts : check-shims (AGENTS 15 l. / CLAUDE 7 l.), check-dogfood-drift (parite), smoke-test.
 - Reste avant DONE : note migration CHANGELOG/docs/upgrading (forme des shims change a copier update) ; check-shims dynamique par agents actives ; confirmer #34235.
 - Fichiers : AGENTS.md, CLAUDE.md, template/AGENTS.md.jinja, template/CLAUDE.md.jinja, template/GEMINI.md.jinja
+
+## 2026-06-30 — check-shims : verrou de self-suffisance d'AGENTS.md (init. core/agents-md-native-collapse-path, P2)
+- `check-shims.sh` (surface possédée ici) : nouvelle assertion exigeant les hard rules inline dans `AGENTS.md` — échoue si le shim est réduit à un simple pointeur. Verrouille la précondition du chemin de collapse (AGENTS.md seul suffit aux règles).
+- Runtime + `.jinja` (parité). Test dédié `tests/unit/test-agents-md-self-sufficient.sh`. check-shims réel PASS (nouvelle ligne « AGENTS.md auto-suffisant »), dogfood-drift aligné.
+- Initiative portée par `core/agents-md-native-collapse-path` (P2, pilot `2026-06-30-ze-solution`) ; recoupe le follow-up « check-shims dynamique par agents activés » listé ci-dessus (non traité ici).

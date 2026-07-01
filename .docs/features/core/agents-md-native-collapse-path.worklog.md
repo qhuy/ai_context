@@ -10,3 +10,13 @@
 - Distinct de `agents-md-shim-canonical` qui a mis l'indirection hors-périmètre (« chantier séparé »).
 - Phase : spec. Décision ouverte : comment opérationnaliser concrètement le kill_criterion #34235 (veille/check).
 - Prochaine étape : définir le contenu inline minimal d'AGENTS.md + le signal kill_criterion.
+
+## 2026-06-30 — incrément 1 : self-suffisance d'AGENTS.md verrouillée (check-shims)
+
+- Constat : runtime `AGENTS.md` et `template/AGENTS.md.jinja` portent DÉJÀ les hard rules inline (self-suffisants). L'incrément = **verrou anti-régression** plutôt que réécriture.
+- `check-shims.sh` : nouvelle assertion — `AGENTS.md` doit contenir un bloc `Hard rules` inline, sinon `ko` (« self-suffisance collapse-path, pas un simple pointeur »). Précondition du collapse rendue testable : un agent lisant AGENTS.md seul connaît les règles.
+- Runtime + `.jinja` (parité dogfood vérifiée). Test `tests/unit/test-agents-md-self-sufficient.sh` : cas AGENTS.md auto-suffisant → OK, cas pointeur nu → échec + message.
+- Surface `check-shims.sh` = possédée par `core/agents-md-shim-canonical` (worklog mis à jour) ; initiative = cette fiche (P2).
+- Invariant `aic-surface-canonical` (`.ai/` source unique) préservé : AGENTS.md reste l'ENTRÉE, pas le contenu.
+- **HANDOFF `quality/smoke-test`** : brancher `test-agents-md-self-sufficient.sh` dans le smoke — non fait ici (mono-scope core), même pattern que P3.
+- Reste : opérationnaliser le kill_criterion #34235 (veille/signal par agent) ; doc migration warn downstream.

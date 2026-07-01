@@ -414,3 +414,7 @@
 - `dogfood-update.sh` préserve les registres datés `.docs/pilots/YYYY-MM-DD-*.md` sous `--delete`.
 - `check-dogfood-drift.sh` compare le template pilot `0000-template.md` et ignore les registres datés project-owned.
 - Reclassification freshness `(a')` : `dogfood-update.sh` et `check-dogfood-drift.sh` deviennent des propriétaires exacts de `core/dogfood-runtime-sync`; les features consommatrices passent en `touches_shared`.
+
+## 2026-06-30 17:55 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-features.sh
