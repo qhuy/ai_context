@@ -99,6 +99,10 @@ echo "[0p/28] tests unitaires (check-features YAML strict)"
 bash tests/unit/test-check-features-yaml-strict.sh
 echo
 
+echo "[0q/28] tests unitaires (clés requises dérivées du schéma)"
+bash tests/unit/test-schema-driven-required.sh
+echo
+
 echo "[1/28] copier copy (profil par défaut)"
 copier copy --defaults --trust \
   --data project_name=smoke-project \

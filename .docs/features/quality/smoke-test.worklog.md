@@ -208,3 +208,13 @@
 ## 2026-06-30 — couverture smoke aic-pilot
 - Le smoke vérifie la présence du skill `aic-pilot`, du template `.docs/pilots/0000-template.md` et du bootstrap `pilot` dans `aic.sh --help`.
 - Reclassification freshness `(a')` : `tests/smoke-test.sh` garde `quality/smoke-test` comme propriétaire exact unique ; les couvertures de régression ciblée passent en `touches_shared`.
+
+## 2026-06-30 17:55 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh
+
+## 2026-06-30 — étape [0q/28] : test schéma-driven des clés requises
+
+- Nouvelle étape smoke `[0q/28]` : `bash tests/unit/test-schema-driven-required.sh`, à la suite des autres tests unitaires `check-features` (`[0p/28]` yaml-strict).
+- Ferme le HANDOFF ouvert par `quality/feature-schema-validator` (P3, pilot `2026-06-30-ze-solution`) et `core/feature-mesh` : le test de la validation schéma-driven des clés requises est désormais dans le harnais CI, pas seulement en standalone.
+- Denominator `/28` préservé (label lettré, comme les autres pré-étapes unitaires).
