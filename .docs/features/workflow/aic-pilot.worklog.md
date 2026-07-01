@@ -33,3 +33,5 @@
 - Routage exécuté : P1 → `product/agent-efficacy-benchmark`, P3 → `quality/feature-schema-validator`, P2 (hedge) → HANDOFF product→core → `core/agents-md-native-collapse-path`.
 - Contrat vérifié en conditions réelles : `aic-pilot` garde l'ownership de `.docs/pilots/**` (`touches:`), donc la freshness staged exige le worklog `aic-pilot` quand le registre change.
 - Suivi : P1/P3/P2 fichés (commits `ebc371c`/`c444caf`) ; P3 recadré (zéro dép) + incrément 1 livré (`dc9c4c6`) et câblé smoke (`885f169`). Registre `next_hint` rafraîchi (retrait de la mention obsolète `check-jsonschema`).
+- P2 incr.1 livré (`ed78af8`, verrou self-suffisance AGENTS.md) ; worklogs orphelins (traces auto CHANGELOG périmées) nettoyés.
+- **P4 différé après mesure** (measure-first) : bench ad-hoc du matching → matching ≠ goulot (grandit à peine à mesh 10×) ; le coût est le parsing yq de `build-index` (linéaire ~80 ms/fiche, négligeable + caché à ≤100 fiches). La réécriture Python cadrée contredit l'éthos bash/jq/yq ET rate la cible → `dropped tel que cadré`. Même leçon que P3 : vérifier la prémisse avant de coder.
