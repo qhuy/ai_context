@@ -11,10 +11,10 @@ touches:
   - .ai/scripts/build-feature-index.sh
   - template/.ai/scripts/build-feature-index.sh.jinja
   - tests/unit/test-build-feature-index-fallback.sh
-  - CHANGELOG.md
   - .docs/features/core/feature-mesh-contract-alignment.md
   - .docs/features/core/feature-mesh-contract-alignment.worklog.md
 touches_shared:
+  - CHANGELOG.md
   - .ai/schema/feature.schema.json
   - template/.ai/schema/feature.schema.json
   - .docs/features/core/feature-mesh.md

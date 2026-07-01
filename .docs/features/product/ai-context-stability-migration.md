@@ -13,8 +13,8 @@ touches:
   - .docs/features/product/ai-context-stability-migration.worklog.md
   - .docs/frames/2026-05-14-ai-context-stability-migration.md
   - docs/upgrading.md
-  - CHANGELOG.md
 touches_shared:
+  - CHANGELOG.md
   - README.md
   - README_AI_CONTEXT.md
   - PROJECT_STATE.md

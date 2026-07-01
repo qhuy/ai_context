@@ -25,11 +25,11 @@ touches:
   - template/.ai/workflows/quality-gate.md.jinja
   - docs/upgrading.md
   - MIGRATION.md
-  - CHANGELOG.md
   - tests/unit/test-read-only-checks-contract.sh
   - .docs/features/quality/read-only-checks-contract.md
   - .docs/features/quality/read-only-checks-contract.worklog.md
 touches_shared:
+  - CHANGELOG.md
   - .ai/scripts/aic.sh
   - template/.ai/scripts/aic.sh.jinja
   - .ai/scripts/check-features.sh

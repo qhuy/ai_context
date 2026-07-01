@@ -28,3 +28,9 @@
 - Application du compagnon de reclassification demandé après `(a')` : exact owner unique pour `aic.sh`, `copier.yml`, `README.md`, `README_AI_CONTEXT.md`, dogfood update/drift, smoke-test et surfaces `aic-frame`.
 - Objectif : tuer les ties exact-multi qui bloquaient le commit `aic-pilot` sans transformer les vraies features consommatrices en propriétaires opportunistes.
 - Moat conservé : les propriétaires structurels gardent leur `touches:` exact et reçoivent un worklog frais ; les autres features restent visibles via `touches_shared`.
+
+## 2026-07-01 — 2ᵉ vague : CHANGELOG.md → touches_shared: (fix diagnostiqué P6)
+- Suite du diagnostic P6 (pilot `2026-06-30-ze-solution`) : `CHANGELOG.md` était en `touches:` DIRECT de 6 features (`aic-surface-canonical`, `codex-skills-install`, `feature-mesh-contract-alignment`, `okf-strict-profile`, `ai-context-stability-migration`, `read-only-checks-contract`) → toute entrée CHANGELOG déclenchait une cascade freshness cross-scope (constaté 2× ce fil : entrée CHANGELOG différée).
+- Reclassé en `touches_shared:` dans les 6 fiches (déplacement mécanique, ±1 ligne/fiche). CHANGELOG reste visible en review mais ne bloque plus `check-feature-freshness --staged`.
+- Vérifs : `check-features` PASS (6 fiches valides), `check-touches-breadth` ne liste PLUS `CHANGELOG.md` dans les surfaces >4. Personne n'« implémente » une feature DANS le changelog → aucun propriétaire exact légitime perdu.
+- Reste (breadth-guard, vagues futures) : `_lib.sh`/`build-feature-index.sh`/`.ai/index.md`/`docs/upgrading.md` restent >4 mais sont des surfaces de code réelles (couverture plus légitime) — à trancher au cas par cas, pas mécaniquement.

@@ -6,7 +6,6 @@ status: active
 depends_on: []
 touches:
   - README_AI_CONTEXT.md
-  - CHANGELOG.md
   - PROJECT_STATE.md
   - MIGRATION.md
   - CONTRIBUTING.md
@@ -22,6 +21,7 @@ touches:
   - template/.claude/skills/aic-*/**
   - template/.agents/skills/aic-*/**
 touches_shared:
+  - CHANGELOG.md
   - README.md
   - copier.yml
   - tests/smoke-test.sh

@@ -22,8 +22,8 @@ touches:
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
   - MIGRATION.md
   - docs/upgrading.md
-  - CHANGELOG.md
 touches_shared:
+  - CHANGELOG.md
   - .ai/scripts/aic.sh
   - template/.ai/scripts/aic.sh.jinja
   - .ai/scripts/check-features.sh

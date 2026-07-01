@@ -7,8 +7,8 @@ depends_on: []
 touches:
   - .agents/skills/**
   - template/.agents/skills/**
-  - CHANGELOG.md
 touches_shared:
+  - CHANGELOG.md
   - .ai/scripts/dogfood-update.sh
   - .ai/scripts/check-dogfood-drift.sh
   - README.md
