@@ -1,13 +1,13 @@
 ---
 pilot_id: "2026-06-30-ze-solution"
-status: "active"
+status: "done"
 source: "Analyse à froid du repo (regard neuf) + cadrage axes d'amélioration"
 scope_primary: "product"
 created_at: "2026-06-30"
 updated_at: "2026-06-30"
-active_item: "P6 incr.1 livré (CHANGELOG reclassé) ; SEUL gros reste = P1 (build harnais)"
-active_question: "Tous les axes traités (livrés/différés/diagnostiqués+fixés). Reste le grand chantier P1 (construire le harnais benchmark) — le lancer, ou clore le pilotage ici avec reprise claire ?"
-next_hint: "Branche pilot/ze-solution-axes (6 commits) à PR/merger. Livré : cadrage 7 axes ; P1 fiché ; P3 incr.1 (clés requises schéma-driven, zéro dép) + smoke ; P2 incr.1 (self-suffisance AGENTS.md verrouillée). P4 + P5 DIFFÉRÉS (dropped) : P4 mal ciblé (matching ≠ goulot, mesuré) ; P5 déjà résolu (dogfood-update génère le runtime depuis le template). Méta : P3/P4/P5 = 3/3 prémisses recadrées → le projet traite déjà plus que supposé. Reste les VRAIS leviers : P1 (construire le harnais benchmark = keystone 'prouver') et P6 (diagnostic friction adoption, preuves déjà collectées ce fil). P7 différé. Follow-ups P2/P3 : kill_criterion #34235, HANDOFFs smoke, CHANGELOG."
+active_item: "CLOS — tous les axes soldés ; résiduel = follow-ups feature-level (pas pilot)"
+active_question: "Aucune — pilotage clos. Reprise = suivi dans les fiches feature."
+next_hint: "PILOTAGE CLOS (tout sur main). Bilan : cadrage 7 axes ; P2/P3/P6/P1 = incr.1 livrés + testés ; P4/P5 dropped (mesure / déjà résolu) ; P7 différé. Méta : P3/P4/P5 = 3/3 prémisses recadrées → dette de PREUVE, pas d'ingénierie. Résiduel = follow-ups feature-level (suivis dans les fiches, PAS le pilot) : (1) P1 runs RÉELS = action mainteneur (câbler AGENT_CMD + ≥2 repos + N → 1er rapport docs/benchmarks/reports/) ; (2) kill_criterion #34235 (P2) ; (3) HANDOFFs quality/smoke-test = brancher run-bench --self-check + test-agents-md-self-sufficient dans le smoke ; (4) breadth-guard vagues futures (au cas par cas)."
 ---
 
 # Pilot 2026-06-30 — « ZE SOLUTION » : axes pour faire d'ai_context la référence
@@ -37,7 +37,7 @@ avant de durcir/optimiser.
 
 | ID | Sujet | Statut | Scope probable | Route | Preuve attendue |
 |---|---|---|---|---|---|
-| P1 | Benchmark d'efficacité agent (valeur mesurée) — **fiche créée** | doing | product | feature (initiative) | bench reproductible : Δ tokens / fiabilité avec vs sans ai_context |
+| P1 | Benchmark d'efficacité agent — **incr.1 : scaffold exécutable livré** | doing | product | feature (initiative) | scaffold (PROTOCOL + runner --self-check + tâche) ✅ ; runs réels = action mainteneur |
 | P2 | Pari `.ai/index.md` vs AGENTS.md lecture native — **fiche core créée** | doing | core | manual → feature core | chemin de collapse documenté + kill_criterion #34235 opérationnalisé |
 | P3 | Validateur clés requises schéma-driven (recadré : zéro dép) — **incr. 1 livré + CI** | doing | quality/core | feature | clé ajoutée au schéma → exigée : test PASS + smoke [0q/28] ✅ |
 | P4 | Noyau moteur hors bash (index/cycles/glob) | **dropped (tel que cadré)** | core | mesuré → différé | mesure faite : matching ≠ goulot ; coût = parsing yq de build-index (linéaire), négligeable+caché à échelle réaliste |
@@ -83,6 +83,8 @@ Question à traiter maintenant :
 | 2026-07-01 | méta | **P3/P4/P5 = 3/3 prémisses recadrées vers le bas** | Le projet traite déjà plus que la vue externe ne supposait. La vraie valeur restante demande de la PREUVE, pas de la machinerie | Concentrer sur P1 (prouver) et P6 (friction adoption) |
 | 2026-07-01 | P6 | **Diagnostiqué** (aic-diagnose) : racine = largeur `touches:` | 9 surfaces transverses en `touches:` bloquant (breadth-guard) → cascade freshness + bruit auto-worklog. Fix = reclasser en `touches_shared:` (outil déjà là). Indépendant de P1 | 1ère action : CHANGELOG.md touches:→touches_shared: dans ses 6 coverers (chantier quality/cross-scope dédié) |
 | 2026-07-01 | P6 | **Incr.1 livré** : CHANGELOG.md reclassé touches_shared: (6 fiches, 84d54aa) | Cascade freshness supprimée à la racine ; feature `quality/touches-breadth-guard` 2ᵉ vague. Vérifié : check-features PASS, breadth-guard ne liste plus CHANGELOG | Reste optionnel : autres surfaces >4 (code réel, au cas par cas) |
+| 2026-07-01 | P1 | **Incr.1 livré** : scaffold benchmark (0164289) | PROTOCOL + runner self-checkable (seam AGENT_CMD) + tâche exemple ; runner = seam externe (tranche « runner ouvert »). Runs réels = action mainteneur | Câbler AGENT_CMD + ≥2 repos + N → 1er rapport |
+| 2026-07-01 | — | **Pilotage CLOS** : les 2 branches feature mergées dans main, checks + tests + self-check verts | Tous les axes soldés (incr.1 ou dropped) ; résiduel = follow-ups feature-level, pas pilot | Suivi dans les fiches ; runs P1 = mainteneur |
 
 ## Handoffs
 
