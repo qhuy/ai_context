@@ -9,12 +9,11 @@ depends_on: []
 touches:
   - .docs/features/product/agent-efficacy-benchmark.md
   - .docs/features/product/agent-efficacy-benchmark.worklog.md
+  - tests/bench/**
+  - docs/benchmarks/**
 touches_shared:
   - README.md
   - PROJECT_STATE.md
-# Surfaces planifiées (ajoutées à touches: à leur création, phase implement) :
-#   tests/bench/**        — harnais maintainer-only
-#   docs/benchmarks/**    — protocole + rapports publiables
 product:
   type: initiative
   bet: "Avec ai_context, un agent complète correctement davantage de tâches qu'un agent sur repo nu, de façon reproductible et indépendante du repo — la valeur est mesurable, pas seulement affirmée."
@@ -45,11 +44,11 @@ doc:
     rollout: false
     observability: true
 progress:
-  phase: spec
-  step: "cadrage via pilot ze-solution ; métrique primaire tranchée = taux de succès de tâche ; v1 maintainer-only"
+  phase: implement
+  step: "incr.1 : scaffold livré — PROTOCOL.md + runner self-checkable (seam AGENT_CMD) + tâche exemple + README ; self-check vérifié (happy-path + détection tâche cassée)"
   blockers: []
-  resume_hint: "concevoir le protocole : suite de tâches figée + grader objectif + >=2 repos de référence + N runs ; choisir le runner (harnais maintainer-only sous tests/bench/)"
-  updated: 2026-06-30
+  resume_hint: "runs RÉELS = action mainteneur : câbler AGENT_CMD sur un agent, choisir >=2 repos (dont 1 externe), calibrer N, produire le 1er rapport sous docs/benchmarks/reports/. Puis suite de tâches discriminantes. HANDOFF quality/smoke-test : brancher run-bench.sh --self-check dans le smoke"
+  updated: 2026-07-01
 ---
 
 # Benchmark d'efficacité agent — preuve de valeur ai_context
@@ -186,3 +185,11 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   succès de tâche** ; coût tokens = leading indicator. Cadres posés : v1 maintainer-only,
   >=2 repos de référence, N runs. Prochaine étape : concevoir le protocole (suite de tâches,
   grader, choix du runner). Prochaine décision produit : 2026-07-15.
+- 2026-07-01 : **incrément 1 — scaffold exécutable livré**. `docs/benchmarks/PROTOCOL.md`
+  (métrique, conditions with/without, ≥2 repos dont 1 externe, N, grader objectif, garde-fous),
+  `tests/bench/run-bench.sh` (orchestrateur, seam `AGENT_CMD`, mode `--self-check`), tâche
+  exemple `0001-example-file` (task.md + check.sh objectif), `tests/bench/README.md`. Self-check
+  vérifié : happy-path OK + détection d'une tâche cassée. **Runs réels non exécutés** (action
+  mainteneur : clés + coût + non-déterminisme) — le harnais est le livrable, pas des résultats
+  fabriqués. Le runner reste `v1 maintainer-only` (non templé). Choix du runner = seam externe
+  (tranche la décision « runner ouvert » sans embarquer d'agent).
