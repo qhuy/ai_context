@@ -5,9 +5,9 @@ source: "Analyse à froid du repo (regard neuf) + cadrage axes d'amélioration"
 scope_primary: "product"
 created_at: "2026-06-30"
 updated_at: "2026-06-30"
-active_item: "cadrage clos ; place à l'IMPLÉMENTATION (un scope/tour)"
-active_question: "Quel chantier d'implémentation lancer en premier — P3 (quality, validateur, isolé) ou P2 (core, AGENTS.md auto-suffisant) ? P4/P5 ensuite ; P6 attend evidence P1."
-next_hint: "Cadrage terminé : P1/P3/P2 ont chacun leur fiche (checks verts), P2 décidé=hedge. PHASE SUIVANTE = implémentation, UN SCOPE PAR TOUR : recommandé P3 d'abord (quality/feature-schema-validator : brancher check-jsonschema en mode warn + fallback bash + tests + parité template). Puis P2 (core/agents-md-native-collapse-path). P4/P5 après ; P6 (workflow/diagnose) après evidence P1. P7 différé."
+active_item: "P3 incrément 1 livré ; prochain = P2 impl (core) ou P3 suite"
+active_question: "Lancer l'implémentation P2 (core : AGENTS.md auto-suffisant + kill_criterion), ou approfondir P3 (pattern id / enums imbriqués), ou ouvrir la PR et faire une pause ?"
+next_hint: "P3 RECADRÉ (zéro dép jq/yq, PAS de check-jsonschema — conflit éthos schéma) puis INCRÉMENT 1 LIVRÉ : clés requises dérivées du schéma (commit feat(core) dc9c4c6) + test câblé smoke [0q/28] (commit test(quality) 885f169). Reste P3 : entrée CHANGELOG (différée, couplée core) + optionnel pattern id ((?:→() / enums imbriqués. UN SCOPE PAR TOUR. Prochain gros item = P2 impl (core/agents-md-native-collapse-path). P4/P5 ensuite ; P6 après evidence P1 ; P7 différé. Branche pilot/ze-solution-axes (4 commits) à PR."
 ---
 
 # Pilot 2026-06-30 — « ZE SOLUTION » : axes pour faire d'ai_context la référence
@@ -39,7 +39,7 @@ avant de durcir/optimiser.
 |---|---|---|---|---|---|
 | P1 | Benchmark d'efficacité agent (valeur mesurée) — **fiche créée** | doing | product | feature (initiative) | bench reproductible : Δ tokens / fiabilité avec vs sans ai_context |
 | P2 | Pari `.ai/index.md` vs AGENTS.md lecture native — **fiche core créée** | doing | core | manual → feature core | chemin de collapse documenté + kill_criterion #34235 opérationnalisé |
-| P3 | Validateur JSON-Schema réel (débloque C2a) — **fiche créée** | doing | quality | feature | frontmatter invalide rejeté par un vrai validateur + tests + CI verte |
+| P3 | Validateur clés requises schéma-driven (recadré : zéro dép) — **incr. 1 livré + CI** | doing | quality/core | feature | clé ajoutée au schéma → exigée : test PASS + smoke [0q/28] ✅ |
 | P4 | Noyau moteur hors bash (index/cycles/glob) | triage | core | refactor (splitté de P3) | parité de sortie + perf gros mesh, bascule sans régression |
 | P5 | Taxe dual-tree (runtime généré depuis template) | triage | core | refactor | source unique ; drift-check trivial/inutile |
 | P6 | Calibrage cérémonie consommateur / anti `--no-verify` | triage | workflow (+product) | diagnose | données d'adoption ; mode soft défini |
