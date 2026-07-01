@@ -5,8 +5,8 @@ source: "Analyse à froid du repo (regard neuf) + cadrage axes d'amélioration"
 scope_primary: "product"
 created_at: "2026-06-30"
 updated_at: "2026-06-30"
-active_item: "P4 & P5 différés (déjà résolus/mal ciblés) ; reste P1 (build) + P6"
-active_question: "Prochain vrai levier : construire P1 (harnais benchmark d'efficacité — le keystone 'prouver'), ou P6 (diagnostic friction adoption, dont ce fil a produit des preuves) ?"
+active_item: "P6 diagnostiqué (racine=largeur touches:) ; reste P1 (build) + impl P6 (reclass)"
+active_question: "Prochain : implémenter la reclass P6 (CHANGELOG touches:→touches_shared: dans 6 coverers, chantier quality/cross-scope) ou construire P1 (harnais benchmark) ?"
 next_hint: "Branche pilot/ze-solution-axes (6 commits) à PR/merger. Livré : cadrage 7 axes ; P1 fiché ; P3 incr.1 (clés requises schéma-driven, zéro dép) + smoke ; P2 incr.1 (self-suffisance AGENTS.md verrouillée). P4 + P5 DIFFÉRÉS (dropped) : P4 mal ciblé (matching ≠ goulot, mesuré) ; P5 déjà résolu (dogfood-update génère le runtime depuis le template). Méta : P3/P4/P5 = 3/3 prémisses recadrées → le projet traite déjà plus que supposé. Reste les VRAIS leviers : P1 (construire le harnais benchmark = keystone 'prouver') et P6 (diagnostic friction adoption, preuves déjà collectées ce fil). P7 différé. Follow-ups P2/P3 : kill_criterion #34235, HANDOFFs smoke, CHANGELOG."
 ---
 
@@ -42,7 +42,7 @@ avant de durcir/optimiser.
 | P3 | Validateur clés requises schéma-driven (recadré : zéro dép) — **incr. 1 livré + CI** | doing | quality/core | feature | clé ajoutée au schéma → exigée : test PASS + smoke [0q/28] ✅ |
 | P4 | Noyau moteur hors bash (index/cycles/glob) | **dropped (tel que cadré)** | core | mesuré → différé | mesure faite : matching ≠ goulot ; coût = parsing yq de build-index (linéaire), négligeable+caché à échelle réaliste |
 | P5 | Taxe dual-tree (runtime généré depuis template) | **dropped (déjà résolu)** | core | — | `dogfood-update.sh --apply` génère DÉJÀ le runtime depuis le template ; taxe résiduelle inhérente au Jinja + mitigée par drift-check |
-| P6 | Calibrage cérémonie consommateur / anti `--no-verify` | triage | workflow (+product) | diagnose | données d'adoption ; mode soft défini |
+| P6 | Calibrage cérémonie / anti `--no-verify` — **diagnostiqué** | validated | quality | diagnose → reclass touches | racine = largeur `touches:` (9 surfaces transverses en touches: bloquant, cf. breadth-guard) ; fix = reclasser en touches_shared: (outil déjà là). **Indépendant de P1** |
 | P7 | Sprawl docs racine + cadence auto-audit | inbox | product/docs | docs/chore (différé) | doc racine consolidée, cadence audit bornée |
 
 Statuts : `inbox`, `triage`, `validated`, `blocked`, `handoff`, `doing`, `review`, `done`, `dropped`.
@@ -55,7 +55,7 @@ Contexte affiché :
 
 - P2 suit immédiatement P1 (décision archi `manual`).
 - P3 est scopé et débloque C2a ; ne jamais le bundler avec P4 (gros refactor, fortes deps inverses).
-- P6 dépend de P1 pour son evidence (pas de feature avant données).
+- P6 est **indépendant de P1** (diagnostic 2026-07-01) : la friction est autoportée par l'evidence de dogfooding ; seul « jusqu'où relâcher le gate » gagnerait à connaître l'efficacité agent (P1).
 
 Question à traiter maintenant :
 
@@ -81,6 +81,7 @@ Question à traiter maintenant :
 | 2026-07-01 | P4 | **Différé (dropped tel que cadré)** après mesure | Matching ≠ goulot (grandit à peine) ; coût = parsing yq build-index, LINÉAIRE, négligeable + caché à ≤100 fiches. Réécriture Python contredit l'éthos ET rate la cible | Si perf mord un jour : batcher le yq de build-index (in-éthos), pas de Python |
 | 2026-07-01 | P5 | **Différé (dropped, déjà résolu)** | `dogfood-update.sh --apply` génère déjà le runtime depuis le template ; la source unique existe. Taxe résiduelle inhérente au Jinja + mitigée par drift-check → rien à refactorer | Ergonomie template-first possible plus tard, faible ROI |
 | 2026-07-01 | méta | **P3/P4/P5 = 3/3 prémisses recadrées vers le bas** | Le projet traite déjà plus que la vue externe ne supposait. La vraie valeur restante demande de la PREUVE, pas de la machinerie | Concentrer sur P1 (prouver) et P6 (friction adoption) |
+| 2026-07-01 | P6 | **Diagnostiqué** (aic-diagnose) : racine = largeur `touches:` | 9 surfaces transverses en `touches:` bloquant (breadth-guard) → cascade freshness + bruit auto-worklog. Fix = reclasser en `touches_shared:` (outil déjà là). Indépendant de P1 | 1ère action : CHANGELOG.md touches:→touches_shared: dans ses 6 coverers (chantier quality/cross-scope dédié) |
 
 ## Handoffs
 
