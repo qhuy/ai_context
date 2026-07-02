@@ -1,0 +1,6 @@
+Fichier créé : [BENCH_RESULT/feature-resume.json](<tmp>/ai-context-bench/ai_debate-3412434117-0002-feature-resume-with-1/work/BENCH_RESULT/feature-resume.json)
+
+Feature retenue : `workflow/aib-debate-plan-action-v1`, car c’est la feature `status: active` avec le `progress.updated` le plus récent (`2026-06-17`).
+
+Validation faite : JSON valide avec exactement les clés `feature,phase,updated,next`.
+Je n’ai pas pu lancer `check.sh` : aucun fichier `check.sh` n’est présent dans cette copie du repo.

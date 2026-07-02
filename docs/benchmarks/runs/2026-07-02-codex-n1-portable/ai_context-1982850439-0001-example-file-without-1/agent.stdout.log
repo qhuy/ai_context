@@ -1,0 +1,7 @@
+Fait : [HELLO.txt](<tmp>/ai-context-bench/ai_context-1982850439-0001-example-file-without-1/work/HELLO.txt) contient exactement :
+
+```text
+hello ai_context
+```
+
+Vérification du contenu OK. `check.sh` n’est pas présent dans ce workspace, donc je n’ai pas pu l’exécuter.

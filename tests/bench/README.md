@@ -38,6 +38,10 @@ bash tests/bench/run-bench.sh
 
 Coûteux + non-déterministe (vraies invocations d'agent). Rapports sous
 `docs/benchmarks/reports/`, logs sous `docs/benchmarks/runs/<stamp>/`.
+Les artefacts publiés référencent les repos par nom/slug et les logs par chemins
+relatifs au repo ; les copies de travail temporaires sont notées `<tmp>/...`.
+Quand le log agent contient un bloc `tokens used`, le runner renseigne aussi
+`tokens_used` dans les TSV/JSONL et les rapports Markdown.
 
 Le runner :
 

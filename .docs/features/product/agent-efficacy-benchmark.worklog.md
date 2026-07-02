@@ -46,3 +46,16 @@
 - Correction publication : les logs, TSV et JSONL sont produits dans un répertoire temporaire puis copiés vers `docs/benchmarks/*` uniquement en fin de run, pour éviter de conserver des artefacts partiels.
 - Décision appliquée : les runs contaminés/partiels ont été supprimés avant publication ; relancer avec le même stamp après correction.
 - Validation : `bash -n` runner + graders, `run-bench.sh --self-check`, matrice déterministe 2 repos × 3 tâches × 2 conditions × N=1 (8/12 succès attendus), test timeout `BENCH_TIMEOUT_SECONDS=1` (`agent_exit=124` sur 2/2 cellules), puis gate projet avant commit.
+
+## 2026-07-02 — premier rapport réel publié
+
+- Run : repos locaux `ai_context` + `ai_debate`, sous-suite portable `0001-example-file` + `0002-feature-resume`, `BENCH_N=1`, `BENCH_SEED=42`, `BENCH_TIMEOUT_SECONDS=300`, agent `codex exec / workspace-write`.
+- Résultat global : `with` 4/4 (100%) vs `without` 2/4 (50%), Δ +50 points.
+- Résultat discriminant `0002-feature-resume` : `with` 2/2 vs `without` 0/2, Δ +100 points sur la reprise feature mesh.
+- Coût tokens extrait depuis les logs Codex : `with` 163997 tokens sur 4 runs mesurés (moyenne 40999), `without` 89804 tokens sur 3 runs mesurés (moyenne 29935) ; `ai_context/0002/without` timeout sans bloc exploitable.
+- Artefacts publiés : rapports par repo, TSV, JSONL, logs sous `docs/benchmarks/reports/` et `docs/benchmarks/runs/2026-07-02-codex-n1-portable/`; synthèse `docs/benchmarks/reports/2026-07-02-codex-n1-portable-summary.md`.
+- Hygiène publication : les rapports/résultats versionnés utilisent des refs repo/chemins relatifs ; scan logs sans secret brut détecté (seulement noms de variables/env et contenu repo).
+- Limites : `N=1`, sous-suite portable seulement, pas d'intervalle de confiance, mesure tokens partielle sur timeout.
+- Validation finale : `bash -n tests/bench/run-bench.sh`, run minimal agent factice `0001`, `run-bench.sh --self-check`, JSONL valide, `git diff --check`, `git show --check HEAD`, `check-feature-docs product/agent-efficacy-benchmark`, `check-feature-freshness --worktree --strict`, `check-shims`, `check-agent-config`, `check-ai-references`, `check-features --no-write`, `check-feature-coverage`, `check-touches-breadth`, `measure-context-size`.
+- Warnings acceptés : deux anciennes fiches sans champ OKF `type`, 6 tests unitaires orphelins, advisory touches breadth sur surfaces partagées ; hors delta de ce run.
+- Next : augmenter N, généraliser `0003` pour repos externes ou garder cette tâche en run repo-spécifique, stabiliser la lecture tokens sur runs timeout, puis brancher `run-bench.sh --self-check` dans le smoke via HANDOFF `quality/smoke-test`.

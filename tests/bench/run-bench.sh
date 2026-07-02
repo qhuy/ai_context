@@ -67,6 +67,27 @@ json_escape() {
     | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e $'s/\t/\\t/g'
 }
 
+display_path() {
+  local path="$1"
+  if [[ "$path" == "$repo_root" ]]; then
+    printf "."
+  elif [[ "$path" == "$repo_root/"* ]]; then
+    printf "%s" "${path#$repo_root/}"
+  elif [[ -n "${work_root:-}" && "$path" == "$work_root/"* ]]; then
+    printf "<tmp>/%s" "${path#$work_root/}"
+  elif [[ -n "${BENCH_REPORT_DIR:-}" && "$path" == "$BENCH_REPORT_DIR/"* ]]; then
+    printf "%s/%s" "$(basename "$BENCH_REPORT_DIR")" "${path#$BENCH_REPORT_DIR/}"
+  elif [[ -n "${BENCH_RUN_DIR:-}" && "$path" == "$BENCH_RUN_DIR/"* ]]; then
+    printf "%s/%s" "$(basename "$BENCH_RUN_DIR")" "${path#$BENCH_RUN_DIR/}"
+  else
+    printf "%s" "$path"
+  fi
+}
+
+repo_ref_for() {
+  basename "$1"
+}
+
 copy_repo() {
   local src="$1" dest="$2"
   mkdir -p "$dest"
@@ -169,6 +190,25 @@ with open(prompt_file, "rb") as stdin, open(stdout_log, "wb") as stdout, open(st
 PY
 }
 
+extract_tokens_used() {
+  local log="$1"
+  [[ -f "$log" ]] || { printf "NA"; return; }
+  awk '
+    BEGIN { seen = 0; found = 0 }
+    tolower($0) ~ /tokens used/ { seen = 1; next }
+    seen {
+      value = $0
+      gsub(/[^0-9]/, "", value)
+      if (value != "") {
+        print value
+        found = 1
+        exit
+      }
+    }
+    END { if (!found) print "NA" }
+  ' "$log"
+}
+
 # --- Conditions : dépouiller la couche ai_context pour 'without' ---
 strip_ai_context() {
   local dir="$1"
@@ -199,6 +239,10 @@ if [[ "$mode" == "self-check" ]]; then
   n_repos=${#repos[@]}; [[ $n_repos -eq 0 ]] && n_repos=0
   total=$(( n_repos * ${#tasks[@]} * 2 * BENCH_N ))
   echo "  matrice : ${n_repos} repo(s) × ${#tasks[@]} tâche(s) × 2 conditions × N=${BENCH_N} = ${total} runs"
+  parser_probe="$(mktemp)"
+  printf "noise\ntokens used\n46 684\n" > "$parser_probe"
+  [[ "$(extract_tokens_used "$parser_probe")" == "46684" ]] && ok "parseur tokens" || ko "parseur tokens"
+  rm -f "$parser_probe"
   echo
   if [[ "$fail" -eq 0 ]]; then echo "✅ self-check OK (plumbing valide ; aucun agent invoqué)"; exit 0
   else echo "❌ self-check FAIL"; exit 1; fi
@@ -235,7 +279,7 @@ final_results_tsv="$BENCH_REPORT_DIR/$BENCH_STAMP-results.tsv"
 final_results_jsonl="$BENCH_REPORT_DIR/$BENCH_STAMP-results.jsonl"
 matrix_file="$run_log_root/matrix.tsv"
 : > "$results_jsonl"
-printf "repo_slug\trepo_name\trepo_path\ttask_id\tcondition\trun_index\tsuccess\tagent_exit\tcheck_exit\tduration_seconds\tworkdir\tstdout_log\tstderr_log\tcheck_log\n" > "$results_tsv"
+printf "repo_slug\trepo_name\trepo_ref\ttask_id\tcondition\trun_index\tsuccess\tagent_exit\tcheck_exit\tduration_seconds\ttokens_used\tworkdir\tstdout_log\tstderr_log\tcheck_log\n" > "$results_tsv"
 
 for r in "${repos[@]}"; do
   for t in "${tasks[@]}"; do
@@ -263,6 +307,7 @@ echo "  logs : $BENCH_RUN_DIR"
 while IFS=$'\t' read -r repo_path task_path condition run_index; do
   repo_name="$(basename "$repo_path")"
   repo_slug="$(repo_slug_for "$repo_path" "$repo_name")"
+  repo_ref="$(repo_ref_for "$repo_path")"
   task_id="$(basename "$task_path")"
   cell_slug="$(slugify "$repo_slug-$task_id-$condition-$run_index")"
   workdir="$work_root/$cell_slug/work"
@@ -274,6 +319,10 @@ while IFS=$'\t' read -r repo_path task_path condition run_index; do
   final_stdout_log="$final_logdir/agent.stdout.log"
   final_stderr_log="$final_logdir/agent.stderr.log"
   final_check_log="$final_logdir/check.log"
+  workdir_ref="$(display_path "$workdir")"
+  stdout_log_ref="$(display_path "$final_stdout_log")"
+  stderr_log_ref="$(display_path "$final_stderr_log")"
+  check_log_ref="$(display_path "$final_check_log")"
   mkdir -p "$logdir"
 
   printf "  ▶ %s / %s / %s / run %s\n" "$repo_name" "$task_id" "$condition" "$run_index"
@@ -301,6 +350,7 @@ while IFS=$'\t' read -r repo_path task_path condition run_index; do
   set -e
   end_ts="$(date +%s)"
   duration=$((end_ts - start_ts))
+  tokens_used="$(extract_tokens_used "$stderr_log")"
 
   success=0
   if [[ "$agent_exit" -eq 0 && "$check_exit" -eq 0 ]]; then
@@ -310,15 +360,20 @@ while IFS=$'\t' read -r repo_path task_path condition run_index; do
     warn "$repo_name / $task_id / $condition / run $run_index FAIL (agent=$agent_exit check=$check_exit)"
   fi
 
-  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" \
-    "$repo_slug" "$repo_name" "$repo_path" "$task_id" "$condition" "$run_index" \
-    "$success" "$agent_exit" "$check_exit" "$duration" "$workdir" "$final_stdout_log" "$final_stderr_log" "$final_check_log" \
+  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" \
+    "$repo_slug" "$repo_name" "$repo_ref" "$task_id" "$condition" "$run_index" \
+    "$success" "$agent_exit" "$check_exit" "$duration" "$tokens_used" "$workdir_ref" "$stdout_log_ref" "$stderr_log_ref" "$check_log_ref" \
     >> "$results_tsv"
 
-  printf '{"stamp":"%s","repo_slug":"%s","repo_name":"%s","repo_path":"%s","task_id":"%s","condition":"%s","run_index":%s,"success":%s,"agent_exit":%s,"check_exit":%s,"duration_seconds":%s,"stdout_log":"%s","stderr_log":"%s","check_log":"%s"}\n' \
-    "$(json_escape "$BENCH_STAMP")" "$(json_escape "$repo_slug")" "$(json_escape "$repo_name")" "$(json_escape "$repo_path")" \
+  if [[ "$tokens_used" == "NA" ]]; then
+    tokens_json="null"
+  else
+    tokens_json="$tokens_used"
+  fi
+  printf '{"stamp":"%s","repo_slug":"%s","repo_name":"%s","repo_ref":"%s","task_id":"%s","condition":"%s","run_index":%s,"success":%s,"agent_exit":%s,"check_exit":%s,"duration_seconds":%s,"tokens_used":%s,"stdout_log":"%s","stderr_log":"%s","check_log":"%s"}\n' \
+    "$(json_escape "$BENCH_STAMP")" "$(json_escape "$repo_slug")" "$(json_escape "$repo_name")" "$(json_escape "$repo_ref")" \
     "$(json_escape "$task_id")" "$(json_escape "$condition")" "$run_index" "$success" "$agent_exit" "$check_exit" "$duration" \
-    "$(json_escape "$final_stdout_log")" "$(json_escape "$final_stderr_log")" "$(json_escape "$final_check_log")" \
+    "$tokens_json" "$(json_escape "$stdout_log_ref")" "$(json_escape "$stderr_log_ref")" "$(json_escape "$check_log_ref")" \
     >> "$results_jsonl"
 done < "$matrix_file"
 
@@ -337,19 +392,19 @@ while IFS= read -r repo_slug; do
   [[ -n "$repo_slug" ]] || continue
   report="$BENCH_REPORT_DIR/$BENCH_STAMP-$repo_slug.md"
   repo_name="$(awk -F '\t' -v repo="$repo_slug" 'NR > 1 && $1 == repo { print $2; exit }' "$results_tsv")"
-  repo_path="$(awk -F '\t' -v repo="$repo_slug" 'NR > 1 && $1 == repo { print $3; exit }' "$results_tsv")"
+  repo_ref="$(awk -F '\t' -v repo="$repo_slug" 'NR > 1 && $1 == repo { print $3; exit }' "$results_tsv")"
 
   {
     echo "# Benchmark agent — $repo_name"
     echo
     echo "- Date : $BENCH_STAMP"
-    echo "- Repo : \`$repo_path\`"
+    echo "- Repo : \`$repo_ref\`"
     echo "- Agent : $BENCH_AGENT_LABEL"
     echo "- N : $BENCH_N"
     echo "- Seed : $BENCH_SEED"
     echo "- Timeout : ${BENCH_TIMEOUT_SECONDS}s"
-    echo "- Résultats bruts : \`$final_results_tsv\`"
-    echo "- Artefact JSONL : \`$final_results_jsonl\`"
+    echo "- Résultats bruts : \`$(display_path "$final_results_tsv")\`"
+    echo "- Artefact JSONL : \`$(display_path "$final_results_jsonl")\`"
     echo
     echo "## Synthèse"
     echo
@@ -375,14 +430,31 @@ while IFS= read -r repo_slug; do
       }
     ' "$results_tsv"
     echo
+    echo "## Coût tokens"
+    echo
+    echo "| Condition | Runs avec mesure | Total tokens | Moyenne tokens/run |"
+    echo "|---|---:|---:|---:|"
+    for condition in with without; do
+      awk -F '\t' -v repo="$repo_slug" -v condition="$condition" '
+        NR > 1 && $1 == repo && $5 == condition && $11 ~ /^[0-9]+$/ {
+          count += 1
+          total += $11
+        }
+        END {
+          mean = count ? total / count : 0
+          printf "| `%s` | %d | %d | %.0f |\n", condition, count, total, mean
+        }
+      ' "$results_tsv"
+    done
+    echo
     echo "## Détail"
     echo
-    echo "| Tâche | Condition | Run | Résultat | Agent | Check | Logs |"
-    echo "|---|---|---:|---|---:|---:|---|"
+    echo "| Tâche | Condition | Run | Résultat | Agent | Check | Tokens | Logs |"
+    echo "|---|---|---:|---|---:|---:|---:|---|"
     awk -F '\t' -v repo="$repo_slug" '
       NR > 1 && $1 == repo {
         result = ($7 == 1) ? "PASS" : "FAIL"
-        printf "| `%s` | `%s` | %s | %s | %s | %s | `%s` |\n", $4, $5, $6, result, $8, $9, $14
+        printf "| `%s` | `%s` | %s | %s | %s | %s | %s | `%s` |\n", $4, $5, $6, result, $8, $9, $11, $15
       }
     ' "$results_tsv"
     echo

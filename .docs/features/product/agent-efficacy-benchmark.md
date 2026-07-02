@@ -45,9 +45,9 @@ doc:
     observability: true
 progress:
   phase: implement
-  step: "incr.4 : isolation du runner corrigée après run Codex contaminé — exclusions harnais/artefacts, skills retirées en without, timeout par cellule"
+  step: "incr.5 : premier run Codex N=1 publié — 2 repos, sous-suite portable 0001/0002, with=4/4 vs without=2/4"
   blockers: []
-  resume_hint: "relancer un run Codex N=1 après correction d'isolation, avec rapports propres sous docs/benchmarks/reports/. HANDOFF quality/smoke-test restant : brancher run-bench.sh --self-check dans le smoke"
+  resume_hint: "prochain incrément : augmenter N sur la sous-suite portable ou généraliser 0003 pour repo externe ; stabiliser la lecture tokens sur runs timeout ; HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
   updated: 2026-07-02
 ---
 
@@ -210,6 +210,14 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   source à `$AGENT_CMD`, pour éviter qu'un agent en condition `without` lise le repo original ; les
   métadonnées source restent réservées au grader. Prochaine étape : run agent réel sur repos
   ai_contextisés avec `N` calibré petit, puis rapport publiable.
+- 2026-07-02 : **incrément 5 — premier run réel publié**. Run Codex `N=1` sur
+  `ai_context` + `ai_debate`, sous-suite portable `0001`/`0002`, seed `42`, timeout 300s. Résultat global :
+  `with` 4/4 (100%) vs `without` 2/4 (50%), soit Δ +50 points ; sur `0002-feature-resume` seul :
+  `with` 2/2 vs `without` 0/2. Rapport résumé :
+  `docs/benchmarks/reports/2026-07-02-codex-n1-portable-summary.md`. Limite : calibrage sans
+  significativité (`N=1`) ; coût tokens extrait depuis les logs Codex pour 7/8 cellules
+  (timeout sans mesure sur `ai_context/0002/without`) ; artefacts publiés avec références de
+  chemins relatives/masquées.
 - 2026-07-02 : **incrément 4 — isolation runner corrigée après run réel contaminé**. Un
   premier run Codex `N=1` a montré que les copies de travail conservaient encore le harnais,
   les artefacts de benchmark et des skills repo-locales. Le runner exclut maintenant

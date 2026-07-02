@@ -1,0 +1,5 @@
+Fait : [BENCH_RESULT/feature-resume.json](<tmp>/ai-context-bench/ai_debate-3412434117-0002-feature-resume-without-1/work/BENCH_RESULT/feature-resume.json) contient les 4 clés demandées.
+
+Feature retenue : `product/agent-efficacy-benchmark`, active, `progress.updated = 2026-07-02`, la plus récente du mesh source `ai_context/.docs/features`.
+
+Validation : JSON valide via `jq`. Aucun `check.sh` n’est présent dans ce repo.

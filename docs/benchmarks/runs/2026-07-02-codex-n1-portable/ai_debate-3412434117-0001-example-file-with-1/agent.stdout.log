@@ -1,0 +1,7 @@
+Créé [HELLO.txt](<tmp>/ai-context-bench/ai_debate-3412434117-0001-example-file-with-1/work/HELLO.txt) à la racine avec exactement :
+
+```text
+hello ai_context
+```
+
+Vérification du contenu faite. `check.sh` n’est pas présent dans ce workspace, donc je n’ai pas pu lancer le grader.

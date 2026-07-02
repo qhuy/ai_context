@@ -1,0 +1,3 @@
+Fait : [HELLO.txt](<tmp>/ai-context-bench/ai_context-1982850439-0001-example-file-with-1/work/HELLO.txt) existe à la racine avec exactement `hello ai_context` et un retour ligne final.
+
+Vérification : `cmp` byte-à-byte OK, `wc -l -c HELLO.txt` donne `1 17`. Je n’ai pas pu lancer `check.sh` : il n’est pas présent dans ce workspace. Le répertoire n’est pas non plus un dépôt Git, donc pas de diff Git disponible.

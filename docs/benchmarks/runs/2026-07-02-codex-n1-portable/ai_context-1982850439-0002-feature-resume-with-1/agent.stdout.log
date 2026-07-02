@@ -1,0 +1,8 @@
+Créé : [BENCH_RESULT/feature-resume.json](<tmp>/ai-context-bench/ai_context-1982850439-0002-feature-resume-with-1/work/BENCH_RESULT/feature-resume.json)
+
+Feature sélectionnée : `product/agent-efficacy-benchmark`, la seule active avec `progress.updated: 2026-07-02`, donc la plus fraîche du mesh.
+
+Validation :
+- `jq` passe, JSON valide.
+- Validation structurelle des 4 clés exacte passée.
+- `check.sh` n’est pas présent dans ce répertoire, donc je n’ai pas pu lancer le grader localement.

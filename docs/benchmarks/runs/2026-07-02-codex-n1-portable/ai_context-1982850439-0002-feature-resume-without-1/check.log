@@ -1,0 +1,3 @@
+résultat inattendu
+expected={'feature': 'product/agent-efficacy-benchmark', 'phase': 'implement', 'updated': '2026-07-02', 'next': 'prochain incrément : augmenter N sur la sous-suite portable ou généraliser 0003 pour repo externe ; extraire le coût tokens ; HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke'}
+actual={'feature': 'product/agent-efficacy-benchmark', 'phase': 'implement', 'updated': '2026-07-02', 'next': "relancer un run Codex N=1 après correction d'isolation, avec rapports propres sous docs/benchmarks/reports/. HANDOFF quality/smoke-test restant : brancher run-bench.sh --self-check dans le smoke"}

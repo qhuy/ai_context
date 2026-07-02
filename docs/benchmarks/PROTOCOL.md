@@ -64,7 +64,12 @@ fois la matrice terminée, afin d'éviter de conserver des artefacts partiels.
   × N, invoque l'agent via le **seam `AGENT_CMD`**, applique le grader, agrège.
 - **Rapport** : `docs/benchmarks/reports/<date>-<repo-slug>.md` — succès par condition,
   Δ et conditions exactes (rejouable). Le runner produit aussi un TSV et un JSONL
-  globaux, plus les logs d'agent/check sous `docs/benchmarks/runs/<stamp>/`.
+  globaux incluant `tokens_used` quand le log agent expose un bloc `tokens used`,
+  plus les logs d'agent/check sous `docs/benchmarks/runs/<stamp>/`.
+  Les artefacts publiés référencent les repos par nom/slug et les logs par chemin
+  relatif au repo, afin d'éviter de versionner des chemins absolus locaux.
+  Les logs sont des sorties brutes d'agent : les relire avant publication externe
+  et ne jamais versionner un run qui contient un secret brut.
 
 ## Seam d'invocation d'agent
 
@@ -107,8 +112,11 @@ relancer et retrouver le même Δ (aux intervalles près).
   JSONL, logs.
 - ✅ Suite discriminante initiale : reprise feature mesh + décision handoff
   cross-scope, avec graders objectifs.
-- ⏳ À venir : exécuter un agent réel sur ≥2 repos de référence, calibrer `N`,
-  produire le 1ᵉʳ rapport publiable.
+- ✅ Premier run agent réel publié : Codex `N=1` sur `ai_context` + `ai_debate`,
+  sous-suite portable `0001`/`0002`, signal `with` 4/4 vs `without` 2/4,
+  coût tokens extrait depuis les logs Codex quand disponible.
+- ⏳ À venir : augmenter `N`, décider si `0003` devient
+  portable pour repos externes ou reste une tâche repo-spécifique.
 - Le runner tourne en `--self-check` (valide le plumbing sans invoquer d'agent).
   Les **runs agents réels** restent une action mainteneur (clés + coût +
   non-déterminisme).
