@@ -194,19 +194,44 @@ extract_tokens_used() {
   local log="$1"
   [[ -f "$log" ]] || { printf "NA"; return; }
   awk '
-    BEGIN { seen = 0; found = 0 }
-    tolower($0) ~ /tokens used/ { seen = 1; next }
+    BEGIN { seen = 0; value = "" }
+    tolower($0) ~ /^[[:space:]]*tokens used[[:space:]]*$/ { seen = 1; next }
     seen {
-      value = $0
-      gsub(/[^0-9]/, "", value)
-      if (value != "") {
-        print value
-        found = 1
-        exit
+      candidate = $0
+      gsub(/[^0-9]/, "", candidate)
+      if (candidate != "") {
+        value = candidate
+        seen = 0
       }
     }
-    END { if (!found) print "NA" }
+    END {
+      if (value == "") print "NA"
+      else print value
+    }
   ' "$log"
+}
+
+is_agent_infra_error() {
+  local log="$1"
+  [[ -f "$log" ]] || return 1
+  grep -Eiq "usage limit|purchase more credits|try again at|rate limit|quota exceeded|authentication failed|invalid api key|provider error|server error|service unavailable" "$log"
+}
+
+failure_kind_for() {
+  local agent_exit="$1" check_exit="$2" stderr_log="$3"
+  if [[ "$agent_exit" -eq 0 && "$check_exit" -eq 0 ]]; then
+    printf "none"
+  elif is_agent_infra_error "$stderr_log"; then
+    printf "agent_infra_error"
+  elif [[ "$agent_exit" -eq 124 ]]; then
+    printf "timeout"
+  elif [[ "$agent_exit" -ne 0 ]]; then
+    printf "agent_error"
+  elif [[ "$check_exit" -ne 0 ]]; then
+    printf "task_fail"
+  else
+    printf "unknown"
+  fi
 }
 
 # --- Conditions : dépouiller la couche ai_context pour 'without' ---
@@ -242,6 +267,10 @@ if [[ "$mode" == "self-check" ]]; then
   parser_probe="$(mktemp)"
   printf "noise\ntokens used\n46 684\n" > "$parser_probe"
   [[ "$(extract_tokens_used "$parser_probe")" == "46684" ]] && ok "parseur tokens" || ko "parseur tokens"
+  printf "tokens used\n1\nnoise\ntokens used\n46,684\n" > "$parser_probe"
+  [[ "$(extract_tokens_used "$parser_probe")" == "46684" ]] && ok "parseur tokens dernier bloc" || ko "parseur tokens dernier bloc"
+  printf "ERROR: You've hit your usage limit. Visit https://chatgpt.com/codex/settings/usage to purchase more credits.\n" > "$parser_probe"
+  is_agent_infra_error "$parser_probe" && ok "classification erreur infra agent" || ko "classification erreur infra agent"
   rm -f "$parser_probe"
   echo
   if [[ "$fail" -eq 0 ]]; then echo "✅ self-check OK (plumbing valide ; aucun agent invoqué)"; exit 0
@@ -279,7 +308,7 @@ final_results_tsv="$BENCH_REPORT_DIR/$BENCH_STAMP-results.tsv"
 final_results_jsonl="$BENCH_REPORT_DIR/$BENCH_STAMP-results.jsonl"
 matrix_file="$run_log_root/matrix.tsv"
 : > "$results_jsonl"
-printf "repo_slug\trepo_name\trepo_ref\ttask_id\tcondition\trun_index\tsuccess\tagent_exit\tcheck_exit\tduration_seconds\ttokens_used\tworkdir\tstdout_log\tstderr_log\tcheck_log\n" > "$results_tsv"
+printf "repo_slug\trepo_name\trepo_ref\ttask_id\tcondition\trun_index\tsuccess\tfailure_kind\tagent_exit\tcheck_exit\tduration_seconds\ttokens_used\tworkdir\tstdout_log\tstderr_log\tcheck_log\n" > "$results_tsv"
 
 for r in "${repos[@]}"; do
   for t in "${tasks[@]}"; do
@@ -351,6 +380,7 @@ while IFS=$'\t' read -r repo_path task_path condition run_index; do
   end_ts="$(date +%s)"
   duration=$((end_ts - start_ts))
   tokens_used="$(extract_tokens_used "$stderr_log")"
+  failure_kind="$(failure_kind_for "$agent_exit" "$check_exit" "$stderr_log")"
 
   success=0
   if [[ "$agent_exit" -eq 0 && "$check_exit" -eq 0 ]]; then
@@ -360,9 +390,9 @@ while IFS=$'\t' read -r repo_path task_path condition run_index; do
     warn "$repo_name / $task_id / $condition / run $run_index FAIL (agent=$agent_exit check=$check_exit)"
   fi
 
-  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" \
+  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" \
     "$repo_slug" "$repo_name" "$repo_ref" "$task_id" "$condition" "$run_index" \
-    "$success" "$agent_exit" "$check_exit" "$duration" "$tokens_used" "$workdir_ref" "$stdout_log_ref" "$stderr_log_ref" "$check_log_ref" \
+    "$success" "$failure_kind" "$agent_exit" "$check_exit" "$duration" "$tokens_used" "$workdir_ref" "$stdout_log_ref" "$stderr_log_ref" "$check_log_ref" \
     >> "$results_tsv"
 
   if [[ "$tokens_used" == "NA" ]]; then
@@ -370,9 +400,9 @@ while IFS=$'\t' read -r repo_path task_path condition run_index; do
   else
     tokens_json="$tokens_used"
   fi
-  printf '{"stamp":"%s","repo_slug":"%s","repo_name":"%s","repo_ref":"%s","task_id":"%s","condition":"%s","run_index":%s,"success":%s,"agent_exit":%s,"check_exit":%s,"duration_seconds":%s,"tokens_used":%s,"stdout_log":"%s","stderr_log":"%s","check_log":"%s"}\n' \
+  printf '{"stamp":"%s","repo_slug":"%s","repo_name":"%s","repo_ref":"%s","task_id":"%s","condition":"%s","run_index":%s,"success":%s,"failure_kind":"%s","agent_exit":%s,"check_exit":%s,"duration_seconds":%s,"tokens_used":%s,"stdout_log":"%s","stderr_log":"%s","check_log":"%s"}\n' \
     "$(json_escape "$BENCH_STAMP")" "$(json_escape "$repo_slug")" "$(json_escape "$repo_name")" "$(json_escape "$repo_ref")" \
-    "$(json_escape "$task_id")" "$(json_escape "$condition")" "$run_index" "$success" "$agent_exit" "$check_exit" "$duration" \
+    "$(json_escape "$task_id")" "$(json_escape "$condition")" "$run_index" "$success" "$(json_escape "$failure_kind")" "$agent_exit" "$check_exit" "$duration" \
     "$tokens_json" "$(json_escape "$stdout_log_ref")" "$(json_escape "$stderr_log_ref")" "$(json_escape "$check_log_ref")" \
     >> "$results_jsonl"
 done < "$matrix_file"
@@ -436,9 +466,9 @@ while IFS= read -r repo_slug; do
     echo "|---|---:|---:|---:|"
     for condition in with without; do
       awk -F '\t' -v repo="$repo_slug" -v condition="$condition" '
-        NR > 1 && $1 == repo && $5 == condition && $11 ~ /^[0-9]+$/ {
+        NR > 1 && $1 == repo && $5 == condition && $12 ~ /^[0-9]+$/ {
           count += 1
-          total += $11
+          total += $12
         }
         END {
           mean = count ? total / count : 0
@@ -449,12 +479,12 @@ while IFS= read -r repo_slug; do
     echo
     echo "## Détail"
     echo
-    echo "| Tâche | Condition | Run | Résultat | Agent | Check | Tokens | Logs |"
-    echo "|---|---|---:|---|---:|---:|---:|---|"
+    echo "| Tâche | Condition | Run | Résultat | Failure | Agent | Check | Tokens | Logs |"
+    echo "|---|---|---:|---|---|---:|---:|---:|---|"
     awk -F '\t' -v repo="$repo_slug" '
       NR > 1 && $1 == repo {
         result = ($7 == 1) ? "PASS" : "FAIL"
-        printf "| `%s` | `%s` | %s | %s | %s | %s | %s | `%s` |\n", $4, $5, $6, result, $8, $9, $11, $15
+        printf "| `%s` | `%s` | %s | %s | `%s` | %s | %s | %s | `%s` |\n", $4, $5, $6, result, $8, $9, $10, $12, $16
       }
     ' "$results_tsv"
     echo
@@ -462,12 +492,19 @@ while IFS= read -r repo_slug; do
     echo
     echo "- \`AGENT_CMD\` n'est pas écrit dans le rapport pour éviter de consigner des secrets ; utiliser \`BENCH_AGENT_LABEL\` pour tracer le modèle/runner."
     echo "- Les échecs de tâche sont des données de benchmark : le runner termine et les agrège au lieu de s'arrêter au premier échec."
+    echo "- \`failure_kind=agent_infra_error\` signale une erreur d'environnement agent (quota, auth, provider) : le run est alors invalide comme preuve benchmark."
   } > "$report"
   report_files+=("$report")
 done < <(awk -F '\t' 'NR > 1 { print $1 }' "$results_tsv" | sort -u)
+
+infra_errors="$(awk -F '\t' 'NR > 1 && $8 == "agent_infra_error" { count += 1 } END { print count + 0 }' "$results_tsv")"
 
 echo
 echo "✅ run terminé"
 printf "  rapport : %s\n" "${report_files[@]}"
 echo "  résultats : $final_results_tsv"
 echo "  jsonl : $final_results_jsonl"
+if [[ "$infra_errors" -gt 0 ]]; then
+  warn "run invalide pour benchmark : $infra_errors erreur(s) infra agent détectée(s)"
+  exit 2
+fi

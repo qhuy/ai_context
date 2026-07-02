@@ -65,11 +65,14 @@ fois la matrice terminée, afin d'éviter de conserver des artefacts partiels.
 - **Rapport** : `docs/benchmarks/reports/<date>-<repo-slug>.md` — succès par condition,
   Δ et conditions exactes (rejouable). Le runner produit aussi un TSV et un JSONL
   globaux incluant `tokens_used` quand le log agent expose un bloc `tokens used`,
+  et `failure_kind` pour distinguer échec de tâche, timeout et erreur infra agent,
   plus les logs d'agent/check sous `docs/benchmarks/runs/<stamp>/`.
   Les artefacts publiés référencent les repos par nom/slug et les logs par chemin
   relatif au repo, afin d'éviter de versionner des chemins absolus locaux.
   Les logs sont des sorties brutes d'agent : les relire avant publication externe
   et ne jamais versionner un run qui contient un secret brut.
+  Un run contenant `failure_kind=agent_infra_error` (quota, auth, provider, etc.)
+  est invalide comme preuve benchmark, même si les artefacts restent utiles au diagnostic.
 
 ## Seam d'invocation d'agent
 
@@ -94,6 +97,8 @@ reproductible et versionné sans secret.
 - **Grader faible = preuve creuse** → critères objectifs + échantillon vérifié.
 - **Sur-ajustement** → imposer ≥1 repo externe.
 - **N trop petit** → résultat non significatif ; publier l'intervalle.
+- **Erreur infra agent** → ne pas la compter comme échec de tâche ; invalider le run
+  et relancer après correction/quota.
 - **Résultat négatif = résultat valide** → publié tel quel (kill_criterion de la
   fiche : aucun Δ significatif après itération ⇒ réévaluer l'initiative).
 
@@ -115,8 +120,10 @@ relancer et retrouver le même Δ (aux intervalles près).
 - ✅ Premier run agent réel publié : Codex `N=1` sur `ai_context` + `ai_debate`,
   sous-suite portable `0001`/`0002`, signal `with` 4/4 vs `without` 2/4,
   coût tokens extrait depuis les logs Codex quand disponible.
-- ⏳ À venir : augmenter `N`, décider si `0003` devient
-  portable pour repos externes ou reste une tâche repo-spécifique.
+- ✅ Runner durci : `failure_kind` sépare échec tâche, timeout et erreur infra agent ;
+  un run contaminé par quota/provider sort en non-zéro.
+- ⏳ À venir : relancer `N=3` après quota, puis décider si `0003` devient portable
+  pour repos externes ou reste une tâche repo-spécifique.
 - Le runner tourne en `--self-check` (valide le plumbing sans invoquer d'agent).
   Les **runs agents réels** restent une action mainteneur (clés + coût +
   non-déterminisme).

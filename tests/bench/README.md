@@ -42,6 +42,10 @@ Les artefacts publiés référencent les repos par nom/slug et les logs par chem
 relatifs au repo ; les copies de travail temporaires sont notées `<tmp>/...`.
 Quand le log agent contient un bloc `tokens used`, le runner renseigne aussi
 `tokens_used` dans les TSV/JSONL et les rapports Markdown.
+Le champ `failure_kind` distingue `task_fail`, `timeout`, `agent_error` et
+`agent_infra_error`. Une erreur infra agent (quota, auth, provider) invalide le
+run comme preuve benchmark ; le runner publie les artefacts de diagnostic puis
+sort en non-zéro.
 
 Le runner :
 
@@ -58,6 +62,8 @@ Le runner :
   `BENCH_SOURCE_REPO`, `BENCH_WORKDIR` ;
 - marque une cellule en échec si `$AGENT_CMD` dépasse `BENCH_TIMEOUT_SECONDS`
   (`agent_exit=124`) ;
+- marque une erreur quota/auth/provider comme `agent_infra_error`, sans la compter
+  comme un échec métier exploitable ;
 - agrège Markdown + TSV + JSONL et ne publie les artefacts dans
   `docs/benchmarks/` qu'une fois la matrice terminée.
 

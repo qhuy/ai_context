@@ -45,9 +45,9 @@ doc:
     observability: true
 progress:
   phase: implement
-  step: "incr.5 : premier run Codex N=1 publié — 2 repos, sous-suite portable 0001/0002, with=4/4 vs without=2/4"
+  step: "incr.6 : run Codex N=3 tenté puis invalidé par quota ; runner durci avec failure_kind=agent_infra_error"
   blockers: []
-  resume_hint: "prochain incrément : augmenter N sur la sous-suite portable ou généraliser 0003 pour repo externe ; stabiliser la lecture tokens sur runs timeout ; HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
+  resume_hint: "relancer N=3 après reset quota ; interpréter le partiel : ai_debate/0002 reste discriminant, ai_context/0002 est trop facile sans contexte ; HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
   updated: 2026-07-02
 ---
 
@@ -218,6 +218,15 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   significativité (`N=1`) ; coût tokens extrait depuis les logs Codex pour 7/8 cellules
   (timeout sans mesure sur `ai_context/0002/without`) ; artefacts publiés avec références de
   chemins relatives/masquées.
+- 2026-07-02 : **incrément 6 — run N=3 invalidé par quota agent**. Un run Codex
+  `N=3` sur la même sous-suite portable a atteint la limite d'usage Codex sur deux
+  cellules `with` finales (`agent_exit=1`), ce qui invalide le run comme preuve
+  benchmark. Signal partiel utile : `ai_debate/0002/without` échoue 3/3 tandis que
+  `ai_context/0002/without` passe 2/3 et timeout 1/3, donc la tâche `0002` est
+  discriminante sur repo externe mais trop facile sur `ai_context`. Le runner sépare
+  maintenant `failure_kind` (`task_fail`, `timeout`, `agent_infra_error`, etc.) et
+  sort en non-zéro si une erreur infra agent contamine la matrice. Les artefacts N=3
+  invalides ne sont pas publiés.
 - 2026-07-02 : **incrément 4 — isolation runner corrigée après run réel contaminé**. Un
   premier run Codex `N=1` a montré que les copies de travail conservaient encore le harnais,
   les artefacts de benchmark et des skills repo-locales. Le runner exclut maintenant

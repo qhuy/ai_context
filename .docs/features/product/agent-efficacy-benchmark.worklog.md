@@ -59,3 +59,13 @@
 - Validation finale : `bash -n tests/bench/run-bench.sh`, run minimal agent factice `0001`, `run-bench.sh --self-check`, JSONL valide, `git diff --check`, `git show --check HEAD`, `check-feature-docs product/agent-efficacy-benchmark`, `check-feature-freshness --worktree --strict`, `check-shims`, `check-agent-config`, `check-ai-references`, `check-features --no-write`, `check-feature-coverage`, `check-touches-breadth`, `measure-context-size`.
 - Warnings acceptés : deux anciennes fiches sans champ OKF `type`, 6 tests unitaires orphelins, advisory touches breadth sur surfaces partagées ; hors delta de ce run.
 - Next : augmenter N, généraliser `0003` pour repos externes ou garder cette tâche en run repo-spécifique, stabiliser la lecture tokens sur runs timeout, puis brancher `run-bench.sh --self-check` dans le smoke via HANDOFF `quality/smoke-test`.
+
+## 2026-07-02 — tentative N=3 invalide, durcissement infra
+
+- Run tenté : Codex `N=3`, repos `ai_context` + `ai_debate`, sous-suite portable `0001-example-file` + `0002-feature-resume`, `BENCH_SEED=42`, `BENCH_TIMEOUT_SECONDS=300`.
+- Résultat : run invalide comme preuve benchmark, car deux cellules `with` finales ont échoué sur limite d'usage Codex (`agent_exit=1`, message `You've hit your usage limit`).
+- Signal partiel : `ai_debate/0002/without` échoue 3/3 tandis que `ai_debate/0002/with` passe 2/2 avant quota ; `ai_context/0002/without` passe 2/3 et timeout 1/3, donc `0002` est trop facile sur `ai_context` sans contexte.
+- Correction runner : ajout de `failure_kind` (`none`, `task_fail`, `timeout`, `agent_error`, `agent_infra_error`, `unknown`), détection quota/auth/provider, sortie non-zéro si `agent_infra_error` contamine un run, et parsing tokens sur le dernier bloc exact `tokens used`.
+- Décision publication : artefacts N=3 invalides supprimés du working tree ; ne pas publier comme rapport benchmark.
+- Validation : `bash -n tests/bench/run-bench.sh`, `run-bench.sh --self-check`, run factice succès avec parsing dernier bloc tokens, run factice quota avec `failure_kind=agent_infra_error` et exit `2`.
+- Next : relancer N=3 après reset quota avec le runner durci, puis renforcer la suite discriminante pour `ai_context` si le partiel se confirme.
