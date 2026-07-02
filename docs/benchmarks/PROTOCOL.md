@@ -50,17 +50,22 @@ départ. Le repo nu n'est **pas** sciemment handicapé (invariant d'honnêteté)
   après l'agent).
 - **Runner** : `tests/bench/run-bench.sh` — orchestre repos × tâches × conditions
   × N, invoque l'agent via le **seam `AGENT_CMD`**, applique le grader, agrège.
-- **Rapport** : `docs/benchmarks/reports/<date>-<repo>.md` — succès par condition,
-  tokens, Δ, intervalle, conditions exactes (rejouable).
+- **Rapport** : `docs/benchmarks/reports/<date>-<repo-slug>.md` — succès par condition,
+  Δ et conditions exactes (rejouable). Le runner produit aussi un TSV et un JSONL
+  globaux, plus les logs d'agent/check sous `docs/benchmarks/runs/<stamp>/`.
 
 ## Seam d'invocation d'agent
 
 Le runner n'embarque **aucun** agent : il appelle `AGENT_CMD` (variable d'env),
 une commande non-interactive qui reçoit le prompt de la tâche et opère dans le
-répertoire de travail courant. Exemple attendu :
+répertoire de travail courant. Concrètement, `task.md` est passé sur `stdin`, et
+le runner expose des variables d'environnement (`BENCH_PROMPT_FILE`,
+`BENCH_TASK_ID`, `BENCH_CONDITION`, `BENCH_RUN_INDEX`, `BENCH_REPO_NAME`,
+`BENCH_REPO_PATH`, `BENCH_WORKDIR`) pour les wrappers d'agents. Exemple attendu :
 
 ```bash
 export AGENT_CMD='claude -p --output-format json'   # ou codex, ou tout runner maison
+export BENCH_AGENT_LABEL='claude-sonnet-...'        # libellé écrit dans les rapports
 ```
 
 Raison : rester agnostique de l'agent/CLI/clés, et garder le harnais
@@ -80,11 +85,15 @@ Tout ce qui influe sur le résultat est versionné (tâches, prompts, graders,
 liste de repos, `N`) ou loggé (modèle, date, seed d'ordre). Un tiers doit pouvoir
 relancer et retrouver le même Δ (aux intervalles près).
 
-## Statut d'implémentation (incrément 1)
+## Statut d'implémentation
 
 - ✅ Protocole (ce fichier), format de suite de tâches, runner **self-checkable**,
   1 tâche exemple, format de rapport.
-- ⏳ À venir : câbler `AGENT_CMD` sur un agent réel, ajouter la suite de tâches
-  complète, choisir les ≥2 repos, calibrer `N`, produire le 1ᵉʳ rapport.
-- Le runner tourne en `--self-check` (valide le plumbing sans invoquer d'agent) ;
-  les **runs réels sont une action mainteneur** (clés + coût + non-déterminisme).
+- ✅ Boucle de run réelle : copies isolées, randomisation par seed, condition
+  `with/without`, invocation de `$AGENT_CMD`, grader, rapports Markdown + TSV +
+  JSONL, logs.
+- ⏳ À venir : exécuter un agent réel sur une suite discriminante, choisir les
+  ≥2 repos de référence, calibrer `N`, produire le 1ᵉʳ rapport publiable.
+- Le runner tourne en `--self-check` (valide le plumbing sans invoquer d'agent).
+  Les **runs agents réels** restent une action mainteneur (clés + coût +
+  non-déterminisme).

@@ -31,11 +31,34 @@ Vérifie que chaque tâche a `task.md` + `check.sh` exécutable, que les repos
 export AGENT_CMD='claude -p --output-format json'   # ou codex, ou runner maison
 export BENCH_REPOS='/chemin/repo-a /chemin/repo-b'   # ≥2, dont ≥1 externe
 export BENCH_N=5                                     # runs par cellule
+export BENCH_AGENT_LABEL='claude-sonnet-...'
 bash tests/bench/run-bench.sh
 ```
 
 Coûteux + non-déterministe (vraies invocations d'agent). Rapports sous
-`docs/benchmarks/reports/`.
+`docs/benchmarks/reports/`, logs sous `docs/benchmarks/runs/<stamp>/`.
+
+Le runner :
+
+- copie chaque repo dans un dossier temporaire ;
+- applique la condition `without` en retirant `.ai/`, `.docs/` et les shims agents ;
+- envoie `task.md` sur `stdin` de `$AGENT_CMD` ;
+- expose aussi `BENCH_PROMPT_FILE`, `BENCH_TASK_ID`, `BENCH_CONDITION`,
+  `BENCH_RUN_INDEX`, `BENCH_REPO_NAME`, `BENCH_REPO_PATH`, `BENCH_WORKDIR` ;
+- exécute ensuite `check.sh` dans la copie de travail ;
+- agrège Markdown + TSV + JSONL.
+
+Exemple Codex CLI, prompt lu depuis `stdin` et travail dans le `cwd` de la copie :
+
+```bash
+export AGENT_CMD='codex exec --skip-git-repo-check --ephemeral --sandbox workspace-write -'
+export BENCH_AGENT_LABEL='codex exec / workspace-write'
+```
+
+`AGENT_CMD` n'est pas écrit dans les rapports pour éviter de consigner un secret
+accidentel ; utiliser `BENCH_AGENT_LABEL` pour tracer le modèle/runner. Pour une
+vérification non publiée, rediriger `BENCH_REPORT_DIR` et `BENCH_RUN_DIR` vers un
+dossier temporaire.
 
 ## Ajouter une tâche
 

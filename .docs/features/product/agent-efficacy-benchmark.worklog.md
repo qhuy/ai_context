@@ -20,3 +20,11 @@
 - **Runs réels NON exécutés** : action mainteneur (clés/coût/non-déterminisme). Le harnais est le livrable ; pas de résultats fabriqués.
 - `v1 maintainer-only` : `tests/bench/` non rendu dans le template (comme le dogfooding).
 - Follow-ups : câbler `AGENT_CMD`, choisir ≥2 repos (dont 1 externe), calibrer N, 1er rapport ; suite de tâches discriminantes ; HANDOFF `quality/smoke-test` (brancher `--self-check` dans le smoke) ; réconcilier le registre pilot après merge (P1 non tracé côté registre pour éviter le conflit avec la branche P6).
+
+## 2026-07-02 — incrément 2 : boucle réelle du runner
+
+- Livré : `run-bench.sh` exécute maintenant la matrice repos × tâches × conditions × N : copies isolées, condition `without` dépouillée, randomisation par `BENCH_SEED`, appel `$AGENT_CMD`, grader, rapports Markdown par repo, TSV + JSONL globaux, logs par cellule.
+- Contrat seam précisé : `task.md` est fourni sur `stdin`; wrappers possibles via `BENCH_PROMPT_FILE`, `BENCH_TASK_ID`, `BENCH_CONDITION`, `BENCH_RUN_INDEX`, `BENCH_REPO_NAME`, `BENCH_REPO_PATH`, `BENCH_WORKDIR`. `AGENT_CMD` n'est pas loggé pour éviter les secrets ; `BENCH_AGENT_LABEL` trace le runner/modèle.
+- Vérifié : `bash -n tests/bench/run-bench.sh`, `bash tests/bench/run-bench.sh --self-check`, run d'intégration déterministe sur 2 repos temporaires (`BENCH_N=1`, 4/4 PASS, rapports + TSV + JSONL générés hors repo), `check-features`, `check-feature-docs`, `check-feature-freshness --worktree --strict`, `git diff --check`, `check-shims`, `measure-context-size`.
+- Probe agent réel : `codex exec --skip-git-repo-check --ephemeral --sandbox workspace-write -` fonctionne sur repo temporaire isolé pour la tâche `HELLO.txt`, mais la tâche triviale a consommé beaucoup de tokens ; pas de run complet Codex × 2 repos × 2 conditions tant que la suite n'est pas discriminante.
+- Follow-ups : écrire/choisir les tâches discriminantes, sélectionner ≥2 repos de référence (dont 1 externe avec condition `with` honnête), calibrer `N`, puis produire le premier rapport publiable sous `docs/benchmarks/reports/`. HANDOFF qualité inchangé : brancher `run-bench.sh --self-check` dans le smoke.

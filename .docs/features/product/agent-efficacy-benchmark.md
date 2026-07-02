@@ -45,10 +45,10 @@ doc:
     observability: true
 progress:
   phase: implement
-  step: "incr.1 : scaffold livré — PROTOCOL.md + runner self-checkable (seam AGENT_CMD) + tâche exemple + README ; self-check vérifié (happy-path + détection tâche cassée)"
+  step: "incr.2 : boucle réelle du runner câblée — copies isolées, randomisation seedée, AGENT_CMD stdin/env, graders, rapports Markdown+TSV+JSONL, logs ; intégration déterministe vérifiée"
   blockers: []
-  resume_hint: "runs RÉELS = action mainteneur : câbler AGENT_CMD sur un agent, choisir >=2 repos (dont 1 externe), calibrer N, produire le 1er rapport sous docs/benchmarks/reports/. Puis suite de tâches discriminantes. HANDOFF quality/smoke-test : brancher run-bench.sh --self-check dans le smoke"
-  updated: 2026-07-01
+  resume_hint: "runs AGENT RÉEL = choisir une suite discriminante + >=2 repos (dont 1 externe), fixer BENCH_AGENT_LABEL/AGENT_CMD, calibrer N, produire le 1er rapport publiable sous docs/benchmarks/reports/. HANDOFF quality/smoke-test : brancher run-bench.sh --self-check dans le smoke"
+  updated: 2026-07-02
 ---
 
 # Benchmark d'efficacité agent — preuve de valeur ai_context
@@ -115,16 +115,18 @@ fourre-tout. Ne pas confondre avec un test de non-régression du template (`smok
 ## Comportement attendu
 
 Un mainteneur lance le harnais ; il obtient, pour chaque repo de référence et chaque
-condition (avec/sans ai_context), le taux de succès agrégé sur N runs, le coût tokens
-moyen, et un rapport reproductible avec le Δ et son intervalle. Le verdict alimente
-directement la décision de positionnement et le tri du backlog (P2–P7).
+condition (avec/sans ai_context), le taux de succès agrégé sur N runs, les artefacts
+bruts rejouables et un rapport Markdown avec le Δ observé. À terme, le premier rapport
+publiable devra aussi documenter le coût tokens et l'intervalle de confiance. Le
+verdict alimente directement la décision de positionnement et le tri du backlog
+(P2–P7).
 
 ## Contrats
 
 - **Entrée** : suite de tâches versionnée (prompt + critère de succès objectif par tâche)
   + liste de repos de référence + N.
-- **Sortie** : rapport `docs/benchmarks/<date>-<repo>.md` (+ artefact machine-lisible)
-  exposant succès, tokens, Δ, conditions exactes.
+- **Sortie** : rapport `docs/benchmarks/reports/<stamp>-<repo-slug>.md`, TSV et JSONL
+  exposant succès, Δ observé, conditions exactes et logs de run.
 - **Reproductibilité** : tout ce qui influe sur le résultat est versionné ou loggé.
 
 ## Validation
@@ -193,3 +195,11 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   mainteneur : clés + coût + non-déterminisme) — le harnais est le livrable, pas des résultats
   fabriqués. Le runner reste `v1 maintainer-only` (non templé). Choix du runner = seam externe
   (tranche la décision « runner ouvert » sans embarquer d'agent).
+- 2026-07-02 : **incrément 2 — boucle réelle du runner livrée**. `run-bench.sh` orchestre
+  désormais la matrice repos × tâches × conditions × N : copies isolées, condition `without`
+  dépouillée, randomisation par seed, prompt sur `stdin` de `$AGENT_CMD`, variables `BENCH_*`
+  exposées, grader objectif, agrégation Markdown + TSV + JSONL et logs par cellule. Vérifié par
+  `bash -n`, `--self-check`, run d'intégration déterministe sur 2 repos temporaires (4/4 PASS) et
+  probe `codex exec` isolé. **Pas de rapport benchmark publiable encore** : la tâche `0001` reste
+  une fumée non discriminante ; produire le premier rapport public exige une suite réelle et un
+  budget d'agent explicite.
