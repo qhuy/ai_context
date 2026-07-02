@@ -45,7 +45,9 @@ Quand le log agent contient un bloc `tokens used`, le runner renseigne aussi
 Le champ `failure_kind` distingue `task_fail`, `timeout`, `agent_error` et
 `agent_infra_error`. Une erreur infra agent (quota, auth, provider) invalide le
 run comme preuve benchmark ; le runner publie les artefacts de diagnostic puis
-sort en non-zéro.
+sort en non-zéro. La classification `agent_infra_error` requiert une commande
+agent sortie non-zéro : un contenu de repo qui mentionne du rate limiting ne doit
+pas invalider un run agent réussi.
 
 Le runner :
 
@@ -62,8 +64,8 @@ Le runner :
   `BENCH_SOURCE_REPO`, `BENCH_WORKDIR` ;
 - marque une cellule en échec si `$AGENT_CMD` dépasse `BENCH_TIMEOUT_SECONDS`
   (`agent_exit=124`) ;
-- marque une erreur quota/auth/provider comme `agent_infra_error`, sans la compter
-  comme un échec métier exploitable ;
+- marque une erreur quota/auth/provider sur commande agent échouée comme
+  `agent_infra_error`, sans la compter comme un échec métier exploitable ;
 - agrège Markdown + TSV + JSONL et ne publie les artefacts dans
   `docs/benchmarks/` qu'une fois la matrice terminée.
 

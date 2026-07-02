@@ -1,0 +1,8 @@
+Créé : [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-3/work/BENCH_RESULT/feature-resume.json:1)
+
+Feature retenue : `workflow/aib-debate-plan-action-v1`, active la plus récente avec `progress.updated: 2026-06-17`.
+
+Vérifications faites :
+- JSON valide avec exactement `feature`, `phase`, `updated`, `next`
+- comparaison directe OK contre l’index généré depuis le feature mesh
+- `check.sh` n’est pas présent dans ce workspace, donc je n’ai pas pu le lancer.

@@ -69,3 +69,12 @@
 - Décision publication : artefacts N=3 invalides supprimés du working tree ; ne pas publier comme rapport benchmark.
 - Validation : `bash -n tests/bench/run-bench.sh`, `run-bench.sh --self-check`, run factice succès avec parsing dernier bloc tokens, run factice quota avec `failure_kind=agent_infra_error` et exit `2`.
 - Next : relancer N=3 après reset quota avec le runner durci, puis renforcer la suite discriminante pour `ai_context` si le partiel se confirme.
+
+## 2026-07-02 — rerun N=3 complet, faux positif infra corrigé
+
+- Run : Codex `N=3`, repos `ai_context` + worktree propre `ai_debate` à `HEAD` (`ai_debate` local étant sale/ahead), sous-suite portable `0001-example-file` + `0002-feature-resume`, `BENCH_SEED=42`, `BENCH_TIMEOUT_SECONDS=300`, stamp `2026-07-02-codex-n3-portable-rerun`.
+- Résultat brut : 24 cellules terminées, aucun quota bloquant ; le runner a toutefois classé à tort `ai_debate/0002/without/run 1` en `agent_infra_error` parce que le stderr contenait du contenu repo avec le texte `rate limiting` alors que `agent_exit=0`.
+- Correction runner : `agent_infra_error` requiert désormais `agent_exit != 0`, le motif `rate limit` est resserré, et le self-check couvre le cas "contenu repo infra + agent OK + check KO" qui doit rester `task_fail`.
+- Résultat corrigé : global `with` 12/12 vs `without` 9/12 ; `ai_debate/0002` fait `with` 3/3 vs `without` 0/3 ; `ai_context/0002` fait `with` 3/3 vs `without` 3/3.
+- Décision : publier les artefacts N=3 corrigés avec les logs du run complet ; ne pas relancer immédiatement les 24 cellules car le bug était une classification post-run et les logs/checks sont complets.
+- Next : renforcer la tâche discriminante côté `ai_context` ou ajouter une tâche repo-spécifique, puis brancher `run-bench.sh --self-check` dans le smoke via HANDOFF `quality/smoke-test`.

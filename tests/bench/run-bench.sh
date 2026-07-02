@@ -214,17 +214,17 @@ extract_tokens_used() {
 is_agent_infra_error() {
   local log="$1"
   [[ -f "$log" ]] || return 1
-  grep -Eiq "usage limit|purchase more credits|try again at|rate limit|quota exceeded|authentication failed|invalid api key|provider error|server error|service unavailable" "$log"
+  grep -Eiq "usage limit|purchase more credits|try again at|quota exceeded|too many requests|(^|[^[:digit:]])429([^[:digit:]]|$)|rate limit (exceeded|reached|hit)|rate-limited|rate limited|authentication failed|invalid api key|provider error|server error|service unavailable" "$log"
 }
 
 failure_kind_for() {
   local agent_exit="$1" check_exit="$2" stderr_log="$3"
   if [[ "$agent_exit" -eq 0 && "$check_exit" -eq 0 ]]; then
     printf "none"
-  elif is_agent_infra_error "$stderr_log"; then
-    printf "agent_infra_error"
   elif [[ "$agent_exit" -eq 124 ]]; then
     printf "timeout"
+  elif [[ "$agent_exit" -ne 0 ]] && is_agent_infra_error "$stderr_log"; then
+    printf "agent_infra_error"
   elif [[ "$agent_exit" -ne 0 ]]; then
     printf "agent_error"
   elif [[ "$check_exit" -ne 0 ]]; then
@@ -271,6 +271,9 @@ if [[ "$mode" == "self-check" ]]; then
   [[ "$(extract_tokens_used "$parser_probe")" == "46684" ]] && ok "parseur tokens dernier bloc" || ko "parseur tokens dernier bloc"
   printf "ERROR: You've hit your usage limit. Visit https://chatgpt.com/codex/settings/usage to purchase more credits.\n" > "$parser_probe"
   is_agent_infra_error "$parser_probe" && ok "classification erreur infra agent" || ko "classification erreur infra agent"
+  [[ "$(failure_kind_for 1 1 "$parser_probe")" == "agent_infra_error" ]] && ok "failure_kind infra agent" || ko "failure_kind infra agent"
+  printf "contenu repo: auth, secrets, rate limiting et provisioning\n" > "$parser_probe"
+  [[ "$(failure_kind_for 0 1 "$parser_probe")" == "task_fail" ]] && ok "failure_kind task_fail malgré contenu infra" || ko "failure_kind task_fail malgré contenu infra"
   rm -f "$parser_probe"
   echo
   if [[ "$fail" -eq 0 ]]; then echo "✅ self-check OK (plumbing valide ; aucun agent invoqué)"; exit 0

@@ -1,0 +1,3 @@
+Fait : [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_context-1982850439-0002-feature-resume-without-2/work/BENCH_RESULT/feature-resume.json:1) contient exactement les 4 clés demandées.
+
+Vérifié avec `jq` : JSON valide, clés limitées à `feature`, `phase`, `updated`, `next`, et correspondance avec la feature active la plus récente : `product/agent-efficacy-benchmark`.

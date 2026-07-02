@@ -1,0 +1,1012 @@
+2026-07-02T13:07:49.053994Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+2026-07-02T13:07:49.054753Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+2026-07-02T13:07:49.116972Z ERROR codex_core::session::session: failed to load skill /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work/.agents/skills/aic-ship/SKILL.md: invalid YAML: mapping values are not allowed in this context at line 2 column 44
+2026-07-02T13:07:49.116998Z ERROR codex_core::session::session: failed to load skill /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work/.agents/skills/aib-debate-frame-action/SKILL.md: invalid YAML: mapping values are not allowed in this context at line 2 column 295
+2026-07-02T13:07:49.117003Z ERROR codex_core::session::session: failed to load skill /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work/.agents/skills/aib-debate-arbitrate/SKILL.md: invalid YAML: mapping values are not allowed in this context at line 2 column 237
+2026-07-02T13:07:49.117006Z ERROR codex_core::session::session: failed to load skill /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work/.agents/skills/aic-status/SKILL.md: invalid YAML: mapping values are not allowed in this context at line 2 column 42
+2026-07-02T13:07:49.141893Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-07-02T13:07:49.166492Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-07-02T13:07:49.191051Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-07-02T13:07:49.211195Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+2026-07-02T13:07:49.211967Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+OpenAI Codex v0.139.0
+--------
+workdir: /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+model: gpt-5.5
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 019f22f1-54a1-77d0-be09-aa69e354e785
+--------
+user
+# Tâche 0002 — reprise depuis le feature mesh
+
+## Prompt (donné à l'agent)
+
+Inspecte le repo et identifie la feature `ai_context` active la plus probable à
+reprendre maintenant. Utilise les fichiers de contexte repo-native s'ils existent.
+
+Crée `BENCH_RESULT/feature-resume.json` à la racine du repo avec exactement ces
+clés JSON :
+
+```json
+{
+  "feature": "<scope/id>",
+  "phase": "<progress.phase>",
+  "updated": "<progress.updated>",
+  "next": "<progress.resume_hint>"
+}
+```
+
+Sélectionne la feature `status: active` dont `progress.updated` est le plus récent.
+En cas d'égalité, choisis l'id lexicalement le plus petit. N'ajoute aucun autre
+champ.
+
+## Critère de succès (humain-lisible)
+
+Le JSON existe, il est valide, et ses quatre valeurs correspondent exactement à la
+feature active la plus fraîche du feature mesh source. Le grader objectif est
+`check.sh`.
+
+2026-07-02T13:07:49.265428Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:07:49.300255Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T13:07:49.304583Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:07:49.321765Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:49.321785Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:49.322141Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:49.322156Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:49.322522Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:49.322533Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:49.322871Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:49.322882Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:49.323236Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:49.323243Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:49.324083Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:49.324091Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:49.736852Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:07:49.745418Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:07:49.745459Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:07:51.137653Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T13:07:51.141944Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:07:51.159692Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:51.159712Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:51.160084Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:51.160092Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:51.160473Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:51.160482Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:51.160828Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:51.160835Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:51.161169Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:51.161175Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:51.161985Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:51.161997Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:07:51.573712Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:07:51.582288Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:07:51.582327Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+exec
+/bin/zsh -lc 'cat .ai/index.md' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ succeeded in 0ms:
+# AI Context Index — ai_debate
+
+Entrée unique des agents. Mode par défaut : **lean context**.
+
+## Pack A — always load
+
+Lire uniquement ceci au démarrage :
+
+- Requête utilisateur.
+- Ce fichier (`.ai/index.md`).
+- `git status --short`.
+- Fichiers d'implémentation les plus proches, trouvés par `rg` ciblé.
+
+Invariants :
+- Un scope primaire par tâche. Cross-scope ⇒ `HANDOFF` explicite + confirmation.
+- Ne charger que le contexte nécessaire. Pas de docs/catalog/index/cache/logs/full diff par défaut.
+- Avant `feat:` : une fiche `.docs/features/<scope>/<id>.md` doit être créée ou mise à jour.
+- Avant DONE : exécuter la delivery gate et mettre à jour les docs impactées.
+- Commits en français.
+
+## Commit & Doc Level
+
+Choisir le type de commit selon l'intention :
+
+- `feat:` : nouveau comportement utilisateur, agent, workflow ou contrat ; exige une fiche feature créée ou mise à jour dans le même commit.
+- `fix:` : correction d'un comportement cassé ou dangereux ; rattacher à une fiche existante si un `touches:` couvre la surface.
+- `refactor:` : restructuration sans changement de comportement attendu ; documenter l'impact dans le worklog de la feature couvrante.
+- `chore:` : maintenance, outillage ou métadonnées sans effet produit direct ; pas de contournement pour livrer une vraie feature sans fiche.
+- `docs:` : documentation seule ; utiliser si le delta ne modifie ni comportement runtime ni contrat.
+
+`doc.level` :
+
+- `brief` : changement interne étroit, faible risque, sans nouveau contrat durable.
+- `standard` : défaut pour une feature ou un contrat maintenu.
+- `full` : surface critique, sécurité, données, rollout, observabilité, API stable ou impact multi-scope.
+
+## Scope Routing
+
+Ne charge `.ai/rules/<scope>.md` que si le scope est clair et utile à l'édition.
+Si le scope est incertain, utiliser cette table puis charger **un seul** fichier de scope.
+
+| Scope | Quand charger |
+|---|---|
+| `core` | Règles propres au scope `core` |
+| `quality` | Règles qualité spécifiques au projet, près de DONE |
+| `workflow` | Routage ou procédure si le flux est ambigu |
+| `product` | Initiative, roadmap, décision produit, traceability |
+| `back` | API, domaine, persistance, services backend |
+| `front` | UI, routes frontend, état client, design system |
+| `architecture` | Structure transversale, contrats, ADR, migration |
+| `security` | Auth, droits, secrets, données sensibles |
+| `handoff` | Passage explicite entre scopes |
+
+## Project Overlay
+
+Si `.ai/project/index.md` existe, le lire maintenant. Ne pas précharger le reste de `.ai/project/**` : ce fichier projet décide seul quelles règles locales charger.
+
+## On Demand
+
+- Feature docs : charger seulement si l'intent ou les paths matchent une feature ; si un path est connu, préférer `bash .ai/scripts/features-for-path.sh <path> --with-docs` avant tout listing de dossiers.
+- `depends_on` : suivre seulement les dépendances nécessaires à la décision ou à l'édition.
+- Quality gate : charger `.ai/quality/QUALITY_GATE.md` ou `.ai/workflows/quality-gate.md` près de DONE, ou tôt pour tâches risquées (contrat, doc canonique, sécurité, DB).
+- Agent guidance : `.ai/agent/*` est optionnel, jamais Pack A.
+- Guardrails projet : charger `.ai/guardrails.md` seulement pour cadrage produit, non-goals ou glossaire métier.
+- Legacy/local rules : charger seulement le pointeur ou fichier local qui matche les paths touchés.
+- Catalogues, références, worklogs, changelogs, skills, indexes générés, caches et diffs complets : recherche ciblée uniquement.
+
+## Exclusions
+
+Pour la récupération de contexte Codex, considérer on-demand seulement : `.claude/skills/**`, `.ai/docs/**`, `.ai/tests/**`, `docs/reference/**`, docs de migration, caches générés, logs/worklogs, diffs complets, larges listings récursifs. Détail : `.ai/context-ignore.md`.
+
+2026-07-02T13:08:01.689203Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T13:08:01.693769Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:08:01.711318Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:01.711341Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:01.711744Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:01.711753Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:01.712122Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:01.712135Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:01.712506Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:01.712514Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:01.712896Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:01.712901Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:01.713619Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:01.713627Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:02.143132Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:08:02.151981Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:08:02.152026Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+J’ai chargé `.ai/index.md` comme demandé. J’utilise maintenant la skill `aic-feature-resume`, car la tâche consiste à reprendre l’état actif depuis le feature mesh.
+exec
+/bin/zsh -lc 'cat .agents/skills/aic-feature-resume/SKILL.md' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ succeeded in 0ms:
+---
+name: aic-feature-resume
+description: Reprend le travail en cours sur une feature via l'index et les buckets EN COURS / BLOQUÉES / STALE / À FAIRE. Primitive interne (fallback) ; usage recommandé via aic-status qui s'appuie sur .ai/workflows/feature-resume.md. Ne pas invoquer par matching lexical implicite ("reprise", "où en est").
+---
+
+Suivre `workflow.md` dans ce dossier.
+
+exec
+/bin/zsh -lc 'git status --short' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ exited 128 in 0ms:
+fatal: not a git repository (or any of the parent directories): .git
+
+exec
+/bin/zsh -lc 'find .ai/project -maxdepth 1 -name index.md -type f' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ exited 1 in 0ms:
+find: .ai/project: No such file or directory
+
+2026-07-02T13:08:16.456057Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T13:08:16.460439Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:08:16.478179Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:16.478204Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:16.478559Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:16.478568Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:16.478930Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:16.478941Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:16.479330Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:16.479338Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:16.479752Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:16.479786Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:16.480634Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:16.480655Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:16.889579Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:08:16.898281Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:08:16.898320Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Le contexte projet additionnel `.ai/project/index.md` n’existe pas ici, et `git status` indique que ce dossier de bench n’est pas un dépôt Git initialisé. Je continue avec les fichiers repo-native disponibles sous `.ai` et `.docs`.
+exec
+/bin/zsh -lc 'cat .agents/skills/aic-feature-resume/workflow.md' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ succeeded in 0ms:
+# Workflow — aic-feature-resume
+
+## Invocation guard
+
+Primitive interne (fallback). N'exécuter que sur invocation explicite :
+
+- nom littéral `aic-feature-resume` cité par l'utilisateur ;
+- chemin `.ai/workflows/feature-resume.md` cité ;
+- instruction explicite "utilise la primitive feature-resume".
+
+Sur sélection implicite par matching lexical ("reprise", "où en est", "continuer", "où je suis") → STOP, ne pas exécuter, rediriger vers `aic-status`. Chemin propre : intention publique → `.ai/workflows/feature-resume.md`, sans retour vers cette primitive.
+
+## Procédure canonique
+
+Lire et suivre :
+
+```text
+.ai/workflows/feature-resume.md
+```
+
+2026-07-02T13:08:24.931206Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T13:08:24.935838Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:08:24.953000Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:24.953022Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:24.953383Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:24.953393Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:24.953753Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:24.953762Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:24.954115Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:24.954123Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:24.954507Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:24.954515Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:24.955200Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:24.955210Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:25.359802Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:08:25.368571Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:08:25.368615Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+La primitive interne refuse l’usage par simple matching lexical ; je bascule donc sur le chemin public indiqué par la skill, puis je vais chercher uniquement les fichiers nécessaires au feature mesh.
+exec
+/bin/zsh -lc 'cat .ai/workflows/feature-resume.md' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ succeeded in 0ms:
+# Procédure interne — feature-resume
+
+**Goal** : reprendre un travail interrompu (nouvelle session, switch de branche, bascule de scope) sans perdre le fil.
+
+**Role** : Lecteur d'état. Zéro écriture dans cette procédure.
+
+**Procedure chain** : `.ai/workflows/feature-resume.md` → (travail) → `.ai/workflows/feature-update.md` (à chaque pause) → `.ai/workflows/feature-done.md`.
+
+## PHASES
+
+### Phase 1 — Scan
+Exécuter :
+```bash
+bash .ai/scripts/resume-features.sh
+```
+Output attendu : 4 buckets (EN COURS / BLOQUÉES / STALE / À FAIRE).
+
+### Phase 2 — Sélection
+- Si **un seul** candidat EN COURS → le charger d'office.
+- Si **plusieurs** → demander à l'utilisateur laquelle reprendre (ne PAS deviner).
+- Si **aucun EN COURS** mais BLOQUÉES → lister les blockers, demander si on débloque.
+- Si vide total → suggérer `feature-new`.
+
+### Phase 3 — Chargement du contexte
+Pour la feature choisie (`<scope>/<id>`) :
+1. Lire `.docs/features/<scope>/<id>.md` **en entier** (frontmatter + corps).
+2. Lire `.docs/features/<scope>/<id>.worklog.md` **en entier** (last-in, last-out : la fin décrit l'état actuel).
+3. Lire `.ai/rules/<scope>.md` si pas déjà chargé ce tour.
+4. Résumer à l'utilisateur en 3-5 lignes :
+   - Où on en est (`progress.phase` + `progress.step`)
+   - Dernière entrée du worklog
+   - Blockers éventuels
+   - Prochaine action recommandée (depuis `progress.resume_hint`)
+
+### Phase 4 — Confirmation
+Demander explicitement : "Je reprends ici, d'accord ?" avant toute écriture de code.
+
+## NON-NEGOTIABLE RULES
+
+- **Ne jamais supposer** quelle feature reprendre sans confirmation explicite.
+- Si `progress.updated` > 14j → signaler la staleness, demander si la spec est encore valide.
+- Si le worklog contredit `progress.phase` → warn et demander arbitrage.
+- Après reprise → le prochain `feature-update` DOIT refléter le fait qu'on a repris (ligne "reprise par <session>").
+
+exec
+/bin/zsh -lc "rg --files -g '*feature*' .ai .docs" in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ succeeded in 0ms:
+.ai/workflows/document-feature.md
+.ai/workflows/feature-new.md
+.ai/workflows/feature-audit.md
+.ai/workflows/feature-done.md
+.ai/workflows/feature-update.md
+.ai/workflows/feature-resume.md
+.ai/workflows/feature-handoff.md
+.ai/.feature-index.json
+.ai/schema/feature.schema.json
+.ai/scripts/audit-features.sh
+.ai/scripts/build-feature-index.sh
+.ai/scripts/check-commit-features.sh
+.ai/scripts/check-feature-freshness.sh
+.ai/scripts/check-feature-coverage.sh
+.ai/scripts/resume-features.sh
+.ai/scripts/check-feature-docs.sh
+.ai/scripts/migrate-features.sh
+.ai/scripts/features-for-path.sh
+.ai/scripts/check-features.sh
+
+exec
+/bin/zsh -lc 'rg -n "''^status:|''^progress:|updated:|resume_hint:|phase:" .docs/features .ai' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ succeeded in 0ms:
+.ai/config.yml:35:progress:
+.docs/features/workflow/aib-debate-plan-action-v1.md:5:status: active
+.docs/features/workflow/aib-debate-plan-action-v1.md:35:progress:
+.docs/features/workflow/aib-debate-plan-action-v1.md:36:  phase: review
+.docs/features/workflow/aib-debate-plan-action-v1.md:39:  resume_hint: "La refonte v1 est implémentée. Reprendre sur A5 quand un débat externe non-méta permettra de noter utile/neutre/trop coûteux dans decision-log."
+.docs/features/workflow/aib-debate-plan-action-v1.md:40:  updated: 2026-06-17
+.ai/scripts/aic-undo.sh:98:  in_fm && in_prog && /^  phase:/ && phase_done==0 {print "  phase: " fp; phase_done=1; next}
+.docs/features/workflow/aib-debate-template-hygiene.md:5:status: done
+.docs/features/workflow/aib-debate-template-hygiene.md:26:progress:
+.docs/features/workflow/aib-debate-template-hygiene.md:27:  phase: done
+.docs/features/workflow/aib-debate-template-hygiene.md:30:  resume_hint: "feature clôturée le 2026-05-08"
+.docs/features/workflow/aib-debate-template-hygiene.md:31:  updated: 2026-05-08
+.docs/features/workflow/aib-debate-frame-action-skill.md:5:status: active
+.docs/features/workflow/aib-debate-frame-action-skill.md:33:progress:
+.docs/features/workflow/aib-debate-frame-action-skill.md:34:  phase: implement
+.docs/features/workflow/aib-debate-frame-action-skill.md:37:  resume_hint: "Feature prête pour review finale : vérifier les skills miroirs, le contrat frame et la reprise 0013/Q0."
+.docs/features/workflow/aib-debate-frame-action-skill.md:38:  updated: 2026-05-12
+.ai/scripts/check-features.sh:115:    in_progress && /^[[:space:]]*phase:[[:space:]]*/ {
+.ai/scripts/check-features.sh:117:      sub(/^[[:space:]]*phase:[[:space:]]*/, "", line)
+.docs/features/workflow/ai-context-runtime-update.md:5:status: done
+.docs/features/workflow/ai-context-runtime-update.md:31:progress:
+.docs/features/workflow/ai-context-runtime-update.md:32:  phase: done
+.docs/features/workflow/ai-context-runtime-update.md:35:  resume_hint: "Feature clôturée ; reprendre seulement si une nouvelle synchronisation ai_context est nécessaire."
+.docs/features/workflow/ai-context-runtime-update.md:36:  updated: 2026-06-02
+.docs/features/workflow/aib-debate-auto-skill.md:5:status: active
+.docs/features/workflow/aib-debate-auto-skill.md:26:progress:
+.docs/features/workflow/aib-debate-auto-skill.md:27:  phase: review
+.docs/features/workflow/aib-debate-auto-skill.md:30:  resume_hint: "Tester /aib-debate-auto sur une discussion avec STOP humain pour confirmer que la question, les options et le recap court suffisent a arbitrer."
+.docs/features/workflow/aib-debate-auto-skill.md:31:  updated: 2026-05-08
+.ai/workflows/feature-done.md:33:status: done
+.ai/workflows/feature-done.md:34:progress:
+.ai/workflows/feature-done.md:35:  phase: done
+.ai/workflows/feature-done.md:38:  resume_hint: "feature clôturée le <date>"
+.ai/workflows/feature-done.md:39:  updated: <YYYY-MM-DD>
+.docs/features/architecture/orchestrateur-dialogue.md:5:status: done
+.docs/features/architecture/orchestrateur-dialogue.md:29:progress:
+.docs/features/architecture/orchestrateur-dialogue.md:30:  phase: done
+.docs/features/architecture/orchestrateur-dialogue.md:33:  resume_hint: "feature cloturee le 2026-05-08"
+.docs/features/architecture/orchestrateur-dialogue.md:34:  updated: 2026-05-08
+.ai/scripts/audit-features.sh:211:status: draft
+.ai/workflows/document-feature.md:230:- `progress.phase: done` seulement si l'evidence le justifie.
+.ai/scripts/auto-progress.sh:9:#   - feature en `progress.phase: spec`
+.ai/scripts/auto-progress.sh:122:    '{ts: $ts, feature: $feature, path: $path, from: {phase: $from_phase, status: $from_status}, to: {phase: $to_phase, status: $to_status}}'
+.ai/scripts/auto-progress.sh:137:  # Patch frontmatter : phase: spec → implement, updated: today
+.ai/scripts/auto-progress.sh:144:    in_fm && in_prog && /^  phase: spec[[:space:]]*$/{print "  phase: implement"; next}
+.ai/scripts/auto-progress.sh:145:    in_fm && in_prog && /^  updated:/{print "  updated: " today; next}
+.docs/features/architecture/local-supervised-control-plane.md:5:status: done
+.docs/features/architecture/local-supervised-control-plane.md:28:progress:
+.docs/features/architecture/local-supervised-control-plane.md:29:  phase: done
+.docs/features/architecture/local-supervised-control-plane.md:32:  resume_hint: "Feature close. Activation durable dans config.yml = discussion séparée à ouvrir si besoin."
+.docs/features/architecture/local-supervised-control-plane.md:33:  updated: 2026-05-07
+.ai/workflows/feature-update.md:43:progress:
+.ai/workflows/feature-update.md:44:  phase: <new|unchanged>
+.ai/workflows/feature-update.md:47:  resume_hint: "<mis à jour>"
+.ai/workflows/feature-update.md:48:  updated: <YYYY-MM-DD d'aujourd'hui>
+.ai/workflows/feature-new.md:62:- `progress.phase: spec`, `progress.updated: <YYYY-MM-DD>`, autres champs vides
+.docs/features/architecture/ai-debate-turn-empty-lists.md:5:status: active
+.docs/features/architecture/ai-debate-turn-empty-lists.md:26:progress:
+.docs/features/architecture/ai-debate-turn-empty-lists.md:27:  phase: review
+.docs/features/architecture/ai-debate-turn-empty-lists.md:30:  resume_hint: "Relancer `bin/ai-debate run 0013 --next codex --max-turns 100 --context-mode read-only --allow-real-agents --timeout-seconds 900` si la reprise du débat est demandée."
+.docs/features/architecture/ai-debate-turn-empty-lists.md:31:  updated: "2026-05-09"
+.docs/features/architecture/arbitrage-humain-orchestre.md:5:status: done
+.docs/features/architecture/arbitrage-humain-orchestre.md:31:progress:
+.docs/features/architecture/arbitrage-humain-orchestre.md:32:  phase: done
+.docs/features/architecture/arbitrage-humain-orchestre.md:35:  resume_hint: "feature clôturée le 2026-05-08"
+.docs/features/architecture/arbitrage-humain-orchestre.md:36:  updated: 2026-06-17
+.ai/scripts/auto-worklog-flush.sh:64:    if grep -qE '^  updated:' "$feature_md"; then
+.ai/scripts/auto-worklog-flush.sh:71:        in_fm && in_prog && /^  updated:/{print "  updated: " today; next}
+.ai/scripts/auto-worklog-flush.sh:76:    # Si progress: existe mais pas updated:, on ne l'ajoute pas (structure trop fragile en awk).
+.ai/scripts/build-feature-index.sh:181:    phase=$(awk '/^progress:/{flag=1; next} flag && /^  phase:/{sub(/^  phase:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/["'"'"']//g; s/[[:space:]]+$//')
+.ai/scripts/build-feature-index.sh:183:    resume_hint=$(awk '/^progress:/{flag=1; next} flag && /^  resume_hint:/{sub(/^  resume_hint:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/^"//; s/"$//; s/[[:space:]]+$//')
+.ai/scripts/build-feature-index.sh:184:    updated=$(awk '/^progress:/{flag=1; next} flag && /^  updated:/{sub(/^  updated:[[:space:]]*/, ""); print; exit}' "$file" | sed -E 's/["'"'"']//g; s/[[:space:]]+$//')
+.ai/scripts/build-feature-index.sh:228:        phase: $phase, step: $step, blockers: $blockers,
+.ai/scripts/build-feature-index.sh:229:        resume_hint: $resume_hint, updated: $updated
+.docs/features/architecture/orchestrateur-dialogue.worklog.md:25:- Statut : `phase: spec`, en attente review Codex. Pas d'ADR ni de code tant que cette review n'est pas accusée.
+
+2026-07-02T13:08:40.510193Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T13:08:40.514497Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:08:40.531739Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:40.531758Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:40.532141Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:40.532158Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:40.532499Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:40.532510Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:40.532850Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:40.532857Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:40.533205Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:40.533217Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:40.534010Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:40.534016Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:40.943971Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:08:40.952413Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:08:40.952454Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Les candidats actifs apparaissent sous `.docs/features`, et `.ai/.feature-index.json` existe comme index généré du mesh. Je vais l’inspecter pour éviter de déduire l’état à partir d’un simple grep.
+exec
+/bin/zsh -lc 'cat .ai/.feature-index.json' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ succeeded in 0ms:
+{
+  "schema_version": "1",
+  "project_id": "ai_debate",
+  "generated_at": "2026-07-02T12:41:23Z",
+  "features": [
+    {
+      "id": "ai-debate-turn-empty-lists",
+      "scope": "architecture",
+      "status": "active",
+      "path": ".docs/features/architecture/ai-debate-turn-empty-lists.md",
+      "touches": [
+        "lib/ai_debate/contracts.py",
+        "lib/ai_debate/prompts.py",
+        "tests/test_contracts.py",
+        "tests/test_prompts.py"
+      ],
+      "touches_shared": [],
+      "depends_on": [
+        "architecture/orchestrateur-dialogue"
+      ],
+      "product": {},
+      "external_refs": {
+        "discussion": ".ai-debate/discussions/0013-qualite-code-ai-context.md"
+      },
+      "progress": {
+        "phase": "review",
+        "step": "Correctif prêt, reprise 0013 à relancer",
+        "blockers": [],
+        "resume_hint": "Relancer `bin/ai-debate run 0013 --next codex --max-turns 100 --context-mode read-only --allow-real-agents --timeout-seconds 900` si la reprise du débat est demandée.",
+        "updated": "2026-05-09"
+      }
+    },
+    {
+      "id": "arbitrage-humain-orchestre",
+      "scope": "architecture",
+      "status": "done",
+      "path": ".docs/features/architecture/arbitrage-humain-orchestre.md",
+      "touches": [
+        "bin/ai-debate",
+        "lib/ai_debate/**",
+        "tests/**",
+        ".agents/skills/aib-debate-arbitrate/**",
+        ".claude/skills/aib-debate-arbitrate/**",
+        ".agents/skills/aib-debate-auto/**",
+        ".claude/skills/aib-debate-auto/**"
+      ],
+      "touches_shared": [
+        ".ai-debate/README.md",
+        ".ai-debate/workflow.md"
+      ],
+      "depends_on": [
+        "architecture/orchestrateur-dialogue"
+      ],
+      "product": {},
+      "external_refs": {
+        "discussion": ".ai-debate/discussions/0011-pertinence-projet-roadmap-limites.md"
+      },
+      "progress": {
+        "phase": "done",
+        "step": "",
+        "blockers": [],
+        "resume_hint": "feature clôturée le 2026-05-08",
+        "updated": "2026-06-17"
+      }
+    },
+    {
+      "id": "local-supervised-control-plane",
+      "scope": "architecture",
+      "status": "done",
+      "path": ".docs/features/architecture/local-supervised-control-plane.md",
+      "touches": [
+        ".ai/guardrails.md",
+        ".ai-debate/templates/execution-run.md",
+        ".ai-debate/templates/governance.md",
+        ".ai-debate/runs/**",
+        ".ai-debate/governance/**",
+        ".ai-debate/discussions/0007-ai-debate-control-plane-execution-inter-projets.md"
+      ],
+      "touches_shared": [
+        ".ai-debate/README.md"
+      ],
+      "depends_on": [],
+      "product": {},
+      "external_refs": {
+        "discussion": ".ai-debate/discussions/0007-ai-debate-control-plane-execution-inter-projets.md"
+      },
+      "progress": {
+        "phase": "done",
+        "step": "Option 2.5 validée empiriquement par le 2e pilote perso_ai_context",
+        "blockers": [],
+        "resume_hint": "Feature close. Activation durable dans config.yml = discussion séparée à ouvrir si besoin.",
+        "updated": "2026-05-07"
+      }
+    },
+    {
+      "id": "orchestrateur-dialogue",
+      "scope": "architecture",
+      "status": "done",
+      "path": ".docs/features/architecture/orchestrateur-dialogue.md",
+      "touches": [
+        "bin/ai-debate"
+      ],
+      "touches_shared": [
+        "lib/ai_debate/**",
+        "tests/**",
+        ".ai-debate/orchestrator/**",
+        ".ai-debate/README.md",
+        ".ai-debate/workflow.md",
+        ".ai-debate/discussions/**"
+      ],
+      "depends_on": [
+        "architecture/local-supervised-control-plane"
+      ],
+      "product": {},
+      "external_refs": {
+        "discussion": ".ai-debate/discussions/0009-orchestrateur-dialogue-ux-execution.md"
+      },
+      "progress": {
+        "phase": "done",
+        "step": "",
+        "blockers": [],
+        "resume_hint": "feature cloturee le 2026-05-08",
+        "updated": "2026-05-08"
+      }
+    },
+    {
+      "id": "ai-context-runtime-update",
+      "scope": "workflow",
+      "status": "done",
+      "path": ".docs/features/workflow/ai-context-runtime-update.md",
+      "touches": [
+        ".ai/**",
+        ".agents/skills/**",
+        ".claude/**",
+        ".github/workflows/ai-context-check.yml",
+        "README_AI_CONTEXT.md",
+        ".copier-answers.yml",
+        ".docs/frames/**"
+      ],
+      "touches_shared": [],
+      "depends_on": [
+        "architecture/orchestrateur-dialogue",
+        "workflow/aib-debate-auto-skill"
+      ],
+      "product": {},
+      "external_refs": {
+        "source_template": "gh:qhuy/ai_context",
+        "source_commit": "78be87db897298e1b1807cd9b7f5610955f3e6e8"
+      },
+      "progress": {
+        "phase": "done",
+        "step": "runtime ai_context synchronisé vers 0.13.0.post15 (HEAD) ; conflit pr-report résolu, checks PASS",
+        "blockers": [],
+        "resume_hint": "Feature clôturée ; reprendre seulement si une nouvelle synchronisation ai_context est nécessaire.",
+        "updated": "2026-06-02"
+      }
+    },
+    {
+      "id": "aib-debate-auto-skill",
+      "scope": "workflow",
+      "status": "active",
+      "path": ".docs/features/workflow/aib-debate-auto-skill.md",
+      "touches": [
+        ".agents/skills/aib-debate-auto/**",
+        ".claude/skills/aib-debate-auto/**"
+      ],
+      "touches_shared": [
+        ".ai-debate/README.md",
+        ".ai-debate/workflow.md"
+      ],
+      "depends_on": [
+        "architecture/orchestrateur-dialogue"
+      ],
+      "product": {},
+      "external_refs": {
+        "discussion": ".ai-debate/discussions/0009-orchestrateur-dialogue-ux-execution.md"
+      },
+      "progress": {
+        "phase": "review",
+        "step": "skill livre cote Codex et Claude ; restitution stop humain simplifiee ; attente retour d'usage",
+        "blockers": [],
+        "resume_hint": "Tester /aib-debate-auto sur une discussion avec STOP humain pour confirmer que la question, les options et le recap court suffisent a arbitrer.",
+        "updated": "2026-05-08"
+      }
+    },
+    {
+      "id": "aib-debate-frame-action-skill",
+      "scope": "workflow",
+      "status": "active",
+      "path": ".docs/features/workflow/aib-debate-frame-action-skill.md",
+      "touches": [
+        ".ai-debate/workflow.md",
+        ".ai-debate/discussions/0000-template.md",
+        ".agents/skills/aib-debate-new/**",
+        ".claude/skills/aib-debate-new/**",
+        ".agents/skills/aib-debate-frame-action/**",
+        ".claude/skills/aib-debate-frame-action/**",
+        "lib/ai_debate/status.py",
+        "tests/test_status.py"
+      ],
+      "touches_shared": [
+        ".ai-debate/discussions/0014-workflow-execution-plans-actions.md",
+        ".ai-debate/decision-log.md"
+      ],
+      "depends_on": [
+        "workflow/aib-debate-plan-action-v1"
+      ],
+      "product": {},
+      "external_refs": {
+        "discussion": ".ai-debate/discussions/0014-workflow-execution-plans-actions.md",
+        "target_capability": "aic-frame in target AIC repositories"
+      },
+      "progress": {
+        "phase": "implement",
+        "step": "F1-F4 done ; plan 0014 clos",
+        "blockers": [],
+        "resume_hint": "Feature prête pour review finale : vérifier les skills miroirs, le contrat frame et la reprise 0013/Q0.",
+        "updated": "2026-05-12"
+      }
+    },
+    {
+      "id": "aib-debate-plan-action-v1",
+      "scope": "workflow",
+      "status": "active",
+      "path": ".docs/features/workflow/aib-debate-plan-action-v1.md",
+      "touches": [
+        "README.md",
+        ".ai-debate/discussions/0000-template.md",
+        ".ai-debate/workflow.md",
+        ".ai-debate/README.md",
+        ".agents/skills/aib-debate-new/**",
+        ".claude/skills/aib-debate-new/**",
+        "bin/ai-debate",
+        "lib/ai_debate/**",
+        "tests/**"
+      ],
+      "touches_shared": [
+        ".ai-debate/discussions/0012-refonte-workflow-debat-plan-action.md",
+        ".ai-debate/decision-log.md"
+      ],
+      "depends_on": [
+        "workflow/aib-debate-template-hygiene",
+        "architecture/arbitrage-humain-orchestre"
+      ],
+      "product": {},
+      "external_refs": {
+        "discussion": ".ai-debate/discussions/0012-refonte-workflow-debat-plan-action.md",
+        "prior_decision": ".ai-debate/discussions/0011-pertinence-projet-roadmap-limites.md"
+      },
+      "progress": {
+        "phase": "review",
+        "step": "README produit simplifié autour des skills ; A0-A4 done ; A5 en attente du prochain débat externe réel",
+        "blockers": [],
+        "resume_hint": "La refonte v1 est implémentée. Reprendre sur A5 quand un débat externe non-méta permettra de noter utile/neutre/trop coûteux dans decision-log.",
+        "updated": "2026-06-17"
+      }
+    },
+    {
+      "id": "aib-debate-template-hygiene",
+      "scope": "workflow",
+      "status": "done",
+      "path": ".docs/features/workflow/aib-debate-template-hygiene.md",
+      "touches": [
+        ".ai-debate/discussions/0000-template.md",
+        ".agents/skills/aib-debate-new/**",
+        ".claude/skills/aib-debate-new/**"
+      ],
+      "touches_shared": [
+        ".ai-debate/workflow.md",
+        ".ai-debate/discussions/0010-pertinence-format-debats-ai-debate.md"
+      ],
+      "depends_on": [],
+      "product": {},
+      "external_refs": {
+        "discussion": ".ai-debate/discussions/0010-pertinence-format-debats-ai-debate.md"
+      },
+      "progress": {
+        "phase": "done",
+        "step": "",
+        "blockers": [],
+        "resume_hint": "feature clôturée le 2026-05-08",
+        "updated": "2026-05-08"
+      }
+    }
+  ]
+}
+
+exec
+/bin/zsh -lc 'bash .ai/scripts/resume-features.sh' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ succeeded in 0ms:
+═══ resume-features ═══
+
+▶ EN COURS
+  architecture/ai-debate-turn-empty-lists  phase=review step="Correctif prêt, reprise 0013 à relancer"  updated=2026-05-09
+      ↳ Relancer `bin/ai-debate run 0013 --next codex --max-turns 100 --context-mode read-only --allow-real-agents --timeout-seconds 900` si la reprise du débat est demandée.
+  workflow/aib-debate-auto-skill  phase=review step="skill livre cote Codex et Claude ; restitution stop humain simplifiee ; attente retour d'usage"  updated=2026-05-08
+      ↳ Tester /aib-debate-auto sur une discussion avec STOP humain pour confirmer que la question, les options et le recap court suffisent a arbitrer.
+  workflow/aib-debate-frame-action-skill  phase=implement step="F1-F4 done ; plan 0014 clos"  updated=2026-05-12
+      ↳ Feature prête pour review finale : vérifier les skills miroirs, le contrat frame et la reprise 0013/Q0.
+  workflow/aib-debate-plan-action-v1  phase=review step="README produit simplifié autour des skills ; A0-A4 done ; A5 en attente du prochain débat externe réel"  updated=2026-06-17
+      ↳ La refonte v1 est implémentée. Reprendre sur A5 quand un débat externe non-méta permettra de noter utile/neutre/trop coûteux dans decision-log.
+
+⏳ STALE (>14j sans update)
+  architecture/ai-debate-turn-empty-lists  phase=review step="Correctif prêt, reprise 0013 à relancer"  updated=2026-05-09
+      ↳ Relancer `bin/ai-debate run 0013 --next codex --max-turns 100 --context-mode read-only --allow-real-agents --timeout-seconds 900` si la reprise du débat est demandée.
+  workflow/aib-debate-auto-skill  phase=review step="skill livre cote Codex et Claude ; restitution stop humain simplifiee ; attente retour d'usage"  updated=2026-05-08
+      ↳ Tester /aib-debate-auto sur une discussion avec STOP humain pour confirmer que la question, les options et le recap court suffisent a arbitrer.
+  workflow/aib-debate-frame-action-skill  phase=implement step="F1-F4 done ; plan 0014 clos"  updated=2026-05-12
+      ↳ Feature prête pour review finale : vérifier les skills miroirs, le contrat frame et la reprise 0013/Q0.
+  workflow/aib-debate-plan-action-v1  phase=review step="README produit simplifié autour des skills ; A0-A4 done ; A5 en attente du prochain débat externe réel"  updated=2026-06-17
+      ↳ La refonte v1 est implémentée. Reprendre sur A5 quand un débat externe non-méta permettra de noter utile/neutre/trop coûteux dans decision-log.
+
+
+2026-07-02T13:08:52.177253Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T13:08:52.198314Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:08:52.218515Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:52.218535Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:52.218893Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:52.218904Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:52.219234Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:52.219241Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:52.219576Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:52.219582Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:52.219914Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:52.219920Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:52.220785Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:52.220792Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:08:52.678045Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:08:52.687262Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:08:52.687300Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+La feature active la plus récente est `workflow/aib-debate-plan-action-v1` avec `progress.updated` à `2026-06-17`. Je vais créer le résultat de bench avec les quatre champs demandés, en reprenant le `resume_hint` tel quel depuis l’index.
+exec
+/bin/zsh -lc 'mkdir -p BENCH_RESULT' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ succeeded in 0ms:
+exec
+/bin/zsh -lc 'test -e BENCH_RESULT/feature-resume.json' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ exited 1 in 0ms:
+2026-07-02T13:09:08.886494Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T13:09:08.891174Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:09:08.909651Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:08.909674Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:08.910046Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:08.910057Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:08.910421Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:08.910428Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:08.910792Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:08.910803Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:08.911175Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:08.911182Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:08.911937Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:08.911953Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:09.313964Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:09:09.322835Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:09:09.322879Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+`BENCH_RESULT` est prêt et le fichier cible n’existait pas encore. J’ajoute maintenant le JSON attendu.
+apply patch
+patch: completed
+/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work/BENCH_RESULT/feature-resume.json
+diff --git a/BENCH_RESULT/feature-resume.json b/BENCH_RESULT/feature-resume.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..151b70e5f89929ca3923c3401bed0c887a4d0ecb
+--- /dev/null
++++ b/BENCH_RESULT/feature-resume.json
+@@ -0,0 +1,6 @@
++{
++  "feature": "workflow/aib-debate-plan-action-v1",
++  "phase": "review",
++  "updated": "2026-06-17",
++  "next": "La refonte v1 est implémentée. Reprendre sur A5 quand un débat externe non-méta permettra de noter utile/neutre/trop coûteux dans decision-log."
++}
+
+diff --git a/BENCH_RESULT/feature-resume.json b/BENCH_RESULT/feature-resume.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..151b70e5f89929ca3923c3401bed0c887a4d0ecb
+--- /dev/null
++++ b/BENCH_RESULT/feature-resume.json
+@@ -0,0 +1,6 @@
++{
++  "feature": "workflow/aib-debate-plan-action-v1",
++  "phase": "review",
++  "updated": "2026-06-17",
++  "next": "La refonte v1 est implémentée. Reprendre sur A5 quand un débat externe non-méta permettra de noter utile/neutre/trop coûteux dans decision-log."
++}
+
+2026-07-02T13:09:14.273621Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T13:09:14.277300Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:09:14.294240Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:14.294256Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:14.294568Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:14.294576Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:14.294886Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:14.294897Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:14.295234Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:14.295242Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:14.295610Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:14.295617Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:14.296333Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:14.296343Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:14.734583Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:09:14.744073Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:09:14.744118Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Le fichier est écrit. Je vérifie maintenant la validité JSON et le check objectif du bench.
+exec
+/bin/zsh -lc 'python -m json.tool BENCH_RESULT/feature-resume.json' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ exited 127 in 0ms:
+zsh:1: command not found: python
+
+exec
+/bin/zsh -lc 'bash check.sh' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ exited 127 in 0ms:
+bash: check.sh: No such file or directory
+
+2026-07-02T13:09:24.289522Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T13:09:24.293774Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+diff --git a/BENCH_RESULT/feature-resume.json b/BENCH_RESULT/feature-resume.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..151b70e5f89929ca3923c3401bed0c887a4d0ecb
+--- /dev/null
++++ b/BENCH_RESULT/feature-resume.json
+@@ -0,0 +1,6 @@
++{
++  "feature": "workflow/aib-debate-plan-action-v1",
++  "phase": "review",
++  "updated": "2026-06-17",
++  "next": "La refonte v1 est implémentée. Reprendre sur A5 quand un débat externe non-méta permettra de noter utile/neutre/trop coûteux dans decision-log."
++}
+
+2026-07-02T13:09:24.310868Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:24.310892Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:24.311243Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:24.311256Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:24.311612Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:24.311621Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:24.312038Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:24.312050Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:24.312439Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:24.312451Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:24.313269Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:24.313278Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:24.740714Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:09:24.749819Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:09:24.749856Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+`python` n’est pas installé sous ce nom et `check.sh` n’est pas présent à la racine. Je vérifie avec `python3` et je cherche rapidement si le check a été placé ailleurs dans ce workspace.
+exec
+/bin/zsh -lc 'find . -maxdepth 3 -name check.sh -type f' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ succeeded in 0ms:
+exec
+/bin/zsh -lc 'python3 -m json.tool BENCH_RESULT/feature-resume.json' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ succeeded in 0ms:
+{
+    "feature": "workflow/aib-debate-plan-action-v1",
+    "phase": "review",
+    "updated": "2026-06-17",
+    "next": "La refonte v1 est impl\u00e9ment\u00e9e. Reprendre sur A5 quand un d\u00e9bat externe non-m\u00e9ta permettra de noter utile/neutre/trop co\u00fbteux dans decision-log."
+}
+
+exec
+/bin/zsh -lc "sed -n '1,20p' BENCH_RESULT/feature-resume.json" in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ succeeded in 0ms:
+{
+  "feature": "workflow/aib-debate-plan-action-v1",
+  "phase": "review",
+  "updated": "2026-06-17",
+  "next": "La refonte v1 est implémentée. Reprendre sur A5 quand un débat externe non-méta permettra de noter utile/neutre/trop coûteux dans decision-log."
+}
+
+2026-07-02T13:09:37.729065Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T13:09:37.733640Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+diff --git a/BENCH_RESULT/feature-resume.json b/BENCH_RESULT/feature-resume.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..151b70e5f89929ca3923c3401bed0c887a4d0ecb
+--- /dev/null
++++ b/BENCH_RESULT/feature-resume.json
+@@ -0,0 +1,6 @@
++{
++  "feature": "workflow/aib-debate-plan-action-v1",
++  "phase": "review",
++  "updated": "2026-06-17",
++  "next": "La refonte v1 est implémentée. Reprendre sur A5 quand un débat externe non-méta permettra de noter utile/neutre/trop coûteux dans decision-log."
++}
+
+2026-07-02T13:09:37.750424Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:37.750446Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:37.750793Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:37.750807Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:37.751148Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:37.751170Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:37.751508Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:37.751519Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:37.751920Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:37.751929Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:37.752680Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:37.752686Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:38.156556Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:09:38.164955Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:09:38.164992Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Le JSON est valide, et aucun `check.sh` n’a été trouvé sous ce workspace. Je fais une dernière vérification programmatique contre `.ai/.feature-index.json` pour confirmer la sélection et les quatre champs.
+exec
+/bin/zsh -lc "python3 - <<'PY'
+import json
+from pathlib import Path
+idx = json.loads(Path('.ai/.feature-index.json').read_text())
+active = [f for f in idx['features'] if f['status'] == 'active']
+selected = sorted(active, key=lambda f: (f['progress']['updated'], ''.join([f['scope'], '/', f['id']])), reverse=True)[0]
+expected = {
+    'feature': f\"{selected['scope']}/{selected['id']}\",
+    'phase': selected['progress']['phase'],
+    'updated': selected['progress']['updated'],
+    'next': selected['progress']['resume_hint'],
+}
+actual = json.loads(Path('BENCH_RESULT/feature-resume.json').read_text())
+print('expected=', json.dumps(expected, ensure_ascii=False, sort_keys=True))
+print('actual=', json.dumps(actual, ensure_ascii=False, sort_keys=True))
+print('match=', actual == expected and list(actual.keys()) == ['feature', 'phase', 'updated', 'next'])
+PY" in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work
+ succeeded in 0ms:
+expected= {"feature": "workflow/aib-debate-plan-action-v1", "next": "La refonte v1 est implémentée. Reprendre sur A5 quand un débat externe non-méta permettra de noter utile/neutre/trop coûteux dans decision-log.", "phase": "review", "updated": "2026-06-17"}
+actual= {"feature": "workflow/aib-debate-plan-action-v1", "next": "La refonte v1 est implémentée. Reprendre sur A5 quand un débat externe non-méta permettra de noter utile/neutre/trop coûteux dans decision-log.", "phase": "review", "updated": "2026-06-17"}
+match= True
+
+2026-07-02T13:09:54.631491Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T13:09:54.635818Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+diff --git a/BENCH_RESULT/feature-resume.json b/BENCH_RESULT/feature-resume.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..151b70e5f89929ca3923c3401bed0c887a4d0ecb
+--- /dev/null
++++ b/BENCH_RESULT/feature-resume.json
+@@ -0,0 +1,6 @@
++{
++  "feature": "workflow/aib-debate-plan-action-v1",
++  "phase": "review",
++  "updated": "2026-06-17",
++  "next": "La refonte v1 est implémentée. Reprendre sur A5 quand un débat externe non-méta permettra de noter utile/neutre/trop coûteux dans decision-log."
++}
+
+2026-07-02T13:09:54.653323Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:54.653348Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:54.653749Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:54.653762Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:54.654174Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:54.654186Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:54.654522Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:54.654535Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:54.654868Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:54.654878Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:54.655597Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:54.655605Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T13:09:55.057688Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:09:55.065912Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T13:09:55.065953Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Créé [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work/BENCH_RESULT/feature-resume.json:1) avec les 4 clés demandées.
+
+Feature retenue : `workflow/aib-debate-plan-action-v1`, active la plus fraîche avec `updated: 2026-06-17`.
+
+Vérifié :
+- JSON valide avec `python3 -m json.tool`
+- comparaison contre `.ai/.feature-index.json` : `match=True`
+- `check.sh` introuvable dans le workspace, donc non lancé.
+diff --git a/BENCH_RESULT/feature-resume.json b/BENCH_RESULT/feature-resume.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..151b70e5f89929ca3923c3401bed0c887a4d0ecb
+--- /dev/null
++++ b/BENCH_RESULT/feature-resume.json
+@@ -0,0 +1,6 @@
++{
++  "feature": "workflow/aib-debate-plan-action-v1",
++  "phase": "review",
++  "updated": "2026-06-17",
++  "next": "La refonte v1 est implémentée. Reprendre sur A5 quand un débat externe non-méta permettra de noter utile/neutre/trop coûteux dans decision-log."
++}
+
+2026-07-02T13:10:08.668017Z  WARN codex_mcp::rmcp_client: failed to initialize MCP client during shutdown: MCP startup failed: Environment variable GITHUB_PAT_TOKEN for MCP server 'github' is not set
+tokens used
+46 476

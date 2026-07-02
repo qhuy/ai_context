@@ -1,0 +1,3 @@
+C’est fait : [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_context-1982850439-0002-feature-resume-with-3/work/BENCH_RESULT/feature-resume.json:1) contient la feature active la plus fraîche du mesh : `product/agent-efficacy-benchmark`.
+
+Validation faite avec `jq`, puis comparaison déterministe contre `.ai/.feature-index.json`. `check.sh` n’est pas présent dans ce checkout, donc je n’ai pas pu l’exécuter.

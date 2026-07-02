@@ -1,0 +1,5 @@
+Créé [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-without-3/work/BENCH_RESULT/feature-resume.json:1).
+
+Source utilisée : `/Users/huy/Documents/Perso/ai_context/.ai/.feature-index.json`, recoupée avec la fiche feature. La feature active la plus récente est `product/agent-efficacy-benchmark`.
+
+Validation : `jq` OK. Aucun `check.sh` n’est présent dans le workspace ou son parent immédiat.

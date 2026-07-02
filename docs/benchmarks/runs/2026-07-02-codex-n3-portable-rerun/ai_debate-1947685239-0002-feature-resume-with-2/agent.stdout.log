@@ -1,0 +1,8 @@
+Créé [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0002-feature-resume-with-2/work/BENCH_RESULT/feature-resume.json:1) avec les 4 clés demandées.
+
+Feature retenue : `workflow/aib-debate-plan-action-v1`, active la plus fraîche avec `updated: 2026-06-17`.
+
+Vérifié :
+- JSON valide avec `python3 -m json.tool`
+- comparaison contre `.ai/.feature-index.json` : `match=True`
+- `check.sh` introuvable dans le workspace, donc non lancé.

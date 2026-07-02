@@ -1,0 +1,7 @@
+Fait : [HELLO.txt](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_debate-1947685239-0001-example-file-with-2/work/HELLO.txt) contient exactement :
+
+```text
+hello ai_context
+```
+
+Vérification locale : comparaison byte-à-byte OK. Le grader `check.sh` n’a pas pu être lancé car aucun fichier `check.sh` n’est présent dans le workspace.

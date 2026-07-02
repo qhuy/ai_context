@@ -45,9 +45,9 @@ doc:
     observability: true
 progress:
   phase: implement
-  step: "incr.6 : run Codex N=3 tenté puis invalidé par quota ; runner durci avec failure_kind=agent_infra_error"
+  step: "incr.7 : run Codex N=3 complet ; faux positif infra corrigé ; signal externe confirmé"
   blockers: []
-  resume_hint: "relancer N=3 après reset quota ; interpréter le partiel : ai_debate/0002 reste discriminant, ai_context/0002 est trop facile sans contexte ; HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
+  resume_hint: "publier le N=3 corrigé puis renforcer la suite : ai_debate/0002 discrimine nettement, ai_context/0002 ne discrimine pas ; HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
   updated: 2026-07-02
 ---
 
@@ -227,6 +227,16 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   maintenant `failure_kind` (`task_fail`, `timeout`, `agent_infra_error`, etc.) et
   sort en non-zéro si une erreur infra agent contamine la matrice. Les artefacts N=3
   invalides ne sont pas publiés.
+- 2026-07-02 : **incrément 7 — run N=3 complet et faux positif infra corrigé**.
+  Rerun Codex `N=3` sur `ai_context` + worktree propre `ai_debate` à `HEAD`,
+  sous-suite portable `0001`/`0002`, seed `42`, timeout 300s. Résultat exploitable
+  après correction d'un faux positif : le classifieur `agent_infra_error` ne
+  s'applique plus quand `agent_exit=0` et un contenu de repo mentionne simplement
+  du `rate limiting`. Signal : global `with` 12/12 vs `without` 9/12 (Δ +25 points).
+  Sur `ai_debate/0002-feature-resume`, `with` 3/3 vs `without` 0/3 ; sur
+  `ai_context/0002`, `with` 3/3 vs `without` 3/3. Conclusion provisoire :
+  la tâche portable prouve l'effet sur repo externe, mais elle ne discrimine pas
+  le repo porteur ; il faut renforcer ou spécialiser la suite pour `ai_context`.
 - 2026-07-02 : **incrément 4 — isolation runner corrigée après run réel contaminé**. Un
   premier run Codex `N=1` a montré que les copies de travail conservaient encore le harnais,
   les artefacts de benchmark et des skills repo-locales. Le runner exclut maintenant

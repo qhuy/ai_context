@@ -73,6 +73,9 @@ fois la matrice terminée, afin d'éviter de conserver des artefacts partiels.
   et ne jamais versionner un run qui contient un secret brut.
   Un run contenant `failure_kind=agent_infra_error` (quota, auth, provider, etc.)
   est invalide comme preuve benchmark, même si les artefacts restent utiles au diagnostic.
+  Cette classification ne s'applique qu'à une commande agent sortie non-zéro ; un
+  contenu de repo ou un warning dans un run agent réussi reste un échec de tâche
+  si le check échoue.
 
 ## Seam d'invocation d'agent
 
@@ -97,8 +100,8 @@ reproductible et versionné sans secret.
 - **Grader faible = preuve creuse** → critères objectifs + échantillon vérifié.
 - **Sur-ajustement** → imposer ≥1 repo externe.
 - **N trop petit** → résultat non significatif ; publier l'intervalle.
-- **Erreur infra agent** → ne pas la compter comme échec de tâche ; invalider le run
-  et relancer après correction/quota.
+- **Erreur infra agent** → ne pas la compter comme échec de tâche si la commande
+  agent échoue elle-même ; invalider le run et relancer après correction/quota.
 - **Résultat négatif = résultat valide** → publié tel quel (kill_criterion de la
   fiche : aucun Δ significatif après itération ⇒ réévaluer l'initiative).
 
@@ -122,8 +125,11 @@ relancer et retrouver le même Δ (aux intervalles près).
   coût tokens extrait depuis les logs Codex quand disponible.
 - ✅ Runner durci : `failure_kind` sépare échec tâche, timeout et erreur infra agent ;
   un run contaminé par quota/provider sort en non-zéro.
-- ⏳ À venir : relancer `N=3` après quota, puis décider si `0003` devient portable
-  pour repos externes ou reste une tâche repo-spécifique.
+- ✅ Run agent réel `N=3` publié : `with` 12/12 vs `without` 9/12 ; signal fort
+  sur `ai_debate/0002` (`with` 3/3, `without` 0/3), mais `ai_context/0002`
+  reste trop facile sans contexte (`without` 3/3).
+- ⏳ À venir : renforcer la suite pour `ai_context`, puis décider si `0003`
+  devient portable pour repos externes ou reste une tâche repo-spécifique.
 - Le runner tourne en `--self-check` (valide le plumbing sans invoquer d'agent).
   Les **runs agents réels** restent une action mainteneur (clés + coût +
   non-déterminisme).

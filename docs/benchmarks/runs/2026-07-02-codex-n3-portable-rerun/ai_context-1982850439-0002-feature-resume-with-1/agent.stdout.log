@@ -1,0 +1,6 @@
+Fait : [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_context-1982850439-0002-feature-resume-with-1/work/BENCH_RESULT/feature-resume.json) contient exactement les 4 clés demandées pour `product/agent-efficacy-benchmark`.
+
+Vérifications :
+- JSON valide et clés exactes : OK
+- Recalcul depuis `.ai/scripts/build-feature-index.sh` avec tie-break lexical : OK
+- `check.sh` : introuvable dans le workspace, y compris fichiers ignorés.

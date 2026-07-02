@@ -1,0 +1,5 @@
+Créé [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_context-1982850439-0002-feature-resume-with-2/work/BENCH_RESULT/feature-resume.json:1) avec la feature active la plus récente :
+
+`product/agent-efficacy-benchmark`, phase `implement`, updated `2026-07-02`.
+
+Validation `jq` OK. `check.sh` n’est pas présent à la racine dans cette sandbox, donc je n’ai pas pu le lancer.

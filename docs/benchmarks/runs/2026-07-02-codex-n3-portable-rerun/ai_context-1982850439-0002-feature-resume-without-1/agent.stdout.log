@@ -1,0 +1,5 @@
+Fait : [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.wcRbvf/ai_context-1982850439-0002-feature-resume-without-1/work/BENCH_RESULT/feature-resume.json) contient la feature active la plus fraîche : `product/agent-efficacy-benchmark`.
+
+Vérifications passées :
+- JSON valide via `jq`
+- `check.sh` tâche `0002-feature-resume` OK avec `BENCH_SOURCE_REPO=/Users/huy/Documents/Perso/ai_context`
