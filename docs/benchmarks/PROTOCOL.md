@@ -11,8 +11,8 @@
 - **Leading indicator** : coût de contexte en tokens par tâche et par classe de
   tâche (disponible avant le grader complet ; valide tôt la direction, ne confère
   pas le titre).
-- **Dispersion** : intervalle de confiance sur `N` runs — sans quoi le Δ n'est
-  pas interprétable.
+- **Dispersion** : IC Wilson 95% par condition et IC approximatif Newcombe sur
+  le Δ `with` - `without` — sans quoi le Δ n'est pas interprétable.
 
 ## Conditions comparées
 
@@ -69,9 +69,10 @@ au `BENCH_STAMP`, pour éviter qu'une configuration invalide déclenche une supp
 - **Runner** : `tests/bench/run-bench.sh` — orchestre repos × tâches × conditions
   × N, invoque l'agent via le **seam `AGENT_CMD`**, applique le grader, agrège.
 - **Rapport** : `docs/benchmarks/reports/<date>-<repo-slug>.md` — succès par condition,
-  Δ et conditions exactes (rejouable), puis coût tokens global et Δ tokens/run
-  par classe de tâche (`with` - `without`). Le runner produit aussi un TSV et un
-  JSONL globaux incluant `tokens_used` quand le log agent expose un bloc
+  IC Wilson 95%, Δ avec IC approximatif Newcombe et conditions exactes
+  (rejouable), puis coût tokens global et Δ tokens/run par classe de tâche
+  (`with` - `without`). Le runner produit aussi un TSV et un JSONL globaux
+  incluant `tokens_used` quand le log agent expose un bloc
   `tokens used`, `task_class` pour l'agrégation par classe, et `failure_kind` pour
   distinguer échec de tâche, timeout et erreur infra agent, plus les logs
   d'agent/check sous `docs/benchmarks/runs/<stamp>/`.
@@ -137,11 +138,13 @@ relancer et retrouver le même Δ (aux intervalles près).
   randomisation avec tie-break déterministe.
 - ✅ Rapport tokens enrichi : les tâches déclarent `task.class`, les TSV/JSONL
   exposent `task_class`, et le rapport Markdown calcule le Δ tokens/run par classe.
+- ✅ Rapport succès enrichi : IC Wilson 95% par condition et IC approximatif
+  Newcombe sur le Δ `with` - `without`.
 - ✅ Run agent réel `N=3` publié : `with` 12/12 vs `without` 9/12 ; signal fort
   sur `ai_debate/0002` (`with` 3/3, `without` 0/3), mais `ai_context/0002`
   reste trop facile sans contexte (`without` 3/3).
-- ⏳ À venir : renforcer la suite pour `ai_context`, puis décider si `0003`
-  devient portable pour repos externes ou reste une tâche repo-spécifique.
+- ⏳ À venir : renforcer encore la suite pour `ai_context`, puis décider si
+  `0003` devient portable pour repos externes ou reste une tâche repo-spécifique.
 - Le runner tourne en `--self-check` (valide le plumbing sans invoquer d'agent).
   Les **runs agents réels** restent une action mainteneur (clés + coût +
   non-déterminisme).

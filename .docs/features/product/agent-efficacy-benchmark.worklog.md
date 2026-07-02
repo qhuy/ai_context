@@ -107,3 +107,14 @@
 - Hygiène : JSONL valide (24 lignes), `agent_infra_error=0`, `task_fail=4` tous sur `0002` en condition `without`, scan simple des rapports/logs sans secret brut détecté.
 - Artefacts : synthèse `docs/benchmarks/reports/2026-07-02-codex-n3-portable-r3-tokens-summary.md`, rapports par repo, TSV/JSONL et logs sous `docs/benchmarks/runs/2026-07-02-codex-n3-portable-r3-tokens/`.
 - Next : renforcer la suite côté `ai_context` et ajouter l'intervalle de confiance avant de considérer la preuve publiable hors contexte mainteneur.
+
+## 2026-07-02 — incrément 11 : IC succès + probe handoff ai_context
+
+- Changement runner : synthèse succès enrichie avec IC Wilson 95% par condition et IC approximatif Newcombe sur le Δ `with` - `without`; `--self-check` couvre le cas 12/12 vs 8/12.
+- Run ciblé : Codex `N=3` sur `ai_context` seul, tâche `0003-handoff-decision`, `BENCH_SEED=42`, `BENCH_TIMEOUT_SECONDS=300`, stamp `2026-07-02-codex-n3-ai-context-handoff-ci`.
+- Résultat : `with` 3/3 (IC Wilson [43.9% ; 100.0%]) vs `without` 2/3 (IC Wilson [20.8% ; 93.9%]), Δ +33.3 points avec IC approx. Newcombe [-50.0 ; 79.2].
+- Coût tokens `handoff` : `with` 60845 tokens/run vs `without` 60148, soit +698 (+1.2%).
+- Hygiène : JSONL valide (6 lignes), `agent_infra_error=0`, `task_fail=1` en condition `without`, scan simple des rapports/logs sans secret brut détecté.
+- Validation : `bash -n tests/bench/run-bench.sh` ; `bash tests/bench/run-bench.sh --self-check` ; run d'intégration local agent factice vérifiant le rendu IC ; `check-feature-docs --strict product/agent-efficacy-benchmark` ; `check-feature-freshness --worktree --strict` ; `check-features --no-write` ; `check-feature-docs` ; `check-feature-coverage` ; `check-touches-breadth` ; `measure-context-size` ; `git diff --check` hors logs bruts. Logs bruts conservés tels que produits par l'agent, avec quelques espaces finaux. Warnings inchangés : 2 fiches historiques sans `type`, 6 tests unitaires orphelins, advisory touches breadth.
+- Décision : `0003` renforce légèrement le côté `ai_context`, mais le prompt suggère trop la décision attendue pour en faire une preuve forte ; prochaine tâche à concevoir avec moins d'indices dans le prompt et un grader objectif.
+- Artefacts : synthèse `docs/benchmarks/reports/2026-07-02-codex-n3-ai-context-handoff-ci-summary.md`, rapports/TSV/JSONL et logs sous `docs/benchmarks/runs/2026-07-02-codex-n3-ai-context-handoff-ci/`.

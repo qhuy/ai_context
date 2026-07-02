@@ -1,0 +1,1525 @@
+2026-07-02T15:57:21.010807Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+2026-07-02T15:57:21.011697Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+2026-07-02T15:57:21.086405Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-07-02T15:57:21.111175Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-07-02T15:57:21.135756Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-07-02T15:57:21.156916Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+2026-07-02T15:57:21.157551Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+2026-07-02T15:57:21.160352Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+OpenAI Codex v0.139.0
+--------
+workdir: /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work
+model: gpt-5.5
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 019f238c-8ad5-7431-b4d2-24d053e6c76f
+--------
+user
+# Tâche 0003 — décision de handoff cross-scope
+
+## Prompt (donné à l'agent)
+
+Tu continues l'initiative benchmark d'efficacité agent. Une suite possible consiste
+à brancher le self-check du benchmark dans `tests/smoke-test.sh`.
+
+Avant d'éditer quoi que ce soit, décide si ce travail reste dans le scope primaire
+courant ou s'il exige un handoff explicite vers une autre feature/scope.
+
+Crée `BENCH_RESULT/handoff-decision.txt` à la racine du repo avec exactement trois
+lignes :
+
+```text
+decision=<HANDOFF_REQUIRED|SAME_SCOPE>
+source=<scope/id>
+target=<scope/id|none>
+```
+
+## Critère de succès (humain-lisible)
+
+La décision doit respecter les règles du repo : un seul scope primaire par tâche,
+et cross-scope ⇒ handoff explicite. Pour le branchement smoke-test du benchmark,
+la source doit rester l'initiative produit benchmark, et la cible doit être la
+feature quality qui couvre déjà `tests/smoke-test.sh`. Le grader objectif est
+`check.sh`.
+
+2026-07-02T15:57:21.183734Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-07-02T15:57:21.208290Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-07-02T15:57:21.234089Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T15:57:21.239299Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:21.254117Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:21.255618Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:21.255633Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:21.255950Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:21.255961Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:21.256328Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:21.256336Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:21.256645Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:21.256654Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:21.256995Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:21.257007Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:21.257650Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:21.257657Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:21.659247Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:21.667632Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:21.667669Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:22.385988Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T15:57:22.390375Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:22.407404Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:22.407425Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:22.407753Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:22.407765Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:22.408118Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:22.408126Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:22.408469Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:22.408480Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:22.408826Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:22.408834Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:22.409651Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:22.409660Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:22.813206Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:22.821532Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:22.821572Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Je vais lire les règles et les marqueurs de scope du dépôt avant de créer le fichier demandé, afin de ne pas deviner les identifiants.
+exec
+/bin/zsh -lc 'rg --files' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work
+ succeeded in 0ms:
+AUDIT_2026-05-06.md
+SECURITY.md
+examples/fullstack-fr.yml
+examples/backend-only.yml
+examples/minimal-project.yml
+CONTRIBUTING.md
+PROJECT_STATE.md
+RELEASE.md
+AUDIT.md
+README.md
+docs/variables.md
+docs/upgrading.md
+docs/benchmarks/PROTOCOL.md
+docs/audit/reports/AUDIT-2026-06-08.md
+docs/audit/REVIEW_PROMPT.md
+docs/getting-started.md
+MIGRATION.md
+template/GEMINI.md.jinja
+template/docs/atomic-design-map.md.jinja
+template/docs/design-system-registry.md.jinja
+template/AGENTS.md.jinja
+template/README_AI_CONTEXT.md.jinja
+template/{{docs_root}}/pilots/0000-template.md.jinja
+template/{{docs_root}}/frames/0000-template.md.jinja
+template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
+template/CLAUDE.md.jinja
+tests/smoke-test.sh
+tests/unit/test-dogfood-drift-extra.sh
+tests/unit/test-check-feature-freshness.sh
+tests/unit/test-id-schema-checker-parity.sh
+tests/unit/test-stop-turn-doc-gate.sh
+tests/unit/test-check-features-frontmatter-boundary.sh
+tests/unit/test-review-delta-uncommitted.sh
+tests/unit/test-build-feature-index-fallback-frontmatter.sh
+tests/unit/test-targeted-regressions.sh
+tests/unit/test-dogfood-update-preserves-frames.sh
+tests/unit/test-freshness-primary-coverer.sh
+tests/unit/test-stop-hook-idempotence.sh
+tests/unit/test-is-path-within-repo.sh
+tests/unit/test-features-for-path-relevance-ranking.sh
+tests/unit/test-fiche-consolidation-nudge.sh
+tests/unit/test-product-reports-read-only.sh
+tests/unit/test-read-only-checks-contract.sh
+tests/unit/test-build-feature-index-robust.sh
+tests/unit/test-check-commit-features-relevance.sh
+tests/unit/test-project-overlay.sh
+tests/unit/test-matcher-multi-level.sh
+tests/unit/test-review-delta-shared.sh
+tests/unit/test-check-agent-config.sh
+tests/unit/test-check-touches-breadth.sh
+tests/unit/test-pr-report-glob-match.sh
+tests/unit/test-agents-md-self-sufficient.sh
+tests/unit/test-schema-driven-required.sh
+tests/unit/test-check-features-yaml-strict.sh
+tests/unit/test-build-feature-index-contract.sh
+tests/unit/test-feature-docs-placeholder-heuristic.sh
+tests/unit/test-context-relevance.sh
+tests/unit/test-build-feature-index-fallback.sh
+tests/unit/test-cycle-detection-diamond.sh
+tests/unit/test-path-matches-touch.sh
+tests/unit/test-auto-worklog-flush.sh
+tests/unit/test-auto-progress-filter.sh
+tests/unit/test-okf-type.sh
+copier.yml
+README_AI_CONTEXT.md
+CHANGELOG.md
+LICENSE
+
+exec
+/bin/zsh -lc 'git status --short' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work
+ exited 128 in 0ms:
+fatal: not a git repository (or any of the parent directories): .git
+
+2026-07-02T15:57:30.064237Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T15:57:30.068666Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:30.085671Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:30.085691Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:30.086046Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:30.086055Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:30.086555Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:30.086566Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:30.086948Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:30.086960Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:30.087338Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:30.087348Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:30.088078Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:30.088084Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:30.493449Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:30.500685Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:30.500718Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Le dépôt n’est pas reconnu comme repo Git actif dans ce checkout, donc je m’appuie sur les fichiers de règles présents. Je cherche maintenant les définitions de scopes et les références à `smoke-test.sh`, benchmark et handoff.
+exec
+/bin/zsh -lc 'ls -la' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work
+ succeeded in 0ms:
+total 392
+drwxr-xr-x@ 23 huy  staff    736 Jul  2 17:57 .
+drwxr-xr-x@  3 huy  staff     96 Jul  2 17:57 ..
+-rw-r--r--@  1 huy  staff   6148 Apr 23 15:23 .DS_Store
+drwxr-xr-x@  4 huy  staff    128 Jul  2 17:57 .claude
+drwxr-xr-x@  6 huy  staff    192 Jun 28 22:34 .githooks
+drwxr-xr-x@  3 huy  staff     96 Apr 24 10:04 .github
+-rw-r--r--@  1 huy  staff     92 Jun  1 15:08 .gitignore
+-rw-r--r--@  1 huy  staff  28229 May  3 11:36 AUDIT.md
+-rw-r--r--@  1 huy  staff   8927 May  6 21:08 AUDIT_2026-05-06.md
+-rw-r--r--@  1 huy  staff  52159 Jun 30 17:51 CHANGELOG.md
+-rw-r--r--@  1 huy  staff   5005 May  6 21:07 CONTRIBUTING.md
+-rw-r--r--@  1 huy  staff   1061 Apr 23 10:08 LICENSE
+-rw-r--r--@  1 huy  staff   9978 Jun 26 15:39 MIGRATION.md
+-rw-r--r--@  1 huy  staff  13462 Jun 29 12:36 PROJECT_STATE.md
+-rw-r--r--@  1 huy  staff  13933 Jun 30 14:53 README.md
+-rw-r--r--@  1 huy  staff   6655 Jun 30 14:53 README_AI_CONTEXT.md
+-rw-r--r--@  1 huy  staff   4433 Apr 28 11:22 RELEASE.md
+-rw-r--r--@  1 huy  staff   5396 May  3 11:36 SECURITY.md
+-rw-r--r--@  1 huy  staff  11551 Jun 30 14:53 copier.yml
+drwxr-xr-x@  7 huy  staff    224 Jul  1 19:02 docs
+drwxr-xr-x@  5 huy  staff    160 Apr 23 10:50 examples
+drwxr-xr-x@ 15 huy  staff    480 Jun 30 14:53 template
+drwxr-xr-x@  4 huy  staff    128 Jul  1 19:02 tests
+
+exec
+/bin/zsh -lc 'rg -n "scope|handoff|benchmark|bench|quality|smoke-test|tests/smoke-test" .' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work
+ succeeded in 0ms:
+./AUDIT_2026-05-06.md:8:Le projet n'a pas besoin d'une refonte totale. Le socle est cohérent : source unique `.ai/`, contexte lean, feature mesh, index JSON, hooks Claude, scripts de contrôle, dogfooding et smoke-test sérieux.
+./AUDIT_2026-05-06.md:29:- `.ai/index.md` impose un Pack A lean et évite de charger quality gate, worklogs, skills et catalogues au démarrage.
+./AUDIT_2026-05-06.md:31:- Le feature mesh est maintenant durci : regex `id/scope`, validation `touches`, `depends_on`, cycles, `touches_shared`, freshness staged.
+./AUDIT_2026-05-06.md:102:- Ajouter smoke-test de rendu `.codex/*` et tests unitaires de payload hook Codex.
+./SECURITY.md:11:- `.docs/features/<scope>/<id>.md` (frontmatter + doc métier)
+./SECURITY.md:12:- `.docs/features/<scope>/<id>.worklog.md` (append-only, alimenté par les hooks)
+./SECURITY.md:32:| `PostToolUse` Write/Edit | `.ai/.session-edits.log` (volatile) | timestamp + chemin du fichier édité + features impactées (scope/id). **Pas** le contenu. |
+./SECURITY.md:33:| `Stop` (auto-worklog-flush) | `.docs/features/<scope>/<id>.worklog.md` | bloc `Fichiers modifiés` (liste de chemins) + bump `progress.updated`. |
+./SECURITY.md:34:| `Stop` (auto-progress) | `.docs/features/<scope>/<id>.md` + `.ai/.progress-history.jsonl` | transition `phase` (ex: `spec → implement`) + snapshot pour `/aic undo`. |
+./SECURITY.md:42:Le feature mesh (`{{ docs_root }}/features/<scope>/<id>.md`) est versionné dans le repo. Toute personne qui peut commit (ou ouvrir une PR mergée) peut donc écrire un frontmatter arbitraire. Le runtime traite ce contenu comme **semi-trusted** :
+./SECURITY.md:46:- `id`, `scope`, `title`, `status` présents et conformes à l'enum.
+./SECURITY.md:77:Périmètre des vulnérabilités jugées en scope :
+./SECURITY.md:82:Hors scope :
+./RELEASE.md:10:- `bash tests/smoke-test.sh` PASS en local sur ta machine.
+./RELEASE.md:17:bash tests/smoke-test.sh
+./RELEASE.md:34:  --data scope_profile=fullstack --data tech_profile=fullstack-dotnet-react . /tmp/ai-context-fullstack
+./MIGRATION.md:84:| `.ai/rules/<scope>.md` | **skip** si tu as du contenu métier ; sinon overwrite |
+./MIGRATION.md:102:Le template impose `{{ docs_root }}/features/<scope>/<id>.md` avec frontmatter. Sur projet mature, tu pars de zéro. Deux stratégies :
+./MIGRATION.md:112:scope: back
+./MIGRATION.md:128:bash .ai/scripts/check-features.sh --no-write   # valide scope + depends_on + touches sans réécrire le cache
+./MIGRATION.md:164:Si trop gros, active `AI_CONTEXT_SHOW_ALL_STATUS=0` (défaut) et passe les features stables en `status: done`. Pour un mesh >100 features, `AI_CONTEXT_FOCUS=<scope>` réduit l'inventaire au scope courant + voisins 1-hop (~5× moins de tokens).
+./MIGRATION.md:226:| `/aic-frame` | Avant action : cadrage, scope, plan, validation |
+./MIGRATION.md:229:| `/aic-document-feature` | Créer, auditer, mettre à jour, handoff ou done-check d'une fiche |
+./MIGRATION.md:231:| `/aic-ship` | Avant commit/push : quality gate, evidence, commit proposé |
+./CONTRIBUTING.md:23:# Lancer le smoke-test (28+ étapes)
+./CONTRIBUTING.md:24:bash tests/smoke-test.sh
+./CONTRIBUTING.md:48:5. Ajoute au moins une assertion dans `tests/smoke-test.sh`.
+./CONTRIBUTING.md:55:2. Frontmatter `name: <verb>` exact (vérifié par `tests/smoke-test.sh`).
+./CONTRIBUTING.md:69:Le smoke-test vérifie l'absence de `mapfile` dans `pr-report.sh`. Étends-le si tu introduis un nouveau script critique.
+./CONTRIBUTING.md:76:<type>[(scope)][!]: <description>
+./CONTRIBUTING.md:84:- `feat:` exige une fiche feature touchée dans le même commit (`.docs/features/<scope>/*.md`). Bloqué par `commit-msg`.
+./CONTRIBUTING.md:98:- `tests/smoke-test.sh` (au moins une assertion)
+./CONTRIBUTING.md:108:bash tests/smoke-test.sh
+./copier.yml:30:  # Règles de scope conditionnelles
+./copier.yml:31:  - "{% if 'back' not in scopes %}.ai/rules/back.md{% endif %}"
+./copier.yml:32:  - "{% if 'front' not in scopes %}.ai/rules/front.md{% endif %}"
+./copier.yml:33:  - "{% if 'architecture' not in scopes %}.ai/rules/architecture.md{% endif %}"
+./copier.yml:34:  - "{% if 'security' not in scopes %}.ai/rules/security.md{% endif %}"
+./copier.yml:35:  - "{% if 'handoff' not in scopes %}.ai/rules/handoff.md{% endif %}"
+./copier.yml:36:  - "{% if 'product' not in scopes %}.ai/rules/product.md{% endif %}"
+./copier.yml:37:  # Cursor MDC scopés (auto-attached via globs) — uniquement si cursor agent + scope présent
+./copier.yml:38:  - "{% if 'cursor' not in agents or 'back' not in scopes %}.cursor/rules/back.mdc{% endif %}"
+./copier.yml:39:  - "{% if 'cursor' not in agents or 'front' not in scopes %}.cursor/rules/front.mdc{% endif %}"
+./copier.yml:47:  # Dossiers features/<scope>/ conditionnels (scopes métier uniquement)
+./copier.yml:48:  - "{% if 'back' not in scopes %}{{ docs_root }}/features/back{% endif %}"
+./copier.yml:49:  - "{% if 'front' not in scopes %}{{ docs_root }}/features/front{% endif %}"
+./copier.yml:50:  - "{% if 'architecture' not in scopes %}{{ docs_root }}/features/architecture{% endif %}"
+./copier.yml:51:  - "{% if 'security' not in scopes %}{{ docs_root }}/features/security{% endif %}"
+./copier.yml:52:  - "{% if 'product' not in scopes %}{{ docs_root }}/features/product{% endif %}"
+./copier.yml:83:    3. Règles locales durables : créer .ai/project/index.md si nécessaire ; garder .ai/rules/<scope>.md générique.
+./copier.yml:116:  aussi des skills minces aic-feature-* / aic-quality-gate, marqués internes/fallback,
+./copier.yml:123:    AI_CONTEXT_FOCUS=<scope>      → réduit l'inventaire au scope + voisins 1-hop (utile sur mesh >100 features)
+./copier.yml:143:scope_profile:
+./copier.yml:147:    minimal (core, quality, workflow, product): minimal
+./copier.yml:148:    backend (+ back, architecture, security, handoff): backend
+./copier.yml:151:  help: Profil de scopes à générer
+./copier.yml:198:# scopes : liste dérivée du profil (non affichée à l'utilisateur)
+./copier.yml:200:scopes:
+./copier.yml:204:    {%- if scope_profile == 'minimal' -%}
+./copier.yml:205:    ["core", "quality", "workflow", "product"]
+./copier.yml:206:    {%- elif scope_profile == 'backend' -%}
+./copier.yml:207:    ["core", "quality", "workflow", "product", "back", "architecture", "security", "handoff"]
+./copier.yml:208:    {%- elif scope_profile == 'fullstack' -%}
+./copier.yml:209:    ["core", "quality", "workflow", "product", "back", "front", "architecture", "security", "handoff"]
+./copier.yml:211:    ["core", "quality", "workflow", "product"]
+./README_AI_CONTEXT.md:13:3. Si le projet a des règles locales durables, créer `.ai/project/index.md` puis y référencer uniquement les fichiers projet utiles. Garder `.ai/rules/<scope>.md` pour les règles génériques de scope.
+./README_AI_CONTEXT.md:35:- `quality` → `.ai/rules/quality.md`
+./README_AI_CONTEXT.md:44:Toute feature ajoute ou met à jour un fichier `.docs/features/<scope>/<id>.md` basé sur `.docs/FEATURE_TEMPLATE.md`.
+./README_AI_CONTEXT.md:46:- Organisation par scope (`product/`, `back/`, `front/`, `architecture/`, `security/`).
+./README_AI_CONTEXT.md:47:- Le scope `product` trace les initiatives et décisions ; les features dev les relient via `product.initiative`, et les specs/stories/tickets externes via `external_refs`.
+./README_AI_CONTEXT.md:119:- `bash .ai/scripts/check-feature-docs.sh` — sections "bible feature" ; utiliser `--strict <scope/id>` avant DONE.
+./PROJECT_STATE.md:19:3. Lancer le smoke-test : `export PATH="$HOME/Library/Python/3.9/bin:$PATH" && bash tests/smoke-test.sh` (28 étapes, attendu `✅ PASS`).
+./PROJECT_STATE.md:28:- `copier.yml` — questions utilisateur (project_name, scope_profile, tech_profile, commit_language, docs_root, agents, enable_ci_guard) + `_exclude` conditionnel.
+./PROJECT_STATE.md:46:- `template/{{docs_root}}/features/<scope>/` = maillage feature par scope (back, front, architecture, security).
+./PROJECT_STATE.md:50:- `template/.ai/workflows/` — procédures internes agent-agnostic partagées par Claude et Codex : `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `quality-gate`, `feature-done`, `project-guardrails`.
+./PROJECT_STATE.md:51:- `tests/smoke-test.sh` — 28 assertions end-to-end.
+./PROJECT_STATE.md:55:- **Contrat read-only des checks** — `check-features.sh --no-write` valide le mesh sans écrire l'index ; `doctor`, `quality-gate`, la CI, `check-feature-freshness`, `check-feature-coverage`, `review-delta`, `pr-report` et les rapports product consomment un index temporaire ou le cache existant (warning si absent).
+./PROJECT_STATE.md:58:- **Installation Codex** — quand `codex` est dans `agents`, le template génère `.agents/skills/` (wrappers `aic-*`, `aic-feature-*`, `aic-quality-gate`) délégant aux workflows canoniques `.ai/workflows/*`.
+./PROJECT_STATE.md:62:- **Feature mesh** — frontmatter validé, détection cycles, warn si active dépend de deprecated, scope enum, touches morte bloquante, `touches_shared` pour surfaces de review non bloquantes.
+./PROJECT_STATE.md:65:- **Coût tokens maîtrisé** — reminder compressé, filtrage par status, `measure-context-size.sh`, **graph-aware injection** via `AI_CONTEXT_FOCUS=<scope>` (scope + voisins 1-hop).
+./PROJECT_STATE.md:74:- **Traceability produit** — scope `product`, champs `product.*` / `external_refs` et commandes `product-status`, `product-portfolio`, `product-review`.
+./PROJECT_STATE.md:86:- CI source repo : workflow GitHub Actions sur `qhuy/ai_context` lui-même qui exécute `tests/smoke-test.sh` (matrix Ubuntu/macOS).
+./PROJECT_STATE.md:92:- Profil `scope_profile=custom` interactif (liste CSV `custom_scopes` + jinja loop).
+./PROJECT_STATE.md:99:- Learning log automatique : Stop hook append patterns récurrents à `.ai/memory/<scope>.md` avec gate de validation manuelle (évite pollution).
+./PROJECT_STATE.md:105:Quand une fonctionnalité change, les fichiers suivants **doivent** être revus dans le même chantier (la règle est rappelée dans `CONTRIBUTING.md` et bloquée par `tests/smoke-test.sh` quand applicable) :
+./PROJECT_STATE.md:113:- `tests/smoke-test.sh` (au moins une assertion)
+./PROJECT_STATE.md:127:- `bash tests/smoke-test.sh` — 28 étapes principales (+ étape unit + étape bonus big-mesh), requiert `copier` dans le PATH (`pip install --user copier`).
+./PROJECT_STATE.md:128:- CI GitHub Actions (`enable_ci_guard: true` par défaut) — `check-shims` + `check-features` (avec validation `touches:` dure) + `check-ai-references`. Matrix `template-smoke-test.yml` étendue à `windows-latest` (best-effort, non-bloquant).
+./examples/minimal-project.yml:3:scope_profile: minimal
+./examples/backend-only.yml:3:scope_profile: backend
+./docs/variables.md:14:| `scope_profile` | choice | `fullstack` | Détermine la liste `scopes` (voir profils) |
+./docs/variables.md:37:| `AI_CONTEXT_FOCUS` | vide | `pre-turn-reminder.sh` | Limite l'inventaire du reminder à un scope et ses voisins, équivalent à `--focus=<scope>`. |
+./docs/variables.md:47:## Profils `scope_profile`
+./docs/variables.md:51:| `minimal` | core, quality, workflow, product |
+./docs/variables.md:52:| `backend` | core, quality, workflow, product, back, architecture, security, handoff |
+./docs/variables.md:54:| `custom` | minimal (tu ajoutes tes scopes à la main après scaffold) |
+./docs/variables.md:84:- `.ai/quality/QUALITY_GATE.md`
+./docs/variables.md:85:- `.ai/rules/core.md`, `quality.md`, `workflow.md`, `product.md` (scopes minimum)
+./AUDIT.md:11:1. ~~**`project_id` est techniquement mort-né.**~~ **Rétractation** : finding faux. [`template/.ai/config.yml.jinja:2`](template/.ai/config.yml.jinja:2) contient bien `project_id: "{{ project_name }}"`, et [`tests/smoke-test.sh:174-178`](tests/smoke-test.sh:174) asserte que le JSON émis correspond au `project_name` Copier. La correction P1 sur `project_id` est complète. Reste valable : `project_url` absent → deux projets `ai_context` (basename collision sur dossiers différents) restent indistinguables — mais c'est un manque, pas un bug.
+./AUDIT.md:13:3. **`copier update` n'est JAMAIS exercé en smoke-test.** Le canal de diffusion des corrections P0+P1+P2 vers les projets existants est un trou critique. [`tests/smoke-test.sh`](tests/smoke-test.sh) joue uniquement `copier copy`. Une régression sur `_message_after_update`, sur la résolution de conflits ou sur `migrate-features.sh --apply` casse silencieusement la propagation.
+./AUDIT.md:14:4. **`ai-context-check.yml` (workflow PR principal) reste sans Windows.** P0 a ajouté `windows-latest` à `template-smoke-test.yml` en `continue-on-error: true`, mais le workflow le plus invoqué (sur tout push `.ai/**` et chaque PR) n'a toujours que [`ubuntu-latest, macos-latest`](.github/workflows/ai-context-check.yml:25). Le runtime utilisateur quotidien (check-shims, check-features, pre-turn-reminder) n'est pas validé Windows.
+./AUDIT.md:15:5. **`id` et `scope` acceptent n'importe quoi.** [`build-feature-index.sh.jinja:111`](template/.ai/scripts/build-feature-index.sh.jinja:111) accepte un `id` contenant `/`, `..`, espaces. La clé `scope/id` sert à construire `worklog_path` dans [`auto-worklog-flush.sh`](template/.ai/scripts/auto-worklog-flush.sh.jinja) → écriture sur chemin non-canonique possible via frontmatter. Vecteur d'écriture latent que l'audit précédent n'a pas vu.
+./AUDIT.md:25:| `copier update` jamais testé en smoke-test | **high** | M | tests |
+./AUDIT.md:26:| `id`/`scope` acceptés sans regex (path traversal worklog) | **high** | S | bug archi |
+./AUDIT.md:34:| 11/16 combinaisons `tech_profile × scope_profile` non testées | medium | M | tests |
+./AUDIT.md:50:**Constat.** P0 a livré : section plateformes dans [`docs/getting-started.md:11-30`](docs/getting-started.md), ajout de `windows-latest` à [`template-smoke-test.yml:27-33`](.github/workflows/template-smoke-test.yml:27) en `continue-on-error: true`, shebangs `#!/bin/bash` portables Git Bash.
+./AUDIT.md:69:- **`id`/`scope` acceptés sans regex.** [`build-feature-index.sh.jinja:111-112`](template/.ai/scripts/build-feature-index.sh.jinja:111) : `[[ -z "$id" ]] && id=$(basename "$file" .md)`. Aucune validation `^[a-z0-9-]+$`. Conséquences : un `id: "../etc"` produit `worklog_path="$(dirname feature_path)/../etc.worklog.md"` (chemin non-canonique), et la clé `scope/id` (utilisée comme accumulateur) collisionne (`back/auth` matche soit `scope=back, id=auth`, soit `scope=back/auth, id=` selon où le slash est interprété).
+./AUDIT.md:70:- **`depends_on` non vérifié contre `is_path_within_repo`.** [`check-features.sh.jinja:102`](template/.ai/scripts/check-features.sh.jinja:102) fait `target="$FEATURES_DIR/$dep.md"`. Un `dep: ../../other-project/scope/id` traverse silencieusement (rejeté seulement si la cible n'existe pas).
+./AUDIT.md:74:**Severity** : high pour le path traversal worklog (`id`/`scope`) + l'absence de test sur `is_path_within_repo`, medium pour les autres.
+./AUDIT.md:75:**Recommandation directionnelle** : ajouter regex stricte sur `id`/`scope` au check + au build-index. Étendre `is_path_within_repo` à UNC + backslash absolu. Créer `tests/unit/test-is-path-within-repo.sh`. Appliquer `is_path_within_repo` aussi aux `depends_on`. Réécrire `extract_scalar_awk` pour préserver multi-ligne (ou documenter la troncature).
+./AUDIT.md:84:- **`/aic undo` testé seulement au niveau plumbing snapshot** ([`smoke-test.sh:686-690`](tests/smoke-test.sh:686)). La logique de restauration vit uniquement dans [`template/.claude/skills/aic/workflow.md.jinja`](template/.claude/skills/aic/workflow.md.jinja) — non testable headless. Un script `aic-undo.sh` extrait du skill faciliterait un test E2E.
+./AUDIT.md:91:**Recommandation directionnelle** : extraire un `aic-undo.sh` headless + assertion smoke-test E2E. Documenter FIFO 50 et faux positifs (README troubleshooting). Décider : retirer les placeholders ou les câbler.
+./AUDIT.md:100:- **Cursor MDC scopé jamais exploité.** [`template/.cursor/rules/protocol-reminder.mdc.jinja`](template/.cursor/rules/protocol-reminder.mdc.jinja) est UN seul MDC global avec `alwaysApply: true`. Cursor permet pourtant `.cursor/rules/<name>.mdc` avec frontmatter `globs: ["src/back/**"]` qui auto-attache uniquement quand le fichier édité matche — l'équivalent natif de `features-for-path.sh` côté Cursor. Un `for scope in scopes: render(.cursor/rules/<scope>.mdc with globs=touches_of(scope))` apporterait une parité partielle Claude/Cursor sur features-for-path. **Effort M, ROI élevé. Pas fait.**
+./AUDIT.md:101:- **AGENTS.md.jinja n'utilise aucune section de la spec agents.md** : pas de "Project Structure", "Setup Commands" (`bash .ai/scripts/check-features.sh`), "Testing Instructions" (`bash tests/smoke-test.sh`), "Code Style", "PR Instructions". Un Codex sans hooks tirerait vraie valeur d'un "Setup Commands" intégré au shim. **Effort S, ROI moyen.**
+./AUDIT.md:102:- **Le tableau coche `Shim racine + lecture .ai/rules/*` ✅ pour Cursor** : techniquement vrai (Cursor lira via le MDC global), mais la nuance scoped vs global est lissée. Pas un mensonge, juste une parité optique non tenue côté capacités natives.
+./AUDIT.md:105:**Recommandation directionnelle** : générer `.cursor/rules/<scope>.mdc` à partir des `.ai/rules/<scope>.md` + globs des `touches:` du scope. Enrichir AGENTS.md.jinja avec sections spec.
+./AUDIT.md:126:**Rectification post-vérif** : la sonde initiale signalait `project_id` non rendu — **erreur**. [`template/.ai/config.yml.jinja:2`](template/.ai/config.yml.jinja:2) le rend bien (`project_id: "{{ project_name }}"`) et [`tests/smoke-test.sh:174-178`](tests/smoke-test.sh:174) l'asserte. La correction P1 sur ce point est solide.
+./AUDIT.md:130:- **`depends_on` cross-project non bloqué** : un `dep: ../../other-project/scope/id` traverse silencieusement (rejeté seulement si la cible n'existe pas, pas par `is_path_within_repo`).
+./AUDIT.md:140:**Constat.** P1+P2 ont livré : `context.max_tokens_warn` consommé à [`pre-turn-reminder.sh.jinja:189-194`](template/.ai/scripts/pre-turn-reminder.sh.jinja:189), big-mesh fixture (60 features) avec assertions chars + `AI_CONTEXT_FOCUS` ([`smoke-test.sh:1110-1175`](tests/smoke-test.sh:1110)).
+./AUDIT.md:155:**Constat.** P2 a livré : [`tests/unit/test-path-matches-touch.sh`](tests/unit/test-path-matches-touch.sh) (17 cas effectifs malgré l'annonce 18), smoke-test étendu avec assertions big-mesh + snapshot from.phase + touches hors repo.
+./AUDIT.md:158:- **`copier update` JAMAIS testé.** [`tests/smoke-test.sh`](tests/smoke-test.sh) joue uniquement `copier copy`. Le canal de diffusion des fixes vers les projets existants est un trou critique. Une régression sur `_message_after_update` ([`copier.yml:96-98`](copier.yml:96)), sur la résolution de conflits sur fichiers générés, ou sur `migrate-features.sh --apply` casse silencieusement la propagation.
+./AUDIT.md:160:- **5/16 combinaisons `tech_profile × scope_profile` testées** : default+fullstack, dotnet+default, react+default, fullstack+fullstack, lite/strict. **11 combinaisons non testées**, dont `minimal × dotnet`, `backend × react-next`, `custom × *`. Risque combinatoire réel sur `_exclude` conditionnels ([`copier.yml:14-41`](copier.yml:14)).
+./AUDIT.md:165:**Recommandation directionnelle** : ajouter étape smoke-test « copier copy v0.X.0 puis copier update vers HEAD avec un fichier customisé ». Ajouter test concurrence sur `build-feature-index --write` (lancer 2x en parallèle, vérifier JSON valide). Étendre `test-path-matches-touch.sh` avec espaces, glob backslash, et créer `test-is-path-within-repo.sh`.
+./AUDIT.md:178:- **Messages d'erreur** : `pre-turn-reminder.sh:81` warn `focus=$focus : aucune feature dans ce scope` mais ne liste pas les scopes valides. Friction inutile.
+./AUDIT.md:192:- [x] ~~`check-features.sh` + `build-feature-index.sh` : valider `id` et `scope` avec regex `^[a-z0-9][a-z0-9-]*$`. Reject early.~~ **Appliqué (commit `fb3e771`)** — regex `^[a-z0-9][a-z0-9_-]*$` (underscore aussi accepté pour cohérence avec IDs existants).
+./AUDIT.md:198:- [x] ~~`tests/smoke-test.sh` : étape `copier update` (depuis tag précédent puis vers HEAD) avec fichier customisé conservé.~~ **Appliqué (R2 commit)** — étape `[28c/28]`, copy v0.11.0 → update HEAD, vérifie `MY_CUSTOM.md` préservé + `aic-undo.sh` propagé.
+./AUDIT.md:200:- [x] ~~Smoke-test étendu à ≥8/16 combinaisons `tech_profile × scope_profile`.~~ **Appliqué (R2 commit)** — étape `[28b/28]` ajoute 4 combinaisons (minimal×generic, backend×dotnet, minimal×react, custom×generic). Couverture matrice : 8/16.
+./AUDIT.md:207:- [x] ~~Cursor MDC scopé : générer `.cursor/rules/<scope>.mdc` avec `globs:` dérivés des `touches:` du scope. Parité partielle features-for-path.~~ **Appliqué (R3 commit)** — `.cursor/rules/{back,front}.mdc.jinja` avec globs auto-attached, conditionnés via `_exclude` copier.yml. Smoke-test couvre les 3 cas (cursor+fullstack, sans cursor, cursor+minimal).
+./AUDIT.md:215:## Hors scope identifié
+./AUDIT.md:231:Mais **P1+P2 ont un raté concret** : `is_path_within_repo` créé sans test unitaire dédié et sans couverture UNC/Windows abs. Le finding initial sur `project_id` mort-né a été rétracté après vérification (la clé est bien rendue dans `config.yml.jinja:2` et le smoke-test l'asserte).
+./AUDIT.md:235:- Le smoke-test ne joue jamais `copier update` — le canal de diffusion des fixes lui-même n'est pas testé.
+./AUDIT.md:237:Le **bon angle d'attaque** : R1 (réparer les corrections incomplètes) avant tout autre chantier. Sans test sur `is_path_within_repo`, la promesse sécu reste creuse ; sans regex sur `id`/`scope`, le path traversal worklog reste latent. R2 (tests `copier update` + `/aic undo` E2E) ferme les angles morts critiques. R3 peut attendre une release majeure.
+./README.md:28:| Reprendre une feature sans redemander l'historique | fiches `.docs/features/<scope>/<id>.md` + worklogs append-only |
+./README.md:32:| Garder un projet mature propre | hooks git, checks CI, doctor, smoke-test, migration Copier |
+./README.md:107:pilot -> item actif -> frame/feature/fix/docs/handoff -> validation -> item suivant
+./README.md:116:L'agent doit garder un scope primaire. Si le travail sort du scope, il produit un
+./README.md:117:handoff explicite au lieu de mélanger les responsabilités.
+./README.md:121:Selon les agents, scopes et modes choisis :
+./README.md:129:│   ├── rules/<scope>.md          # règles courtes par scope
+./README.md:141:    └── features/<scope>/
+./README.md:193:- Subagents : déléguer seulement avec rôle clair (`explorer` lecture seule, `worker` avec write-set explicite), sortie structurée et aucun cross-scope sans HANDOFF.
+./README.md:204:scope: back
+./README.md:241:| `minimal` | core, quality, workflow, product |
+./README.md:242:| `backend` | minimal + back, architecture, security, handoff |
+./README.md:266:  --data scope_profile=backend \
+./README.md:272:Copie en priorité les scripts, hooks, quality gate et templates. Fusionne
+./README.md:304:| `bash .ai/scripts/check-features.sh` | valide frontmatter, scopes, `depends_on`, `touches` |
+./README.md:311:| `bash tests/smoke-test.sh` | test end-to-end du template |
+./README.md:319:| `AI_CONTEXT_FOCUS=<scope>` | réduit l'inventaire au scope + voisins 1-hop |
+./README.md:348:Le scope `product` ne remplace pas ton outil produit. Il relie initiative,
+./README.md:353:Oui. Utilise `docs_root=docs` si nécessaire et crée des scopes adaptés
+./README.md:371:bash tests/smoke-test.sh
+./template/README_AI_CONTEXT.md.jinja:13:3. Si le projet a des règles locales durables, créer `.ai/project/index.md` puis y référencer uniquement les fichiers projet utiles. Garder `.ai/rules/<scope>.md` pour les règles génériques de scope.
+./template/README_AI_CONTEXT.md.jinja:33:{% for scope in scopes %}- `{{ scope }}` → `.ai/rules/{{ scope }}.md`{% if scope in ['back', 'front', 'architecture', 'security', 'product'] %} + features `{{ docs_root }}/features/{{ scope }}/`{% endif %}
+./template/README_AI_CONTEXT.md.jinja:49:Toute feature ajoute ou met à jour un fichier `{{ docs_root }}/features/<scope>/<id>.md` basé sur `{{ docs_root }}/FEATURE_TEMPLATE.md`.
+./template/README_AI_CONTEXT.md.jinja:51:- Organisation par scope (`product/`, `back/`, `front/`, `architecture/`, `security/`).
+./template/README_AI_CONTEXT.md.jinja:52:- Le scope `product` trace les initiatives et décisions ; les features dev les relient via `product.initiative`, et les specs/stories/tickets externes via `external_refs`.
+./template/README_AI_CONTEXT.md.jinja:125:- `bash .ai/scripts/check-feature-docs.sh` — sections "bible feature" ; utiliser `--strict <scope/id>` avant DONE.
+./tests/unit/test-check-feature-freshness.sh:33:scope: review
+./tests/unit/test-check-feature-freshness.sh:52:scope: review
+./examples/fullstack-fr.yml:3:scope_profile: fullstack
+./template/AGENTS.md.jinja:5:Shim lean : ne charge pas `.ai/quality/QUALITY_GATE.md`, `.ai/agent/*`,
+./template/AGENTS.md.jinja:9:- Un scope primaire par tâche ; cross-scope ⇒ HANDOFF explicite.
+./template/AGENTS.md.jinja:12:- Avant DONE : quality gate + docs impactées.
+./docs/getting-started.md:50:3. **Créer `.ai/project/index.md` si besoin** pour les règles propres au projet. Garder `.ai/rules/<scope>.md` pour les règles génériques de scope.
+./docs/getting-started.md:51:4. **Première feature** : créer `.docs/features/<scope>/<id>.md` à partir de `.docs/FEATURE_TEMPLATE.md`.
+./docs/getting-started.md:59:bash tests/smoke-test.sh
+./docs/upgrading.md:69:La commande infère `project_name`, `docs_root`, le profil de scopes, les agents et le mode d'adoption depuis les fichiers présents. Relis le YAML proposé avant `--apply` si le projet a été fortement customisé.
+./docs/upgrading.md:91:- `.ai/workflows/quality-gate.md`
+./docs/upgrading.md:97:- `doctor`, `quality-gate`, `review-delta`, `pr-report`, `check-feature-freshness`, `check-feature-coverage` et les rapports product utilisent un index temporaire.
+./docs/upgrading.md:128:- déplacer les règles métier depuis d'anciens fichiers gérés par le template, par exemple `.ai/rules/<scope>.md` ou `.ai/workflow/L1_*`, vers `.ai/project/**` ;
+./docs/upgrading.md:133:## Overlay projet : registre de scopes (`aic-onboard`)
+./docs/upgrading.md:135:À partir de cette version, `.ai/project/**` peut être structuré en **registre de scopes** : un dossier `.ai/project/<scope>/` par app/couche/préoccupation (`bo-front`, `bo-back`, `sql`, `infra`…), chacun avec un `index.md` privé (routeur + manifeste). Le contrat de forme est documenté dans `.ai/templates/project-overlay/README.md`. Le skill `aic-onboard` peuple et maintient cette structure.
+./docs/upgrading.md:143:   - `init` : pas d'overlay → détecte les scopes, interroge les conventions, scaffolde.
+./docs/upgrading.md:144:   - `sync` : overlay déjà au format registre → enrichit/affûte par scope.
+./docs/upgrading.md:161:- `.ai/rules/core.md`, `.ai/rules/workflow.md`, `.ai/rules/quality.md`
+./docs/upgrading.md:167:- `.ai/quality/QUALITY_GATE.md`
+./docs/upgrading.md:174:La quality gate reste bloquante avant DONE ; elle est simplement déplacée du
+./tests/unit/test-matcher-multi-level.sh:4:# Acceptance bloquante Phase 2 #2 (quality/features-for-path-ranking-and-
+./tests/unit/test-matcher-multi-level.sh:158:{"features":[{"scope":"foo","id":"bar","path":"foo.md","touches":["foo**bar"],"depends_on":[],"touches_shared":[]}]}
+./CHANGELOG.md:10:- Overlay projet **registre de scopes** : `.ai/project/<scope>/index.md` (un dossier + index privé par app/couche/préoccupation), avec un contrat de forme documenté (`paths`, `meta`, `conventions`, `derived`) et un stamp global `overlay_contract_version`. Le contrat de chargement descend d'un niveau, sur match de path, par pointeur explicite. Voir `core/project-overlay-scope-registry`.
+./CHANGELOG.md:11:- Skill **`aic-onboard`** (Claude + Codex) : peuple, maintient ou migre l'overlay projet (modes `init`/`sync`/`migrate` auto-détectés) — détecte les scopes inférables, interroge les conventions tribales, scaffolde après confirmation, écrit uniquement sous `.ai/project/**`. Procédure canonique `.ai/workflows/project-overlay-sync.md`. Voir `workflow/project-overlay-onboarding`.
+./CHANGELOG.md:14:- **Nudge de consolidation à l'édition d'une fiche** (`workflow/feature-consolidation-nudge`) : un hook `PreToolUse` advisory réinterroge la raison d'être d'une fiche éditée et liste ses sœurs (même scope / famille d'id) pour enrayer le sur-découpage au fil de l'eau. Non bloquant, `Stop`-only côté Claude.
+./CHANGELOG.md:15:- **Garde-fou anti sur-couverture `touches:`** (`quality/touches-breadth-guard`) : `check-touches-breadth.sh` (advisory) signale les fichiers d'infra partagés en `touches:` direct de trop de features (candidats `touches_shared:`) et les globs catch-all top-level, réduisant la « taxe » du gate freshness `--staged`. 1ʳᵉ vague : `tests/smoke-test.sh` reclassé.
+./CHANGELOG.md:22:- Migration de l'overlay vers le registre de scopes : deux temps (`copier update` apporte le skill + le contrat ; `aic-onboard` migre l'overlay project-owned). Opt-in, non bloquant, non destructif, idempotent. Voir `docs/upgrading.md` → « Overlay projet : registre de scopes ».
+./CHANGELOG.md:33:- Installation Codex : quand `codex` est sélectionné dans `agents`, le template génère désormais `.agents/skills/` avec les wrappers `aic-*`, `aic-feature-*` et `aic-quality-gate`. Les wrappers restent minces et délèguent aux workflows canoniques `.ai/workflows/*`.
+./CHANGELOG.md:34:- Contrat read-only des checks : `check-features.sh --no-write` valide le mesh sans écrire l'index ; `doctor`, `quality-gate`, la CI, `check-feature-freshness`, `check-feature-coverage`, `review-delta`, `pr-report` et les rapports product consomment un index temporaire ou un cache existant avec warning.
+./CHANGELOG.md:38:- Remédiation audit prod : suite de tests fiabilisée (clones `cp -R .` → `rsync --exclude=.git`, fixture `review-delta` rebasée pour éviter une explosion O(fichiers)), couverture CI complète via boucle `for t in tests/unit/*.sh` (5 tests auparavant orphelins), `_min_copier_version: "9.0.0"`, ownership `copier.yml` restreint au scope `core`, récupération des locks d'index orphelins dans `with_index_lock`, et alignement du smoke `[9/28]` sur l'écriture idempotente de l'index.
+./CHANGELOG.md:51:- Product Traceability Loop V1 — nouveau scope `product`, règle `.ai/rules/product.md`, champs frontmatter optionnels `product.*` et `external_refs`, scripts read-only `check-product-links.sh`, `product-status.sh`, `product-portfolio.sh`, `product-review.sh` et routes `ai-context.sh product-*`. Objectif : relier initiatives produit, artefacts externes, features dev, evidence et décision suivante sans roadmap parallèle.
+./CHANGELOG.md:60:- **Cursor MDC scopés** — `.cursor/rules/back.mdc` et `.cursor/rules/front.mdc` générés conditionnellement (si `cursor` dans agents + scope présent) avec frontmatter `globs:` Cursor (auto-attached aux fichiers du scope). Première parité partielle Claude/Cursor sur l'injection contextuelle : Cursor charge automatiquement les règles du scope quand un fichier matché est édité. Globs par défaut couvrent les conventions courantes ; à customiser selon la structure du projet.
+./CHANGELOG.md:69:- Tests unitaires `tests/unit/test-path-matches-touch.sh` — couvre 18 cas (exact, dossier, glob `*` / `?` / `[]` / `**`, edge cases, Windows-friendly). Lancé en tête de smoke-test.
+./CHANGELOG.md:70:- Tests unitaires `tests/unit/test-is-path-within-repo.sh` — 30 cas couvrant safe (relatifs, globs, espaces) et unsafe (absolus Unix, Windows lettre+drive, UNC, backslash, traversées, home, NUL/tab/newline, vide). Lancé en tête de smoke-test.
+./CHANGELOG.md:71:- CI : `windows-latest` ajouté à la matrix `template-smoke-test.yml` en `continue-on-error: true` (best-effort, non-bloquant). `shellcheck` reste Linux/macOS.
+./CHANGELOG.md:77:- `check-features.sh` impose désormais une regex stricte sur `id` et `scope` (`^[a-z0-9][a-z0-9_-]*$`). Ferme un vecteur de path traversal latent : ces deux champs servent à construire les chemins worklog (`auto-worklog-flush.sh`) et les clés `scope/id` (`auto-progress.sh`). Un `id="../foo"` ou `scope` avec espace/slash sont désormais rejetés au check.
+./CHANGELOG.md:78:- `check-features.sh` applique aussi `is_path_within_repo` aux entrées `depends_on:` (auparavant seulement aux `touches:`). Une référence `depends_on: ../../other-project/scope/id` ne traverse plus silencieusement.
+./CHANGELOG.md:82:- UX skills : `aic-feature-*`, `aic-quality-gate` et `aic-project-guardrails` ne sont plus exposés comme skills Claude. Les procédures équivalentes vivent sous `.ai/workflows/`, partagées par Claude et Codex. `/aic-frame` devient le point d'entrée de cadrage avec plan, spécificités métier/technique et validation.
+./CHANGELOG.md:95:- Les fiches dogfoodées trop larges migrent leurs surfaces globales (`tests/smoke-test.sh`, CHANGELOG/PROJECT_STATE, etc.) vers `touches_shared` quand elles ne possèdent pas directement le fichier.
+./CHANGELOG.md:100:- Smoke-test étendu — étape `[28b/28]` couvre 4 combinaisons additionnelles `scope_profile × tech_profile` (minimal × generic, backend × dotnet-clean-cqrs, minimal × react-next, custom × generic). Couverture matrice porte à 8/16 (les 4 autres via `fullstack × *`). Vérifie : présence/absence des règles tech-* selon profil, présence/absence des scopes métier selon scope_profile, sanity check-shims.
+./CHANGELOG.md:104:- Tests unitaires ajoutés — `test-check-feature-freshness.sh` couvre la régression multi-feature du staged freshness ; `test-dogfood-drift-extra.sh` couvre les fichiers runtime destination-only. Tous deux sont lancés en tête de `tests/smoke-test.sh`.
+./CHANGELOG.md:119:- Skill `/aic-project-guardrails` (scope `workflow`) — dialogue conversationnel pour cadrer les **non-goals** (hors-scope explicite, ≥1 item obligatoire) et le **glossaire métier** (optionnel) du projet, produit `.ai/guardrails.md`. Idempotent (ré-invocation = mode update). Catalogue passe de 8 à 9 skills, surface utilisateur de 4 à 5 (`/aic`, `/aic-feature-resume`, `/aic-feature-audit`, `/aic-quality-gate`, `/aic-project-guardrails`).
+./CHANGELOG.md:128:Les rules (`<scope>.md`) cadrent le « comment travailler » et le feature mesh cadre le « quoi est en cours ». Aucun mécanisme ne capturait *ce que l'agent ne doit PAS proposer* (non-goals) ni le vocabulaire métier précis. Sans non-goals explicites, un agent peut dériver vers des features non souhaitées. Vision/utilisateurs cibles restent intentionnellement délégués au README pour éviter la duplication — ce skill se concentre sur ce qui n'est *jamais* écrit ailleurs.
+./CHANGELOG.md:140:- `.ai/scripts/doctor.sh` — diagnostic non destructif (dépendances, hooks, index, checks). Mode `--strict` opt-in ; en mode par défaut reste informatif (exit 0) pour ne pas casser le smoke-test sur scaffold sain.
+./CHANGELOG.md:141:- `.ai/scripts/audit-features.sh` — audit agent-agnostique (`discover <scope>`, dry-run par défaut, `--apply` explicite pour créer des fiches draft minimales). MVP : `discover` only, pas de `refresh` ni de mode interactif (voir feature `workflow/feature-audit`). `--help` annonce explicitement le périmètre MVP.
+./CHANGELOG.md:152:- Workflow `.github/workflows/template-smoke-test.yml` étendu en matrix `ubuntu-latest` + `macos-latest` (au lieu d'Ubuntu seul). Install copier cross-platform (PEP 668 / `--break-system-packages` côté macOS). Déclencheurs étendus à `.ai/scripts/**` et `.ai/schema/**` pour rattraper les changements dogfoodés. Ajout `workflow_dispatch`.
+./CHANGELOG.md:156:- Documentation synchronisée : nombre d'étapes du smoke-test, défaut `enable_ci_guard`, description des hooks runtime.
+./CHANGELOG.md:157:- Synchronisation docs/runtime sur l'UX skills et l'auto-progression : distinction commandes exposées (`/aic`, `/aic undo`, `/aic-feature-resume`, `/aic-feature-audit`, `/aic-quality-gate`) vs skills internes (`new/update/handoff/done`) ; clarification explicite que l'auto-progression couvre uniquement `spec → implement`.
+./CHANGELOG.md:178:- `tests/smoke-test.sh` valide désormais un override simple de `coverage.*` via `.ai/config.yml` (sans casser le comportement par défaut).
+./CHANGELOG.md:179:- `tests/smoke-test.sh` valide aussi l'override `progress.stale_after_days` via `.ai/config.yml` dans `resume-features.sh`.
+./CHANGELOG.md:180:- `tests/smoke-test.sh` vérifie que `pr-report.sh` généré reste compatible Bash 3.2 (absence de `mapfile`).
+./CHANGELOG.md:181:- `tests/smoke-test.sh` valide les rendus `adoption_mode=lite` (`.githooks` et `.github/workflows/` exclus) et `adoption_mode=strict + enable_ci_guard=false` (workflows conservés).
+./CHANGELOG.md:182:- `tests/smoke-test.sh` valide que `check-features.sh` exige `depends_on` et `touches` (acceptent `[]`).
+./CHANGELOG.md:183:- `tests/smoke-test.sh` valide `audit-features.sh --help` (annonce périmètre MVP) et la robustesse aux chemins avec espaces (`src/with space/file.ts` orphelin détecté).
+./CHANGELOG.md:184:- `tests/smoke-test.sh` valide `pr-report.sh --format=json` (sortie JSON parseable via `jq`), exclusion par défaut d'un README modifié, et `--include-docs` qui lève l'exclusion.
+./CHANGELOG.md:185:- `tests/smoke-test.sh` valide le wrapper `ai-context.sh` (`--help` liste les commandes, alias `shims` route vers `check-shims`, commande inconnue rejetée).
+./CHANGELOG.md:196:- **`AI_CONTEXT_FOCUS=<scope>`** (et `--focus=<scope>` en CLI) : `pre-turn-reminder.sh` restreint l'inventaire au scope demandé + ses voisins **1-hop** (features dont on dépend ou qui dépendent de nous, tous scopes confondus). Les reverse deps sont pareillement filtrées (sources dans le focus uniquement). Gain typique : ~5× moins de tokens sur mesh matures.
+./CHANGELOG.md:198:- **Fallback safe** : focus sur un scope inexistant → warn stderr + fallback inventaire complet (jamais de vide silencieux).
+./CHANGELOG.md:202:- `tests/smoke-test.sh` utilise `copier copy --vcs-ref=HEAD` pour tester le working tree plutôt que le dernier tag (bug rencontré : copier utilisait v0.8.0 au lieu de HEAD).
+./CHANGELOG.md:213:v0.6 a réduit le bruit par filtrage status. v0.9 réduit le bruit par **topologie** : un scope ne « voit » que ses voisins immédiats, pas le mesh entier. Le graphe de dépendances devient un outil de sélection, pas juste de validation.
+./CHANGELOG.md:245:- **Détection de cycles `depends_on`** — `check-features.sh` exécute un DFS en jq sur l'index après rebuild. Un cycle `A → B → A` fait échouer le check avec message explicite (`cycle détecté : scope/A → scope/B → scope/A`). Évitait auparavant un crash silencieux de `group_by` au rebuild suivant.
+./CHANGELOG.md:289:- `.ai/scripts/resume-features.sh` — scanne l'index, groupe en 4 buckets : **EN COURS** (phase définie, pas de blocker), **BLOQUÉES** (blockers non vide), **STALE** (>14j sans update), **À FAIRE** (progress non initialisé). Mode `--format=json` pour automation, `--scope=<X>` pour filtrage.
+./CHANGELOG.md:294:  - `/aic-feature-handoff` — bloc HANDOFF inter-scope formalisé (what delivered / next needs / blockers / status)
+./CHANGELOG.md:295:  - `/aic-quality-gate` — rapport go/no-go factuel (check-shims + features + coverage + context-size + progress)
+./CHANGELOG.md:307:v0.5 = fiabilité, v0.6 = coût maîtrisé, **v0.7 = continuité**. Le travail n'est plus perdu entre sessions. Les skills encadrent les gestes récurrents (create/resume/update/handoff/done) avec une structure identique partout, exécutée dans un ordre stable. Le contexte de reprise est dans l'index (machine-readable) ET dans le worklog (narrative).
+./CHANGELOG.md:375:- `.ai/scripts/pre-turn-reminder.sh` — même refacto pour l'inventaire scope/status injecté à chaque tour (UserPromptSubmit).
+./CHANGELOG.md:377:- `tests/smoke-test.sh` — 2 nouvelles assertions : (1) l'index est créé et contient la feature de test, (2) rebuild sur mtime.
+./CHANGELOG.md:389:- `pre-turn-reminder.sh` enrichi — liste dynamique des features actives par scope (avec statut) injectée à chaque tour.
+./CHANGELOG.md:395:- `.ai/index.md` et `.ai/reminder.md` — suppression de la wiggle room : "lister `features/<scope>/`" devient obligatoire à chaque tour (plus de "si applicable").
+./CHANGELOG.md:402:Feature mesh enforcement — systématique, organisé par scope, cross-refs imposées.
+./CHANGELOG.md:405:- `{{ docs_root }}/FEATURE_TEMPLATE.md` — squelette feature (frontmatter `id/scope/title/status/depends_on/touches`).
+./CHANGELOG.md:406:- `{{ docs_root }}/features/<scope>/` — organisation par scope métier (back, front, architecture, security).
+./CHANGELOG.md:407:- `.ai/scripts/check-features.sh` — validation du maillage (frontmatter présent, scope == dossier parent, `depends_on` résout).
+./CHANGELOG.md:413:- `.ai/quality/QUALITY_GATE.md` — suppression de l'option "C — Skip" (remplacée par Conventional Commits). Ajout des sections **Feature mesh** et **Commits** bloquantes.
+./CHANGELOG.md:415:- `.ai/index.md` — table scope avec colonne Features, section Feature mesh, runtime enforcement étendu.
+./CHANGELOG.md:427:- `.ai/index.md` (entrée impérative) + `.ai/rules/<scope>.md` (squelettes par scope)
+./CHANGELOG.md:428:- `.ai/quality/QUALITY_GATE.md` (DoD + Doc Impact Decision)
+./CHANGELOG.md:433:- Profils scope : `minimal`, `backend`, `fullstack`, `custom`
+./CHANGELOG.md:437:- Slash commands Claude (`/handoff`, `/plan-task`)
+./CHANGELOG.md:442:- Stop hook `.ai/state/last-handoff.md`
+./CHANGELOG.md:444:- Profil `custom` interactif avec liste de scopes
+./tests/smoke-test.sh:2:# smoke-test.sh — Génère un projet de test et vérifie qu'il est cohérent.
+./tests/smoke-test.sh:4:# Usage : bash tests/smoke-test.sh
+./tests/smoke-test.sh:16:echo "═══ smoke-test ═══"
+./tests/smoke-test.sh:237:  echo "  ✗ aic.sh frame product ne produit pas de scope"
+./tests/smoke-test.sh:316:scope: back
+./tests/smoke-test.sh:346:scope: back
+./tests/smoke-test.sh:435:scope: product
+./tests/smoke-test.sh:470:scope: core
+./tests/smoke-test.sh:484:scope: back
+./tests/smoke-test.sh:561:if ! jq -e '.features[] | select(.id == "sample" and .scope == "back")' "$idx" >/dev/null; then
+./tests/smoke-test.sh:656:scope: back
+./tests/smoke-test.sh:666:scope: back
+./tests/smoke-test.sh:698:scope: back
+./tests/smoke-test.sh:717:scope: back
+./tests/smoke-test.sh:739:scope: back
+./tests/smoke-test.sh:766:scope: back
+./tests/smoke-test.sh:785:scope: back
+./tests/smoke-test.sh:806:scope: back
+./tests/smoke-test.sh:839:scope: back
+./tests/smoke-test.sh:905:scope: back
+./tests/smoke-test.sh:950:scope: back
+./tests/smoke-test.sh:980:scope: back
+./tests/smoke-test.sh:1044:scope: back
+./tests/smoke-test.sh:1101:scope: back
+./tests/smoke-test.sh:1235:for s in feature-new feature-resume feature-update feature-handoff feature-audit document-feature dev-plan quality-gate feature-done project-guardrails project-overlay-sync; do
+./tests/smoke-test.sh:1241:for s in aic-feature-new aic-feature-resume aic-feature-update aic-feature-handoff aic-feature-done aic-quality-gate; do
+./tests/smoke-test.sh:1260:for s in aic-quality-gate aic-project-guardrails; do
+./tests/smoke-test.sh:1299:' "$OUT/.ai/index.md" | grep -qE '\.ai/quality/QUALITY_GATE\.md|\.ai/agent/|guardrails\.md|ls .*features|docs/reference|\.claude/skills'; then
+./tests/smoke-test.sh:1349:scope: back
+./tests/smoke-test.sh:1361:scope: back
+./tests/smoke-test.sh:1382:scope: back
+./tests/smoke-test.sh:1393:scope: back
+./tests/smoke-test.sh:1433:echo "[24/28] pre-turn-reminder --focus : scope + 1-hop, exclut le reste"
+./tests/smoke-test.sh:1438:scope: back
+./tests/smoke-test.sh:1449:scope: front
+./tests/smoke-test.sh:1461:scope: architecture
+./tests/smoke-test.sh:1500:echo "  ✓ focus filter OK (scope + 1-hop + env + fallback)"
+./tests/smoke-test.sh:1508:scope: back
+./tests/smoke-test.sh:1551:scope: back
+./tests/smoke-test.sh:1636:  --data scope_profile=fullstack \
+./tests/smoke-test.sh:1689:echo "[28b/28] combinaisons scope_profile × tech_profile (couverture matrice)"
+./tests/smoke-test.sh:1693:#   minimal × react-next     : product + pas de scope dev métier, tech-react présent
+./tests/smoke-test.sh:1694:#   custom × generic         : minimal scopes, pas de tech profile
+./tests/smoke-test.sh:1702:  scope="${combo%%:*}"
+./tests/smoke-test.sh:1704:  combo_out="/tmp/ai-context-smoke-${scope}-${tech}-$$"
+./tests/smoke-test.sh:1706:    --data project_name="smoke-${scope}-${tech}" \
+./tests/smoke-test.sh:1707:    --data scope_profile="$scope" \
+./tests/smoke-test.sh:1711:  # Tous les profils ont core+quality+workflow+product
+./tests/smoke-test.sh:1712:  for required in core.md quality.md workflow.md product.md; do
+./tests/smoke-test.sh:1728:  # minimal et custom : pas de scopes dev métier (back/front/architecture/security/handoff)
+./tests/smoke-test.sh:1729:  if [[ "$scope" == "minimal" || "$scope" == "custom" ]]; then
+./tests/smoke-test.sh:1730:    for forbidden in back.md front.md architecture.md security.md handoff.md; do
+./tests/smoke-test.sh:1739:  # backend : back+architecture+security+handoff oui, front non
+./tests/smoke-test.sh:1740:  if [[ "$scope" == "backend" ]]; then
+./tests/smoke-test.sh:1741:    for required in back.md architecture.md security.md handoff.md; do
+./tests/smoke-test.sh:1790:# Cursor MDC scopés : back.mdc et front.mdc rendus si cursor + scope présent
+./tests/smoke-test.sh:1794:  --data scope_profile=fullstack \
+./tests/smoke-test.sh:1831:  --data scope_profile=minimal \
+./tests/smoke-test.sh:1841:    echo "  ✗ .cursor/rules/$mdc rendu alors que scope absent (minimal)"
+./tests/smoke-test.sh:1847:echo "  ✓ Cursor MDC scopés : protocol-reminder + back/front conditionnels au scope"
+./tests/smoke-test.sh:1947:  --data scope_profile=fullstack \
+./tests/smoke-test.sh:1959:scope: back
+./tests/smoke-test.sh:1970:scope: front
+./tests/smoke-test.sh:2014:echo "✅ smoke-test PASS"
+./tests/unit/test-feature-docs-placeholder-heuristic.sh:31:scope: back
+./tests/unit/test-feature-docs-placeholder-heuristic.sh:69:mkfeat comparaison active 'ratio `fix:feat(quality)` < 1:1 et 0 draft gelé > 30 j.'
+./tests/unit/test-feature-docs-placeholder-heuristic.sh:79:mkfeat enum active 'scope : <product | back | front | architecture | security>'
+./tests/unit/test-feature-docs-placeholder-heuristic.sh:84:mkfeat closed done 'ratio `fix:feat(quality)` < 1:1 et 0 draft gelé > 30 j.'
+./tests/unit/test-path-matches-touch.sh:7:# d'auto-injection, ce qui n'est pas détecté par le smoke-test d'intégration.
+./docs/benchmarks/PROTOCOL.md:3:> Initiative `product/agent-efficacy-benchmark` (pilot `2026-06-30-ze-solution`, P1).
+./docs/benchmarks/PROTOCOL.md:28:Le harnais lui-même (`tests/bench/`) et les artefacts de runs précédents
+./docs/benchmarks/PROTOCOL.md:29:(`docs/benchmarks/reports`, `docs/benchmarks/runs`) sont exclus de toutes les
+./docs/benchmarks/PROTOCOL.md:36:puis publiés vers `docs/benchmarks/reports` et `docs/benchmarks/runs` seulement une
+./docs/benchmarks/PROTOCOL.md:39:`docs/benchmarks/runs` ou sous le répertoire temporaire, et si son basename correspond
+./docs/benchmarks/PROTOCOL.md:63:- **Suite de tâches** : `tests/bench/tasks/<id>/` = `task.md` (prompt + critère
+./docs/benchmarks/PROTOCOL.md:68:  `contextual` ; `0003` handoff cross-scope, classe `handoff`).
+./docs/benchmarks/PROTOCOL.md:69:- **Runner** : `tests/bench/run-bench.sh` — orchestre repos × tâches × conditions
+./docs/benchmarks/PROTOCOL.md:71:- **Rapport** : `docs/benchmarks/reports/<date>-<repo-slug>.md` — succès par condition,
+./docs/benchmarks/PROTOCOL.md:77:  d'agent/check sous `docs/benchmarks/runs/<stamp>/`.
+./docs/benchmarks/PROTOCOL.md:83:  est invalide comme preuve benchmark, même si les artefacts restent utiles au diagnostic.
+./docs/benchmarks/PROTOCOL.md:129:- ✅ Suite discriminante initiale : reprise feature mesh + décision handoff
+./docs/benchmarks/PROTOCOL.md:130:  cross-scope, avec graders objectifs.
+./docs/audit/REVIEW_PROMPT.md:39:| `copier.yml` + `template/` | Définition du template (questions, profils scope/techno, exclusions) + payload rendu. |
+./docs/audit/REVIEW_PROMPT.md:40:| `.ai/index.md` | Point d'entrée canonique des agents : politique « Pack A », routage par scope, exclusions, invariants. |
+./docs/audit/REVIEW_PROMPT.md:45:| `.docs/features/<scope>/<id>.md` (+ `.worklog.md`) | Le **feature mesh** : traçabilité source-of-truth, validée par `.ai/schema/feature.schema.json`. |
+./docs/audit/REVIEW_PROMPT.md:48:| `.ai/quality/QUALITY_GATE.md` + `.ai/workflows/quality-gate.md` | Contrat DONE (checklist) + procédure d'inspection (verdict go/no-go). |
+./docs/audit/REVIEW_PROMPT.md:49:| `tests/smoke-test.sh` + `tests/unit/` + `.github/workflows/` | Smoke-test d'intégration (copier copy/update), suites unitaires, orchestration CI. |
+./docs/audit/REVIEW_PROMPT.md:53:2. **Un scope primaire par tâche** ; cross-scope ⇒ bloc **HANDOFF** explicite + confirmation.
+./docs/audit/REVIEW_PROMPT.md:55:4. **Schéma frontmatter** : `id, scope, title, status, depends_on, touches` requis ; `touches:` doit passer `is_path_within_repo` (pas de `..`, absolu, `~`).
+./docs/audit/REVIEW_PROMPT.md:66:   2. runtime `.ai/` (`index.md`, `rules/`, `schema/`, `workflows/`, `quality/`, `context-ignore`) ;
+./docs/audit/REVIEW_PROMPT.md:93:- `is_path_within_repo` : a-t-il un test unitaire dédié ? Couvre-t-il chemins Windows/UNC/backslash ? La validation regex de `id`/`scope` (`^[a-z0-9][a-z0-9_-]*$`) est-elle réellement à HEAD (sinon `id='../x'` → `worklog_path` non canonique = traversal latent) ?
+./docs/audit/REVIEW_PROMPT.md:97:- Enforcement vs doc : quels critères du quality gate (risk ledger, doc-impact A/B/C, evidence build/test, `progress.phase`/`blockers`) sont **réellement** automatisés en CI vs purement manuels ? `check-feature-coverage.sh` / `check-feature-docs.sh` tournent-ils en `--warn` (non bloquant) par défaut ?
+./docs/audit/REVIEW_PROMPT.md:99:- Couverture matrice : combien de combinaisons `tech_profile × scope_profile` testées ? Quels scripts (`audit-features.sh`, `migrate-features.sh`, `product-*.sh`, `context-relevance-log.sh`) ne sont jamais invoqués en CI ?
+./docs/audit/REVIEW_PROMPT.md:106:2. Les remédiations annoncées dans `AUDIT*.md` (tests `is_path_within_repo`, validation `id`/`scope`, smoke-test `copier update`) sont-elles **réellement** à HEAD ? Vérifie, ne crois pas.
+./docs/audit/REVIEW_PROMPT.md:109:5. Comment le loader réconcilie-t-il une table de scope projet (`.ai/project/index.md`) avec la table canonique de `.ai/index.md` — extension, override, ou priorité ? Est-ce spécifié ?
+./template/{{docs_root}}/pilots/0000-template.md.jinja:5:scope_primary: "product"
+./template/{{docs_root}}/pilots/0000-template.md.jinja:29:Statuts : `inbox`, `triage`, `validated`, `blocked`, `handoff`, `doing`, `review`, `done`, `dropped`.
+./template/{{docs_root}}/pilots/0000-template.md.jinja:31:Routes : `feature`, `fix`, `docs`, `refactor`, `chore`, `diagnose`, `handoff`, `manual`, `dropped`.
+./template/{{docs_root}}/pilots/0000-template.md.jinja:53:  from_scope:
+./template/{{docs_root}}/pilots/0000-template.md.jinja:54:  to_scope:
+./template/{{docs_root}}/pilots/0000-template.md.jinja:69:- Tous les items sont `done`, `dropped`, `handoff` ou explicitement reportés.
+./template/{{docs_root}}/pilots/0000-template.md.jinja:70:- Les features validées ont une fiche `{{ docs_root }}/features/<scope>/<id>.md`.
+./template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja:3:scope: <product | back | front | architecture | security>
+./template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja:16:# Optionnel : lien produit. Pour `scope: product`, décrit l'initiative.
+./template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja:17:# Pour les autres scopes, relie la feature à une initiative product/<id>.
+./template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja:44:> Copier ce fichier vers `{{ docs_root }}/features/<scope>/<id>.md` pour chaque nouvelle feature.
+./template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja:45:> Journal d'avancement append-only : `{{ docs_root }}/features/<scope>/<id>.worklog.md` (créé via `.ai/workflows/feature-new.md`).
+./template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja:162:Si cette feature sert une initiative produit, renseigner `product.initiative`. Si cette feature est une initiative `scope: product`, renseigner le pari, la métrique, la prochaine date de décision et les critères de cut. Si le détail vit dans BMAD, Spec Kit, Linear, Jira ou un autre outil, ajouter un lien dans `external_refs` plutôt que dupliquer le contenu.
+./template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja:172:- `id` : slug kebab-case unique dans ce scope
+./template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja:173:- `scope` : doit matcher le dossier parent (`features/<scope>/`)
+./template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja:176:- `depends_on` : liste de `<scope>/<id>` (ex : `back/payment-intent`)
+./template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja:181:- `touches_shared` : surfaces transverses liées à la feature (`tests/smoke-test.sh`, `CHANGELOG.md`, docs d'état). Ces chemins apparaissent dans les rapports mais ne déclenchent pas l'obligation de fiche/worklog dans `check-feature-freshness --staged`.
+./template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja:182:- `product` : lien produit typé. Pour une initiative `scope: product`, utiliser `product.type: initiative`, `bet`, `success_metric`, `leading_indicator`, `decision_state`, `next_decision_date`, `kill_criteria`, `portfolio.*`. Pour une feature dev, utiliser `product.initiative`, `contribution`, `evidence`.
+./tests/unit/test-id-schema-checker-parity.sh:38:scope: test
+./tests/unit/test-context-relevance.sh:5:# Cas obligatoires (cf. quality/context-relevance-tracker) :
+./tests/unit/test-agents-md-self-sufficient.sh:18:mkdir -p "$tmp/.ai/scripts" "$tmp/.ai/rules" "$tmp/.ai/quality"
+./tests/unit/test-agents-md-self-sufficient.sh:24:cp "$repo_root/.ai/quality/QUALITY_GATE.md" "$tmp/.ai/quality/QUALITY_GATE.md"
+./tests/unit/test-agents-md-self-sufficient.sh:25:for r in core quality workflow product; do
+./tests/unit/test-agents-md-self-sufficient.sh:41:- Un scope par tâche ; cross-scope ⇒ HANDOFF.
+./docs/audit/reports/AUDIT-2026-06-08.md:13:`is_path_within_repo` a 30+ cas unitaires, la validation `id`/`scope`/`touches` existe, le
+./docs/audit/reports/AUDIT-2026-06-08.md:18:pas exécutoire*. Trois P1 convergent — (a) aucun critère substantiel de la quality-gate n'est
+./docs/audit/reports/AUDIT-2026-06-08.md:47:| **CI-8** | gaps | P1 | `.github/workflows/*` (grep `quality-gate\|risk\|evidence` → ∅) | Aucun critère de `QUALITY_GATE.md` (risk ledger, doc-impact, evidence build/test, progress.phase/blockers) n'a de vérif CI. La CI bloque la *structure* (shellcheck, schema, shims, drift, cycles), pas le *contenu* de la livraison. | Gate DONE 100 % déclarative : un `feat:` peut passer toute la CI en violant plusieurs critères DONE. | Documenter explicitement dans `QUALITY_GATE.md` quels critères sont manuels, OU promouvoir des checks bloquants. | M |
+./docs/audit/reports/AUDIT-2026-06-08.md:49:| **CI-1** | gaps | P1 | `.github/workflows/*` (grep `core.hooksPath\|post-checkout` → ∅) ; `smoke-test.sh:1069` | Hooks git jamais exercés en CI headless. `commit-msg` testé seulement sur chemin *valide* (`\|\| true`, l.1069) ; rejet via le hook réel jamais asserté ; `post-checkout` jamais exercé. | La chaîne hook→script peut casser sans qu'un test tombe. Enforcement non testé e2e. | Cas smoke : commit message invalide sous `core.hooksPath` → assert rejet ; cas post-checkout. | M |
+./docs/audit/reports/AUDIT-2026-06-08.md:52:| **SCR-1** | sécurité | P1 | `auto-worklog-flush.sh:48` ; `auto-progress.sh:79` ; `build-feature-index.sh` | `is_path_within_repo` absent du chemin runtime (présent seulement dans `_lib.sh`/`check-features.sh`/`features-for-path.sh`). `worklog="$repo_root/$(dirname "$feature_path")/$id.worklog.md"` construit sans validation depuis l'index. `check-features` gate en CI (`--no-write`), pas à l'exécution. | **Latent** : une fiche corrompue/forgée (`scope: ../../tmp`) entrant dans l'index fait écrire un worklog hors repo via le hook Stop. Defense-in-depth manquante. | Appeler `is_path_within_repo` + regex `id`/`scope` dans `build-feature-index.sh` (au build) avant émission. | S |
+./docs/audit/reports/AUDIT-2026-06-08.md:54:| **RUN-1** | technique | P1 | `feature.schema.json:12` vs `check-features.sh:96` | Schema `id`/`scope` = `^[a-z0-9]+(?:-[a-z0-9]+)*$` (pas d'`_`) ; script accepte `^[a-z0-9][a-z0-9_-]*$` (`_` autorisé). Divergence vérifiée. | Deux contrats divergents pour la même clé ; un validateur JSON-Schema rejetterait ce que le repo accepte. Latent (aucune fiche `_` aujourd'hui). | Aligner : ajouter `_` au schema OU le retirer du regex script. | S |
+./docs/audit/reports/AUDIT-2026-06-08.md:57:| **AGT-5** | gaps | P2 | `.claude/skills/` (8) vs `.agents/skills/` (14) ; `aic/SKILL.md` frontmatter | 6 primitives `aic-feature-*`/`aic-quality-gate` Codex-only, 0 Claude-only. Skills partagés byte-identiques (pas symlinks). `disable-model-invocation:true` présent côté Claude, **absent** côté `.agents`. | Deux surfaces d'invocation divergentes ; override auto-progress déclenchable par lexique côté Codex. | Tester que chaque skill pointe vers un `.ai/workflows/*` existant + que les 8 partagés restent identiques. | M |
+./docs/audit/reports/AUDIT-2026-06-08.md:59:| **TPL-2** | technique (drift) | P2 | `check-dogfood-drift.sh:37-46` | Paramètres de rendu hardcodés (`scope_profile=minimal`, `agents=[claude,codex]`, etc.) ; pas de `.copier-answers.yml` racine pour garantir le miroir. | Faux positifs/négatifs si le dogfood évolue (ex. nouveau scope racine). | Commenter « doit refléter l'état racine » OU dériver d'un `.ai/dogfood-answers.yml` versionné. | S |
+./docs/audit/reports/AUDIT-2026-06-08.md:70:| **MESH-1** | maintenabilité | P2 | `check-feature-freshness.sh` (--warn) | 26 fiches stale/45 (doc plus vieille que le code), dont `done`/`active` à >14 j (`product/readme-positioning` ~21 j, `quality/context-relevance-tracker` ~25 j). Le stock historique n'est jamais forcé à converger. | Les fiches ne sont plus source de vérité ; un agent charge un état périmé. | Vague de refresh ciblée >14 j, OU seuil CI pour le stock. | M |
+./docs/audit/reports/AUDIT-2026-06-08.md:73:| **CI-10** | gaps | P2 | `smoke-test.sh:1794-1797` | `copier update` (seul test de migration) skippé avec un simple `⚠` si le tag v0.11.0 est absent (clone shallow / fork sans tags) → no-op silencieux. | Régression `copier update` non détectée sur fork/CI sans tags. | Faire échouer (ou FAIL visible) si le tag de référence manque. | S |
+./docs/audit/reports/AUDIT-2026-06-08.md:81:| **TPL-3** | maintenabilité | P3 | `check-dogfood-drift.sh:126` | `template-smoke-test.yml` listé en « source-only ignored » alors qu'il n'a aucun `.jinja` (purement repo). | Clarté seulement. | Reclasser/commenter. | S |
+./docs/audit/reports/AUDIT-2026-06-08.md:92:5. **RUN-1** (P1, S) — aligner regex `id`/`scope` schema↔script. Un seul contrat.
+./docs/audit/reports/AUDIT-2026-06-08.md:103:- **RUN-1** : `feature.schema.json` (« source de vérité unique ») et `check-features.sh` divergent sur le pattern `id`/`scope`.
+./docs/audit/reports/AUDIT-2026-06-08.md:111:- **Remédiations d'audit réellement livrées** : tests path-within-repo, validation id/scope/touches, smoke `copier update`, CI Windows — toutes confirmées à HEAD (pas de sur-vente côté README).
+./docs/audit/reports/AUDIT-2026-06-08.md:124:4. **Overlay projet** : `.ai/project/index.md` *étend* ou *override* la table de scope canonique ? Non spécifié (RUN-4). À figer avant qu'un consumer crée le fichier.
+./docs/audit/reports/AUDIT-2026-06-08.md:132:À titre de continuité, les findings « high » des audits historiques racine (`AUDIT.md`, `AUDIT_2026-05-06.md`) ont été re-vérifiés et sont **RÉSOLUS** à HEAD : tests `is_path_within_repo`, validation `id`/`scope`, contrainte `touches`/`depends_on`, smoke `copier update`, CI Windows. Le seul **PERSISTANT** de ces audits historiques est **DOC-2** (AGENTS.md.jinja enrichi annoncé mais inexistant, déjà flaggé en mai).
+./tests/unit/test-check-features-yaml-strict.sh:37:scope: test
+./tests/unit/test-check-features-yaml-strict.sh:49:# clés (id/scope/title/status/depends_on/touches). C'est le cas exact du finding
+./tests/unit/test-check-features-yaml-strict.sh:54:scope: test
+./tests/unit/test-review-delta-shared.sh:33:scope: review
+./tests/unit/test-build-feature-index-fallback.sh:30:scope: product
+./tests/unit/test-build-feature-index-fallback.sh:66:    | select(.scope == "product" and .id == "activation")
+./tests/unit/test-build-feature-index-fallback.sh:78:    | select(.scope == "product" and .id == "activation")
+./tests/unit/test-auto-worklog-flush.sh:29:scope: core
+./tests/unit/test-build-feature-index-contract.sh:26:mkdir -p "$tmp/.ai/scripts" "$tmp/.ai/schema" "$tmp/.docs/features/core" "$tmp/.docs/features/quality"
+./tests/unit/test-build-feature-index-contract.sh:43:cat > "$tmp/.docs/features/quality/z-last.md" <<'MD'
+./tests/unit/test-build-feature-index-contract.sh:46:scope: quality
+./tests/unit/test-build-feature-index-contract.sh:66:scope: core
+./tests/unit/test-build-feature-index-contract.sh:93:  [[ "$order" == ".docs/features/core/a-first.md|.docs/features/quality/z-last.md" ]] \
+./tests/unit/test-build-feature-index-contract.sh:109:      [[ "$feat_keys" == "depends_on,external_refs,id,path,product,progress,scope,status,touches,touches_shared,type" ]] \
+./tests/unit/test-stop-turn-doc-gate.sh:41:scope: core
+./tests/unit/test-auto-progress-filter.sh:51:FEAT=".docs/features/quality/example.md"
+./tests/unit/test-auto-progress-filter.sh:54:assert_not_structural "fiche feature exclue" "$FEAT" ".docs/features/quality/example.md"
+./tests/unit/test-auto-progress-filter.sh:58:assert_not_structural "worklog dans .docs exclu" "$FEAT" ".docs/features/quality/example.worklog.md"
+./tests/unit/test-auto-progress-filter.sh:129:{"$schema":"https://json-schema.org/draft-07/schema#","type":"object","required":["id","scope","title","status"]}
+./tests/unit/test-auto-progress-filter.sh:139:scope: test
+./tests/unit/test-auto-progress-filter.sh:154:{"features":[{"scope":"test","id":"feat","path":".docs/features/test/feat.md","status":"active","touches":["src/foo.sh"],"progress":{"phase":"spec"}}]}
+./tests/unit/test-auto-progress-filter.sh:173:scope: test
+./tests/unit/test-auto-progress-filter.sh:189:{"features":[{"scope":"test","id":"feat","path":".docs/features/test/feat.md","status":"active","touches":["src/foo.sh",".docs/features/test/feat.md"],"progress":{"phase":"spec"}}]}
+./tests/unit/test-auto-progress-filter.sh:209:scope: test
+./tests/unit/test-auto-progress-filter.sh:225:{"features":[{"scope":"test","id":"feat","path":".docs/features/test/feat.md","status":"active","touches":["src/foo.sh"],"progress":{"phase":"spec"}}]}
+./tests/unit/test-auto-progress-filter.sh:244:scope: test
+./tests/unit/test-auto-progress-filter.sh:259:{"features":[{"scope":"test","id":"feat","path":".docs/features/test/feat.md","status":"active","touches":["src/foo.sh",".docs/features/test/feat.md"],"progress":{"phase":"spec"}}]}
+./tests/unit/test-check-touches-breadth.sh:25:  { printf -- '---\nid: %s\nscope: test\ntitle: %s\nstatus: active\ntype: feature\ndepends_on: []\ntouches:\n' "$id" "$id"
+./tests/unit/test-cycle-detection-diamond.sh:2:# test-cycle-detection-diamond.sh — quality/cycle-detection.
+./tests/unit/test-cycle-detection-diamond.sh:39:scope: t
+./tests/unit/test-check-features-frontmatter-boundary.sh:29:scope: test
+./tests/unit/test-check-features-frontmatter-boundary.sh:49:scope: test
+./tests/unit/test-targeted-regressions.sh:43:scope: back
+./tests/unit/test-targeted-regressions.sh:91:scope: back
+./template/{{docs_root}}/frames/0000-template.md.jinja:4:scope_probable: "workflow"
+./tests/unit/test-build-feature-index-fallback-frontmatter.sh:28:scope: test
+./tests/unit/test-build-feature-index-fallback-frontmatter.sh:48:scope: test
+./tests/unit/test-build-feature-index-fallback-frontmatter.sh:63:scope: test
+./tests/unit/test-schema-driven-required.sh:2:# test-schema-driven-required.sh — quality/feature-schema-validator.
+./tests/unit/test-schema-driven-required.sh:43:scope: test
+./tests/unit/test-schema-driven-required.sh:67:scope: test
+./tests/unit/test-read-only-checks-contract.sh:2:# test-read-only-checks-contract.sh — diagnostics quality non mutants.
+./tests/unit/test-read-only-checks-contract.sh:35:scope: core
+./tests/unit/test-read-only-checks-contract.sh:101:  bash .ai/scripts/aic.sh frame "quality checks" >/dev/null
+./tests/unit/test-read-only-checks-contract.sh:104:  bash .ai/scripts/aic.sh diagnose "quality checks" >/dev/null
+./tests/unit/test-pr-report-glob-match.sh:35:scope: globtest
+./tests/unit/test-pr-report-glob-match.sh:53:scope: globtest
+./tests/unit/test-freshness-primary-coverer.sh:2:# test-freshness-primary-coverer.sh — quality/doc-freshness.
+./tests/unit/test-freshness-primary-coverer.sh:33:scope: back
+./tests/unit/test-okf-type.sh:37:scope: back
+./tests/unit/test-okf-type.sh:49:scope: back
+./tests/unit/test-check-commit-features-relevance.sh:2:# test-check-commit-features-relevance.sh — workflow/git-hooks + quality/doc-freshness.
+./tests/unit/test-check-commit-features-relevance.sh:26:scope: back
+./tests/unit/test-check-commit-features-relevance.sh:40:scope: back
+./tests/unit/test-build-feature-index-robust.sh:23:  printf -- '---\nid: %s\nscope: test\ntitle: %s\nstatus: active\ntype: feature\ndepends_on: []\ntouches:\n  - src/%s.ts\n---\n# %s\n' "$id" "$id" "$id" "$id" > "$tmp/.docs/features/test/$id.md"
+./tests/unit/test-build-feature-index-robust.sh:26:printf -- '---\nid: bad\nscope: test\ntitle: Titre casse finissant par deux points:\nstatus: active\n---\n# bad\n' > "$tmp/.docs/features/test/bad.md"
+./tests/unit/test-project-overlay.sh:76:# ── Registre de scopes : dogfood-drift tolère project/<scope>/index.md ──────
+./tests/unit/test-project-overlay.sh:85:  ./ "$tmp/repo-scope/"
+./tests/unit/test-project-overlay.sh:87:  cd "$tmp/repo-scope"
+./tests/unit/test-project-overlay.sh:92:scope: bo-front
+./tests/unit/test-project-overlay.sh:105:    echo "✗ check-dogfood-drift doit ignorer .ai/project/<scope>/index.md"
+./tests/unit/test-project-overlay.sh:110:# ── Registre de scopes : check-ai-references accepte un lien vers <scope>/index.md ──
+./tests/unit/test-project-overlay.sh:125:    echo "✗ check-ai-references doit accepter les liens existants sous .ai/project/<scope>/**"
+./tests/unit/test-fiche-consolidation-nudge.sh:19:  printf -- '---\nid: %s\nscope: sales\ntitle: %s\nstatus: active\n---\n# %s\n' "$f" "$f" "$f" > "$tmp/.docs/features/sales/$f.md"
+./tests/unit/test-features-for-path-relevance-ranking.sh:25:      "scope": "quality",
+./tests/unit/test-features-for-path-relevance-ranking.sh:27:      "path": ".docs/features/quality/a-noisy.md",
+./tests/unit/test-features-for-path-relevance-ranking.sh:34:      "scope": "quality",
+./tests/unit/test-features-for-path-relevance-ranking.sh:36:      "path": ".docs/features/quality/z-clean.md",
+./tests/unit/test-features-for-path-relevance-ranking.sh:43:      "scope": "quality",
+./tests/unit/test-features-for-path-relevance-ranking.sh:45:      "path": ".docs/features/quality/m-broad.md",
+./tests/unit/test-features-for-path-relevance-ranking.sh:75:# Sans tracker, le tri historique departage par scope/id apres specificite.
+./tests/unit/test-features-for-path-relevance-ranking.sh:76:assert_first "baseline sans log garde le tie-break scope/id" "quality/a-noisy" env
+./tests/unit/test-features-for-path-relevance-ranking.sh:79:{"ts":"2026-07-02T10:00:00Z","event":"summary","injected_features":["quality/a-noisy"],"touched_features":[],"intersection":[]}
+./tests/unit/test-features-for-path-relevance-ranking.sh:80:{"ts":"2026-07-02T10:01:00Z","event":"summary","injected_features":["quality/a-noisy"],"touched_features":[],"intersection":[]}
+./tests/unit/test-features-for-path-relevance-ranking.sh:81:{"ts":"2026-07-02T10:02:00Z","event":"summary","injected_features":["quality/a-noisy"],"touched_features":[],"intersection":[]}
+./tests/unit/test-features-for-path-relevance-ranking.sh:84:assert_first "feature injectee sans intersection descend derriere un match equivalent" "quality/z-clean" env
+./tests/unit/test-features-for-path-relevance-ranking.sh:85:assert_first "seuil plus haut ignore le signal insuffisant" "quality/a-noisy" env AI_CONTEXT_RELEVANCE_RANK_MIN_INJECTED=4
+./tests/unit/test-features-for-path-relevance-ranking.sh:86:assert_first "opt-out ranking relevance restaure le tri de base" "quality/a-noisy" env AI_CONTEXT_RELEVANCE_RANKING=0
+./tests/unit/test-features-for-path-relevance-ranking.sh:91:if [[ "$hook_direct" != "quality/z-clean" ]]; then
+./tests/unit/test-features-for-path-relevance-ranking.sh:95:echo "PASS: hook direct_features reste un vrai scope/id apres ajout de la colonne penalty"
+./tests/unit/test-stop-hook-idempotence.sh:77:{"features":[{"scope":"test","id":"feat","path":".docs/features/test/feat.md","status":"active","touches":["src/foo.sh","README.md",".docs/features/test/feat.md","feat.lock"]}]}
+./tests/unit/test-stop-hook-idempotence.sh:82:scope: test
+./tests/unit/test-product-reports-read-only.sh:32:scope: product
+./tests/unit/test-product-reports-read-only.sh:69:scope: core
+
+2026-07-02T15:57:37.987459Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T15:57:37.992050Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:38.008386Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:38.008406Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:38.008767Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:38.008779Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:38.009197Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:38.009207Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:38.009604Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:38.009613Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:38.010009Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:38.010015Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:38.010799Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:38.010809Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:38.423607Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:38.431957Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:38.431986Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Les docs indiquent bien la règle “un scope par tâche ; cross-scope ⇒ handoff”. Je vais vérifier les fiches template qui identifient l’initiative benchmark et la feature quality couvrant le smoke-test.
+exec
+/bin/zsh -lc 'rg --files -uu' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work
+ succeeded in 0ms:
+copier.yml
+README_AI_CONTEXT.md
+CHANGELOG.md
+LICENSE
+.DS_Store
+AUDIT_2026-05-06.md
+SECURITY.md
+README.md
+.gitignore
+RELEASE.md
+AUDIT.md
+CONTRIBUTING.md
+PROJECT_STATE.md
+docs/variables.md
+docs/upgrading.md
+.githooks/pre-commit
+.githooks/commit-msg
+.githooks/README.md
+.githooks/post-checkout
+examples/fullstack-fr.yml
+docs/getting-started.md
+examples/backend-only.yml
+MIGRATION.md
+examples/minimal-project.yml
+.claude/settings.local.json
+tests/smoke-test.sh
+.claude/settings.json
+.github/workflows/template-smoke-test.yml
+docs/audit/REVIEW_PROMPT.md
+docs/benchmarks/PROTOCOL.md
+.github/workflows/ai-context-check.yml
+template/GEMINI.md.jinja
+docs/audit/reports/AUDIT-2026-06-08.md
+docs/audit/reports/.gitkeep
+template/.DS_Store
+template/README_AI_CONTEXT.md.jinja
+tests/unit/test-dogfood-drift-extra.sh
+tests/unit/test-check-feature-freshness.sh
+tests/unit/test-id-schema-checker-parity.sh
+tests/unit/test-stop-turn-doc-gate.sh
+tests/unit/test-check-features-frontmatter-boundary.sh
+tests/unit/test-review-delta-uncommitted.sh
+tests/unit/test-build-feature-index-fallback-frontmatter.sh
+tests/unit/test-targeted-regressions.sh
+tests/unit/test-dogfood-update-preserves-frames.sh
+tests/unit/test-freshness-primary-coverer.sh
+tests/unit/test-stop-hook-idempotence.sh
+tests/unit/test-is-path-within-repo.sh
+tests/unit/test-features-for-path-relevance-ranking.sh
+tests/unit/test-fiche-consolidation-nudge.sh
+tests/unit/test-product-reports-read-only.sh
+tests/unit/test-read-only-checks-contract.sh
+tests/unit/test-build-feature-index-robust.sh
+tests/unit/test-check-commit-features-relevance.sh
+tests/unit/test-project-overlay.sh
+tests/unit/test-matcher-multi-level.sh
+tests/unit/test-review-delta-shared.sh
+tests/unit/test-check-agent-config.sh
+tests/unit/test-check-touches-breadth.sh
+tests/unit/test-pr-report-glob-match.sh
+tests/unit/test-agents-md-self-sufficient.sh
+tests/unit/test-schema-driven-required.sh
+tests/unit/test-check-features-yaml-strict.sh
+tests/unit/test-build-feature-index-contract.sh
+tests/unit/test-feature-docs-placeholder-heuristic.sh
+tests/unit/test-context-relevance.sh
+tests/unit/test-build-feature-index-fallback.sh
+tests/unit/test-cycle-detection-diamond.sh
+tests/unit/test-path-matches-touch.sh
+tests/unit/test-auto-worklog-flush.sh
+tests/unit/test-auto-progress-filter.sh
+tests/unit/test-okf-type.sh
+template/.githooks/post-checkout.jinja
+template/.githooks/pre-commit.jinja
+template/.githooks/README.md.jinja
+template/.githooks/commit-msg.jinja
+template/.ai/workflows/document-feature.md.jinja
+template/.ai/workflows/project-guardrails.md.jinja
+template/.ai/workflows/feature-update.md.jinja
+template/.ai/workflows/project-overlay-sync.md.jinja
+template/.ai/workflows/subagent-contract.md.jinja
+template/.ai/workflows/mcp-policy.md.jinja
+template/.ai/workflows/codex-hooks-parity.md.jinja
+template/.ai/workflows/feature-audit.md.jinja
+template/.ai/workflows/dev-plan.md.jinja
+template/.ai/workflows/feature-new.md.jinja
+template/.ai/workflows/quality-gate.md.jinja
+template/.ai/workflows/feature-done.md.jinja
+template/.ai/workflows/feature-resume.md.jinja
+template/.ai/workflows/feature-handoff.md.jinja
+template/.ai/config.yml.jinja
+template/.ai/quality/QUALITY_GATE.md.jinja
+template/.ai/templates/project-overlay/README.md.jinja
+template/.ai/reminder.md.jinja
+template/.ai/.DS_Store
+template/.cursor/rules/front.mdc.jinja
+template/.cursor/rules/back.mdc.jinja
+template/.cursor/rules/protocol-reminder.mdc.jinja
+template/.ai/rules/front.md.jinja
+template/.ai/rules/handoff.md.jinja
+template/.ai/rules/architecture.md.jinja
+template/.ai/rules/core.md.jinja
+template/.ai/rules/product.md.jinja
+template/.ai/rules/back.md.jinja
+template/.ai/rules/stack-fullstack-dotnet-react.md.jinja
+template/.ai/rules/tech-dotnet.md.jinja
+template/.ai/rules/security.md.jinja
+template/.ai/rules/tech-react.md.jinja
+template/.ai/rules/quality.md.jinja
+template/.ai/rules/workflow.md.jinja
+template/.ai/OWNERSHIP.md.jinja
+template/.github/workflows/ai-context-check.yml.jinja
+template/.github/copilot-instructions.md.jinja
+template/.github/.DS_Store
+template/{{docs_root}}/pilots/0000-template.md.jinja
+template/docs/atomic-design-map.md.jinja
+template/docs/design-system-registry.md.jinja
+template/.ai/scripts/context-relevance-report.sh.jinja
+template/.ai/scripts/measure-context-size.sh.jinja
+template/.ai/scripts/migrate-features.sh.jinja
+template/.ai/scripts/pr-report.sh.jinja
+template/.ai/scripts/check-features.sh.jinja
+template/.ai/scripts/review-delta.sh.jinja
+template/.ai/scripts/aic-undo.sh.jinja
+template/.ai/scripts/features-for-path.sh.jinja
+template/.ai/scripts/auto-worklog-flush.sh.jinja
+template/.ai/scripts/aic.sh.jinja
+template/.ai/scripts/check-commit-features.sh.jinja
+template/.ai/scripts/stop-doc-gate.sh.jinja
+template/.ai/scripts/check-ai-references.sh.jinja
+template/.ai/scripts/stop-sequence.sh.jinja
+template/.ai/scripts/fiche-consolidation-nudge.sh.jinja
+template/.ai/scripts/audit-features.sh.jinja
+template/.ai/scripts/doctor.sh.jinja
+template/.ai/scripts/_lib.sh.jinja
+template/.ai/scripts/migrate-okf-type.sh.jinja
+template/.ai/scripts/auto-worklog-log.sh.jinja
+template/.ai/scripts/product-status.sh.jinja
+template/.ai/scripts/resume-features.sh.jinja
+template/.ai/scripts/auto-progress.sh.jinja
+template/.ai/scripts/product-review.sh.jinja
+template/.ai/scripts/check-feature-coverage.sh.jinja
+template/.ai/scripts/build-feature-index.sh.jinja
+template/.ai/scripts/context-relevance-log.sh.jinja
+template/.ai/scripts/check-feature-docs.sh.jinja
+template/.ai/scripts/check-touches-breadth.sh.jinja
+template/.ai/scripts/product-portfolio.sh.jinja
+template/.ai/scripts/check-feature-freshness.sh.jinja
+template/.ai/scripts/check-agent-config.sh.jinja
+template/.ai/scripts/pre-turn-reminder.sh.jinja
+template/.ai/scripts/check-product-links.sh.jinja
+template/.ai/scripts/check-shims.sh.jinja
+template/{{docs_root}}/frames/0000-template.md.jinja
+template/.ai/review/application-review.md.jinja
+template/{{docs_root}}/features/front/.gitkeep
+template/.ai/review/tech/react.md.jinja
+template/.claude/skills/aic/SKILL.md.jinja
+template/.claude/skills/aic/workflow.md.jinja
+template/.ai/review/tech/csharp.md.jinja
+template/.ai/review/tech/python.md.jinja
+template/.ai/review/business.md.jinja
+template/.ai/review/documentation.md.jinja
+template/.ai/review/common.md.jinja
+template/.ai/.gitignore
+template/.ai/guardrails.md.jinja
+template/.ai/index.md.jinja
+template/.claude/skills/aic-diagnose/SKILL.md.jinja
+template/.claude/skills/aic-diagnose/workflow.md.jinja
+template/{{docs_root}}/features/architecture/.gitkeep
+template/.ai/schema/feature.schema.json
+template/.claude/skills/aic-status/SKILL.md.jinja
+template/.claude/skills/aic-status/workflow.md.jinja
+template/{{docs_root}}/features/product/.gitkeep
+template/.ai/agent/posture.md.jinja
+template/.ai/agent/response-style.md.jinja
+template/.ai/agent/initiative-contract.md.jinja
+template/.ai/context-ignore.md.jinja
+template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
+template/CLAUDE.md.jinja
+template/{{docs_root}}/.gitkeep
+template/.claude/skills/aic-frame/SKILL.md.jinja
+template/.claude/skills/aic-frame/workflow.md.jinja
+template/{{docs_root}}/features/security/.gitkeep
+template/{{docs_root}}/features/back/.gitkeep
+template/.claude/skills/aic-onboard/SKILL.md.jinja
+template/.claude/skills/aic-onboard/workflow.md.jinja
+template/.claude/skills/aic-document-feature/SKILL.md.jinja
+template/.claude/skills/aic-document-feature/workflow.md.jinja
+template/.claude/settings.json.jinja
+template/.claude/skills/aic-review/SKILL.md.jinja
+template/.claude/skills/aic-review/workflow.md.jinja
+template/.claude/skills/aic-ship/SKILL.md.jinja
+template/.claude/skills/aic-ship/workflow.md.jinja
+template/.claude/skills/aic-pilot/SKILL.md.jinja
+template/.claude/skills/aic-pilot/workflow.md.jinja
+template/.claude/skills/aic-dev-plan/SKILL.md.jinja
+template/.agents/skills/aic/SKILL.md.jinja
+template/.agents/skills/aic/workflow.md.jinja
+template/.claude/skills/aic-dev-plan/workflow.md.jinja
+template/.agents/skills/aic-feature-handoff/SKILL.md.jinja
+template/.agents/skills/aic-feature-handoff/workflow.md.jinja
+template/.agents/skills/aic-feature-done/SKILL.md.jinja
+template/.agents/skills/aic-diagnose/SKILL.md.jinja
+template/.agents/skills/aic-feature-done/workflow.md.jinja
+template/.agents/skills/aic-diagnose/workflow.md.jinja
+template/AGENTS.md.jinja
+template/.agents/skills/aic-frame/SKILL.md.jinja
+template/.agents/skills/aic-frame/workflow.md.jinja
+template/.agents/skills/aic-status/SKILL.md.jinja
+template/.agents/skills/aic-status/workflow.md.jinja
+template/.agents/skills/aic-feature-update/SKILL.md.jinja
+template/.agents/skills/aic-feature-update/workflow.md.jinja
+template/.agents/skills/aic-dev-plan/SKILL.md.jinja
+template/.agents/skills/aic-dev-plan/workflow.md.jinja
+template/.agents/skills/aic-onboard/SKILL.md.jinja
+template/.agents/skills/aic-onboard/workflow.md.jinja
+template/.agents/skills/aic-quality-gate/SKILL.md.jinja
+template/.agents/skills/aic-quality-gate/workflow.md.jinja
+template/.agents/skills/aic-pilot/SKILL.md.jinja
+template/.agents/skills/aic-pilot/workflow.md.jinja
+template/.agents/skills/aic-review/SKILL.md.jinja
+template/.agents/skills/aic-review/workflow.md.jinja
+template/.agents/skills/aic-document-feature/SKILL.md.jinja
+template/.agents/skills/aic-ship/SKILL.md.jinja
+template/.agents/skills/aic-feature-resume/SKILL.md.jinja
+template/.agents/skills/aic-document-feature/workflow.md.jinja
+template/.agents/skills/aic-ship/workflow.md.jinja
+template/.agents/skills/aic-feature-resume/workflow.md.jinja
+template/.agents/skills/aic-feature-new/workflow.md.jinja
+template/.agents/skills/aic-feature-new/SKILL.md.jinja
+
+exec
+/bin/zsh -lc 'rg -n --hidden -uu "benchmark|bench|smoke-test|tests/smoke-test|scope_primary|scope: quality|scope: product|Un scope|cross-scope|HANDOFF|handoff" .' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work
+ succeeded in 0ms:
+./MIGRATION.md:229:| `/aic-document-feature` | Créer, auditer, mettre à jour, handoff ou done-check d'une fiche |
+./AUDIT_2026-05-06.md:8:Le projet n'a pas besoin d'une refonte totale. Le socle est cohérent : source unique `.ai/`, contexte lean, feature mesh, index JSON, hooks Claude, scripts de contrôle, dogfooding et smoke-test sérieux.
+./AUDIT_2026-05-06.md:102:- Ajouter smoke-test de rendu `.codex/*` et tests unitaires de payload hook Codex.
+./RELEASE.md:10:- `bash tests/smoke-test.sh` PASS en local sur ta machine.
+./RELEASE.md:17:bash tests/smoke-test.sh
+./CONTRIBUTING.md:23:# Lancer le smoke-test (28+ étapes)
+./CONTRIBUTING.md:24:bash tests/smoke-test.sh
+./CONTRIBUTING.md:48:5. Ajoute au moins une assertion dans `tests/smoke-test.sh`.
+./CONTRIBUTING.md:55:2. Frontmatter `name: <verb>` exact (vérifié par `tests/smoke-test.sh`).
+./CONTRIBUTING.md:69:Le smoke-test vérifie l'absence de `mapfile` dans `pr-report.sh`. Étends-le si tu introduis un nouveau script critique.
+./CONTRIBUTING.md:98:- `tests/smoke-test.sh` (au moins une assertion)
+./CONTRIBUTING.md:108:bash tests/smoke-test.sh
+./AUDIT.md:11:1. ~~**`project_id` est techniquement mort-né.**~~ **Rétractation** : finding faux. [`template/.ai/config.yml.jinja:2`](template/.ai/config.yml.jinja:2) contient bien `project_id: "{{ project_name }}"`, et [`tests/smoke-test.sh:174-178`](tests/smoke-test.sh:174) asserte que le JSON émis correspond au `project_name` Copier. La correction P1 sur `project_id` est complète. Reste valable : `project_url` absent → deux projets `ai_context` (basename collision sur dossiers différents) restent indistinguables — mais c'est un manque, pas un bug.
+./AUDIT.md:13:3. **`copier update` n'est JAMAIS exercé en smoke-test.** Le canal de diffusion des corrections P0+P1+P2 vers les projets existants est un trou critique. [`tests/smoke-test.sh`](tests/smoke-test.sh) joue uniquement `copier copy`. Une régression sur `_message_after_update`, sur la résolution de conflits ou sur `migrate-features.sh --apply` casse silencieusement la propagation.
+./AUDIT.md:14:4. **`ai-context-check.yml` (workflow PR principal) reste sans Windows.** P0 a ajouté `windows-latest` à `template-smoke-test.yml` en `continue-on-error: true`, mais le workflow le plus invoqué (sur tout push `.ai/**` et chaque PR) n'a toujours que [`ubuntu-latest, macos-latest`](.github/workflows/ai-context-check.yml:25). Le runtime utilisateur quotidien (check-shims, check-features, pre-turn-reminder) n'est pas validé Windows.
+./AUDIT.md:25:| `copier update` jamais testé en smoke-test | **high** | M | tests |
+./AUDIT.md:50:**Constat.** P0 a livré : section plateformes dans [`docs/getting-started.md:11-30`](docs/getting-started.md), ajout de `windows-latest` à [`template-smoke-test.yml:27-33`](.github/workflows/template-smoke-test.yml:27) en `continue-on-error: true`, shebangs `#!/bin/bash` portables Git Bash.
+./AUDIT.md:84:- **`/aic undo` testé seulement au niveau plumbing snapshot** ([`smoke-test.sh:686-690`](tests/smoke-test.sh:686)). La logique de restauration vit uniquement dans [`template/.claude/skills/aic/workflow.md.jinja`](template/.claude/skills/aic/workflow.md.jinja) — non testable headless. Un script `aic-undo.sh` extrait du skill faciliterait un test E2E.
+./AUDIT.md:91:**Recommandation directionnelle** : extraire un `aic-undo.sh` headless + assertion smoke-test E2E. Documenter FIFO 50 et faux positifs (README troubleshooting). Décider : retirer les placeholders ou les câbler.
+./AUDIT.md:101:- **AGENTS.md.jinja n'utilise aucune section de la spec agents.md** : pas de "Project Structure", "Setup Commands" (`bash .ai/scripts/check-features.sh`), "Testing Instructions" (`bash tests/smoke-test.sh`), "Code Style", "PR Instructions". Un Codex sans hooks tirerait vraie valeur d'un "Setup Commands" intégré au shim. **Effort S, ROI moyen.**
+./AUDIT.md:126:**Rectification post-vérif** : la sonde initiale signalait `project_id` non rendu — **erreur**. [`template/.ai/config.yml.jinja:2`](template/.ai/config.yml.jinja:2) le rend bien (`project_id: "{{ project_name }}"`) et [`tests/smoke-test.sh:174-178`](tests/smoke-test.sh:174) l'asserte. La correction P1 sur ce point est solide.
+./AUDIT.md:140:**Constat.** P1+P2 ont livré : `context.max_tokens_warn` consommé à [`pre-turn-reminder.sh.jinja:189-194`](template/.ai/scripts/pre-turn-reminder.sh.jinja:189), big-mesh fixture (60 features) avec assertions chars + `AI_CONTEXT_FOCUS` ([`smoke-test.sh:1110-1175`](tests/smoke-test.sh:1110)).
+./AUDIT.md:155:**Constat.** P2 a livré : [`tests/unit/test-path-matches-touch.sh`](tests/unit/test-path-matches-touch.sh) (17 cas effectifs malgré l'annonce 18), smoke-test étendu avec assertions big-mesh + snapshot from.phase + touches hors repo.
+./AUDIT.md:158:- **`copier update` JAMAIS testé.** [`tests/smoke-test.sh`](tests/smoke-test.sh) joue uniquement `copier copy`. Le canal de diffusion des fixes vers les projets existants est un trou critique. Une régression sur `_message_after_update` ([`copier.yml:96-98`](copier.yml:96)), sur la résolution de conflits sur fichiers générés, ou sur `migrate-features.sh --apply` casse silencieusement la propagation.
+./AUDIT.md:165:**Recommandation directionnelle** : ajouter étape smoke-test « copier copy v0.X.0 puis copier update vers HEAD avec un fichier customisé ». Ajouter test concurrence sur `build-feature-index --write` (lancer 2x en parallèle, vérifier JSON valide). Étendre `test-path-matches-touch.sh` avec espaces, glob backslash, et créer `test-is-path-within-repo.sh`.
+./AUDIT.md:198:- [x] ~~`tests/smoke-test.sh` : étape `copier update` (depuis tag précédent puis vers HEAD) avec fichier customisé conservé.~~ **Appliqué (R2 commit)** — étape `[28c/28]`, copy v0.11.0 → update HEAD, vérifie `MY_CUSTOM.md` préservé + `aic-undo.sh` propagé.
+./AUDIT.md:231:Mais **P1+P2 ont un raté concret** : `is_path_within_repo` créé sans test unitaire dédié et sans couverture UNC/Windows abs. Le finding initial sur `project_id` mort-né a été rétracté après vérification (la clé est bien rendue dans `config.yml.jinja:2` et le smoke-test l'asserte).
+./AUDIT.md:235:- Le smoke-test ne joue jamais `copier update` — le canal de diffusion des fixes lui-même n'est pas testé.
+./CHANGELOG.md:15:- **Garde-fou anti sur-couverture `touches:`** (`quality/touches-breadth-guard`) : `check-touches-breadth.sh` (advisory) signale les fichiers d'infra partagés en `touches:` direct de trop de features (candidats `touches_shared:`) et les globs catch-all top-level, réduisant la « taxe » du gate freshness `--staged`. 1ʳᵉ vague : `tests/smoke-test.sh` reclassé.
+./CHANGELOG.md:69:- Tests unitaires `tests/unit/test-path-matches-touch.sh` — couvre 18 cas (exact, dossier, glob `*` / `?` / `[]` / `**`, edge cases, Windows-friendly). Lancé en tête de smoke-test.
+./CHANGELOG.md:70:- Tests unitaires `tests/unit/test-is-path-within-repo.sh` — 30 cas couvrant safe (relatifs, globs, espaces) et unsafe (absolus Unix, Windows lettre+drive, UNC, backslash, traversées, home, NUL/tab/newline, vide). Lancé en tête de smoke-test.
+./CHANGELOG.md:71:- CI : `windows-latest` ajouté à la matrix `template-smoke-test.yml` en `continue-on-error: true` (best-effort, non-bloquant). `shellcheck` reste Linux/macOS.
+./CHANGELOG.md:95:- Les fiches dogfoodées trop larges migrent leurs surfaces globales (`tests/smoke-test.sh`, CHANGELOG/PROJECT_STATE, etc.) vers `touches_shared` quand elles ne possèdent pas directement le fichier.
+./CHANGELOG.md:104:- Tests unitaires ajoutés — `test-check-feature-freshness.sh` couvre la régression multi-feature du staged freshness ; `test-dogfood-drift-extra.sh` couvre les fichiers runtime destination-only. Tous deux sont lancés en tête de `tests/smoke-test.sh`.
+./CHANGELOG.md:140:- `.ai/scripts/doctor.sh` — diagnostic non destructif (dépendances, hooks, index, checks). Mode `--strict` opt-in ; en mode par défaut reste informatif (exit 0) pour ne pas casser le smoke-test sur scaffold sain.
+./CHANGELOG.md:152:- Workflow `.github/workflows/template-smoke-test.yml` étendu en matrix `ubuntu-latest` + `macos-latest` (au lieu d'Ubuntu seul). Install copier cross-platform (PEP 668 / `--break-system-packages` côté macOS). Déclencheurs étendus à `.ai/scripts/**` et `.ai/schema/**` pour rattraper les changements dogfoodés. Ajout `workflow_dispatch`.
+./CHANGELOG.md:156:- Documentation synchronisée : nombre d'étapes du smoke-test, défaut `enable_ci_guard`, description des hooks runtime.
+./CHANGELOG.md:157:- Synchronisation docs/runtime sur l'UX skills et l'auto-progression : distinction commandes exposées (`/aic`, `/aic undo`, `/aic-feature-resume`, `/aic-feature-audit`, `/aic-quality-gate`) vs skills internes (`new/update/handoff/done`) ; clarification explicite que l'auto-progression couvre uniquement `spec → implement`.
+./CHANGELOG.md:178:- `tests/smoke-test.sh` valide désormais un override simple de `coverage.*` via `.ai/config.yml` (sans casser le comportement par défaut).
+./CHANGELOG.md:179:- `tests/smoke-test.sh` valide aussi l'override `progress.stale_after_days` via `.ai/config.yml` dans `resume-features.sh`.
+./CHANGELOG.md:180:- `tests/smoke-test.sh` vérifie que `pr-report.sh` généré reste compatible Bash 3.2 (absence de `mapfile`).
+./CHANGELOG.md:181:- `tests/smoke-test.sh` valide les rendus `adoption_mode=lite` (`.githooks` et `.github/workflows/` exclus) et `adoption_mode=strict + enable_ci_guard=false` (workflows conservés).
+./CHANGELOG.md:182:- `tests/smoke-test.sh` valide que `check-features.sh` exige `depends_on` et `touches` (acceptent `[]`).
+./CHANGELOG.md:183:- `tests/smoke-test.sh` valide `audit-features.sh --help` (annonce périmètre MVP) et la robustesse aux chemins avec espaces (`src/with space/file.ts` orphelin détecté).
+./CHANGELOG.md:184:- `tests/smoke-test.sh` valide `pr-report.sh --format=json` (sortie JSON parseable via `jq`), exclusion par défaut d'un README modifié, et `--include-docs` qui lève l'exclusion.
+./CHANGELOG.md:185:- `tests/smoke-test.sh` valide le wrapper `ai-context.sh` (`--help` liste les commandes, alias `shims` route vers `check-shims`, commande inconnue rejetée).
+./CHANGELOG.md:202:- `tests/smoke-test.sh` utilise `copier copy --vcs-ref=HEAD` pour tester le working tree plutôt que le dernier tag (bug rencontré : copier utilisait v0.8.0 au lieu de HEAD).
+./CHANGELOG.md:294:  - `/aic-feature-handoff` — bloc HANDOFF inter-scope formalisé (what delivered / next needs / blockers / status)
+./CHANGELOG.md:307:v0.5 = fiabilité, v0.6 = coût maîtrisé, **v0.7 = continuité**. Le travail n'est plus perdu entre sessions. Les skills encadrent les gestes récurrents (create/resume/update/handoff/done) avec une structure identique partout, exécutée dans un ordre stable. Le contexte de reprise est dans l'index (machine-readable) ET dans le worklog (narrative).
+./CHANGELOG.md:377:- `tests/smoke-test.sh` — 2 nouvelles assertions : (1) l'index est créé et contient la feature de test, (2) rebuild sur mtime.
+./CHANGELOG.md:437:- Slash commands Claude (`/handoff`, `/plan-task`)
+./CHANGELOG.md:442:- Stop hook `.ai/state/last-handoff.md`
+./tests/smoke-test.sh:2:# smoke-test.sh — Génère un projet de test et vérifie qu'il est cohérent.
+./tests/smoke-test.sh:4:# Usage : bash tests/smoke-test.sh
+./tests/smoke-test.sh:16:echo "═══ smoke-test ═══"
+./tests/smoke-test.sh:435:scope: product
+./tests/smoke-test.sh:1235:for s in feature-new feature-resume feature-update feature-handoff feature-audit document-feature dev-plan quality-gate feature-done project-guardrails project-overlay-sync; do
+./tests/smoke-test.sh:1241:for s in aic-feature-new aic-feature-resume aic-feature-update aic-feature-handoff aic-feature-done aic-quality-gate; do
+./tests/smoke-test.sh:1728:  # minimal et custom : pas de scopes dev métier (back/front/architecture/security/handoff)
+./tests/smoke-test.sh:1730:    for forbidden in back.md front.md architecture.md security.md handoff.md; do
+./tests/smoke-test.sh:1739:  # backend : back+architecture+security+handoff oui, front non
+./tests/smoke-test.sh:1741:    for required in back.md architecture.md security.md handoff.md; do
+./tests/smoke-test.sh:2014:echo "✅ smoke-test PASS"
+./README.md:32:| Garder un projet mature propre | hooks git, checks CI, doctor, smoke-test, migration Copier |
+./README.md:107:pilot -> item actif -> frame/feature/fix/docs/handoff -> validation -> item suivant
+./README.md:117:handoff explicite au lieu de mélanger les responsabilités.
+./README.md:193:- Subagents : déléguer seulement avec rôle clair (`explorer` lecture seule, `worker` avec write-set explicite), sortie structurée et aucun cross-scope sans HANDOFF.
+./README.md:242:| `backend` | minimal + back, architecture, security, handoff |
+./README.md:311:| `bash tests/smoke-test.sh` | test end-to-end du template |
+./README.md:371:bash tests/smoke-test.sh
+./PROJECT_STATE.md:19:3. Lancer le smoke-test : `export PATH="$HOME/Library/Python/3.9/bin:$PATH" && bash tests/smoke-test.sh` (28 étapes, attendu `✅ PASS`).
+./PROJECT_STATE.md:50:- `template/.ai/workflows/` — procédures internes agent-agnostic partagées par Claude et Codex : `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `quality-gate`, `feature-done`, `project-guardrails`.
+./PROJECT_STATE.md:51:- `tests/smoke-test.sh` — 28 assertions end-to-end.
+./PROJECT_STATE.md:86:- CI source repo : workflow GitHub Actions sur `qhuy/ai_context` lui-même qui exécute `tests/smoke-test.sh` (matrix Ubuntu/macOS).
+./PROJECT_STATE.md:105:Quand une fonctionnalité change, les fichiers suivants **doivent** être revus dans le même chantier (la règle est rappelée dans `CONTRIBUTING.md` et bloquée par `tests/smoke-test.sh` quand applicable) :
+./PROJECT_STATE.md:113:- `tests/smoke-test.sh` (au moins une assertion)
+./PROJECT_STATE.md:127:- `bash tests/smoke-test.sh` — 28 étapes principales (+ étape unit + étape bonus big-mesh), requiert `copier` dans le PATH (`pip install --user copier`).
+./PROJECT_STATE.md:128:- CI GitHub Actions (`enable_ci_guard: true` par défaut) — `check-shims` + `check-features` (avec validation `touches:` dure) + `check-ai-references`. Matrix `template-smoke-test.yml` étendue à `windows-latest` (best-effort, non-bloquant).
+./docs/variables.md:52:| `backend` | core, quality, workflow, product, back, architecture, security, handoff |
+./docs/benchmarks/PROTOCOL.md:3:> Initiative `product/agent-efficacy-benchmark` (pilot `2026-06-30-ze-solution`, P1).
+./docs/benchmarks/PROTOCOL.md:28:Le harnais lui-même (`tests/bench/`) et les artefacts de runs précédents
+./docs/benchmarks/PROTOCOL.md:29:(`docs/benchmarks/reports`, `docs/benchmarks/runs`) sont exclus de toutes les
+./docs/benchmarks/PROTOCOL.md:36:puis publiés vers `docs/benchmarks/reports` et `docs/benchmarks/runs` seulement une
+./docs/benchmarks/PROTOCOL.md:39:`docs/benchmarks/runs` ou sous le répertoire temporaire, et si son basename correspond
+./docs/benchmarks/PROTOCOL.md:63:- **Suite de tâches** : `tests/bench/tasks/<id>/` = `task.md` (prompt + critère
+./docs/benchmarks/PROTOCOL.md:68:  `contextual` ; `0003` handoff cross-scope, classe `handoff`).
+./docs/benchmarks/PROTOCOL.md:69:- **Runner** : `tests/bench/run-bench.sh` — orchestre repos × tâches × conditions
+./docs/benchmarks/PROTOCOL.md:71:- **Rapport** : `docs/benchmarks/reports/<date>-<repo-slug>.md` — succès par condition,
+./docs/benchmarks/PROTOCOL.md:77:  d'agent/check sous `docs/benchmarks/runs/<stamp>/`.
+./docs/benchmarks/PROTOCOL.md:83:  est invalide comme preuve benchmark, même si les artefacts restent utiles au diagnostic.
+./docs/benchmarks/PROTOCOL.md:129:- ✅ Suite discriminante initiale : reprise feature mesh + décision handoff
+./docs/benchmarks/PROTOCOL.md:130:  cross-scope, avec graders objectifs.
+./docs/audit/reports/AUDIT-2026-06-08.md:49:| **CI-1** | gaps | P1 | `.github/workflows/*` (grep `core.hooksPath\|post-checkout` → ∅) ; `smoke-test.sh:1069` | Hooks git jamais exercés en CI headless. `commit-msg` testé seulement sur chemin *valide* (`\|\| true`, l.1069) ; rejet via le hook réel jamais asserté ; `post-checkout` jamais exercé. | La chaîne hook→script peut casser sans qu'un test tombe. Enforcement non testé e2e. | Cas smoke : commit message invalide sous `core.hooksPath` → assert rejet ; cas post-checkout. | M |
+./docs/audit/reports/AUDIT-2026-06-08.md:73:| **CI-10** | gaps | P2 | `smoke-test.sh:1794-1797` | `copier update` (seul test de migration) skippé avec un simple `⚠` si le tag v0.11.0 est absent (clone shallow / fork sans tags) → no-op silencieux. | Régression `copier update` non détectée sur fork/CI sans tags. | Faire échouer (ou FAIL visible) si le tag de référence manque. | S |
+./docs/audit/reports/AUDIT-2026-06-08.md:81:| **TPL-3** | maintenabilité | P3 | `check-dogfood-drift.sh:126` | `template-smoke-test.yml` listé en « source-only ignored » alors qu'il n'a aucun `.jinja` (purement repo). | Clarté seulement. | Reclasser/commenter. | S |
+./.github/workflows/template-smoke-test.yml:1:name: template-smoke-test
+./.github/workflows/template-smoke-test.yml:15:      - 'tests/smoke-test.sh'
+./.github/workflows/template-smoke-test.yml:18:      - '.github/workflows/template-smoke-test.yml'
+./.github/workflows/template-smoke-test.yml:30:      - 'tests/smoke-test.sh'
+./.github/workflows/template-smoke-test.yml:33:      - '.github/workflows/template-smoke-test.yml'
+./.github/workflows/template-smoke-test.yml:37:  smoke-test:
+./.github/workflows/template-smoke-test.yml:96:      - name: smoke-test template
+./.github/workflows/template-smoke-test.yml:99:          bash tests/smoke-test.sh
+./tests/unit/test-agents-md-self-sufficient.sh:41:- Un scope par tâche ; cross-scope ⇒ HANDOFF.
+./.claude/settings.local.json:4:      "Bash(bash tests/smoke-test.sh)",
+./.claude/settings.local.json:56:      "Bash(bash .ai/scripts/smoke-test.sh)",
+./.claude/settings.local.json:135:      "Bash(bash tests/smoke-test.sh *)",
+./.claude/settings.local.json:140:      "Bash(bash tests/smoke-test.sh 2>&1 | tail -3 && echo \"---\" && bash tests/unit/test-auto-progress-filter.sh 2>&1 | tail -2 && bash tests/unit/test-context-relevance.sh 2>&1 | tail -2 && bash tests/unit/test-stop-hook-idempotence.sh 2>&1 | tail -2 && echo \"---\" && rm -f .ai/.context-relevance.jsonl* .ai/.session-edits.log* .ai/.session-edits.flushed)",
+./.claude/settings.local.json:179:      "Bash(bash .ai/scripts/features-for-path.sh tests/smoke-test.sh)",
+./.claude/settings.local.json:212:      "Bash(bash /Users/huy/Documents/Perso/ai_context/.ai/scripts/check-feature-docs.sh --strict quality/smoke-test)",
+./.claude/settings.local.json:230:      "Bash(bash /Users/huy/Documents/Perso/ai_context/tests/smoke-test.sh)",
+./docs/getting-started.md:59:bash tests/smoke-test.sh
+./tests/unit/test-path-matches-touch.sh:7:# d'auto-injection, ce qui n'est pas détecté par le smoke-test d'intégration.
+./docs/audit/REVIEW_PROMPT.md:49:| `tests/smoke-test.sh` + `tests/unit/` + `.github/workflows/` | Smoke-test d'intégration (copier copy/update), suites unitaires, orchestration CI. |
+./docs/audit/REVIEW_PROMPT.md:53:2. **Un scope primaire par tâche** ; cross-scope ⇒ bloc **HANDOFF** explicite + confirmation.
+./docs/audit/REVIEW_PROMPT.md:106:2. Les remédiations annoncées dans `AUDIT*.md` (tests `is_path_within_repo`, validation `id`/`scope`, smoke-test `copier update`) sont-elles **réellement** à HEAD ? Vérifie, ne crois pas.
+./tests/unit/test-build-feature-index-contract.sh:46:scope: quality
+./tests/unit/test-product-reports-read-only.sh:32:scope: product
+./tests/unit/test-build-feature-index-fallback.sh:30:scope: product
+./copier.yml:35:  - "{% if 'handoff' not in scopes %}.ai/rules/handoff.md{% endif %}"
+./copier.yml:148:    backend (+ back, architecture, security, handoff): backend
+./copier.yml:207:    ["core", "quality", "workflow", "product", "back", "architecture", "security", "handoff"]
+./copier.yml:209:    ["core", "quality", "workflow", "product", "back", "front", "architecture", "security", "handoff"]
+./template/.cursor/rules/front.mdc.jinja:46:- Un scope primaire par tour ; cross-scope back↔front ⇒ HANDOFF formel ([`/aic-feature-handoff`] côté Claude).
+./template/{{docs_root}}/pilots/0000-template.md.jinja:5:scope_primary: "product"
+./template/{{docs_root}}/pilots/0000-template.md.jinja:29:Statuts : `inbox`, `triage`, `validated`, `blocked`, `handoff`, `doing`, `review`, `done`, `dropped`.
+./template/{{docs_root}}/pilots/0000-template.md.jinja:31:Routes : `feature`, `fix`, `docs`, `refactor`, `chore`, `diagnose`, `handoff`, `manual`, `dropped`.
+./template/{{docs_root}}/pilots/0000-template.md.jinja:52:HANDOFF
+./template/{{docs_root}}/pilots/0000-template.md.jinja:69:- Tous les items sont `done`, `dropped`, `handoff` ou explicitement reportés.
+./template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja:16:# Optionnel : lien produit. Pour `scope: product`, décrit l'initiative.
+./template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja:162:Si cette feature sert une initiative produit, renseigner `product.initiative`. Si cette feature est une initiative `scope: product`, renseigner le pari, la métrique, la prochaine date de décision et les critères de cut. Si le détail vit dans BMAD, Spec Kit, Linear, Jira ou un autre outil, ajouter un lien dans `external_refs` plutôt que dupliquer le contenu.
+./template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja:181:- `touches_shared` : surfaces transverses liées à la feature (`tests/smoke-test.sh`, `CHANGELOG.md`, docs d'état). Ces chemins apparaissent dans les rapports mais ne déclenchent pas l'obligation de fiche/worklog dans `check-feature-freshness --staged`.
+./template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja:182:- `product` : lien produit typé. Pour une initiative `scope: product`, utiliser `product.type: initiative`, `bet`, `success_metric`, `leading_indicator`, `decision_state`, `next_decision_date`, `kill_criteria`, `portfolio.*`. Pour une feature dev, utiliser `product.initiative`, `contribution`, `evidence`.
+./template/.cursor/rules/back.mdc.jinja:41:- Un scope primaire par tour ; cross-scope ⇒ HANDOFF formel ([`/aic-feature-handoff`] côté Claude, ou bloc HANDOFF manuel dans le worklog).
+./template/.claude/skills/aic-document-feature/SKILL.md.jinja:3:description: Crée, met à jour, audite ou prépare la clôture d'une fiche feature ai_context. Utilise le feature mesh, garde le worklog à jour, respecte le scope primaire et produit un HANDOFF explicite en cas de cross-scope.
+./template/.cursor/rules/protocol-reminder.mdc.jinja:19:- Un scope primaire par tour ; cross-scope ⇒ HANDOFF + confirmation utilisateur
+./template/.claude/skills/aic/workflow.md.jinja:26:> Le script `aic-undo.sh` est testable en CI (smoke-test étape E2E). Si tu dois faire l'undo manuellement (script absent), suis le contrat décrit dans son `--help`.
+./template/.claude/skills/aic/workflow.md.jinja:34:- `/aic handoff vers quality` → émet HANDOFF vers autre scope
+./template/.claude/skills/aic/workflow.md.jinja:49:   | « handoff vers X » | émettre HANDOFF formel + update fiche cible |
+./template/.claude/skills/aic-frame/workflow.md.jinja:42:- Signal B — détection lexicale : `skill`, `workflow`, `hook`, `quality gate`, `contrat`, `template`, `Claude`, `Codex`, `agent`, `orchestrateur`, `MCP`, `ADR`, `handoff`, `cross-scope`, `migration`, `schema`, `format`, `runtime`.
+./template/.claude/skills/aic-pilot/workflow.md.jinja:19:3. `.ai/rules/workflow.md` si la demande implique plusieurs scopes, HANDOFF, skills ou protocole
+./template/.claude/skills/aic-pilot/workflow.md.jinja:36:- demande cross-scope ou risque de créer une fiche feature globale ;
+./template/.claude/skills/aic-pilot/workflow.md.jinja:47:   - statut : `inbox | triage | validated | blocked | handoff | doing | review | done | dropped`
+./template/.claude/skills/aic-pilot/workflow.md.jinja:49:   - route : `feature | fix | docs | refactor | chore | diagnose | handoff | manual | dropped`
+./template/.claude/skills/aic-pilot/workflow.md.jinja:109:- `handoff` : produire le bloc HANDOFF et attendre confirmation avant de changer de scope primaire.
+./template/.claude/skills/aic-pilot/workflow.md.jinja:141:`done` si tous les items sont `done`, `dropped`, `handoff` ou explicitement reportés avec une reprise claire.
+./template/.claude/skills/aic-pilot/workflow.md.jinja:143:`blocked` si l'item actif demande une décision humaine, une preuve absente ou un HANDOFF non confirmé.
+./template/.claude/skills/aic-pilot/workflow.md.jinja:153:- Si un item change le scope primaire, produire un HANDOFF avant toute édition.
+./template/.agents/skills/aic-feature-handoff/SKILL.md.jinja:2:name: aic-feature-handoff
+./template/.agents/skills/aic-feature-handoff/SKILL.md.jinja:3:description: Génère un HANDOFF inter-scope pour une feature quand le travail bascule vers un autre scope ou une autre session. Primitive interne (fallback) ; usage recommandé via /aic handoff ou le langage naturel qui s'appuient sur .ai/workflows/feature-handoff.md. Ne pas invoquer par matching lexical implicite.
+./template/.ai/rules/handoff.md.jinja:1:# Rules — handoff
+./template/.ai/rules/handoff.md.jinja:5:## Template HANDOFF
+./template/.ai/rules/handoff.md.jinja:8:HANDOFF
+./template/.ai/rules/handoff.md.jinja:25:Un HANDOFF incomplet bloque la reprise. Tous les champs sont requis.
+./template/.claude/skills/aic-diagnose/workflow.md.jinja:47:- `scope` : cross-scope, dépendance non chargée, handoff nécessaire.
+./template/.claude/skills/aic-dev-plan/SKILL.md.jinja:3:description: Transforme une intention cadrée en plan d'exécution vérifiable avant implémentation. Identifie surfaces, ordre, handoffs, contrats traversants et checks par étape. Plan-only — aucun code, aucun commit.
+./template/.agents/skills/aic/workflow.md.jinja:26:> Le script `aic-undo.sh` est testable en CI (smoke-test étape E2E). Si tu dois faire l'undo manuellement (script absent), suis le contrat décrit dans son `--help`.
+./template/.agents/skills/aic/workflow.md.jinja:34:- `/aic handoff vers quality` → émet HANDOFF vers autre scope
+./template/.agents/skills/aic/workflow.md.jinja:49:   | « handoff vers X » | émettre HANDOFF formel + update fiche cible |
+./template/.agents/skills/aic-diagnose/workflow.md.jinja:47:- `scope` : cross-scope, dépendance non chargée, handoff nécessaire.
+./template/.github/copilot-instructions.md.jinja:8:- Un scope primaire par tâche ; cross-scope ⇒ HANDOFF explicite.
+./template/.agents/skills/aic-feature-handoff/workflow.md.jinja:1:# Workflow — aic-feature-handoff
+./template/.agents/skills/aic-feature-handoff/workflow.md.jinja:7:- nom littéral `aic-feature-handoff` cité par l'utilisateur ;
+./template/.agents/skills/aic-feature-handoff/workflow.md.jinja:8:- chemin `.ai/workflows/feature-handoff.md` cité ;
+./template/.agents/skills/aic-feature-handoff/workflow.md.jinja:9:- instruction explicite "utilise la primitive feature-handoff".
+./template/.agents/skills/aic-feature-handoff/workflow.md.jinja:11:Sur sélection implicite par matching lexical ("handoff", "transfert", "passer la main", "déléguer scope") → STOP, ne pas exécuter, rediriger vers `/aic handoff`. Chemin propre : intention publique → `.ai/workflows/feature-handoff.md`, sans retour vers cette primitive.
+./template/.agents/skills/aic-feature-handoff/workflow.md.jinja:18:.ai/workflows/feature-handoff.md
+./template/.ai/agent/initiative-contract.md.jinja:32:- Handoff cross-scope effectif après émission du bloc HANDOFF.
+./template/.ai/reminder.md.jinja:5:- One scope per turn; cross-scope ⇒ HANDOFF + user confirmation.
+./template/.ai/reminder.md.jinja:13:- Un scope par tour ; cross-scope ⇒ HANDOFF + confirmation utilisateur.
+./template/.ai/context-ignore.md.jinja:21:- Charger une seule règle de scope sauf HANDOFF confirmé.
+./template/.agents/skills/aic-frame/workflow.md.jinja:42:- Signal B — détection lexicale : `skill`, `workflow`, `hook`, `quality gate`, `contrat`, `template`, `Claude`, `Codex`, `agent`, `orchestrateur`, `MCP`, `ADR`, `handoff`, `cross-scope`, `migration`, `schema`, `format`, `runtime`.
+./template/.agents/skills/aic-pilot/workflow.md.jinja:19:3. `.ai/rules/workflow.md` si la demande implique plusieurs scopes, HANDOFF, skills ou protocole
+./template/.agents/skills/aic-pilot/workflow.md.jinja:36:- demande cross-scope ou risque de créer une fiche feature globale ;
+./template/.agents/skills/aic-pilot/workflow.md.jinja:47:   - statut : `inbox | triage | validated | blocked | handoff | doing | review | done | dropped`
+./template/.agents/skills/aic-pilot/workflow.md.jinja:49:   - route : `feature | fix | docs | refactor | chore | diagnose | handoff | manual | dropped`
+./template/.agents/skills/aic-pilot/workflow.md.jinja:109:- `handoff` : produire le bloc HANDOFF et attendre confirmation avant de changer de scope primaire.
+./template/.agents/skills/aic-pilot/workflow.md.jinja:141:`done` si tous les items sont `done`, `dropped`, `handoff` ou explicitement reportés avec une reprise claire.
+./template/.agents/skills/aic-pilot/workflow.md.jinja:143:`blocked` si l'item actif demande une décision humaine, une preuve absente ou un HANDOFF non confirmé.
+./template/.agents/skills/aic-pilot/workflow.md.jinja:153:- Si un item change le scope primaire, produire un HANDOFF avant toute édition.
+./template/.ai/rules/product.md.jinja:7:- Une feature `scope: product` représente une initiative produit.
+./template/.ai/index.md.jinja:17:- Un scope primaire par tâche. Cross-scope ⇒ `HANDOFF` explicite + confirmation.
+./template/.ai/index.md.jinja:57:{% elif scope == 'handoff' -%}
+./template/.ai/index.md.jinja:58:| `handoff` | Passage explicite entre scopes |
+./template/.ai/rules/workflow.md.jinja:8:HANDOFF
+./template/.ai/quality/QUALITY_GATE.md.jinja:86:| core | Pack A lean lu, HANDOFF clair si cross-scope |
+./template/.ai/quality/QUALITY_GATE.md.jinja:101:{%- if 'handoff' in scopes %}
+./template/.ai/quality/QUALITY_GATE.md.jinja:102:| handoff | Template HANDOFF rempli (scope, status, fichiers, risques, état validation) |
+./template/.ai/workflows/document-feature.md.jinja:14:- `handoff` : formaliser une passation quand le travail sort du scope primaire.
+./template/.ai/workflows/document-feature.md.jinja:28:- `mode` : `init`, `update`, `audit`, `handoff`, `done-check`.
+./template/.ai/workflows/document-feature.md.jinja:39:- `workflow` : workflows agent, skills, lifecycle feature, handoff, auto-progress.
+./template/.ai/workflows/document-feature.md.jinja:49:Cross-scope : documenter le scope primaire, puis produire un `HANDOFF` explicite pour le scope suivant.
+./template/.ai/workflows/document-feature.md.jinja:169:- aucun travail cross-scope n'est caché dans une seule fiche.
+./template/.ai/workflows/document-feature.md.jinja:191:## Phase 5 — HANDOFF
+./template/.ai/workflows/document-feature.md.jinja:193:Produire un handoff si le travail quitte le scope primaire.
+./template/.ai/workflows/document-feature.md.jinja:196:## HANDOFF — <from-scope> -> <to-scope>
+./template/.ai/workflows/document-feature.md.jinja:245:- handoff si l'implémentation relève d'un autre scope.
+./template/.ai/workflows/document-feature.md.jinja:254:RESULT: DONE | UPDATED | INIT_CREATED | AUDIT_ONLY | BLOCKED | HANDOFF_REQUIRED
+./template/.ai/workflows/document-feature.md.jinja:271:docs(<scope>): prépare le handoff <feature>
+./template/.ai/workflows/document-feature.md.jinja:276:- Un scope primaire par tâche.
+./template/.ai/workflows/document-feature.md.jinja:281:- Pas de cross-scope sans HANDOFF.
+./template/.ai/rules/stack-fullstack-dotnet-react.md.jinja:62:## Séquencement & handoff
+./template/.ai/rules/stack-fullstack-dotnet-react.md.jinja:64:- Un scope primaire par tour. Si le travail traverse back ET front, produire un HANDOFF explicite vers l'autre scope avant de poursuivre.
+./template/.ai/rules/stack-fullstack-dotnet-react.md.jinja:67:- Migrations DB, changements de droits, feature flags, stratégie de rollout : visibles dans la fiche feature ou le handoff — pas en implicite.
+./template/.ai/workflows/feature-update.md.jinja:7:**Procedure chain** : `feature-new` → **`feature-update`** (répété) → `.ai/workflows/feature-handoff.md` ou `feature-done`.
+./template/.ai/scripts/check-touches-breadth.sh.jinja:5:# partagée (ex. tests/smoke-test.sh) listée en `touches:` DIRECT par des dizaines
+./template/.agents/skills/aic-dev-plan/SKILL.md.jinja:3:description: Transforme une intention cadrée en plan d'exécution vérifiable avant implémentation. Identifie surfaces, ordre, handoffs, contrats traversants et checks par étape. Plan-only — aucun code, aucun commit.
+./template/.agents/skills/aic-document-feature/SKILL.md.jinja:3:description: Crée, met à jour, audite ou prépare la clôture d'une fiche feature ai_context. Utilise le feature mesh, garde le worklog à jour, respecte le scope primaire et produit un HANDOFF explicite en cas de cross-scope.
+./template/.ai/workflows/subagent-contract.md.jinja:5:**Role** : Contrat de délégation. Ne remplace ni le feature mesh, ni les checks, ni les handoffs.
+./template/.ai/workflows/subagent-contract.md.jinja:16:- la création du HANDOFF ;
+./template/.ai/workflows/subagent-contract.md.jinja:34:- Interdit : revert de changements tiers, édition hors assignation, changement de scope sans HANDOFF.
+./template/.ai/workflows/subagent-contract.md.jinja:64:3. L'agent principal produit un HANDOFF explicite.
+./template/AGENTS.md.jinja:9:- Un scope primaire par tâche ; cross-scope ⇒ HANDOFF explicite.
+./template/.ai/scripts/audit-features.sh.jinja:108:  # Fallback hors repo git (scaffold neuf, smoke-test) : find filtré.
+./template/.ai/workflows/mcp-policy.md.jinja:48:- Si l'usage MCP implique un autre scope, produire un HANDOFF.
+./template/.ai/workflows/dev-plan.md.jinja:5:**Role** : Planificateur structurant. L'agent identifie les surfaces, détermine l'ordre, liste les handoffs et les checks, prend position sur la prochaine action minimale. Il ne produit aucun code et ne lance aucun chantier.
+./template/.ai/workflows/dev-plan.md.jinja:50:**Cross-scope** : tout passage vers un autre scope primaire produit un bloc HANDOFF explicite :
+./template/.ai/workflows/dev-plan.md.jinja:53:HANDOFF
+./template/.ai/workflows/dev-plan.md.jinja:102:- HANDOFF ou "aucun"
+./template/.ai/workflows/dev-plan.md.jinja:125:- Un scope primaire reste actif : HANDOFF explicite pour tout changement de scope.
+./template/.ai/workflows/feature-new.md.jinja:11:- Un scope unique est connu (`back | front | architecture | security | ...`). Si ambigu → demander à l'utilisateur.
+./template/.ai/scripts/aic.sh.jinja:329:2. Confirmer le scope primaire ; si plusieurs scopes sont nécessaires, préparer un HANDOFF.
+./template/.ai/workflows/feature-handoff.md.jinja:1:# Procédure interne — feature-handoff
+./template/.ai/workflows/feature-handoff.md.jinja:3:**Goal** : formaliser une passation de travail sur une feature, soit vers un autre scope (cross-scope impose un handoff selon `.ai/index.md`), soit vers une autre session / un autre humain.
+./template/.ai/workflows/feature-handoff.md.jinja:7:**Procedure chain** : `.ai/workflows/feature-update.md` → **`.ai/workflows/feature-handoff.md`** → STOP + confirmation utilisateur → autre session prendra le relais via `.ai/workflows/feature-resume.md`.
+./template/.ai/workflows/feature-handoff.md.jinja:24:### Phase 2 — Bloc HANDOFF
+./template/.ai/workflows/feature-handoff.md.jinja:27:## <YYYY-MM-DD HH:MM> — HANDOFF → <target_scope>
+./template/.ai/workflows/feature-handoff.md.jinja:45:- `progress.step` → `"handoff pending → <target_scope>"`
+./template/.ai/workflows/feature-handoff.md.jinja:46:- `progress.resume_hint` → `"voir HANDOFF du <date> dans worklog"`
+./template/.ai/workflows/feature-handoff.md.jinja:56:- Résumé du HANDOFF (1-2 phrases)
+./template/.ai/workflows/feature-handoff.md.jinja:63:- Un HANDOFF PENDING qui reste > 7j sans bouger → signalé par `.ai/workflows/feature-resume.md` comme STALE.
+./template/.ai/workflows/feature-handoff.md.jinja:64:- Jamais de HANDOFF sans `what_next_needs` (vide = pas un handoff, juste un update).
+./template/.ai/workflows/feature-handoff.md.jinja:66:- Un HANDOFF est **append**, jamais remplacé. Plusieurs handoffs peuvent coexister si la feature passe par plusieurs scopes.
+
+2026-07-02T15:57:50.036073Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T15:57:50.040545Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:50.056333Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:50.056355Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:50.056766Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:50.056778Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:50.057158Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:50.057171Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:50.057537Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:50.057546Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:50.057947Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:50.057956Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:50.058720Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:50.058729Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:57:50.457375Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:50.465823Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:57:50.465857Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+La source est identifiée dans le protocole benchmark comme `product/agent-efficacy-benchmark`. Pour `tests/smoke-test.sh`, l’indice local explicite pointe vers `quality/smoke-test`, donc la décision doit être un handoff.
+exec
+/bin/zsh -lc "sed -n '1,90p' docs/benchmarks/PROTOCOL.md" in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work
+ succeeded in 0ms:
+# Protocole — Benchmark d'efficacité agent (ai_context)
+
+> Initiative `product/agent-efficacy-benchmark` (pilot `2026-06-30-ze-solution`, P1).
+> **But** : prouver, de façon reproductible, qu'un agent travaille plus fiablement
+> AVEC la couche `ai_context` que sur un repo nu. **v1 maintainer-only.**
+
+## Métrique
+
+- **Primaire** : **taux de succès de tâche** — % de tâches d'une suite figée
+  complétées correctement, jugé objectivement, `AVEC` vs `SANS` ai_context.
+- **Leading indicator** : coût de contexte en tokens par tâche et par classe de
+  tâche (disponible avant le grader complet ; valide tôt la direction, ne confère
+  pas le titre).
+- **Dispersion** : intervalle de confiance sur `N` runs — sans quoi le Δ n'est
+  pas interprétable.
+
+## Conditions comparées
+
+Pour chaque repo de référence et chaque tâche :
+
+| Condition | Repo de travail |
+|---|---|
+| `with` | copie du repo **avec** `ai_context` (`.ai/`, `AGENTS.md`, `CLAUDE.md`, `.docs/`) |
+| `without` | même copie **dépouillée** de la couche ai_context |
+
+Seule la présence d'ai_context varie. Même modèle, même tâche, même prompt de
+départ. Le repo nu n'est **pas** sciemment handicapé (invariant d'honnêteté).
+Le harnais lui-même (`tests/bench/`) et les artefacts de runs précédents
+(`docs/benchmarks/reports`, `docs/benchmarks/runs`) sont exclus de toutes les
+copies de travail pour éviter que l'agent lise les tâches, graders ou résultats.
+La condition `without` retire aussi les skills repo-locales (`.agents`,
+`.claude/skills`), pas seulement les shims.
+Chaque cellule est bornée par `BENCH_TIMEOUT_SECONDS` ; un timeout est compté comme
+échec de tâche (`agent_exit=124`) et reste visible dans les logs.
+Les résultats et logs sont écrits dans un répertoire temporaire pendant l'exécution,
+puis publiés vers `docs/benchmarks/reports` et `docs/benchmarks/runs` seulement une
+fois la matrice terminée, afin d'éviter de conserver des artefacts partiels.
+Le répertoire de logs publié est remplacé uniquement s'il reste sous
+`docs/benchmarks/runs` ou sous le répertoire temporaire, et si son basename correspond
+au `BENCH_STAMP`, pour éviter qu'une configuration invalide déclenche une suppression large.
+
+## Design expérimental
+
+- **≥ 2 repos de référence**, dont **≥ 1 externe** (non taillé pour ai_context)
+  → validité externe.
+- **N runs** par (repo × tâche × condition) pour absorber la stochasticité du
+  modèle. `N` calibré pour que le Δ dépasse le bruit (démarrer petit, élargir si
+  signal).
+- **Ordre randomisé** des conditions pour éviter tout biais d'ordre/cache, avec
+  tie-break déterministe en cas d'égalité de clé pseudo-aléatoire.
+
+## Grader (objectivité)
+
+- Chaque tâche fournit un **`check.sh` exécutable** qui retourne `0` = succès,
+  `≠0` = échec, **sans jugement subjectif** (assertions sur fichiers, sortie,
+  build, tests).
+- Si une tâche ne peut être jugée par assertion, un **LLM-judge cadré** est admis
+  MAIS : critères explicites écrits + **échantillon vérifié à la main**. À éviter
+  tant qu'une assertion objective est possible.
+
+## Contrats d'artefacts
+
+- **Suite de tâches** : `tests/bench/tasks/<id>/` = `task.md` (prompt + critère
+  humain-lisible) + `task.class` (classe d'analyse tokens, fallback = `<id>`) +
+  `check.sh` (grader objectif, exécuté dans le repo de travail après l'agent).
+  La suite v1 contient une fumée de format (`0001`, classe `trivial`) et deux
+  tâches discriminantes ai_context (`0002` reprise feature mesh, classe
+  `contextual` ; `0003` handoff cross-scope, classe `handoff`).
+- **Runner** : `tests/bench/run-bench.sh` — orchestre repos × tâches × conditions
+  × N, invoque l'agent via le **seam `AGENT_CMD`**, applique le grader, agrège.
+- **Rapport** : `docs/benchmarks/reports/<date>-<repo-slug>.md` — succès par condition,
+  Δ et conditions exactes (rejouable), puis coût tokens global et Δ tokens/run
+  par classe de tâche (`with` - `without`). Le runner produit aussi un TSV et un
+  JSONL globaux incluant `tokens_used` quand le log agent expose un bloc
+  `tokens used`, `task_class` pour l'agrégation par classe, et `failure_kind` pour
+  distinguer échec de tâche, timeout et erreur infra agent, plus les logs
+  d'agent/check sous `docs/benchmarks/runs/<stamp>/`.
+  Les artefacts publiés référencent les repos par nom/slug et les logs par chemin
+  relatif au repo, afin d'éviter de versionner des chemins absolus locaux.
+  Les logs sont des sorties brutes d'agent : les relire avant publication externe
+  et ne jamais versionner un run qui contient un secret brut.
+  Un run contenant `failure_kind=agent_infra_error` (quota, auth, provider, etc.)
+  est invalide comme preuve benchmark, même si les artefacts restent utiles au diagnostic.
+  Cette classification ne s'applique qu'à une commande agent sortie non-zéro ; un
+  contenu de repo ou un warning dans un run agent réussi reste un échec de tâche
+  si le check échoue.
+
+## Seam d'invocation d'agent
+
+Le runner n'embarque **aucun** agent : il appelle `AGENT_CMD` (variable d'env),
+
+exec
+/bin/zsh -lc "sed -n '1,80p' template/.ai/index.md.jinja" in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work
+ succeeded in 0ms:
+# AI Context Index — {{ project_name }}
+
+{% if project_description %}> {{ project_description }}
+
+{% endif %}Entrée unique des agents. Mode par défaut : **lean context**.
+
+## Pack A — always load
+
+Lire uniquement ceci au démarrage :
+
+- Requête utilisateur.
+- Ce fichier (`.ai/index.md`).
+- `git status --short`.
+- Fichiers d'implémentation les plus proches, trouvés par `rg` ciblé.
+
+Invariants :
+- Un scope primaire par tâche. Cross-scope ⇒ `HANDOFF` explicite + confirmation.
+- Ne charger que le contexte nécessaire. Pas de docs/catalog/index/cache/logs/full diff par défaut.
+- Avant `feat:` : une fiche `{{ docs_root }}/features/<scope>/<id>.md` doit être créée ou mise à jour.
+- Avant DONE : exécuter la delivery gate et mettre à jour les docs impactées.
+- Commits en {{ 'français' if commit_language == 'fr' else 'English' }}.
+
+## Commit & Doc Level
+
+Choisir le type de commit selon l'intention :
+
+- `feat:` : nouveau comportement utilisateur, agent, workflow ou contrat ; exige une fiche feature créée ou mise à jour dans le même commit.
+- `fix:` : correction d'un comportement cassé ou dangereux ; rattacher à une fiche existante si un `touches:` couvre la surface.
+- `refactor:` : restructuration sans changement de comportement attendu ; documenter l'impact dans le worklog de la feature couvrante.
+- `chore:` : maintenance, outillage ou métadonnées sans effet produit direct ; pas de contournement pour livrer une vraie feature sans fiche.
+- `docs:` : documentation seule ; utiliser si le delta ne modifie ni comportement runtime ni contrat.
+
+`doc.level` :
+
+- `brief` : changement interne étroit, faible risque, sans nouveau contrat durable.
+- `standard` : défaut pour une feature ou un contrat maintenu.
+- `full` : surface critique, sécurité, données, rollout, observabilité, API stable ou impact multi-scope.
+
+## Scope Routing
+
+Ne charge `.ai/rules/<scope>.md` que si le scope est clair et utile à l'édition.
+Si le scope est incertain, utiliser cette table puis charger **un seul** fichier de scope.
+
+| Scope | Quand charger |
+|---|---|
+{% for scope in scopes -%}
+{% if scope == 'product' -%}
+| `product` | Initiative, roadmap, décision produit, traceability |
+{% elif scope == 'back' -%}
+| `back` | API, domaine, persistance, services backend |
+{% elif scope == 'front' -%}
+| `front` | UI, routes frontend, état client, design system |
+{% elif scope == 'architecture' -%}
+| `architecture` | Structure transversale, contrats, ADR, migration |
+{% elif scope == 'security' -%}
+| `security` | Auth, droits, secrets, données sensibles |
+{% elif scope == 'handoff' -%}
+| `handoff` | Passage explicite entre scopes |
+{% elif scope == 'quality' -%}
+| `quality` | Règles qualité spécifiques au projet, près de DONE |
+{% elif scope == 'workflow' -%}
+| `workflow` | Routage ou procédure si le flux est ambigu |
+{% else -%}
+| `{{ scope }}` | Règles propres au scope `{{ scope }}` |
+{% endif -%}
+{% endfor -%}
+{% if tech_profile != 'generic' %}
+
+Règles tech à la demande :
+{% if tech_profile in ['dotnet-clean-cqrs', 'fullstack-dotnet-react'] -%}
+- `.ai/rules/tech-dotnet.md` seulement pour C#/.NET.
+{% endif -%}
+{% if tech_profile in ['react-next', 'fullstack-dotnet-react'] -%}
+- `.ai/rules/tech-react.md` seulement pour React/Next.
+{% endif -%}
+{% if tech_profile == 'fullstack-dotnet-react' -%}
+- `.ai/rules/stack-fullstack-dotnet-react.md` seulement pour contrats back/front.
+{% endif -%}
+{% endif %}
+## Project Overlay
+
+exec
+/bin/zsh -lc "sed -n '200,220p' .claude/settings.local.json" in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work
+ succeeded in 0ms:
+      "Bash(grep -n 'with_index_lock\\(\\)\\\\|mkdir \"\\\\$lock_dir\"\\\\|max_tries\\\\|return 75\\\\|lock timeout' template/.ai/scripts/_lib.sh.jinja)",
+      "Bash(rg -n '_lib\\\\.sh|^touches:|^touches_shared:' .docs/features/__TRACKED_VAR__.md)",
+      "Bash(curl -fsSL --max-time 20 https://github.com/mikefarah/yq/releases/download/v4.44.3/checksums_hashes_order)",
+      "Bash(curl -fsSL --max-time 25 https://github.com/mikefarah/yq/releases/download/v4.44.3/checksums)",
+      "Bash(awk '$1==\"yq_linux_amd64\"||$1==\"yq_darwin_amd64\"||$1==\"yq_darwin_arm64\" {print $1\" \"$19}')",
+      "Bash(grep -n 'config_file=\".ai/config.yml\"\\\\|mode=\"\\\\${1' template/.ai/scripts/check-feature-coverage.sh.jinja)",
+      "Bash(sed -n '34,38p' .ai/scripts/check-feature-coverage.sh)",
+      "Bash(sed -n '34,37p' template/.ai/scripts/check-feature-coverage.sh.jinja)",
+      "Bash(echo \"rc=$? ; $\\(git log --oneline -2\\)\")",
+      "Bash(bash .ai/scripts/check-feature-docs.sh --strict quality/ci-guard)",
+      "Bash(bash .ai/scripts/check-feature-docs.sh --strict core/template-engine)",
+      "Bash(bash -n .ai/scripts/check-feature-docs.sh)",
+      "Bash(bash /Users/huy/Documents/Perso/ai_context/.ai/scripts/check-feature-docs.sh --strict quality/smoke-test)",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(bash /Users/huy/Documents/Perso/ai_context/.ai/scripts/check-feature-docs.sh --strict core/graph-aware-injection)",
+      "Bash(bash .ai/scripts/check-feature-docs.sh --strict workflow/feature-audit)",
+      "Bash(bash .ai/scripts/check-feature-docs.sh --strict workflow/auto-worklog)",
+      "Bash(bash /Users/huy/Documents/Perso/ai_context/.ai/scripts/check-feature-docs.sh --strict quality/cycle-detection)",
+      "Bash(bash /Users/huy/Documents/Perso/ai_context/.ai/scripts/check-feature-docs.sh --strict workflow/agent-behavior)",
+      "Bash(bash /Users/huy/Documents/Perso/ai_context/.ai/scripts/check-feature-docs.sh --strict quality/doc-freshness)",
+      "Bash(bash .ai/scripts/check-feature-docs.sh --strict workflow/project-guardrails)",
+
+2026-07-02T15:58:08.073813Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T15:58:08.078157Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:58:08.095223Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:08.095243Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:08.095644Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:08.095655Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:08.095978Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:08.095990Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:08.096344Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:08.096352Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:08.096707Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:08.096715Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:08.097456Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:08.097467Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:08.498629Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:58:08.507024Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:58:08.507059Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Je vais maintenant écrire uniquement l’artefact demandé, avec les trois lignes exactes et sans modifier le smoke-test.
+exec
+/bin/zsh -lc 'mkdir -p BENCH_RESULT' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work
+ succeeded in 0ms:
+2026-07-02T15:58:13.459128Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T15:58:13.462725Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:58:13.479704Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:13.479724Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:13.480099Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:13.480112Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:13.480518Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:13.480540Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:13.480940Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:13.480949Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:13.481289Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:13.481296Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:13.482016Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:13.482026Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:13.868988Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:58:13.876919Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:58:13.876953Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+apply patch
+patch: completed
+/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work/BENCH_RESULT/handoff-decision.txt
+diff --git a/BENCH_RESULT/handoff-decision.txt b/BENCH_RESULT/handoff-decision.txt
+new file mode 100644
+index 0000000000000000000000000000000000000000..8f48a60ea3c9283c4594943e6ab2408b5b567c8e
+--- /dev/null
++++ b/BENCH_RESULT/handoff-decision.txt
+@@ -0,0 +1,3 @@
++decision=HANDOFF_REQUIRED
++source=product/agent-efficacy-benchmark
++target=quality/smoke-test
+
+diff --git a/BENCH_RESULT/handoff-decision.txt b/BENCH_RESULT/handoff-decision.txt
+new file mode 100644
+index 0000000000000000000000000000000000000000..8f48a60ea3c9283c4594943e6ab2408b5b567c8e
+--- /dev/null
++++ b/BENCH_RESULT/handoff-decision.txt
+@@ -0,0 +1,3 @@
++decision=HANDOFF_REQUIRED
++source=product/agent-efficacy-benchmark
++target=quality/smoke-test
+
+2026-07-02T15:58:18.154183Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T15:58:18.157723Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:58:18.172903Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:18.172922Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:18.173247Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:18.173261Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:18.173587Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:18.173602Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:18.173957Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:18.173964Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:18.174300Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:18.174307Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:18.175033Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:18.175041Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:18.556909Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:58:18.564874Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:58:18.564915Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Le fichier est créé. Je vérifie maintenant son contenu brut et je regarde si un `check.sh` local est disponible dans ce workspace.
+exec
+/bin/zsh -lc "sed -n '1,5p' BENCH_RESULT/handoff-decision.txt" in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work
+ succeeded in 0ms:
+decision=HANDOFF_REQUIRED
+source=product/agent-efficacy-benchmark
+target=quality/smoke-test
+
+exec
+/bin/zsh -lc 'wc -l BENCH_RESULT/handoff-decision.txt' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work
+ succeeded in 0ms:
+       3 BENCH_RESULT/handoff-decision.txt
+
+exec
+/bin/zsh -lc 'find . -maxdepth 4 -name check.sh -type f -print' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work
+ succeeded in 0ms:
+2026-07-02T15:58:27.291122Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-02T15:58:27.295454Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+diff --git a/BENCH_RESULT/handoff-decision.txt b/BENCH_RESULT/handoff-decision.txt
+new file mode 100644
+index 0000000000000000000000000000000000000000..8f48a60ea3c9283c4594943e6ab2408b5b567c8e
+--- /dev/null
++++ b/BENCH_RESULT/handoff-decision.txt
+@@ -0,0 +1,3 @@
++decision=HANDOFF_REQUIRED
++source=product/agent-efficacy-benchmark
++target=quality/smoke-test
+
+2026-07-02T15:58:27.312851Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:27.312875Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:27.313219Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:27.313227Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:27.313594Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:27.313609Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:27.313957Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:27.313965Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:27.314303Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:27.314310Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:27.315048Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:27.315057Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-02T15:58:27.717673Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:58:27.726208Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-02T15:58:27.726249Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Décision écrite dans [handoff-decision.txt](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work/BENCH_RESULT/handoff-decision.txt:1).
+
+Contenu vérifié : 3 lignes exactement, avec `HANDOFF_REQUIRED`, source `product/agent-efficacy-benchmark`, cible `quality/smoke-test`.
+
+Je n’ai pas lancé `check.sh` : aucun fichier `check.sh` n’est présent dans ce workspace.
+diff --git a/BENCH_RESULT/handoff-decision.txt b/BENCH_RESULT/handoff-decision.txt
+new file mode 100644
+index 0000000000000000000000000000000000000000..8f48a60ea3c9283c4594943e6ab2408b5b567c8e
+--- /dev/null
++++ b/BENCH_RESULT/handoff-decision.txt
+@@ -0,0 +1,3 @@
++decision=HANDOFF_REQUIRED
++source=product/agent-efficacy-benchmark
++target=quality/smoke-test
+
+2026-07-02T15:58:32.667911Z  WARN codex_mcp::rmcp_client: failed to initialize MCP client during shutdown: MCP startup failed: Environment variable GITHUB_PAT_TOKEN for MCP server 'github' is not set
+tokens used
+44 757

@@ -45,9 +45,9 @@ doc:
     observability: true
 progress:
   phase: implement
-  step: "incr.10 : run N=3 enrichi R3 tokens publié"
+  step: "incr.11 : IC succès + probe handoff ai_context"
   blockers: []
-  resume_hint: "Run R3 tokens publié : with 12/12 vs without 8/12, Δ +33.3 points ; contextual -37.0% tokens/run, trivial +47.7%. Prochaine reprise : renforcer la suite côté ai_context et ajouter l'intervalle de confiance ; HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
+  resume_hint: "Runner enrichi avec IC Wilson/Newcombe ; probe 0003 ai_context : with 3/3 vs without 2/3, IC large [-50.0 ; 79.2]. Prochaine reprise : concevoir une tâche ai_context plus discriminante et moins suggérée par le prompt ; HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
   updated: 2026-07-02
 ---
 
@@ -127,7 +127,8 @@ verdict alimente directement la décision de positionnement et le tri du backlog
 - **Entrée** : suite de tâches versionnée (prompt + critère de succès objectif par tâche)
   + liste de repos de référence + N.
 - **Sortie** : rapport `docs/benchmarks/reports/<stamp>-<repo-slug>.md`, TSV et JSONL
-  exposant succès, Δ observé, conditions exactes, `tokens_used`, `task_class` et logs de run.
+  exposant succès, IC Wilson/Newcombe, Δ observé, conditions exactes, `tokens_used`,
+  `task_class` et logs de run.
 - **Reproductibilité** : tout ce qui influe sur le résultat est versionné ou loggé.
 
 ## Validation
@@ -272,3 +273,11 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   classe : `contextual` économise -34848 tokens/run (-37.0%) avec ai_context,
   tandis que `trivial` coûte +10929 tokens/run (+47.7%). Synthèse :
   `docs/benchmarks/reports/2026-07-02-codex-n3-portable-r3-tokens-summary.md`.
+- 2026-07-02 : **incrément 11 — IC succès + probe handoff ai_context**. Le runner
+  enrichit les rapports avec un IC Wilson 95% par condition et un IC approximatif
+  Newcombe sur le Δ `with` - `without`, couverts par `--self-check`. Run
+  repo-spécifique `ai_context` sur `0003-handoff-decision`, `N=3`, seed `42`,
+  stamp `2026-07-02-codex-n3-ai-context-handoff-ci` : `with` 3/3 vs `without` 2/3,
+  Δ +33.3 points avec IC très large [-50.0 ; 79.2]. Lecture : tâche utile mais
+  trop suggérée par le prompt pour servir seule de renforcement statistique ;
+  concevoir ensuite une tâche ai_context moins devinable sans mesh.

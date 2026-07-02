@@ -1,0 +1,5 @@
+Décision écrite dans [handoff-decision.txt](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-3/work/BENCH_RESULT/handoff-decision.txt:1).
+
+Contenu vérifié : 3 lignes exactement, avec `HANDOFF_REQUIRED`, source `product/agent-efficacy-benchmark`, cible `quality/smoke-test`.
+
+Je n’ai pas lancé `check.sh` : aucun fichier `check.sh` n’est présent dans ce workspace.

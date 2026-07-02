@@ -25,8 +25,9 @@ bash tests/bench/run-bench.sh --self-check
 
 Vérifie que chaque tâche a `task.md` + `check.sh` exécutable, que les repos
 (si `BENCH_REPOS`) existent, que les garde-fous de suppression et le tie-break
-de matrice fonctionnent, que le calcul de Δ tokens par classe est stable, et
-affiche la matrice de runs. N'invoque aucun agent.
+de matrice fonctionnent, que le calcul de Δ tokens par classe et les intervalles
+de confiance de succès sont stables, et affiche la matrice de runs. N'invoque
+aucun agent.
 
 ## Run réel (action mainteneur)
 
@@ -51,7 +52,8 @@ Quand le log agent contient un bloc `tokens used`, le runner renseigne aussi
 déclarer une classe via `task.class` ; le runner écrit alors `task_class` dans
 les TSV/JSONL et ajoute au rapport un tableau de Δ tokens/run par classe
 (`with` - `without`) pour éviter qu'une moyenne globale masque des tâches de
-nature différente.
+nature différente. La synthèse succès expose aussi un IC Wilson 95% par condition
+et un IC approximatif Newcombe pour le Δ `with` - `without`.
 Le champ `failure_kind` distingue `task_fail`, `timeout`, `agent_error` et
 `agent_infra_error`. Une erreur infra agent (quota, auth, provider) invalide le
 run comme preuve benchmark ; le runner publie les artefacts de diagnostic puis

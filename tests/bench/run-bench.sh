@@ -332,6 +332,83 @@ emit_token_class_delta_table() {
   ' "$results_tsv" | sort
 }
 
+emit_success_summary_table() {
+  local results_tsv="$1" repo_slug="$2"
+  echo "| Condition | Succès | Total | Taux | IC 95% Wilson |"
+  echo "|---|---:|---:|---:|---:|"
+  for condition in with without; do
+    awk -F '\t' -v repo="$repo_slug" -v condition="$condition" '
+      function wilson_lo(success, total, z, phat, denom, center, half, value) {
+        if (total <= 0) return 0
+        z = 1.959963984540054
+        phat = success / total
+        denom = 1 + z * z / total
+        center = (phat + z * z / (2 * total)) / denom
+        half = z * sqrt((phat * (1 - phat) + z * z / (4 * total)) / total) / denom
+        value = 100 * (center - half)
+        return value < 0 ? 0 : value
+      }
+      function wilson_hi(success, total, z, phat, denom, center, half, value) {
+        if (total <= 0) return 0
+        z = 1.959963984540054
+        phat = success / total
+        denom = 1 + z * z / total
+        center = (phat + z * z / (2 * total)) / denom
+        half = z * sqrt((phat * (1 - phat) + z * z / (4 * total)) / total) / denom
+        value = 100 * (center + half)
+        return value > 100 ? 100 : value
+      }
+      NR > 1 && $1 == repo && $5 == condition { total += 1; success += $7 }
+      END {
+        rate = total ? (100 * success / total) : 0
+        lo = wilson_lo(success, total)
+        hi = wilson_hi(success, total)
+        printf "| `%s` | %d | %d | %.1f%% | [%.1f%% ; %.1f%%] |\n", condition, success, total, rate, lo, hi
+      }
+    ' "$results_tsv"
+  done
+}
+
+emit_success_delta_line() {
+  local results_tsv="$1" repo_slug="$2"
+  awk -F '\t' -v repo="$repo_slug" '
+    function wilson_lo(success, total, z, phat, denom, center, half, value) {
+      if (total <= 0) return 0
+      z = 1.959963984540054
+      phat = success / total
+      denom = 1 + z * z / total
+      center = (phat + z * z / (2 * total)) / denom
+      half = z * sqrt((phat * (1 - phat) + z * z / (4 * total)) / total) / denom
+      value = 100 * (center - half)
+      return value < 0 ? 0 : value
+    }
+    function wilson_hi(success, total, z, phat, denom, center, half, value) {
+      if (total <= 0) return 0
+      z = 1.959963984540054
+      phat = success / total
+      denom = 1 + z * z / total
+      center = (phat + z * z / (2 * total)) / denom
+      half = z * sqrt((phat * (1 - phat) + z * z / (4 * total)) / total) / denom
+      value = 100 * (center + half)
+      return value > 100 ? 100 : value
+    }
+    NR > 1 && $1 == repo && $5 == "with" { with_total += 1; with_success += $7 }
+    NR > 1 && $1 == repo && $5 == "without" { without_total += 1; without_success += $7 }
+    END {
+      with_rate = with_total ? (100 * with_success / with_total) : 0
+      without_rate = without_total ? (100 * without_success / without_total) : 0
+      with_lo = wilson_lo(with_success, with_total)
+      with_hi = wilson_hi(with_success, with_total)
+      without_lo = wilson_lo(without_success, without_total)
+      without_hi = wilson_hi(without_success, without_total)
+      delta = with_rate - without_rate
+      delta_lo = with_lo - without_hi
+      delta_hi = with_hi - without_lo
+      printf "Δ succès (`with` - `without`) : **%.1f points** (IC 95%% approx. Newcombe : **[%.1f ; %.1f] points**).\n", delta, delta_lo, delta_hi
+    }
+  ' "$results_tsv"
+}
+
 is_agent_infra_error() {
   local log="$1"
   [[ -f "$log" ]] || return 1
@@ -412,6 +489,27 @@ if [[ "$mode" == "self-check" ]]; then
     && ok "delta tokens classe contextual" \
     || ko "delta tokens classe contextual"
   rm -f "$token_delta_probe"
+  success_ci_probe="$(mktemp)"
+  printf "repo_slug\trepo_name\trepo_ref\ttask_id\tcondition\trun_index\tsuccess\tfailure_kind\tagent_exit\tcheck_exit\tduration_seconds\ttokens_used\tworkdir\tstdout_log\tstderr_log\tcheck_log\ttask_class\n" > "$success_ci_probe"
+  run_index=1
+  while [[ "$run_index" -le 12 ]]; do
+    printf "repo-a\tRepo A\tref\t0001\twith\t%s\t1\tnone\t0\t0\t1\t100\t<tmp>\tstdout\tstderr\tcheck\ttrivial\n" "$run_index" >> "$success_ci_probe"
+    if [[ "$run_index" -le 8 ]]; then success_value=1; failure_kind=none; check_exit=0; else success_value=0; failure_kind=task_fail; check_exit=1; fi
+    printf "repo-a\tRepo A\tref\t0001\twithout\t%s\t%s\t%s\t0\t%s\t1\t100\t<tmp>\tstdout\tstderr\tcheck\ttrivial\n" "$run_index" "$success_value" "$failure_kind" "$check_exit" >> "$success_ci_probe"
+    run_index=$((run_index + 1))
+  done
+  success_ci_table="$(emit_success_summary_table "$success_ci_probe" "repo-a")"
+  success_ci_delta="$(emit_success_delta_line "$success_ci_probe" "repo-a")"
+  printf "%s\n" "$success_ci_table" | grep -Fq '| `with` | 12 | 12 | 100.0% | [75.8% ; 100.0%] |' \
+    && ok "IC Wilson succès with" \
+    || ko "IC Wilson succès with"
+  printf "%s\n" "$success_ci_table" | grep -Fq '| `without` | 8 | 12 | 66.7% | [39.1% ; 86.2%] |' \
+    && ok "IC Wilson succès without" \
+    || ko "IC Wilson succès without"
+  printf "%s\n" "$success_ci_delta" | grep -Fq 'Δ succès (`with` - `without`) : **33.3 points** (IC 95% approx. Newcombe : **[-10.4 ; 60.9] points**).' \
+    && ok "IC Newcombe delta succès" \
+    || ko "IC Newcombe delta succès"
+  rm -f "$success_ci_probe"
   printf "ERROR: You've hit your usage limit. Visit https://chatgpt.com/codex/settings/usage to purchase more credits.\n" > "$parser_probe"
   is_agent_infra_error "$parser_probe" && ok "classification erreur infra agent" || ko "classification erreur infra agent"
   [[ "$(failure_kind_for 1 1 "$parser_probe")" == "agent_infra_error" ]] && ok "failure_kind infra agent" || ko "failure_kind infra agent"
@@ -602,27 +700,9 @@ while IFS= read -r repo_slug; do
     echo
     echo "## Synthèse"
     echo
-    echo "| Condition | Succès | Total | Taux |"
-    echo "|---|---:|---:|---:|"
-    for condition in with without; do
-      awk -F '\t' -v repo="$repo_slug" -v condition="$condition" '
-        NR > 1 && $1 == repo && $5 == condition { total += 1; success += $7 }
-        END {
-          rate = total ? (100 * success / total) : 0
-          printf "| `%s` | %d | %d | %.1f%% |\n", condition, success, total, rate
-        }
-      ' "$results_tsv"
-    done
+    emit_success_summary_table "$results_tsv" "$repo_slug"
     echo
-    awk -F '\t' -v repo="$repo_slug" '
-      NR > 1 && $1 == repo && $5 == "with" { with_total += 1; with_success += $7 }
-      NR > 1 && $1 == repo && $5 == "without" { without_total += 1; without_success += $7 }
-      END {
-        with_rate = with_total ? (100 * with_success / with_total) : 0
-        without_rate = without_total ? (100 * without_success / without_total) : 0
-        printf "Δ succès (`with` - `without`) : **%.1f points**.\n", with_rate - without_rate
-      }
-    ' "$results_tsv"
+    emit_success_delta_line "$results_tsv" "$repo_slug"
     echo
     echo "## Coût tokens"
     echo

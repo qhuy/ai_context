@@ -1,0 +1,9 @@
+Créé [BENCH_RESULT/handoff-decision.txt](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.z9kIUL/ai_context-1982850439-0003-handoff-decision-without-1/work/BENCH_RESULT/handoff-decision.txt:1) avec :
+
+```text
+decision=HANDOFF_REQUIRED
+source=product/agent-efficacy-benchmark
+target=quality/smoke-test
+```
+
+Vérifié : le fichier contient exactement 3 lignes. Aucun `check.sh` n’est présent dans cette copie de travail, donc je n’ai pas pu lancer le grader localement.
