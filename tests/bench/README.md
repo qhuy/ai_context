@@ -43,9 +43,12 @@ Le runner :
 - copie chaque repo dans un dossier temporaire ;
 - applique la condition `without` en retirant `.ai/`, `.docs/` et les shims agents ;
 - envoie `task.md` sur `stdin` de `$AGENT_CMD` ;
-- expose aussi `BENCH_PROMPT_FILE`, `BENCH_TASK_ID`, `BENCH_CONDITION`,
-  `BENCH_RUN_INDEX`, `BENCH_REPO_NAME`, `BENCH_REPO_PATH`, `BENCH_WORKDIR` ;
+- expose à l'agent uniquement `BENCH_TASK_ID` et `BENCH_WORKDIR` pour éviter de
+  fuiter le chemin du repo source dans la condition `without` ;
 - exécute ensuite `check.sh` dans la copie de travail ;
+- expose au grader `BENCH_PROMPT_FILE`, `BENCH_TASK_DIR`, `BENCH_TASK_ID`,
+  `BENCH_CONDITION`, `BENCH_RUN_INDEX`, `BENCH_REPO_NAME`,
+  `BENCH_SOURCE_REPO`, `BENCH_WORKDIR` ;
 - agrège Markdown + TSV + JSONL.
 
 Exemple Codex CLI, prompt lu depuis `stdin` et travail dans le `cwd` de la copie :
@@ -68,3 +71,11 @@ dossier temporaire.
 
 Préférer un grader par **assertion**. LLM-judge seulement si aucune assertion
 possible, avec critères écrits + échantillon vérifié à la main (cf. PROTOCOL).
+
+## Suite actuelle
+
+- `0001-example-file` : tâche de fumée du format de tâche, non discriminante.
+- `0002-feature-resume` : retrouve la feature active la plus fraîche depuis le
+  feature mesh et écrit une reprise JSON objective.
+- `0003-handoff-decision` : vérifie la décision de handoff cross-scope pour le
+  branchement du benchmark dans le smoke-test.

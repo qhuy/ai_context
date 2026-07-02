@@ -28,3 +28,11 @@
 - Vérifié : `bash -n tests/bench/run-bench.sh`, `bash tests/bench/run-bench.sh --self-check`, run d'intégration déterministe sur 2 repos temporaires (`BENCH_N=1`, 4/4 PASS, rapports + TSV + JSONL générés hors repo), `check-features`, `check-feature-docs`, `check-feature-freshness --worktree --strict`, `git diff --check`, `check-shims`, `measure-context-size`.
 - Probe agent réel : `codex exec --skip-git-repo-check --ephemeral --sandbox workspace-write -` fonctionne sur repo temporaire isolé pour la tâche `HELLO.txt`, mais la tâche triviale a consommé beaucoup de tokens ; pas de run complet Codex × 2 repos × 2 conditions tant que la suite n'est pas discriminante.
 - Follow-ups : écrire/choisir les tâches discriminantes, sélectionner ≥2 repos de référence (dont 1 externe avec condition `with` honnête), calibrer `N`, puis produire le premier rapport publiable sous `docs/benchmarks/reports/`. HANDOFF qualité inchangé : brancher `run-bench.sh --self-check` dans le smoke.
+
+## 2026-07-02 — incrément 3 : suite discriminante initiale
+
+- Livré : tâches `0002-feature-resume` et `0003-handoff-decision`, avec graders objectifs exécutables.
+- Décision : `$AGENT_CMD` ne reçoit plus les chemins source (`BENCH_REPOS`, `BENCH_SOURCE_REPO`, `BENCH_REPO_PATH`, etc.) afin de ne pas contaminer la condition `without`; les métadonnées source sont exposées uniquement au grader.
+- Intent des tâches : mesurer deux apports concrets d'ai_context — reprise depuis le feature mesh, et respect de la règle cross-scope ⇒ HANDOFF.
+- Validation : `bash -n` runner + graders, `run-bench.sh --self-check`, probe env agent (seuls `BENCH_TASK_ID`/`BENCH_WORKDIR` visibles), matrice temporaire 2 repos ai_contextisés × 3 tâches × 2 conditions × N=1 avec agent déterministe honnête (8/12 succès, échecs `without` attendus sur les tâches dépendantes du contexte, sans fuite source vers l'agent), `check-features`, `check-feature-docs`, `check-feature-freshness --worktree --strict`, `git diff --check`, `check-shims`, `measure-context-size`, `review-delta`, `check-feature-coverage`.
+- Next : préparer un premier run agent réel sur repos ai_contextisés si budget accepté, puis publier le premier rapport sous `docs/benchmarks/reports/`.

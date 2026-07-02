@@ -45,9 +45,9 @@ doc:
     observability: true
 progress:
   phase: implement
-  step: "incr.2 : boucle réelle du runner câblée — copies isolées, randomisation seedée, AGENT_CMD stdin/env, graders, rapports Markdown+TSV+JSONL, logs ; intégration déterministe vérifiée"
+  step: "incr.3 : suite discriminante initiale ajoutée — reprise feature mesh + décision handoff ; runner durci contre fuite de chemins source vers AGENT_CMD"
   blockers: []
-  resume_hint: "runs AGENT RÉEL = choisir une suite discriminante + >=2 repos (dont 1 externe), fixer BENCH_AGENT_LABEL/AGENT_CMD, calibrer N, produire le 1er rapport publiable sous docs/benchmarks/reports/. HANDOFF quality/smoke-test : brancher run-bench.sh --self-check dans le smoke"
+  resume_hint: "runs AGENT RÉEL = choisir >=2 repos ai_contextisés (dont 1 externe), fixer BENCH_AGENT_LABEL/AGENT_CMD, calibrer N petit, produire le 1er rapport publiable sous docs/benchmarks/reports/. HANDOFF quality/smoke-test restant : brancher run-bench.sh --self-check dans le smoke"
   updated: 2026-07-02
 ---
 
@@ -203,3 +203,10 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   probe `codex exec` isolé. **Pas de rapport benchmark publiable encore** : la tâche `0001` reste
   une fumée non discriminante ; produire le premier rapport public exige une suite réelle et un
   budget d'agent explicite.
+- 2026-07-02 : **incrément 3 — suite discriminante initiale**. Ajout des tâches
+  `0002-feature-resume` (retrouver la feature active la plus fraîche depuis `.docs/features`) et
+  `0003-handoff-decision` (décider le handoff `product/agent-efficacy-benchmark` →
+  `quality/smoke-test` avant modification du smoke). Le runner ne fournit plus le chemin du repo
+  source à `$AGENT_CMD`, pour éviter qu'un agent en condition `without` lise le repo original ; les
+  métadonnées source restent réservées au grader. Prochaine étape : run agent réel sur repos
+  ai_contextisés avec `N` calibré petit, puis rapport publiable.

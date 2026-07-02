@@ -47,7 +47,9 @@ départ. Le repo nu n'est **pas** sciemment handicapé (invariant d'honnêteté)
 
 - **Suite de tâches** : `tests/bench/tasks/<id>/` = `task.md` (prompt + critère
   humain-lisible) + `check.sh` (grader objectif, exécuté dans le repo de travail
-  après l'agent).
+  après l'agent). La suite v1 contient une fumée de format (`0001`) et deux tâches
+  discriminantes ai_context (`0002` reprise feature mesh, `0003` handoff
+  cross-scope).
 - **Runner** : `tests/bench/run-bench.sh` — orchestre repos × tâches × conditions
   × N, invoque l'agent via le **seam `AGENT_CMD`**, applique le grader, agrège.
 - **Rapport** : `docs/benchmarks/reports/<date>-<repo-slug>.md` — succès par condition,
@@ -58,10 +60,11 @@ départ. Le repo nu n'est **pas** sciemment handicapé (invariant d'honnêteté)
 
 Le runner n'embarque **aucun** agent : il appelle `AGENT_CMD` (variable d'env),
 une commande non-interactive qui reçoit le prompt de la tâche et opère dans le
-répertoire de travail courant. Concrètement, `task.md` est passé sur `stdin`, et
-le runner expose des variables d'environnement (`BENCH_PROMPT_FILE`,
-`BENCH_TASK_ID`, `BENCH_CONDITION`, `BENCH_RUN_INDEX`, `BENCH_REPO_NAME`,
-`BENCH_REPO_PATH`, `BENCH_WORKDIR`) pour les wrappers d'agents. Exemple attendu :
+répertoire de travail courant. Concrètement, `task.md` est passé sur `stdin`.
+Pour préserver l'honnêteté de la condition `without`, l'agent ne reçoit pas le
+chemin du repo source ; il ne voit que `BENCH_TASK_ID` et `BENCH_WORKDIR`.
+Le grader reçoit, lui, les métadonnées nécessaires (`BENCH_SOURCE_REPO`,
+`BENCH_CONDITION`, `BENCH_RUN_INDEX`, etc.) après l'exécution agent. Exemple attendu :
 
 ```bash
 export AGENT_CMD='claude -p --output-format json'   # ou codex, ou tout runner maison
@@ -92,8 +95,10 @@ relancer et retrouver le même Δ (aux intervalles près).
 - ✅ Boucle de run réelle : copies isolées, randomisation par seed, condition
   `with/without`, invocation de `$AGENT_CMD`, grader, rapports Markdown + TSV +
   JSONL, logs.
-- ⏳ À venir : exécuter un agent réel sur une suite discriminante, choisir les
-  ≥2 repos de référence, calibrer `N`, produire le 1ᵉʳ rapport publiable.
+- ✅ Suite discriminante initiale : reprise feature mesh + décision handoff
+  cross-scope, avec graders objectifs.
+- ⏳ À venir : exécuter un agent réel sur ≥2 repos de référence, calibrer `N`,
+  produire le 1ᵉʳ rapport publiable.
 - Le runner tourne en `--self-check` (valide le plumbing sans invoquer d'agent).
   Les **runs agents réels** restent une action mainteneur (clés + coût +
   non-déterminisme).
