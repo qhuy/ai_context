@@ -8,8 +8,9 @@
 
 - **Primaire** : **taux de succès de tâche** — % de tâches d'une suite figée
   complétées correctement, jugé objectivement, `AVEC` vs `SANS` ai_context.
-- **Leading indicator** : coût de contexte en tokens par tâche (disponible avant
-  le grader complet ; valide tôt la direction, ne confère pas le titre).
+- **Leading indicator** : coût de contexte en tokens par tâche et par classe de
+  tâche (disponible avant le grader complet ; valide tôt la direction, ne confère
+  pas le titre).
 - **Dispersion** : intervalle de confiance sur `N` runs — sans quoi le Δ n'est
   pas interprétable.
 
@@ -60,17 +61,20 @@ au `BENCH_STAMP`, pour éviter qu'une configuration invalide déclenche une supp
 ## Contrats d'artefacts
 
 - **Suite de tâches** : `tests/bench/tasks/<id>/` = `task.md` (prompt + critère
-  humain-lisible) + `check.sh` (grader objectif, exécuté dans le repo de travail
-  après l'agent). La suite v1 contient une fumée de format (`0001`) et deux tâches
-  discriminantes ai_context (`0002` reprise feature mesh, `0003` handoff
-  cross-scope).
+  humain-lisible) + `task.class` (classe d'analyse tokens, fallback = `<id>`) +
+  `check.sh` (grader objectif, exécuté dans le repo de travail après l'agent).
+  La suite v1 contient une fumée de format (`0001`, classe `trivial`) et deux
+  tâches discriminantes ai_context (`0002` reprise feature mesh, classe
+  `contextual` ; `0003` handoff cross-scope, classe `handoff`).
 - **Runner** : `tests/bench/run-bench.sh` — orchestre repos × tâches × conditions
   × N, invoque l'agent via le **seam `AGENT_CMD`**, applique le grader, agrège.
 - **Rapport** : `docs/benchmarks/reports/<date>-<repo-slug>.md` — succès par condition,
-  Δ et conditions exactes (rejouable). Le runner produit aussi un TSV et un JSONL
-  globaux incluant `tokens_used` quand le log agent expose un bloc `tokens used`,
-  et `failure_kind` pour distinguer échec de tâche, timeout et erreur infra agent,
-  plus les logs d'agent/check sous `docs/benchmarks/runs/<stamp>/`.
+  Δ et conditions exactes (rejouable), puis coût tokens global et Δ tokens/run
+  par classe de tâche (`with` - `without`). Le runner produit aussi un TSV et un
+  JSONL globaux incluant `tokens_used` quand le log agent expose un bloc
+  `tokens used`, `task_class` pour l'agrégation par classe, et `failure_kind` pour
+  distinguer échec de tâche, timeout et erreur infra agent, plus les logs
+  d'agent/check sous `docs/benchmarks/runs/<stamp>/`.
   Les artefacts publiés référencent les repos par nom/slug et les logs par chemin
   relatif au repo, afin d'éviter de versionner des chemins absolus locaux.
   Les logs sont des sorties brutes d'agent : les relire avant publication externe
@@ -131,6 +135,8 @@ relancer et retrouver le même Δ (aux intervalles près).
   un run contaminé par quota/provider sort en non-zéro.
 - ✅ Runner protégé : suppressions bornées, `BENCH_RUN_DIR` attaché au stamp, et
   randomisation avec tie-break déterministe.
+- ✅ Rapport tokens enrichi : les tâches déclarent `task.class`, les TSV/JSONL
+  exposent `task_class`, et le rapport Markdown calcule le Δ tokens/run par classe.
 - ✅ Run agent réel `N=3` publié : `with` 12/12 vs `without` 9/12 ; signal fort
   sur `ai_debate/0002` (`with` 3/3, `without` 0/3), mais `ai_context/0002`
   reste trop facile sans contexte (`without` 3/3).

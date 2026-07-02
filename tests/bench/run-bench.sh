@@ -283,6 +283,55 @@ extract_tokens_used() {
   ' "$log"
 }
 
+task_class_for() {
+  local task_dir="$1" task_id="$2" class_file value
+  class_file="$task_dir/task.class"
+  if [[ -f "$class_file" ]]; then
+    value="$(sed -n '1p' "$class_file" | tr -d '\r' | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//')"
+    value="${value//$'\t'/ }"
+    if [[ -n "$value" ]]; then
+      printf "%s" "$value"
+      return
+    fi
+  fi
+  printf "%s" "$task_id"
+}
+
+emit_token_class_delta_table() {
+  local results_tsv="$1" repo_slug="$2"
+  echo "| Classe | with n | with moy. | without n | without moy. | Δ tokens/run | Δ tokens/run % |"
+  echo "|---|---:|---:|---:|---:|---:|---:|"
+  awk -F '\t' -v repo="$repo_slug" '
+    NR > 1 && $1 == repo && $12 ~ /^[0-9]+$/ {
+      cls = ($17 != "" ? $17 : $4)
+      count[cls SUBSEP $5] += 1
+      total[cls SUBSEP $5] += $12
+      classes[cls] = 1
+    }
+    END {
+      for (cls in classes) {
+        wc = count[cls SUBSEP "with"] + 0
+        nc = count[cls SUBSEP "without"] + 0
+        wt = total[cls SUBSEP "with"] + 0
+        nt = total[cls SUBSEP "without"] + 0
+        wm = wc ? wt / wc : 0
+        nm = nc ? nt / nc : 0
+        wms = wc ? sprintf("%.0f", wm) : "NA"
+        nms = nc ? sprintf("%.0f", nm) : "NA"
+        if (wc && nc) {
+          delta = wm - nm
+          delta_s = sprintf("%+.0f", delta)
+          pct_s = nm ? sprintf("%+.1f%%", 100 * delta / nm) : "NA"
+        } else {
+          delta_s = "NA"
+          pct_s = "NA"
+        }
+        printf "| `%s` | %d | %s | %d | %s | %s | %s |\n", cls, wc, wms, nc, nms, delta_s, pct_s
+      }
+    }
+  ' "$results_tsv" | sort
+}
+
 is_agent_infra_error() {
   local log="$1"
   [[ -f "$log" ]] || return 1
@@ -343,6 +392,26 @@ if [[ "$mode" == "self-check" ]]; then
   [[ "$(extract_tokens_used "$parser_probe")" == "46684" ]] && ok "parseur tokens" || ko "parseur tokens"
   printf "tokens used\n1\nnoise\ntokens used\n46,684\n" > "$parser_probe"
   [[ "$(extract_tokens_used "$parser_probe")" == "46684" ]] && ok "parseur tokens dernier bloc" || ko "parseur tokens dernier bloc"
+  task_class_probe="$(mktemp -d)"
+  printf "contextual\n" > "$task_class_probe/task.class"
+  [[ "$(task_class_for "$task_class_probe" "fallback-id")" == "contextual" ]] && ok "classe tâche explicite" || ko "classe tâche explicite"
+  printf "\n" > "$task_class_probe/task.class"
+  [[ "$(task_class_for "$task_class_probe" "fallback-id")" == "fallback-id" ]] && ok "classe tâche fallback id" || ko "classe tâche fallback id"
+  safe_rm_rf "$task_class_probe" "self-check task class" "${TMPDIR:-/tmp}"
+  token_delta_probe="$(mktemp)"
+  printf "repo_slug\trepo_name\trepo_ref\ttask_id\tcondition\trun_index\tsuccess\tfailure_kind\tagent_exit\tcheck_exit\tduration_seconds\ttokens_used\tworkdir\tstdout_log\tstderr_log\tcheck_log\ttask_class\n" > "$token_delta_probe"
+  printf "repo-a\tRepo A\tref\t0001\twith\t1\t1\tnone\t0\t0\t1\t46684\t<tmp>\tstdout\tstderr\tcheck\ttrivial\n" >> "$token_delta_probe"
+  printf "repo-a\tRepo A\tref\t0001\twithout\t1\t1\tnone\t0\t0\t1\t11989\t<tmp>\tstdout\tstderr\tcheck\ttrivial\n" >> "$token_delta_probe"
+  printf "repo-a\tRepo A\tref\t0002\twith\t1\t1\tnone\t0\t0\t1\t35873\t<tmp>\tstdout\tstderr\tcheck\tcontextual\n" >> "$token_delta_probe"
+  printf "repo-a\tRepo A\tref\t0002\twithout\t1\t0\ttask_fail\t0\t1\t1\t60495\t<tmp>\tstdout\tstderr\tcheck\tcontextual\n" >> "$token_delta_probe"
+  token_delta_out="$(emit_token_class_delta_table "$token_delta_probe" "repo-a")"
+  printf "%s\n" "$token_delta_out" | grep -Fq '| `trivial` | 1 | 46684 | 1 | 11989 | +34695 | +289.4% |' \
+    && ok "delta tokens classe trivial" \
+    || ko "delta tokens classe trivial"
+  printf "%s\n" "$token_delta_out" | grep -Fq '| `contextual` | 1 | 35873 | 1 | 60495 | -24622 | -40.7% |' \
+    && ok "delta tokens classe contextual" \
+    || ko "delta tokens classe contextual"
+  rm -f "$token_delta_probe"
   printf "ERROR: You've hit your usage limit. Visit https://chatgpt.com/codex/settings/usage to purchase more credits.\n" > "$parser_probe"
   is_agent_infra_error "$parser_probe" && ok "classification erreur infra agent" || ko "classification erreur infra agent"
   [[ "$(failure_kind_for 1 1 "$parser_probe")" == "agent_infra_error" ]] && ok "failure_kind infra agent" || ko "failure_kind infra agent"
@@ -403,7 +472,7 @@ final_results_tsv="$BENCH_REPORT_DIR/$BENCH_STAMP-results.tsv"
 final_results_jsonl="$BENCH_REPORT_DIR/$BENCH_STAMP-results.jsonl"
 matrix_file="$run_log_root/matrix.tsv"
 : > "$results_jsonl"
-printf "repo_slug\trepo_name\trepo_ref\ttask_id\tcondition\trun_index\tsuccess\tfailure_kind\tagent_exit\tcheck_exit\tduration_seconds\ttokens_used\tworkdir\tstdout_log\tstderr_log\tcheck_log\n" > "$results_tsv"
+printf "repo_slug\trepo_name\trepo_ref\ttask_id\tcondition\trun_index\tsuccess\tfailure_kind\tagent_exit\tcheck_exit\tduration_seconds\ttokens_used\tworkdir\tstdout_log\tstderr_log\tcheck_log\ttask_class\n" > "$results_tsv"
 
 for r in "${repos[@]}"; do
   for t in "${tasks[@]}"; do
@@ -431,6 +500,7 @@ while IFS=$'\t' read -r repo_path task_path condition run_index; do
   repo_slug="$(repo_slug_for "$repo_path" "$repo_name")"
   repo_ref="$(repo_ref_for "$repo_path")"
   task_id="$(basename "$task_path")"
+  task_class="$(task_class_for "$task_path" "$task_id")"
   cell_slug="$(slugify "$repo_slug-$task_id-$condition-$run_index")"
   workdir="$work_root/$cell_slug/work"
   logdir="$run_log_root/$cell_slug"
@@ -461,6 +531,7 @@ while IFS=$'\t' read -r repo_path task_path condition run_index; do
     BENCH_PROMPT_FILE="$task_path/task.md" \
     BENCH_TASK_DIR="$task_path" \
     BENCH_TASK_ID="$task_id" \
+    BENCH_TASK_CLASS="$task_class" \
     BENCH_CONDITION="$condition" \
     BENCH_RUN_INDEX="$run_index" \
     BENCH_REPO_NAME="$repo_name" \
@@ -483,9 +554,9 @@ while IFS=$'\t' read -r repo_path task_path condition run_index; do
     warn "$repo_name / $task_id / $condition / run $run_index FAIL (agent=$agent_exit check=$check_exit)"
   fi
 
-  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" \
+  printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" \
     "$repo_slug" "$repo_name" "$repo_ref" "$task_id" "$condition" "$run_index" \
-    "$success" "$failure_kind" "$agent_exit" "$check_exit" "$duration" "$tokens_used" "$workdir_ref" "$stdout_log_ref" "$stderr_log_ref" "$check_log_ref" \
+    "$success" "$failure_kind" "$agent_exit" "$check_exit" "$duration" "$tokens_used" "$workdir_ref" "$stdout_log_ref" "$stderr_log_ref" "$check_log_ref" "$task_class" \
     >> "$results_tsv"
 
   if [[ "$tokens_used" == "NA" ]]; then
@@ -493,9 +564,9 @@ while IFS=$'\t' read -r repo_path task_path condition run_index; do
   else
     tokens_json="$tokens_used"
   fi
-  printf '{"stamp":"%s","repo_slug":"%s","repo_name":"%s","repo_ref":"%s","task_id":"%s","condition":"%s","run_index":%s,"success":%s,"failure_kind":"%s","agent_exit":%s,"check_exit":%s,"duration_seconds":%s,"tokens_used":%s,"stdout_log":"%s","stderr_log":"%s","check_log":"%s"}\n' \
+  printf '{"stamp":"%s","repo_slug":"%s","repo_name":"%s","repo_ref":"%s","task_id":"%s","task_class":"%s","condition":"%s","run_index":%s,"success":%s,"failure_kind":"%s","agent_exit":%s,"check_exit":%s,"duration_seconds":%s,"tokens_used":%s,"stdout_log":"%s","stderr_log":"%s","check_log":"%s"}\n' \
     "$(json_escape "$BENCH_STAMP")" "$(json_escape "$repo_slug")" "$(json_escape "$repo_name")" "$(json_escape "$repo_ref")" \
-    "$(json_escape "$task_id")" "$(json_escape "$condition")" "$run_index" "$success" "$(json_escape "$failure_kind")" "$agent_exit" "$check_exit" "$duration" \
+    "$(json_escape "$task_id")" "$(json_escape "$task_class")" "$(json_escape "$condition")" "$run_index" "$success" "$(json_escape "$failure_kind")" "$agent_exit" "$check_exit" "$duration" \
     "$tokens_json" "$(json_escape "$stdout_log_ref")" "$(json_escape "$stderr_log_ref")" "$(json_escape "$check_log_ref")" \
     >> "$results_jsonl"
 done < "$matrix_file"
@@ -569,6 +640,10 @@ while IFS= read -r repo_slug; do
         }
       ' "$results_tsv"
     done
+    echo
+    echo "## Δ tokens par classe de tâche"
+    echo
+    emit_token_class_delta_table "$results_tsv" "$repo_slug"
     echo
     echo "## Détail"
     echo

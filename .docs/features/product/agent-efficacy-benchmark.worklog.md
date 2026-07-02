@@ -88,3 +88,12 @@
 - Documentation : `tests/bench/README.md`, `docs/benchmarks/PROTOCOL.md` et fiche feature mis à jour avec le contrat `BENCH_RUN_DIR`.
 - Validation : `bash -n tests/bench/run-bench.sh` ; `bash tests/bench/run-bench.sh --self-check` PASS avec assertions garde `rm -rf` + tie-break ; tests négatifs `BENCH_RUN_DIR` non stampé et hors racine autorisée rejetés avant run ; test ciblé `0002-feature-resume` sur égalité `core/zzz` vs `product/aaa` attendu PASS/FAIL.
 - Next : R1 peut reprendre ensuite en scope `workflow/pre-turn-reminder`, avec HANDOFF séparé depuis ce scope produit.
+
+## 2026-07-02 — R3 : Δ tokens par classe de tâche
+
+- Intent : rendre le leading indicator exploitable par classe de tâche, car un delta tokens global masque le surcoût des tâches triviales et l'économie des tâches contextuelles.
+- Changement runner : ajout de `task.class` par tâche, colonne TSV/JSONL `task_class`, variable grader `BENCH_TASK_CLASS`, et tableau Markdown `Δ tokens par classe de tâche` (`with` - `without`) dans chaque rapport repo.
+- Suite actuelle : `0001-example-file` = `trivial`, `0002-feature-resume` = `contextual`, `0003-handoff-decision` = `handoff`.
+- Self-check : assertions synthétiques sur les chiffres observés qui ont motivé R3 (`trivial` +34695 tokens/run, +289.4% ; `contextual` -24622 tokens/run, -40.7%).
+- Validation : `bash -n tests/bench/run-bench.sh` ; `bash tests/bench/run-bench.sh --self-check` ; run d'intégration local avec agent factice sur `0001` vérifiant header TSV `task_class`, JSONL `task_class:"trivial"` et ligne rapport `trivial` à +0 tokens ; `check-feature-docs --strict product/agent-efficacy-benchmark` ; `check-feature-freshness --worktree --strict` ; `check-features --no-write` ; `check-feature-docs` ; `check-feature-coverage` ; `check-touches-breadth` ; `measure-context-size` ; `git diff --check`. Warnings inchangés : 2 fiches historiques sans `type`, 6 tests unitaires orphelins, advisory touches breadth.
+- Next : relancer le run mainteneur attendu avec ce rapport enrichi ; puis renforcer la suite côté `ai_context` si `0002` reste non discriminante.

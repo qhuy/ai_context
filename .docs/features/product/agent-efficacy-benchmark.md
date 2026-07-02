@@ -45,9 +45,9 @@ doc:
     observability: true
 progress:
   phase: implement
-  step: "incr.8 : runner durci + tie-break grader 0002 aligné"
+  step: "incr.9 : leading indicator tokens ventilé par classe de tâche"
   blockers: []
-  resume_hint: "R4 clos ; R1 peut démarrer en scope workflow/pre-turn-reminder ; côté benchmark, renforcer ensuite la suite : ai_debate/0002 discrimine nettement, ai_context/0002 ne discrimine pas ; HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
+  resume_hint: "R3 clos côté benchmark ; prochaine reprise produit : relancer/publier le run attendu avec le tableau Δ tokens par classe, puis renforcer la suite car ai_debate/0002 discrimine nettement mais ai_context/0002 ne discrimine pas. HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
   updated: 2026-07-02
 ---
 
@@ -79,7 +79,7 @@ qu'un argument d'autorité.
   la significativité.
 - **Grader objectif** du succès de tâche (assertions automatiques quand possible ;
   LLM-judge cadré sinon, avec critères explicites).
-- **Leading indicator** : coût de contexte en tokens par tâche.
+- **Leading indicator** : coût de contexte en tokens par tâche et par classe de tâche.
 - Harnais **maintainer-only** sous `tests/bench/`, rapport publiable sous `docs/benchmarks/`.
 
 ### Hors périmètre
@@ -117,7 +117,8 @@ fourre-tout. Ne pas confondre avec un test de non-régression du template (`smok
 Un mainteneur lance le harnais ; il obtient, pour chaque repo de référence et chaque
 condition (avec/sans ai_context), le taux de succès agrégé sur N runs, les artefacts
 bruts rejouables et un rapport Markdown avec le Δ observé. À terme, le premier rapport
-publiable devra aussi documenter le coût tokens et l'intervalle de confiance. Le
+publiable devra aussi documenter le coût tokens global, le Δ tokens par classe de tâche
+et l'intervalle de confiance. Le
 verdict alimente directement la décision de positionnement et le tri du backlog
 (P2–P7).
 
@@ -126,7 +127,7 @@ verdict alimente directement la décision de positionnement et le tri du backlog
 - **Entrée** : suite de tâches versionnée (prompt + critère de succès objectif par tâche)
   + liste de repos de référence + N.
 - **Sortie** : rapport `docs/benchmarks/reports/<stamp>-<repo-slug>.md`, TSV et JSONL
-  exposant succès, Δ observé, conditions exactes et logs de run.
+  exposant succès, Δ observé, conditions exactes, `tokens_used`, `task_class` et logs de run.
 - **Reproductibilité** : tout ce qui influe sur le résultat est versionné ou loggé.
 
 ## Validation
@@ -155,7 +156,7 @@ une commande lance le harnais et produit un rapport lisible (Δ, tokens, conditi
 ## Observabilité
 
 - Métrique primaire : taux de succès de tâche par condition et par repo.
-- Leading indicator : tokens de contexte chargés par tâche.
+- Leading indicator : tokens de contexte chargés par tâche et par classe de tâche.
 - Dispersion : variance / intervalle de confiance sur N runs (sans quoi le Δ n'est pas interprétable).
 - Méta : nombre de tâches, repos couverts, part jugée automatiquement vs LLM-judge.
 
@@ -253,3 +254,11 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   pas `id` seul. Le `--self-check` et le test ciblé `0002` couvrent ces régressions
   pour éviter un run N=3 invalide par configuration, ordre instable ou faux échec
   du grader.
+- 2026-07-02 : **incrément 9 — R3 : Δ tokens par classe de tâche**. Les tâches
+  benchmark peuvent déclarer `task.class` (`trivial`, `contextual`, `handoff` dans
+  la suite actuelle). Le runner écrit `task_class` dans le TSV/JSONL, expose
+  `BENCH_TASK_CLASS` au grader, et ajoute au rapport Markdown un tableau `Δ tokens
+  par classe de tâche` calculé sur la moyenne `with` - `without`. Le `--self-check`
+  couvre le cas qui a motivé R3 : surcoût massif sur classe triviale et économie
+  sur classe contextuelle, afin qu'un delta global ne masque plus deux réalités
+  opposées.

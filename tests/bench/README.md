@@ -13,6 +13,7 @@ tests/bench/
 ├── run-bench.sh              # orchestrateur (seam AGENT_CMD ; --self-check)
 └── tasks/<id>/
     ├── task.md               # prompt + critère humain-lisible
+    ├── task.class            # classe de tâche pour agréger les coûts tokens
     └── check.sh              # grader OBJECTIF (exit 0/≠0), exécuté après l'agent
 ```
 
@@ -24,7 +25,8 @@ bash tests/bench/run-bench.sh --self-check
 
 Vérifie que chaque tâche a `task.md` + `check.sh` exécutable, que les repos
 (si `BENCH_REPOS`) existent, que les garde-fous de suppression et le tie-break
-de matrice fonctionnent, et affiche la matrice de runs. N'invoque aucun agent.
+de matrice fonctionnent, que le calcul de Δ tokens par classe est stable, et
+affiche la matrice de runs. N'invoque aucun agent.
 
 ## Run réel (action mainteneur)
 
@@ -45,7 +47,11 @@ Si `BENCH_RUN_DIR` est personnalisé, il doit rester sous `docs/benchmarks/runs`
 ou sous le répertoire temporaire, et son nom de dossier doit être égal à
 `BENCH_STAMP`, car le runner remplace ce répertoire en fin de matrice.
 Quand le log agent contient un bloc `tokens used`, le runner renseigne aussi
-`tokens_used` dans les TSV/JSONL et les rapports Markdown.
+`tokens_used` dans les TSV/JSONL et les rapports Markdown. Chaque tâche peut
+déclarer une classe via `task.class` ; le runner écrit alors `task_class` dans
+les TSV/JSONL et ajoute au rapport un tableau de Δ tokens/run par classe
+(`with` - `without`) pour éviter qu'une moyenne globale masque des tâches de
+nature différente.
 Le champ `failure_kind` distingue `task_fail`, `timeout`, `agent_error` et
 `agent_infra_error`. Une erreur infra agent (quota, auth, provider) invalide le
 run comme preuve benchmark ; le runner publie les artefacts de diagnostic puis
@@ -64,7 +70,7 @@ Le runner :
   fuiter le chemin du repo source dans la condition `without` ;
 - exécute ensuite `check.sh` dans la copie de travail ;
 - expose au grader `BENCH_PROMPT_FILE`, `BENCH_TASK_DIR`, `BENCH_TASK_ID`,
-  `BENCH_CONDITION`, `BENCH_RUN_INDEX`, `BENCH_REPO_NAME`,
+  `BENCH_TASK_CLASS`, `BENCH_CONDITION`, `BENCH_RUN_INDEX`, `BENCH_REPO_NAME`,
   `BENCH_SOURCE_REPO`, `BENCH_WORKDIR` ;
 - marque une cellule en échec si `$AGENT_CMD` dépasse `BENCH_TIMEOUT_SECONDS`
   (`agent_exit=124`) ;
@@ -89,16 +95,18 @@ dossier temporaire.
 ## Ajouter une tâche
 
 1. `tests/bench/tasks/<id>/task.md` — prompt + critère.
-2. `tests/bench/tasks/<id>/check.sh` (`chmod +x`) — grader objectif (assertions).
-3. `bash tests/bench/run-bench.sh --self-check` pour valider.
+2. `tests/bench/tasks/<id>/task.class` — classe d'analyse courte (`trivial`,
+   `contextual`, etc.) ; si absent ou vide, le runner utilise `<id>`.
+3. `tests/bench/tasks/<id>/check.sh` (`chmod +x`) — grader objectif (assertions).
+4. `bash tests/bench/run-bench.sh --self-check` pour valider.
 
 Préférer un grader par **assertion**. LLM-judge seulement si aucune assertion
 possible, avec critères écrits + échantillon vérifié à la main (cf. PROTOCOL).
 
 ## Suite actuelle
 
-- `0001-example-file` : tâche de fumée du format de tâche, non discriminante.
+- `0001-example-file` (`trivial`) : tâche de fumée du format de tâche, non discriminante.
 - `0002-feature-resume` : retrouve la feature active la plus fraîche depuis le
-  feature mesh et écrit une reprise JSON objective.
-- `0003-handoff-decision` : vérifie la décision de handoff cross-scope pour le
-  branchement du benchmark dans le smoke-test.
+  feature mesh et écrit une reprise JSON objective (`contextual`).
+- `0003-handoff-decision` (`handoff`) : vérifie la décision de handoff cross-scope
+  pour le branchement du benchmark dans le smoke-test.
