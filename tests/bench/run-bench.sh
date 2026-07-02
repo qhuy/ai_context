@@ -20,6 +20,7 @@
 #   BENCH_AGENT_LABEL  — libellé consigné dans les rapports (évite de logger des secrets)
 #   BENCH_REPORT_DIR   — dossier des rapports, défaut docs/benchmarks/reports
 #   BENCH_RUN_DIR      — dossier des logs, défaut docs/benchmarks/runs/<stamp>
+#                        si personnalisé, son basename doit rester BENCH_STAMP
 #   BENCH_SEED         — seed de randomisation de la matrice, défaut epoch seconds
 #   BENCH_KEEP_WORKDIR — 1 pour conserver les copies de travail temporaires
 #   BENCH_TIMEOUT_SECONDS — timeout par cellule agent, défaut 300
@@ -84,6 +85,56 @@ display_path() {
   fi
 }
 
+resolved_target_path() {
+  local target="$1" parent base resolved_parent
+  parent="$(dirname "$target")"
+  base="$(basename "$target")"
+  resolved_parent="$(cd "$parent" 2>/dev/null && pwd -P)" || return 1
+  printf "%s/%s" "$resolved_parent" "$base"
+}
+
+path_is_under() {
+  local target="$1" prefix="$2" resolved prefix_resolved
+  resolved="$(resolved_target_path "$target")" || return 1
+  prefix_resolved="$(cd "$prefix" 2>/dev/null && pwd -P)" || return 1
+  [[ "$resolved" == "$prefix_resolved" || "$resolved" == "$prefix_resolved/"* ]]
+}
+
+rm_target_is_safe() {
+  local target="${1:-}" required_prefix="${2:-}" required_basename="${3:-}"
+  local base resolved required_resolved
+
+  [[ -n "$target" ]] || return 1
+  [[ "$target" != "/" && "$target" != "." && "$target" != ".." ]] || return 1
+
+  base="$(basename "$target")"
+  [[ -n "$base" && "$base" != "/" && "$base" != "." && "$base" != ".." ]] || return 1
+
+  resolved="$(resolved_target_path "$target")" || return 1
+  [[ "$resolved" != "/" && "$resolved" != "$repo_root" && "$resolved" != "${HOME:-}" ]] || return 1
+  [[ "$resolved" != "/tmp" && "$resolved" != "/private/tmp" && "$resolved" != "${TMPDIR:-/tmp}" ]] || return 1
+
+  if [[ -n "$required_prefix" ]]; then
+    required_resolved="$(cd "$required_prefix" 2>/dev/null && pwd -P)" || return 1
+    [[ "$resolved" == "$required_resolved" || "$resolved" == "$required_resolved/"* ]] || return 1
+  fi
+
+  if [[ -n "$required_basename" ]]; then
+    [[ "$base" == "$required_basename" ]] || return 1
+  fi
+
+  return 0
+}
+
+safe_rm_rf() {
+  local target="$1" label="${2:-target}" required_prefix="${3:-}" required_basename="${4:-}"
+  if ! rm_target_is_safe "$target" "$required_prefix" "$required_basename"; then
+    ko "refus rm -rf dangereux ($label) : ${target:-<vide>}"
+    return 1
+  fi
+  rm -rf "$target"
+}
+
 repo_ref_for() {
   basename "$1"
 }
@@ -135,6 +186,27 @@ validate_n() {
 
 validate_timeout() {
   [[ "$BENCH_TIMEOUT_SECONDS" =~ ^[1-9][0-9]*$ ]] || ko "BENCH_TIMEOUT_SECONDS doit être un entier positif (reçu : $BENCH_TIMEOUT_SECONDS)"
+}
+
+validate_stamp() {
+  [[ "$BENCH_STAMP" =~ ^[A-Za-z0-9._-]+$ ]] || ko "BENCH_STAMP doit rester un nom de dossier simple (reçu : $BENCH_STAMP)"
+}
+
+validate_run_dir() {
+  [[ "$(basename "$BENCH_RUN_DIR")" == "$BENCH_STAMP" ]] || ko "BENCH_RUN_DIR doit terminer par BENCH_STAMP (run dir : $BENCH_RUN_DIR ; stamp : $BENCH_STAMP)"
+  path_is_under "$BENCH_RUN_DIR" "$repo_root/docs/benchmarks/runs" \
+    || path_is_under "$BENCH_RUN_DIR" "${TMPDIR:-/tmp}" \
+    || ko "BENCH_RUN_DIR doit être sous docs/benchmarks/runs ou sous TMPDIR (reçu : $BENCH_RUN_DIR)"
+}
+
+matrix_sort_with_tiebreak() {
+  sort -k1,1n -k2,2n | cut -f3-
+}
+
+randomize_matrix() {
+  local seed="$1"
+  awk -v seed="$seed" 'BEGIN { srand(seed) } { printf "%.17g\t%d\t%s\n", rand(), NR, $0 }' \
+    | matrix_sort_with_tiebreak
 }
 
 run_agent_command() {
@@ -245,6 +317,8 @@ echo "═══ run-bench ($mode) ═══"
 validate_tasks
 validate_n
 validate_timeout
+validate_stamp
+validate_run_dir
 
 if [[ "$mode" == "self-check" ]]; then
   # Repos : présence seulement (optionnels en self-check).
@@ -275,6 +349,24 @@ if [[ "$mode" == "self-check" ]]; then
   printf "contenu repo: auth, secrets, rate limiting et provisioning\n" > "$parser_probe"
   [[ "$(failure_kind_for 0 1 "$parser_probe")" == "task_fail" ]] && ok "failure_kind task_fail malgré contenu infra" || ko "failure_kind task_fail malgré contenu infra"
   rm -f "$parser_probe"
+  rm_target_is_safe "" && ko "garde rm -rf cible vide" || ok "garde rm -rf cible vide"
+  rm_target_is_safe "/" && ko "garde rm -rf racine" || ok "garde rm -rf racine"
+  rm_guard_parent="$(mktemp -d)"
+  rm_guard_target="$rm_guard_parent/$BENCH_STAMP"
+  mkdir -p "$rm_guard_target"
+  touch "$rm_guard_target/probe"
+  rm_target_is_safe "$rm_guard_parent/not-$BENCH_STAMP" "$rm_guard_parent" "$BENCH_STAMP" \
+    && ko "garde BENCH_RUN_DIR impose le stamp" \
+    || ok "garde BENCH_RUN_DIR impose le stamp"
+  safe_rm_rf "$rm_guard_target" "self-check rm guard" "$rm_guard_parent" "$BENCH_STAMP"
+  [[ ! -e "$rm_guard_target" ]] && ok "safe_rm_rf supprime une cible autorisée" || ko "safe_rm_rf supprime une cible autorisée"
+  rmdir "$rm_guard_parent" 2>/dev/null || true
+  matrix_probe="$(mktemp)"
+  printf "0.1\t2\tsecond\n0.1\t1\tfirst\n0.2\t3\tthird\n" | matrix_sort_with_tiebreak > "$matrix_probe"
+  [[ "$(tr '\n' ' ' < "$matrix_probe")" == "first second third " ]] \
+    && ok "tie-break matrice déterministe" \
+    || ko "tie-break matrice déterministe"
+  rm -f "$matrix_probe"
   echo
   if [[ "$fail" -eq 0 ]]; then echo "✅ self-check OK (plumbing valide ; aucun agent invoqué)"; exit 0
   else echo "❌ self-check FAIL"; exit 1; fi
@@ -300,7 +392,7 @@ cleanup() {
   if [[ "$BENCH_KEEP_WORKDIR" == "1" ]]; then
     warn "copies de travail conservées : $work_root"
   else
-    rm -rf "$work_root"
+    safe_rm_rf "$work_root" "work_root" "${TMPDIR:-/tmp}"
   fi
 }
 trap cleanup EXIT
@@ -325,9 +417,7 @@ for r in "${repos[@]}"; do
     done
   done
 done \
-  | awk -v seed="$BENCH_SEED" 'BEGIN { srand(seed) } { print rand() "\t" $0 }' \
-  | sort -n \
-  | cut -f2- > "$matrix_file"
+  | randomize_matrix "$BENCH_SEED" > "$matrix_file"
 
 echo "  run réel : ${#repos[@]} repo(s) × ${#tasks[@]} tâche(s) × 2 conditions × N=$BENCH_N"
 echo "  seed : $BENCH_SEED"
@@ -410,7 +500,7 @@ while IFS=$'\t' read -r repo_path task_path condition run_index; do
     >> "$results_jsonl"
 done < "$matrix_file"
 
-rm -rf "$BENCH_RUN_DIR"
+safe_rm_rf "$BENCH_RUN_DIR" "BENCH_RUN_DIR" "$(dirname "$BENCH_RUN_DIR")" "$BENCH_STAMP"
 mkdir -p "$BENCH_RUN_DIR" "$BENCH_REPORT_DIR"
 if command -v rsync >/dev/null 2>&1; then
   rsync -a "$run_log_root"/ "$BENCH_RUN_DIR"/

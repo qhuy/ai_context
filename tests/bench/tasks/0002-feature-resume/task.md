@@ -18,8 +18,8 @@ clés JSON :
 ```
 
 Sélectionne la feature `status: active` dont `progress.updated` est le plus récent.
-En cas d'égalité, choisis l'id lexicalement le plus petit. N'ajoute aucun autre
-champ.
+En cas d'égalité, choisis le scope/id lexicalement le plus petit. N'ajoute aucun
+autre champ.
 
 ## Critère de succès (humain-lisible)
 

@@ -45,9 +45,9 @@ doc:
     observability: true
 progress:
   phase: implement
-  step: "incr.7 : run Codex N=3 complet ; faux positif infra corrigé ; signal externe confirmé"
+  step: "incr.8 : runner durci + tie-break grader 0002 aligné"
   blockers: []
-  resume_hint: "publier le N=3 corrigé puis renforcer la suite : ai_debate/0002 discrimine nettement, ai_context/0002 ne discrimine pas ; HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
+  resume_hint: "R4 clos ; R1 peut démarrer en scope workflow/pre-turn-reminder ; côté benchmark, renforcer ensuite la suite : ai_debate/0002 discrimine nettement, ai_context/0002 ne discrimine pas ; HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
   updated: 2026-07-02
 ---
 
@@ -244,3 +244,12 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   et `.claude/skills` en condition `without`, et borne chaque cellule via
   `BENCH_TIMEOUT_SECONDS` (`agent_exit=124`). Les artefacts contaminés/partiels ont été
   supprimés avant publication ; prochaine étape : relancer un run propre.
+- 2026-07-02 : **incrément 8 — durcissement R4 du runner avant relance N=3**.
+  Le runner refuse maintenant les cibles `rm -rf` dangereuses, impose que
+  `BENCH_RUN_DIR` reste sous `docs/benchmarks/runs` ou sous le répertoire
+  temporaire avec un basename `BENCH_STAMP`, et trie la matrice randomisée avec un
+  tie-break déterministe par ordre d'entrée. Le prompt de `0002-feature-resume`
+  aligne aussi son départage sur le grader : `scope/id` lexicalement le plus petit,
+  pas `id` seul. Le `--self-check` et le test ciblé `0002` couvrent ces régressions
+  pour éviter un run N=3 invalide par configuration, ordre instable ou faux échec
+  du grader.

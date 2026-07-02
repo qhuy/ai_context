@@ -23,7 +23,8 @@ bash tests/bench/run-bench.sh --self-check
 ```
 
 Vérifie que chaque tâche a `task.md` + `check.sh` exécutable, que les repos
-(si `BENCH_REPOS`) existent, et affiche la matrice de runs. N'invoque aucun agent.
+(si `BENCH_REPOS`) existent, que les garde-fous de suppression et le tie-break
+de matrice fonctionnent, et affiche la matrice de runs. N'invoque aucun agent.
 
 ## Run réel (action mainteneur)
 
@@ -40,6 +41,9 @@ Coûteux + non-déterministe (vraies invocations d'agent). Rapports sous
 `docs/benchmarks/reports/`, logs sous `docs/benchmarks/runs/<stamp>/`.
 Les artefacts publiés référencent les repos par nom/slug et les logs par chemins
 relatifs au repo ; les copies de travail temporaires sont notées `<tmp>/...`.
+Si `BENCH_RUN_DIR` est personnalisé, il doit rester sous `docs/benchmarks/runs`
+ou sous le répertoire temporaire, et son nom de dossier doit être égal à
+`BENCH_STAMP`, car le runner remplace ce répertoire en fin de matrice.
 Quand le log agent contient un bloc `tokens used`, le runner renseigne aussi
 `tokens_used` dans les TSV/JSONL et les rapports Markdown.
 Le champ `failure_kind` distingue `task_fail`, `timeout`, `agent_error` et
@@ -66,6 +70,7 @@ Le runner :
   (`agent_exit=124`) ;
 - marque une erreur quota/auth/provider sur commande agent échouée comme
   `agent_infra_error`, sans la compter comme un échec métier exploitable ;
+- refuse les suppressions dangereuses avant de nettoyer les répertoires de run ;
 - agrège Markdown + TSV + JSONL et ne publie les artefacts dans
   `docs/benchmarks/` qu'une fois la matrice terminée.
 

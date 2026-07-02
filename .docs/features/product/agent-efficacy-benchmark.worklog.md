@@ -78,3 +78,13 @@
 - Résultat corrigé : global `with` 12/12 vs `without` 9/12 ; `ai_debate/0002` fait `with` 3/3 vs `without` 0/3 ; `ai_context/0002` fait `with` 3/3 vs `without` 3/3.
 - Décision : publier les artefacts N=3 corrigés avec les logs du run complet ; ne pas relancer immédiatement les 24 cellules car le bug était une classification post-run et les logs/checks sont complets.
 - Next : renforcer la tâche discriminante côté `ai_context` ou ajouter une tâche repo-spécifique, puis brancher `run-bench.sh --self-check` dans le smoke via HANDOFF `quality/smoke-test`.
+
+## 2026-07-02 — R4 : garde rm -rf et tie-break matrice
+
+- Contexte : R4 priorisé avant R1 pour sécuriser le prochain run Codex `N=3` au reset quota. Scope primaire maintenu sur `product/agent-efficacy-benchmark`.
+- Correction runner : ajout d'une suppression sûre (`safe_rm_rf`) qui refuse cible vide, racine, repo root, home et racines temporaires ; la publication remplace `BENCH_RUN_DIR` seulement s'il reste sous `docs/benchmarks/runs` ou sous `TMPDIR`, avec un basename `BENCH_STAMP`.
+- Correction matrice : randomisation par seed conservée, mais tri explicite `clé pseudo-aléatoire + ordre d'entrée`, pour rendre le tie-break déterministe sans dépendre du contenu des lignes.
+- Correction grader 0002 : le prompt demandait de départager par `id`, alors que le grader trie par `scope/id`. Le libellé est aligné sur la vérité terrain du grader : `scope/id` lexicalement le plus petit.
+- Documentation : `tests/bench/README.md`, `docs/benchmarks/PROTOCOL.md` et fiche feature mis à jour avec le contrat `BENCH_RUN_DIR`.
+- Validation : `bash -n tests/bench/run-bench.sh` ; `bash tests/bench/run-bench.sh --self-check` PASS avec assertions garde `rm -rf` + tie-break ; tests négatifs `BENCH_RUN_DIR` non stampé et hors racine autorisée rejetés avant run ; test ciblé `0002-feature-resume` sur égalité `core/zzz` vs `product/aaa` attendu PASS/FAIL.
+- Next : R1 peut reprendre ensuite en scope `workflow/pre-turn-reminder`, avec HANDOFF séparé depuis ce scope produit.

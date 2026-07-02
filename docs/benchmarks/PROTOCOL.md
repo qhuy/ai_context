@@ -34,6 +34,9 @@ Chaque cellule est bornée par `BENCH_TIMEOUT_SECONDS` ; un timeout est compté 
 Les résultats et logs sont écrits dans un répertoire temporaire pendant l'exécution,
 puis publiés vers `docs/benchmarks/reports` et `docs/benchmarks/runs` seulement une
 fois la matrice terminée, afin d'éviter de conserver des artefacts partiels.
+Le répertoire de logs publié est remplacé uniquement s'il reste sous
+`docs/benchmarks/runs` ou sous le répertoire temporaire, et si son basename correspond
+au `BENCH_STAMP`, pour éviter qu'une configuration invalide déclenche une suppression large.
 
 ## Design expérimental
 
@@ -42,7 +45,8 @@ fois la matrice terminée, afin d'éviter de conserver des artefacts partiels.
 - **N runs** par (repo × tâche × condition) pour absorber la stochasticité du
   modèle. `N` calibré pour que le Δ dépasse le bruit (démarrer petit, élargir si
   signal).
-- **Ordre randomisé** des conditions pour éviter tout biais d'ordre/cache.
+- **Ordre randomisé** des conditions pour éviter tout biais d'ordre/cache, avec
+  tie-break déterministe en cas d'égalité de clé pseudo-aléatoire.
 
 ## Grader (objectivité)
 
@@ -125,6 +129,8 @@ relancer et retrouver le même Δ (aux intervalles près).
   coût tokens extrait depuis les logs Codex quand disponible.
 - ✅ Runner durci : `failure_kind` sépare échec tâche, timeout et erreur infra agent ;
   un run contaminé par quota/provider sort en non-zéro.
+- ✅ Runner protégé : suppressions bornées, `BENCH_RUN_DIR` attaché au stamp, et
+  randomisation avec tie-break déterministe.
 - ✅ Run agent réel `N=3` publié : `with` 12/12 vs `without` 9/12 ; signal fort
   sur `ai_debate/0002` (`with` 3/3, `without` 0/3), mais `ai_context/0002`
   reste trop facile sans contexte (`without` 3/3).
