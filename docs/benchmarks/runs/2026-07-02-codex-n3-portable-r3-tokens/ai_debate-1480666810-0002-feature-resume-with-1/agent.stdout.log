@@ -1,0 +1,5 @@
+Fichier créé : [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.Eur3dH/ai_debate-1480666810-0002-feature-resume-with-1/work/BENCH_RESULT/feature-resume.json:1)
+
+Feature retenue : `workflow/aib-debate-plan-action-v1`, active, `progress.updated: 2026-06-17`, plus récente que les autres features actives.
+
+Vérification : JSON valide avec exactement les clés demandées. `check.sh` est absent dans ce workspace, donc je n’ai pas pu l’exécuter.

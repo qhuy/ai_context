@@ -1,0 +1,3 @@
+Fait : [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.Eur3dH/ai_debate-1480666810-0002-feature-resume-with-3/work/BENCH_RESULT/feature-resume.json) contient la feature active la plus récente : `workflow/aib-debate-plan-action-v1`.
+
+Validation : JSON valide avec exactement les 4 clés demandées. `check.sh` n’existe pas dans ce checkout, donc je n’ai pas pu l’exécuter.

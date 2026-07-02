@@ -97,3 +97,13 @@
 - Self-check : assertions synthétiques sur les chiffres observés qui ont motivé R3 (`trivial` +34695 tokens/run, +289.4% ; `contextual` -24622 tokens/run, -40.7%).
 - Validation : `bash -n tests/bench/run-bench.sh` ; `bash tests/bench/run-bench.sh --self-check` ; run d'intégration local avec agent factice sur `0001` vérifiant header TSV `task_class`, JSONL `task_class:"trivial"` et ligne rapport `trivial` à +0 tokens ; `check-feature-docs --strict product/agent-efficacy-benchmark` ; `check-feature-freshness --worktree --strict` ; `check-features --no-write` ; `check-feature-docs` ; `check-feature-coverage` ; `check-touches-breadth` ; `measure-context-size` ; `git diff --check`. Warnings inchangés : 2 fiches historiques sans `type`, 6 tests unitaires orphelins, advisory touches breadth.
 - Next : relancer le run mainteneur attendu avec ce rapport enrichi ; puis renforcer la suite côté `ai_context` si `0002` reste non discriminante.
+
+## 2026-07-02 — run N=3 R3 tokens publié
+
+- Run : Codex `N=3`, repos `ai_context` (`789fd76`) + worktree propre `ai_debate` (`d6cdc17`), sous-suite portable `0001-example-file` + `0002-feature-resume`, `BENCH_SEED=42`, `BENCH_TIMEOUT_SECONDS=300`, stamp `2026-07-02-codex-n3-portable-r3-tokens`.
+- Résultat global : `with` 12/12 (100.0%) vs `without` 8/12 (66.7%), Δ +33.3 points.
+- Résultat par tâche : `0001` passe partout ; `ai_debate/0002` réplique le signal externe (`with` 3/3, `without` 0/3) ; `ai_context/0002` devient partiellement discriminant (`with` 3/3, `without` 2/3).
+- Leading indicator R3 : `contextual` = `with` 59386 tokens/run vs `without` 94235, soit -34848 (-37.0%) ; `trivial` = `with` 33854 vs `without` 22924, soit +10929 (+47.7%). Le tableau par classe confirme que le delta global masquerait deux réalités opposées.
+- Hygiène : JSONL valide (24 lignes), `agent_infra_error=0`, `task_fail=4` tous sur `0002` en condition `without`, scan simple des rapports/logs sans secret brut détecté.
+- Artefacts : synthèse `docs/benchmarks/reports/2026-07-02-codex-n3-portable-r3-tokens-summary.md`, rapports par repo, TSV/JSONL et logs sous `docs/benchmarks/runs/2026-07-02-codex-n3-portable-r3-tokens/`.
+- Next : renforcer la suite côté `ai_context` et ajouter l'intervalle de confiance avant de considérer la preuve publiable hors contexte mainteneur.

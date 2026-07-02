@@ -1,0 +1,3 @@
+résultat inattendu
+expected={'feature': 'workflow/aib-debate-plan-action-v1', 'phase': 'review', 'updated': '2026-06-17', 'next': 'La refonte v1 est implémentée. Reprendre sur A5 quand un débat externe non-méta permettra de noter utile/neutre/trop coûteux dans decision-log.'}
+actual={'feature': 'product/agent-efficacy-benchmark', 'phase': 'implement', 'updated': '2026-07-02', 'next': 'R3 clos côté benchmark ; prochaine reprise produit : relancer/publier le run attendu avec le tableau Δ tokens par classe, puis renforcer la suite car ai_debate/0002 discrimine nettement mais ai_context/0002 ne discrimine pas. HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke'}

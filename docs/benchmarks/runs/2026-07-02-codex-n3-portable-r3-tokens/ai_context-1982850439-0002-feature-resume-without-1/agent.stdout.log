@@ -1,0 +1,3 @@
+J’ai créé [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.Eur3dH/ai_context-1982850439-0002-feature-resume-without-1/work/BENCH_RESULT/feature-resume.json) avec les 4 clés demandées.
+
+Validation faite avec `jq`: JSON valide, et la sélection retient `product/agent-efficacy-benchmark` comme feature active la plus fraîche, tie-break lexical appliqué. Aucun `check.sh` n’est présent dans cette copie pour lancer le grader localement.

@@ -1,0 +1,3 @@
+Fait : [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.Eur3dH/ai_debate-1480666810-0002-feature-resume-without-1/work/BENCH_RESULT/feature-resume.json) contient exactement les quatre clés demandées.
+
+J’ai utilisé le feature index natif de `ai_context`; trois features actives avaient `updated: 2026-07-02`, et `product/agent-efficacy-benchmark` gagne le tie-break lexical. Validation `jq` OK. `check.sh` n’est pas présent dans ce snapshot.

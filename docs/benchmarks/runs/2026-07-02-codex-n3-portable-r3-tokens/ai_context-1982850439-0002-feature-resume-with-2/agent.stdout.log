@@ -1,0 +1,3 @@
+Créé [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.Eur3dH/ai_context-1982850439-0002-feature-resume-with-2/work/BENCH_RESULT/feature-resume.json:1) avec la feature active la plus fraîche : `product/agent-efficacy-benchmark`.
+
+Validation faite avec `jq`; JSON valide et limité aux 4 clés demandées. `bash check.sh` n’a pas pu être lancé car `check.sh` n’existe pas dans ce workspace.

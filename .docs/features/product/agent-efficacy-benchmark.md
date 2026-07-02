@@ -45,9 +45,9 @@ doc:
     observability: true
 progress:
   phase: implement
-  step: "incr.9 : leading indicator tokens ventilé par classe de tâche"
+  step: "incr.10 : run N=3 enrichi R3 tokens publié"
   blockers: []
-  resume_hint: "R3 clos côté benchmark ; prochaine reprise produit : relancer/publier le run attendu avec le tableau Δ tokens par classe, puis renforcer la suite car ai_debate/0002 discrimine nettement mais ai_context/0002 ne discrimine pas. HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
+  resume_hint: "Run R3 tokens publié : with 12/12 vs without 8/12, Δ +33.3 points ; contextual -37.0% tokens/run, trivial +47.7%. Prochaine reprise : renforcer la suite côté ai_context et ajouter l'intervalle de confiance ; HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
   updated: 2026-07-02
 ---
 
@@ -262,3 +262,13 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   couvre le cas qui a motivé R3 : surcoût massif sur classe triviale et économie
   sur classe contextuelle, afin qu'un delta global ne masque plus deux réalités
   opposées.
+- 2026-07-02 : **incrément 10 — run N=3 enrichi R3 tokens publié**. Rerun Codex
+  `N=3`, repos `ai_context` (`789fd76`) + worktree propre `ai_debate` (`d6cdc17`),
+  sous-suite portable `0001`/`0002`, seed `42`, timeout 300s, stamp
+  `2026-07-02-codex-n3-portable-r3-tokens`. Résultat exploitable sans erreur infra :
+  global `with` 12/12 vs `without` 8/12, soit Δ +33.3 points. Le signal externe
+  `ai_debate/0002` est répliqué (`with` 3/3, `without` 0/3) et `ai_context/0002`
+  devient partiellement discriminant (`with` 3/3, `without` 2/3). Coût tokens par
+  classe : `contextual` économise -34848 tokens/run (-37.0%) avec ai_context,
+  tandis que `trivial` coûte +10929 tokens/run (+47.7%). Synthèse :
+  `docs/benchmarks/reports/2026-07-02-codex-n3-portable-r3-tokens-summary.md`.

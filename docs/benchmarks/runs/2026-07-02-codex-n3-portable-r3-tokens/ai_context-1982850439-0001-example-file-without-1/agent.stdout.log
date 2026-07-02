@@ -1,0 +1,7 @@
+Fait : [HELLO.txt](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.Eur3dH/ai_context-1982850439-0001-example-file-without-1/work/HELLO.txt) existe à la racine avec exactement :
+
+```text
+hello ai_context
+```
+
+`check.sh` n’est pas présent dans le repo, donc je n’ai pas pu lancer le grader. J’ai vérifié le contenu directement.

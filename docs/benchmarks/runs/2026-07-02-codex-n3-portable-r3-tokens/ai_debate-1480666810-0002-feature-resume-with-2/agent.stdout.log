@@ -1,0 +1,5 @@
+J’ai créé [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.Eur3dH/ai_debate-1480666810-0002-feature-resume-with-2/work/BENCH_RESULT/feature-resume.json) avec la feature active la plus récente depuis `.ai/.feature-index.json` :
+
+`workflow/aib-debate-plan-action-v1`, phase `review`, updated `2026-06-17`.
+
+Validation effectuée avec `jq`. `check.sh` n’est pas présent dans ce workspace, donc je n’ai pas pu l’exécuter.

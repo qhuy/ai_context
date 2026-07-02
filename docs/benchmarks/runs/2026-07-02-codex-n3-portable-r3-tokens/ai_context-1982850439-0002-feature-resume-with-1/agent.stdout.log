@@ -1,0 +1,5 @@
+Créé [BENCH_RESULT/feature-resume.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.Eur3dH/ai_context-1982850439-0002-feature-resume-with-1/work/BENCH_RESULT/feature-resume.json:1).
+
+Feature retenue : `product/agent-efficacy-benchmark`, car c’est la fiche `status: active` la plus récente au `2026-07-02`, avec tie-break lexical devant les autres du même jour.
+
+Validation faite : JSON valide, exactement les clés `feature`, `phase`, `updated`, `next`. `check.sh` n’est pas présent dans ce workspace, donc je n’ai pas pu le lancer.
