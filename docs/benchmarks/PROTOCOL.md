@@ -31,6 +31,9 @@ La condition `without` retire aussi les skills repo-locales (`.agents`,
 `.claude/skills`), pas seulement les shims.
 Chaque cellule est bornée par `BENCH_TIMEOUT_SECONDS` ; un timeout est compté comme
 échec de tâche (`agent_exit=124`) et reste visible dans les logs.
+Les résultats et logs sont écrits dans un répertoire temporaire pendant l'exécution,
+puis publiés vers `docs/benchmarks/reports` et `docs/benchmarks/runs` seulement une
+fois la matrice terminée, afin d'éviter de conserver des artefacts partiels.
 
 ## Design expérimental
 

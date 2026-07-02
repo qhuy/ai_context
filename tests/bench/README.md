@@ -54,7 +54,8 @@ Le runner :
   `BENCH_SOURCE_REPO`, `BENCH_WORKDIR` ;
 - marque une cellule en échec si `$AGENT_CMD` dépasse `BENCH_TIMEOUT_SECONDS`
   (`agent_exit=124`) ;
-- agrège Markdown + TSV + JSONL.
+- agrège Markdown + TSV + JSONL et ne publie les artefacts dans
+  `docs/benchmarks/` qu'une fois la matrice terminée.
 
 Exemple Codex CLI, prompt lu depuis `stdin` et travail dans le `cwd` de la copie :
 

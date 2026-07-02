@@ -218,6 +218,8 @@ done
 
 mkdir -p "$BENCH_REPORT_DIR" "$BENCH_RUN_DIR"
 work_root="$(mktemp -d "${TMPDIR:-/tmp}/ai-context-bench.XXXXXX")"
+run_log_root="$work_root/logs"
+mkdir -p "$run_log_root"
 cleanup() {
   if [[ "$BENCH_KEEP_WORKDIR" == "1" ]]; then
     warn "copies de travail conservées : $work_root"
@@ -227,9 +229,11 @@ cleanup() {
 }
 trap cleanup EXIT
 
-results_tsv="$BENCH_REPORT_DIR/$BENCH_STAMP-results.tsv"
-results_jsonl="$BENCH_REPORT_DIR/$BENCH_STAMP-results.jsonl"
-matrix_file="$BENCH_RUN_DIR/matrix.tsv"
+results_tsv="$work_root/results.tsv"
+results_jsonl="$work_root/results.jsonl"
+final_results_tsv="$BENCH_REPORT_DIR/$BENCH_STAMP-results.tsv"
+final_results_jsonl="$BENCH_REPORT_DIR/$BENCH_STAMP-results.jsonl"
+matrix_file="$run_log_root/matrix.tsv"
 : > "$results_jsonl"
 printf "repo_slug\trepo_name\trepo_path\ttask_id\tcondition\trun_index\tsuccess\tagent_exit\tcheck_exit\tduration_seconds\tworkdir\tstdout_log\tstderr_log\tcheck_log\n" > "$results_tsv"
 
@@ -262,10 +266,14 @@ while IFS=$'\t' read -r repo_path task_path condition run_index; do
   task_id="$(basename "$task_path")"
   cell_slug="$(slugify "$repo_slug-$task_id-$condition-$run_index")"
   workdir="$work_root/$cell_slug/work"
-  logdir="$BENCH_RUN_DIR/$cell_slug"
+  logdir="$run_log_root/$cell_slug"
+  final_logdir="$BENCH_RUN_DIR/$cell_slug"
   stdout_log="$logdir/agent.stdout.log"
   stderr_log="$logdir/agent.stderr.log"
   check_log="$logdir/check.log"
+  final_stdout_log="$final_logdir/agent.stdout.log"
+  final_stderr_log="$final_logdir/agent.stderr.log"
+  final_check_log="$final_logdir/check.log"
   mkdir -p "$logdir"
 
   printf "  ▶ %s / %s / %s / run %s\n" "$repo_name" "$task_id" "$condition" "$run_index"
@@ -304,15 +312,25 @@ while IFS=$'\t' read -r repo_path task_path condition run_index; do
 
   printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" \
     "$repo_slug" "$repo_name" "$repo_path" "$task_id" "$condition" "$run_index" \
-    "$success" "$agent_exit" "$check_exit" "$duration" "$workdir" "$stdout_log" "$stderr_log" "$check_log" \
+    "$success" "$agent_exit" "$check_exit" "$duration" "$workdir" "$final_stdout_log" "$final_stderr_log" "$final_check_log" \
     >> "$results_tsv"
 
   printf '{"stamp":"%s","repo_slug":"%s","repo_name":"%s","repo_path":"%s","task_id":"%s","condition":"%s","run_index":%s,"success":%s,"agent_exit":%s,"check_exit":%s,"duration_seconds":%s,"stdout_log":"%s","stderr_log":"%s","check_log":"%s"}\n' \
     "$(json_escape "$BENCH_STAMP")" "$(json_escape "$repo_slug")" "$(json_escape "$repo_name")" "$(json_escape "$repo_path")" \
     "$(json_escape "$task_id")" "$(json_escape "$condition")" "$run_index" "$success" "$agent_exit" "$check_exit" "$duration" \
-    "$(json_escape "$stdout_log")" "$(json_escape "$stderr_log")" "$(json_escape "$check_log")" \
+    "$(json_escape "$final_stdout_log")" "$(json_escape "$final_stderr_log")" "$(json_escape "$final_check_log")" \
     >> "$results_jsonl"
 done < "$matrix_file"
+
+rm -rf "$BENCH_RUN_DIR"
+mkdir -p "$BENCH_RUN_DIR" "$BENCH_REPORT_DIR"
+if command -v rsync >/dev/null 2>&1; then
+  rsync -a "$run_log_root"/ "$BENCH_RUN_DIR"/
+else
+  ( cd "$run_log_root" && tar -cf - . ) | ( cd "$BENCH_RUN_DIR" && tar -xf - )
+fi
+cp "$results_tsv" "$final_results_tsv"
+cp "$results_jsonl" "$final_results_jsonl"
 
 report_files=()
 while IFS= read -r repo_slug; do
@@ -329,8 +347,9 @@ while IFS= read -r repo_slug; do
     echo "- Agent : $BENCH_AGENT_LABEL"
     echo "- N : $BENCH_N"
     echo "- Seed : $BENCH_SEED"
-    echo "- Résultats bruts : \`$results_tsv\`"
-    echo "- Artefact JSONL : \`$results_jsonl\`"
+    echo "- Timeout : ${BENCH_TIMEOUT_SECONDS}s"
+    echo "- Résultats bruts : \`$final_results_tsv\`"
+    echo "- Artefact JSONL : \`$final_results_jsonl\`"
     echo
     echo "## Synthèse"
     echo
@@ -378,5 +397,5 @@ done < <(awk -F '\t' 'NR > 1 { print $1 }' "$results_tsv" | sort -u)
 echo
 echo "✅ run terminé"
 printf "  rapport : %s\n" "${report_files[@]}"
-echo "  résultats : $results_tsv"
-echo "  jsonl : $results_jsonl"
+echo "  résultats : $final_results_tsv"
+echo "  jsonl : $final_results_jsonl"

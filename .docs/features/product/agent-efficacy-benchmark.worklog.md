@@ -43,5 +43,6 @@
 - Résultat brut initial : `ai_context` 100%/100%, `ai_debate` 100%/50%. Inspection des logs : la copie `without` de `ai_context` conservait encore `.agents`, `.claude/skills`, `tests/bench/` et les artefacts `docs/benchmarks/*`; le résultat `ai_context without` était donc contaminé.
 - Correction runner : exclure `tests/bench/` + `docs/benchmarks/{reports,runs}` de toutes les copies, et retirer `.agents` + `.claude/skills` dans `without`.
 - Correction runner complémentaire : ajout de `BENCH_TIMEOUT_SECONDS` par cellule (`agent_exit=124`) après blocage prolongé de `ai_context/0002/without` avec le harnais corrigé.
+- Correction publication : les logs, TSV et JSONL sont produits dans un répertoire temporaire puis copiés vers `docs/benchmarks/*` uniquement en fin de run, pour éviter de conserver des artefacts partiels.
 - Décision appliquée : les runs contaminés/partiels ont été supprimés avant publication ; relancer avec le même stamp après correction.
 - Validation : `bash -n` runner + graders, `run-bench.sh --self-check`, matrice déterministe 2 repos × 3 tâches × 2 conditions × N=1 (8/12 succès attendus), test timeout `BENCH_TIMEOUT_SECONDS=1` (`agent_exit=124` sur 2/2 cellules), puis gate projet avant commit.
