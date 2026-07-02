@@ -45,9 +45,9 @@ doc:
     observability: true
 progress:
   phase: implement
-  step: "incr.3 : suite discriminante initiale ajoutée — reprise feature mesh + décision handoff ; runner durci contre fuite de chemins source vers AGENT_CMD"
+  step: "incr.4 : isolation du runner corrigée après run Codex contaminé — exclusions harnais/artefacts, skills retirées en without, timeout par cellule"
   blockers: []
-  resume_hint: "runs AGENT RÉEL = choisir >=2 repos ai_contextisés (dont 1 externe), fixer BENCH_AGENT_LABEL/AGENT_CMD, calibrer N petit, produire le 1er rapport publiable sous docs/benchmarks/reports/. HANDOFF quality/smoke-test restant : brancher run-bench.sh --self-check dans le smoke"
+  resume_hint: "relancer un run Codex N=1 après correction d'isolation, avec rapports propres sous docs/benchmarks/reports/. HANDOFF quality/smoke-test restant : brancher run-bench.sh --self-check dans le smoke"
   updated: 2026-07-02
 ---
 
@@ -210,3 +210,10 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   source à `$AGENT_CMD`, pour éviter qu'un agent en condition `without` lise le repo original ; les
   métadonnées source restent réservées au grader. Prochaine étape : run agent réel sur repos
   ai_contextisés avec `N` calibré petit, puis rapport publiable.
+- 2026-07-02 : **incrément 4 — isolation runner corrigée après run réel contaminé**. Un
+  premier run Codex `N=1` a montré que les copies de travail conservaient encore le harnais,
+  les artefacts de benchmark et des skills repo-locales. Le runner exclut maintenant
+  `tests/bench/` et `docs/benchmarks/{reports,runs}` de toutes les copies, retire `.agents`
+  et `.claude/skills` en condition `without`, et borne chaque cellule via
+  `BENCH_TIMEOUT_SECONDS` (`agent_exit=124`). Les artefacts contaminés/partiels ont été
+  supprimés avant publication ; prochaine étape : relancer un run propre.

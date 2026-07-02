@@ -24,6 +24,13 @@ Pour chaque repo de référence et chaque tâche :
 
 Seule la présence d'ai_context varie. Même modèle, même tâche, même prompt de
 départ. Le repo nu n'est **pas** sciemment handicapé (invariant d'honnêteté).
+Le harnais lui-même (`tests/bench/`) et les artefacts de runs précédents
+(`docs/benchmarks/reports`, `docs/benchmarks/runs`) sont exclus de toutes les
+copies de travail pour éviter que l'agent lise les tâches, graders ou résultats.
+La condition `without` retire aussi les skills repo-locales (`.agents`,
+`.claude/skills`), pas seulement les shims.
+Chaque cellule est bornée par `BENCH_TIMEOUT_SECONDS` ; un timeout est compté comme
+échec de tâche (`agent_exit=124`) et reste visible dans les logs.
 
 ## Design expérimental
 

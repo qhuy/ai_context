@@ -32,6 +32,7 @@ export AGENT_CMD='claude -p --output-format json'   # ou codex, ou runner maison
 export BENCH_REPOS='/chemin/repo-a /chemin/repo-b'   # ≥2, dont ≥1 externe
 export BENCH_N=5                                     # runs par cellule
 export BENCH_AGENT_LABEL='claude-sonnet-...'
+export BENCH_TIMEOUT_SECONDS=300                     # timeout par cellule agent
 bash tests/bench/run-bench.sh
 ```
 
@@ -40,8 +41,10 @@ Coûteux + non-déterministe (vraies invocations d'agent). Rapports sous
 
 Le runner :
 
-- copie chaque repo dans un dossier temporaire ;
-- applique la condition `without` en retirant `.ai/`, `.docs/` et les shims agents ;
+- copie chaque repo dans un dossier temporaire en excluant `.git`, le harnais
+  `tests/bench/` et les anciens rapports/logs `docs/benchmarks/{reports,runs}` ;
+- applique la condition `without` en retirant `.ai/`, `.docs/`, les shims agents
+  et les skills repo-locales (`.agents`, `.claude/skills`) ;
 - envoie `task.md` sur `stdin` de `$AGENT_CMD` ;
 - expose à l'agent uniquement `BENCH_TASK_ID` et `BENCH_WORKDIR` pour éviter de
   fuiter le chemin du repo source dans la condition `without` ;
@@ -49,6 +52,8 @@ Le runner :
 - expose au grader `BENCH_PROMPT_FILE`, `BENCH_TASK_DIR`, `BENCH_TASK_ID`,
   `BENCH_CONDITION`, `BENCH_RUN_INDEX`, `BENCH_REPO_NAME`,
   `BENCH_SOURCE_REPO`, `BENCH_WORKDIR` ;
+- marque une cellule en échec si `$AGENT_CMD` dépasse `BENCH_TIMEOUT_SECONDS`
+  (`agent_exit=124`) ;
 - agrège Markdown + TSV + JSONL.
 
 Exemple Codex CLI, prompt lu depuis `stdin` et travail dans le `cwd` de la copie :

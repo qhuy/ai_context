@@ -36,3 +36,12 @@
 - Intent des tâches : mesurer deux apports concrets d'ai_context — reprise depuis le feature mesh, et respect de la règle cross-scope ⇒ HANDOFF.
 - Validation : `bash -n` runner + graders, `run-bench.sh --self-check`, probe env agent (seuls `BENCH_TASK_ID`/`BENCH_WORKDIR` visibles), matrice temporaire 2 repos ai_contextisés × 3 tâches × 2 conditions × N=1 avec agent déterministe honnête (8/12 succès, échecs `without` attendus sur les tâches dépendantes du contexte, sans fuite source vers l'agent), `check-features`, `check-feature-docs`, `check-feature-freshness --worktree --strict`, `git diff --check`, `check-shims`, `measure-context-size`, `review-delta`, `check-feature-coverage`.
 - Next : préparer un premier run agent réel sur repos ai_contextisés si budget accepté, puis publier le premier rapport sous `docs/benchmarks/reports/`.
+
+## 2026-07-02 — run réel N=1 : fuite détectée puis correction
+
+- Premier run réel Codex sur `ai_context` + `ai_debate`, sous-suite portable `0001`/`0002`, `N=1`, stamp `2026-07-02-codex-n1-portable`.
+- Résultat brut initial : `ai_context` 100%/100%, `ai_debate` 100%/50%. Inspection des logs : la copie `without` de `ai_context` conservait encore `.agents`, `.claude/skills`, `tests/bench/` et les artefacts `docs/benchmarks/*`; le résultat `ai_context without` était donc contaminé.
+- Correction runner : exclure `tests/bench/` + `docs/benchmarks/{reports,runs}` de toutes les copies, et retirer `.agents` + `.claude/skills` dans `without`.
+- Correction runner complémentaire : ajout de `BENCH_TIMEOUT_SECONDS` par cellule (`agent_exit=124`) après blocage prolongé de `ai_context/0002/without` avec le harnais corrigé.
+- Décision appliquée : les runs contaminés/partiels ont été supprimés avant publication ; relancer avec le même stamp après correction.
+- Validation : `bash -n` runner + graders, `run-bench.sh --self-check`, matrice déterministe 2 repos × 3 tâches × 2 conditions × N=1 (8/12 succès attendus), test timeout `BENCH_TIMEOUT_SECONDS=1` (`agent_exit=124` sur 2/2 cellules), puis gate projet avant commit.

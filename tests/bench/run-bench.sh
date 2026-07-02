@@ -22,6 +22,7 @@
 #   BENCH_RUN_DIR      — dossier des logs, défaut docs/benchmarks/runs/<stamp>
 #   BENCH_SEED         — seed de randomisation de la matrice, défaut epoch seconds
 #   BENCH_KEEP_WORKDIR — 1 pour conserver les copies de travail temporaires
+#   BENCH_TIMEOUT_SECONDS — timeout par cellule agent, défaut 300
 
 set -euo pipefail
 
@@ -36,6 +37,7 @@ BENCH_AGENT_LABEL="${BENCH_AGENT_LABEL:-non renseigne}"
 BENCH_REPORT_DIR="${BENCH_REPORT_DIR:-$repo_root/docs/benchmarks/reports}"
 BENCH_RUN_DIR="${BENCH_RUN_DIR:-$repo_root/docs/benchmarks/runs/$BENCH_STAMP}"
 BENCH_KEEP_WORKDIR="${BENCH_KEEP_WORKDIR:-0}"
+BENCH_TIMEOUT_SECONDS="${BENCH_TIMEOUT_SECONDS:-300}"
 mode="run"
 [[ "${1:-}" == "--self-check" ]] && mode="self-check"
 [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]] && { sed -n '1,18p' "$0" | sed 's/^# \{0,1\}//'; exit 0; }
@@ -69,9 +71,19 @@ copy_repo() {
   local src="$1" dest="$2"
   mkdir -p "$dest"
   if command -v rsync >/dev/null 2>&1; then
-    rsync -a --delete --exclude '.git' "$src"/ "$dest"/
+    rsync -a --delete \
+      --exclude '.git' \
+      --exclude 'tests/bench' \
+      --exclude 'docs/benchmarks/reports' \
+      --exclude 'docs/benchmarks/runs' \
+      "$src"/ "$dest"/
   else
-    ( cd "$src" && tar --exclude='.git' -cf - . ) | ( cd "$dest" && tar -xf - )
+    ( cd "$src" && tar \
+        --exclude='.git' \
+        --exclude='tests/bench' \
+        --exclude='docs/benchmarks/reports' \
+        --exclude='docs/benchmarks/runs' \
+        -cf - . ) | ( cd "$dest" && tar -xf - )
   fi
 }
 
@@ -100,16 +112,74 @@ validate_n() {
   [[ "$BENCH_N" =~ ^[1-9][0-9]*$ ]] || ko "BENCH_N doit être un entier positif (reçu : $BENCH_N)"
 }
 
+validate_timeout() {
+  [[ "$BENCH_TIMEOUT_SECONDS" =~ ^[1-9][0-9]*$ ]] || ko "BENCH_TIMEOUT_SECONDS doit être un entier positif (reçu : $BENCH_TIMEOUT_SECONDS)"
+}
+
+run_agent_command() {
+  local workdir="$1" prompt_file="$2" stdout_log="$3" stderr_log="$4" task_id="$5" timeout_seconds="$6" agent_cmd="$7"
+  python3 - "$workdir" "$prompt_file" "$stdout_log" "$stderr_log" "$task_id" "$timeout_seconds" "$agent_cmd" <<'PY'
+import os
+import pathlib
+import signal
+import subprocess
+import sys
+
+workdir, prompt_file, stdout_log, stderr_log, task_id, timeout_seconds, agent_cmd = sys.argv[1:]
+timeout_seconds = int(timeout_seconds)
+
+env = dict(os.environ)
+for key in list(env):
+    if key.startswith("BENCH_") or key == "AGENT_CMD":
+        env.pop(key, None)
+env["BENCH_TASK_ID"] = task_id
+env["BENCH_WORKDIR"] = workdir
+
+with open(prompt_file, "rb") as stdin, open(stdout_log, "wb") as stdout, open(stderr_log, "ab") as stderr:
+    proc = subprocess.Popen(
+        agent_cmd,
+        shell=True,
+        executable="/bin/bash",
+        cwd=workdir,
+        stdin=stdin,
+        stdout=stdout,
+        stderr=stderr,
+        env=env,
+        start_new_session=True,
+    )
+    try:
+        proc.wait(timeout=timeout_seconds)
+        raise SystemExit(proc.returncode)
+    except subprocess.TimeoutExpired:
+        stderr.write(f"\nBENCH_TIMEOUT after {timeout_seconds}s\n".encode("utf-8"))
+        stderr.flush()
+        try:
+            os.killpg(proc.pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+        try:
+            proc.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            proc.wait()
+        raise SystemExit(124)
+PY
+}
+
 # --- Conditions : dépouiller la couche ai_context pour 'without' ---
 strip_ai_context() {
   local dir="$1"
   ( cd "$dir" && rm -rf .ai .docs AGENTS.md CLAUDE.md GEMINI.md \
-      .github/copilot-instructions.md .cursor 2>/dev/null || true )
+      .agents .claude/skills .github/copilot-instructions.md .cursor 2>/dev/null || true )
 }
 
 echo "═══ run-bench ($mode) ═══"
 validate_tasks
 validate_n
+validate_timeout
 
 if [[ "$mode" == "self-check" ]]; then
   # Repos : présence seulement (optionnels en self-check).
@@ -182,6 +252,7 @@ done \
 echo "  run réel : ${#repos[@]} repo(s) × ${#tasks[@]} tâche(s) × 2 conditions × N=$BENCH_N"
 echo "  seed : $BENCH_SEED"
 echo "  agent : $BENCH_AGENT_LABEL"
+echo "  timeout : ${BENCH_TIMEOUT_SECONDS}s"
 echo "  rapports : $BENCH_REPORT_DIR"
 echo "  logs : $BENCH_RUN_DIR"
 
@@ -203,17 +274,7 @@ while IFS=$'\t' read -r repo_path task_path condition run_index; do
 
   start_ts="$(date +%s)"
   set +e
-  (
-    cd "$workdir" || exit 127
-    agent_cmd="$AGENT_CMD"
-    unset BENCH_REPOS BENCH_TASKS BENCH_REPORT_DIR BENCH_RUN_DIR BENCH_SOURCE_REPO \
-      BENCH_REPO_PATH BENCH_PROMPT_FILE BENCH_TASK_DIR BENCH_CONDITION \
-      BENCH_RUN_INDEX BENCH_REPO_NAME BENCH_STAMP BENCH_SEED BENCH_AGENT_LABEL \
-      BENCH_KEEP_WORKDIR BENCH_N AGENT_CMD
-    BENCH_TASK_ID="$task_id" \
-    BENCH_WORKDIR="$workdir" \
-      bash -lc "$agent_cmd"
-  ) < "$task_path/task.md" > "$stdout_log" 2> "$stderr_log"
+  run_agent_command "$workdir" "$task_path/task.md" "$stdout_log" "$stderr_log" "$task_id" "$BENCH_TIMEOUT_SECONDS" "$AGENT_CMD"
   agent_exit=$?
 
   (
