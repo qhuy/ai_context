@@ -109,3 +109,9 @@
 
 ## 2026-06-29 — couverture incidente (fix .session-docs.log dans exclusions drift)
 - Surface partagee touchee (check-dogfood-drift.sh). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)
+
+## 2026-07-02 — consommation R2 par le ranker
+
+- Surface partagée : `features-for-path.sh` lit désormais les derniers `summary` du tracker pour calculer une pénalité de ranking best-effort.
+- Contrat tracker inchangé : le logger/reporter restent best-effort et le fichier JSONL reste local/ignoré.
+- Validation : `test-context-relevance` PASS et nouveau test R2 de ranking par pertinence PASS.

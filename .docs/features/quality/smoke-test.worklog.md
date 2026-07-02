@@ -227,3 +227,8 @@
 ## 2026-07-02 — validation smoke R1
 
 - `tests/smoke-test.sh` PASS complet après remplacement du cas reverse deps par le cas lean reminder + JIT `depends_on`.
+
+## 2026-07-02 — smoke R2 relevance ranking
+
+- Ajout de l'étape `[0r/28]` : `test-features-for-path-relevance-ranking.sh`.
+- Couverture : baseline sans log, dé-rank d'une feature injectée sans intersection, seuil insuffisant et opt-out `AI_CONTEXT_RELEVANCE_RANKING=0`.

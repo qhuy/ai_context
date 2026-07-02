@@ -429,3 +429,9 @@
 
 - `check-dogfood-drift.sh` PASS : runtime dogfood aligné avec le rendu Copier minimal.
 - `tests/smoke-test.sh` PASS : le rendu template embarque le reminder allégé et la compensation JIT.
+
+## 2026-07-02 — couverture runtime/template R2
+
+- Surface dogfoodée : `.ai/scripts/features-for-path.sh` et son miroir `.jinja`.
+- Changement fonctionnel porté par `quality/features-for-path-ranking-and-matcher-correctness` : ajout d'une pénalité de ranking issue du tracker local.
+- Validation : `check-dogfood-drift.sh` PASS après miroir template.

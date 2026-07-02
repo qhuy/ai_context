@@ -170,3 +170,12 @@
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-07-02 — R2 : dé-rank via tracker de pertinence
+
+- Intent : exploiter le tracker `.ai/.context-relevance.jsonl` pour dé-ranker les features injectées plusieurs fois sans intersection injectée/touchée.
+- Fichiers/surfaces : `.ai/scripts/features-for-path.sh`, `template/.ai/scripts/features-for-path.sh.jinja`, `tests/unit/test-features-for-path-relevance-ranking.sh`, `tests/smoke-test.sh`.
+- Décision : pénalité best-effort uniquement comme tie-break après la spécificité (`tier`, `prefix_len`, `wildcards`) ; pas de disparition forcée et opt-out via `AI_CONTEXT_RELEVANCE_RANKING=0`.
+- Validation ciblée : `bash -n` scripts, `test-features-for-path-relevance-ranking`, `test-matcher-multi-level`, `test-context-relevance`, `check-dogfood-drift` PASS.
+- Validation gate : `tests/smoke-test.sh` PASS ; `check-shims`, `check-agent-config`, `check-ai-references`, `check-features --no-write`, `check-feature-docs --strict quality/features-for-path-ranking-and-matcher-correctness`, `check-feature-freshness --worktree --strict`, `check-feature-coverage`, `check-touches-breadth`, `measure-context-size`, `git diff --check` OK/PASS.
+- Next : prêt à commit.

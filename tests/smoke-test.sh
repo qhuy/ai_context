@@ -103,6 +103,10 @@ echo "[0q/28] tests unitaires (clés requises dérivées du schéma)"
 bash tests/unit/test-schema-driven-required.sh
 echo
 
+echo "[0r/28] tests unitaires (ranking features-for-path par pertinence tracker)"
+bash tests/unit/test-features-for-path-relevance-ranking.sh
+echo
+
 echo "[1/28] copier copy (profil par défaut)"
 copier copy --defaults --trust \
   --data project_name=smoke-project \

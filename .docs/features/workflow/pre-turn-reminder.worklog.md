@@ -41,3 +41,9 @@
 - Preuve coût : `measure-context-size.sh` passe de `5326 chars` (`reverse_deps=3285`) à `2039 chars` (`reverse_deps=0`), soit `tokens~=(509..679)`.
 - Preuve runtime/template : `check-dogfood-drift.sh` PASS après miroir `template/*.jinja`.
 - Preuve comportement : `tests/smoke-test.sh` PASS ; l'étape `[10/28]` vérifie absence de reverse deps dans le reminder et injection JIT de la fiche directe + `depends_on`.
+
+## 2026-07-02 — couverture incidente R2 ranking tracker
+
+- Surface partagée : `template/.ai/scripts/features-for-path.sh.jinja`, utilisée par le hook PreToolUse complémentaire du reminder.
+- Changement porté par `quality/features-for-path-ranking-and-matcher-correctness` : pénalité de ranking issue du tracker local.
+- Impact contrat pre-turn : aucun changement du hook `UserPromptSubmit`; le JIT conserve l'injection fiches directes + `depends_on`.

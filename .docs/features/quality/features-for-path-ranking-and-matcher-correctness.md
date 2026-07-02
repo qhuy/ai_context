@@ -2,7 +2,7 @@
 id: features-for-path-ranking-and-matcher-correctness
 scope: quality
 title: Ranker features-for-path et corriger le matcher globstar bash 3.2
-status: draft
+status: active
 depends_on: []
 touches:
   - .ai/scripts/features-for-path.sh
@@ -11,6 +11,7 @@ touches:
   - template/.ai/scripts/_lib.sh.jinja
   - tests/unit/test-path-matches-touch.sh
   - tests/unit/test-matcher-multi-level.sh
+  - tests/unit/test-features-for-path-relevance-ranking.sh
 touches_shared:
   - .claude/settings.json
   - tests/smoke-test.sh
@@ -27,10 +28,10 @@ doc:
     observability: false
 progress:
   phase: review
-  step: "implémentation livrée, 49 cas test PASS, prêt à commit"
+  step: "R2 gate verte : pénalité tracker branchée et smoke PASS"
   blockers: []
-  resume_hint: "commit feat(quality) puis valider en utilisation réelle"
-  updated: 2026-06-26
+  resume_hint: "prêt à commit : feat(quality): exploiter le tracker dans le ranking features-for-path"
+  updated: 2026-07-02
 type: feature
 ---
 
@@ -49,6 +50,7 @@ Réduire le bruit du contexte injecté en PreToolUse Claude (et de tout consomma
 1. **Corrigeant** le matcher pour qu'un pattern `touches: src/**/*.ts` matche réellement `src/sub/file.ts` sous bash 3.2.
 2. **Rankant** les features matchées par spécificité du glob, en bornant à top-K (3 par défaut).
 3. **Bornant** le coût tokens et la pollution cross-feature de l'injection.
+4. **Dé-rankant** les features que le tracker observe injectées plusieurs fois sans intersection avec les features réellement touchées.
 
 ## Périmètre
 
@@ -58,6 +60,7 @@ Réduire le bruit du contexte injecté en PreToolUse Claude (et de tout consomma
 - Fix du matcher pour que `**` se comporte correctement multi-niveaux sous bash 3.2, ou borne explicite des patterns supportés avec erreur claire si pattern non supporté.
 - Algorithme de ranking : longueur du préfixe non-glob, nombre de wildcards, ou combinaison.
 - Top-K configurable via env var (`AI_CONTEXT_FEATURES_TOP_K`, défaut 3).
+- Pénalité ranking best-effort via `.ai/.context-relevance.jsonl` : les features injectées au moins `AI_CONTEXT_RELEVANCE_RANK_MIN_INJECTED` fois sans intersection sur les `AI_CONTEXT_RELEVANCE_RANK_LAST` derniers summaries descendent derrière les matches équivalents non pénalisés.
 - Tests reproductibles : pattern multi-niveaux ne se résout plus en faux positif/faux négatif ; ranking ordonne stablement.
 
 ### Hors périmètre
@@ -75,8 +78,9 @@ Cette fiche couvre un seul outil (`features-for-path.sh`) et son matcher (`_lib.
 
 - Pack A reste lean : pas d'élargissement.
 - Le script reste agent-agnostic (Bash, pas de dépendance hookée Claude).
-- Comportement déterministe : sortie reproductible pour un même path et un même état du mesh.
+- Comportement déterministe : sortie reproductible pour un même path, un même état du mesh et un même snapshot du tracker local.
 - Pattern non supporté observable selon 3 politiques (cf. Contrats) : **silent compat** pour callers historiques explicitement opt-in, **warn stderr + exit 0** pour wrapper/hook best-effort (défaut), **error stderr + exit ≠ 0** en mode strict/check.
+- Le signal tracker est un tie-break : il ne remplace pas la spécificité du matcher (`exact` > dossier > glob).
 
 ## Décisions
 
@@ -140,6 +144,15 @@ Cas test minimum :
 - pattern unsupported observable en best-effort, fail en strict.
 - ranking top-K stable + ligne « N omises ».
 
+### 6. R2 — pénalité issue du tracker
+
+`features-for-path.sh` lit best-effort les derniers summaries de `.ai/.context-relevance.jsonl` et attribue une pénalité aux features dont `injected >= AI_CONTEXT_RELEVANCE_RANK_MIN_INJECTED` et `intersection == 0`.
+
+- Défaut : fenêtre `AI_CONTEXT_RELEVANCE_RANK_LAST=50`, seuil `AI_CONTEXT_RELEVANCE_RANK_MIN_INJECTED=3`.
+- Désactivation : `AI_CONTEXT_RELEVANCE_RANKING=0` ou `AI_CONTEXT_RELEVANCE_DISABLED=1`.
+- Position dans le tri : `tier desc`, `prefix_len desc`, `wildcards asc`, `penalty asc`, puis `scope/id`.
+- Effet attendu : une feature souvent injectée sans intersection ne disparaît pas ; elle descend seulement derrière un match de même spécificité non pénalisé.
+
 ### Q1 résolu — policy unique
 
 Variable interne unique `_FEATURES_MATCHING_POLICY=silent|warn|strict`. Pas 2 booléens conflictuels. Wrapper `features-for-path.sh` mappe `--strict` ou `AI_CONTEXT_FEATURES_STRICT=1` → `strict`. Hooks Claude → `warn`. Callers historiques → `silent`. Défaut `warn`.
@@ -160,6 +173,7 @@ Critère P1 confirmé. La conversion regex POSIX A2 est compatible bash 3.2 (`[[
 2. Trier les features matchées par spécificité décroissante.
 3. Renvoyer top-K features (3 par défaut), avec mention du nombre de features omises si troncature.
 4. Sur pattern non supporté par le matcher : **best-effort par défaut** (warning stderr + exit 0). **Mode strict opt-in** (flag `--strict` ou env var `AI_CONTEXT_FEATURES_STRICT=1`) → erreur stderr + exit ≠ 0. Aucun `bash features-for-path.sh <path>` sans flag ne déclenche de fail hard.
+5. Si le tracker local fournit un signal suffisant, départager les matches équivalents en faveur des features qui ont déjà eu une intersection injectée/touchée.
 
 ## Contrats
 
@@ -203,13 +217,14 @@ Consommateurs directs de `features_matching_path` ou de `features-for-path.sh` q
 ### Sortie et compatibilité
 
 - Sortie JSON ou markdown stable consommable par `aic.sh`, hooks Claude, et checks.
-- Variables d'env : `AI_CONTEXT_FEATURES_TOP_K` (défaut 3), `AI_CONTEXT_FEATURES_STRICT` (défaut 0), `AI_CONTEXT_FEATURE_DOC_MAX_CHARS` (existant), `AI_CONTEXT_FEATURE_DOC_PER_DOC_CHARS` (existant).
+- Variables d'env : `AI_CONTEXT_FEATURES_TOP_K` (défaut 3), `AI_CONTEXT_FEATURES_STRICT` (défaut 0), `AI_CONTEXT_FEATURE_DOC_MAX_CHARS` (existant), `AI_CONTEXT_FEATURE_DOC_PER_DOC_CHARS` (existant), `AI_CONTEXT_RELEVANCE_RANKING` (défaut 1), `AI_CONTEXT_RELEVANCE_RANK_LAST` (défaut 50), `AI_CONTEXT_RELEVANCE_RANK_MIN_INJECTED` (défaut 3).
 - Compatibilité ascendante : aucune feature actuellement déclarée ne doit régresser. Rebuild de l'index puis comparaison avant/après sur 100 paths types pour détecter les régressions.
 
 ## Validation
 
 - Test reproductible matcher : créer une fiche avec `touches: src/**/*.ts`, lancer le script sur `src/sub/file.ts`, vérifier que la fiche est matchée. Idem pour `foo-*/**`.
 - Test ranking : créer 5 fiches dont les `touches:` matchent un même path à des spécificités différentes, vérifier que top-3 sont retournées dans l'ordre attendu.
+- Test relevance ranking : créer deux matches équivalents, alimenter `.ai/.context-relevance.jsonl` avec 3 summaries où le premier est injecté sans intersection, vérifier que le second passe devant ; vérifier aussi seuil plus haut et opt-out.
 - Test acceptance best-effort : créer une fiche avec un `touches:` non supporté, lancer `bash features-for-path.sh <path>` sans flag → le pattern non supporté **doit être observable** sur stderr (warning) **sans bloquer** l'exit (code 0). Idem si invoqué via le hook PreToolUse Claude : édition non bloquée, warning visible dans les logs.
 - Test acceptance strict : même configuration, lancer avec `--strict` ou `AI_CONTEXT_FEATURES_STRICT=1` → erreur sur stderr + exit ≠ 0.
 - `bash tests/smoke-test.sh` PASS après intégration.
@@ -231,3 +246,4 @@ Consommateurs directs de `features_matching_path` ou de `features-for-path.sh` q
 
 - 2026-05-06 : création en draft suite au cross-check Claude/Codex (4 rounds) sur `workflow/intentional-skills`. Bug bash 3.2 confirmé en local : `_lib.sh:82-84` (`enable_globstar()` no-op sur 3.2) + branche spéciale partielle `_lib.sh:118-121` (couvre `prefix/**` simple, pas multi-niveaux). Choix Option B : un seul livrable cohérent ranking+correctness, acceptance bloque livraison sur matcher correct.
 - 2026-05-07 (post-review Codex) : **contrat dual exit code** ajouté. Le draft initial demandait « erreur claire + code retour ≠ 0 » sans distinguer les consommateurs. Risque pointé par Codex : `features-for-path.sh` est consommé par le hook PreToolUse Claude ([settings.json:31](.claude/settings.json:31)), et un exit ≠ 0 sur pattern cassé peut bloquer toute édition de l'agent. Fix : détection mode strict / mode hook (best-effort par défaut). Cible 5 consommateurs identifiés : `aic.sh`, `auto-worklog-log.sh`, `measure-context-size.sh`, hook PreToolUse, hook PostToolUse via `auto-worklog-log.sh`.
+- 2026-07-02 : R2 exploite le tracker de pertinence comme tie-break de ranking. Les features injectées plusieurs fois sans intersection sont pénalisées après la spécificité du matcher, avec opt-out et seuils configurables.

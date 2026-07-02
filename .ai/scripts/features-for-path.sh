@@ -52,6 +52,39 @@ feature_context=""
 feature_context_truncated=0
 feature_doc_max_chars="${AI_CONTEXT_FEATURE_DOC_MAX_CHARS:-10000}"
 feature_doc_per_doc_chars="${AI_CONTEXT_FEATURE_DOC_PER_DOC_CHARS:-3000}"
+context_relevance_log_file="$repo_root/.ai/.context-relevance.jsonl"
+relevance_rank_last="${AI_CONTEXT_RELEVANCE_RANK_LAST:-50}"
+relevance_rank_min_injected="${AI_CONTEXT_RELEVANCE_RANK_MIN_INJECTED:-3}"
+
+load_relevance_rank_penalties() {
+  [[ "${AI_CONTEXT_RELEVANCE_DISABLED:-0}" == "1" ]] && return 0
+  [[ "${AI_CONTEXT_RELEVANCE_RANKING:-1}" == "0" ]] && return 0
+  [[ -f "$context_relevance_log_file" ]] || return 0
+  command -v jq >/dev/null 2>&1 || return 0
+
+  [[ "$relevance_rank_last" =~ ^[0-9]+$ ]] || relevance_rank_last=50
+  [[ "$relevance_rank_min_injected" =~ ^[0-9]+$ ]] || relevance_rank_min_injected=3
+  [[ "$relevance_rank_last" -gt 0 && "$relevance_rank_min_injected" -gt 0 ]] || return 0
+
+  jq -rs --argjson last "$relevance_rank_last" --argjson min "$relevance_rank_min_injected" '
+    [.[] | select(type == "object" and .event == "summary")]
+    | (if length > $last then .[(length - $last):] else . end)
+    | reduce .[] as $s ({};
+        reduce (($s.injected_features // [])[]) as $f (.;
+          .[$f].injected = ((.[$f].injected // 0) + 1)
+        )
+        | reduce (($s.intersection // [])[]) as $f (.;
+          .[$f].intersection = ((.[$f].intersection // 0) + 1)
+        )
+      )
+    | to_entries[]
+    | (.value.injected // 0) as $injected
+    | (.value.intersection // 0) as $intersection
+    | select($injected >= $min and $intersection == 0)
+    | [.key, 1, $injected, $intersection]
+    | @tsv
+  ' "$context_relevance_log_file" 2>/dev/null || true
+}
 
 seen_feature_key() {
   local key="$1"
@@ -205,6 +238,7 @@ if [[ -f "$index_file" ]]; then
   ranked_lines=""
   declare_feature_key_seen=""
   best_per_feature=""
+  relevance_penalties=""
   ranked_rc=0
 
   # Capture la sortie ET le code retour de features_matching_path_ranked
@@ -219,6 +253,8 @@ if [[ -f "$index_file" ]]; then
     ranked_output=$(features_matching_path_ranked "$index_file" "$rel_path"); ranked_rc=$?
   fi
 
+  relevance_penalties=$(load_relevance_rank_penalties)
+
   while IFS=$'\t' read -r scope id fpath touch; do
     [[ -z "$scope" ]] && continue
     score_line=$(_score_touch_pattern "$touch")
@@ -229,10 +265,26 @@ if [[ -f "$index_file" ]]; then
 
   if [[ -n "$best_per_feature" ]]; then
     # Garde le meilleur score par feature (scope/id) : tri sur score puis dédup par scope/id.
-    # Tri : tier desc, plen desc, wcs asc, scope/id asc (tie-break stable).
-    ranked_lines=$(printf '%s' "$best_per_feature" \
-      | sort -t$'\t' -k1,1nr -k2,2nr -k3,3n -k4,4 -k5,5 \
-      | awk -F'\t' '!seen[$4 "/" $5]++')
+    # Tri : tier desc, plen desc, wcs asc, pénalité tracker asc, scope/id asc.
+    # La pénalité ne remplace pas la spécificité : elle départage les features
+    # équivalentes quand le tracker les observe injectées sans intersection.
+    ranked_lines=$(
+      {
+        printf '%s\n' "$relevance_penalties"
+        printf '__AIC_MATCHES__\n'
+        printf '%s' "$best_per_feature"
+      } | awk -F'\t' '
+        BEGIN { OFS=FS; mode="penalties" }
+        $0 == "__AIC_MATCHES__" { mode="matches"; next }
+        mode == "penalties" && NF >= 2 { penalty[$1] = $2; next }
+        mode == "matches" && NF >= 7 {
+          key = $4 "/" $5
+          p = ((key in penalty) ? penalty[key] : 0)
+          print $1, $2, $3, p, $4, $5, $6, $7
+        }
+      ' | sort -t$'\t' -k1,1nr -k2,2nr -k3,3n -k4,4n -k5,5 -k6,6 \
+        | awk -F'\t' '!seen[$5 "/" $6]++'
+    )
 
     # Compte total avant top-K
     total_count=$(printf '%s' "$ranked_lines" | grep -c '^' || true)
@@ -245,7 +297,7 @@ if [[ -f "$index_file" ]]; then
     fi
 
     # Construit la sortie matches + add_feature_key sur chaque feature gardée
-    while IFS=$'\t' read -r tier plen wcs scope id fpath touch; do
+    while IFS=$'\t' read -r tier plen wcs relevance_penalty scope id fpath touch; do
       [[ -z "$scope" ]] && continue
       matches+="  • ${scope}/${id} (${fpath})"$'\n'
       add_feature_key "${scope}/${id}"
@@ -269,7 +321,7 @@ log_inject_event() {
     local direct_json injected_json dep_json index_mtime truncated_str unsupported_json log_tool
     direct_json='[]'
     if [[ -n "${kept_lines:-}" ]]; then
-      direct_json=$(printf '%s' "$kept_lines" | awk -F'\t' '$4 != "" && $5 != "" {print $4 "/" $5}' \
+      direct_json=$(printf '%s' "$kept_lines" | awk -F'\t' '$5 != "" && $6 != "" {print $5 "/" $6}' \
         | jq -Rsc 'split("\n") | map(select(length > 0))' 2>/dev/null) || direct_json='[]'
     fi
     injected_json='[]'
