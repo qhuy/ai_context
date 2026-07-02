@@ -218,3 +218,12 @@
 - Nouvelle étape smoke `[0q/28]` : `bash tests/unit/test-schema-driven-required.sh`, à la suite des autres tests unitaires `check-features` (`[0p/28]` yaml-strict).
 - Ferme le HANDOFF ouvert par `quality/feature-schema-validator` (P3, pilot `2026-06-30-ze-solution`) et `core/feature-mesh` : le test de la validation schéma-driven des clés requises est désormais dans le harnais CI, pas seulement en standalone.
 - Denominator `/28` préservé (label lettré, comme les autres pré-étapes unitaires).
+
+## 2026-07-02 — smoke R1 pre-turn lean
+
+- Étape `[10/28]` mise à jour : le smoke vérifie que `pre-turn-reminder.sh` n'expose plus les reverse deps dans `UserPromptSubmit`.
+- Compensation testée : `features-for-path.sh src/foo.ts --with-docs` doit injecter la fiche directe et sa fiche `depends_on`, ce qui couvre le report du contexte graphe vers le JIT.
+
+## 2026-07-02 — validation smoke R1
+
+- `tests/smoke-test.sh` PASS complet après remplacement du cas reverse deps par le cas lean reminder + JIT `depends_on`.

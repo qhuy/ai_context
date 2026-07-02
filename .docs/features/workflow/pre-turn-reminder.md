@@ -11,11 +11,11 @@ touches:
   - template/.ai/scripts/features-for-path.sh.jinja
   - template/.ai/reminder.md.jinja
 progress:
-  phase: review
-  step: "features-for-path injecte fiches directes + depends_on avant écriture"
+  phase: done
+  step: "R1 livré : reverse_deps=0 et JIT depends_on couvert"
   blockers: []
-  resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-05-07
+  resume_hint: "R1 clos ; prochaine action recommandée : R2 ranking tracker des features jamais touchées"
+  updated: 2026-07-02
 type: feature
 ---
 
@@ -23,17 +23,17 @@ type: feature
 
 ## Résumé
 
-Hook `UserPromptSubmit` qui injecte automatiquement le contexte juste-à-temps avant chaque prompt (règles, inventaire des features actives, reverse deps, `reminder.md`), complété par `features-for-path.sh` en `PreToolUse` qui pousse les fiches concernées par le path édité. Objectif : que l'agent reçoive le bon contexte sans le deviner ni le recharger manuellement.
+Hook `UserPromptSubmit` qui injecte automatiquement le contexte juste-à-temps avant chaque prompt (règles, inventaire des features actives, `reminder.md`), complété par `features-for-path.sh` en `PreToolUse` qui pousse les fiches concernées par le path édité et leurs `depends_on`. Objectif : que l'agent reçoive le bon contexte sans le deviner ni le recharger manuellement, sans charger tout le graphe à chaque tour.
 
 ## Objectif
 
-À chaque prompt utilisateur, injecter automatiquement (hook `UserPromptSubmit`) le bon contexte : règles + inventaire des features actives + reverse deps + `reminder.md`. L'agent n'a plus à deviner ni à recharger.
+À chaque prompt utilisateur, injecter automatiquement (hook `UserPromptSubmit`) le contexte global strictement utile : règles + inventaire des features actives + `reminder.md`. Le graphe détaillé reste juste-à-temps via `features-for-path.sh` quand un path est connu.
 
 ## Périmètre
 
 ### Inclus
 
-- Le hook `UserPromptSubmit` (`pre-turn-reminder.sh`) : assemblage règles + inventaire features `active` + reverse deps + `reminder.md`.
+- Le hook `UserPromptSubmit` (`pre-turn-reminder.sh`) : assemblage règles + inventaire features `active` + `reminder.md`.
 - L'injection `PreToolUse` (`features-for-path.sh`) : fiches directes liées au path édité + leurs `depends_on`, avec budget borné.
 - Le filtrage par status, le focus (`AI_CONTEXT_FOCUS`), le format de sortie (`AI_CONTEXT_OUTPUT`) et l'i18n du `reminder.md` (FR/EN).
 
@@ -56,7 +56,7 @@ Hook `UserPromptSubmit` qui injecte automatiquement le contexte juste-à-temps a
 
 - L'injection reste read-only : aucun appel réseau, aucune écriture hors rebuild de l'index si absent.
 - Seules les features `active` sont inventoriées par défaut (sauf override `AI_CONTEXT_SHOW_ALL_STATUS=1`).
-- Le coût tokens par prompt reste borné : le `reminder.md` ne grossit pas avec le mesh, et `features-for-path.sh` respecte un budget plafonné (fiches directes + `depends_on` uniquement).
+- Le coût tokens par prompt reste borné : le `reminder.md` ne grossit pas avec le mesh, les reverse deps ne sont pas injectées à chaque tour, et `features-for-path.sh` respecte un budget plafonné (fiches directes + `depends_on` uniquement).
 - La langue du `reminder.md` suit `commit_language` (FR/EN), sans divergence entre les deux variantes.
 
 ## Contrats
@@ -69,6 +69,7 @@ Hook `UserPromptSubmit` qui injecte automatiquement le contexte juste-à-temps a
 
 - Deux hooks distincts plutôt qu'un seul : `UserPromptSubmit` porte le contexte global (règles + inventaire), `PreToolUse` porte le contexte ciblé sur le path édité. Cela évite de tout charger à chaque prompt.
 - `features-for-path.sh` est passé d'un simple **rappel de liste** à une **injection juste-à-temps bornée** des fiches concernées et de leurs dépendances, pour rester aligné sur la règle "contexte juste-à-temps" sans gonfler le reminder.
+- Les dépendances inverses ne sont plus injectées par défaut dans `UserPromptSubmit` : elles dominaient le coût par tour et sont remplacées par l'injection JIT des fiches directes + `depends_on` dès qu'un path est connu.
 - Le filtrage `active` est le défaut assumé ; voir tout le mesh est un opt-in explicite (`AI_CONTEXT_SHOW_ALL_STATUS`).
 - Le focus (`AI_CONTEXT_FOCUS`) délègue la réduction de l'inventaire à `graph-aware-injection` plutôt que de dupliquer la logique de graphe ici.
 
@@ -79,6 +80,7 @@ Hook `UserPromptSubmit` qui injecte automatiquement le contexte juste-à-temps a
 - Contrôle que `features-for-path.sh` injecte bien les fiches directes du path + leurs `depends_on` en `PreToolUse`, sans dépasser le budget.
 - i18n : `reminder.md` rendu en FR et EN selon `commit_language`.
 - Rebuild auto : suppression de l'index puis prompt → l'injection reconstruit l'index et fonctionne.
+- Coût : `measure-context-size.sh` doit montrer `reverse_deps chars=0` par défaut.
 
 ## Cross-refs
 
@@ -91,3 +93,4 @@ Première brique du flux invisible. Complétée par `features-for-path` en `PreT
 - v0.9 : graph-aware focus.
 - 2026-05-03 : freshness documentaire rafraîchie après dogfood ; aucun changement de format ou de budget d'injection.
 - 2026-05-03 : `features-for-path.sh` passe de rappel de liste à injection juste-à-temps bornée des fiches concernées et de leurs dépendances. Le reminder reste inchangé pour préserver le coût tokens par prompt.
+- 2026-07-02 : R1 tokens — sortie des dépendances inverses du hook `UserPromptSubmit`. Le reminder global reste limité à règles + inventaire ; `features-for-path.sh --with-docs` conserve l'injection JIT des fiches directes et de leurs `depends_on`.

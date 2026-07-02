@@ -418,3 +418,14 @@
 ## 2026-06-30 17:55 — auto
 - Fichiers modifiés :
   - .ai/scripts/check-features.sh
+
+## 2026-07-02 — couverture runtime pre-turn-reminder R1
+
+- Surface dogfoodée : `.ai/scripts/pre-turn-reminder.sh`, `.ai/scripts/measure-context-size.sh` et leurs miroirs `.jinja`.
+- Changement fonctionnel porté par `workflow/pre-turn-reminder` : les reverse deps sortent du hook `UserPromptSubmit`; `measure-context-size.sh` garde une ligne `reverse_deps` pour prouver `chars=0`.
+- Validation attendue : `check-dogfood-drift.sh` doit rester vert après mise à jour du miroir `.jinja`.
+
+## 2026-07-02 — validation runtime/template R1
+
+- `check-dogfood-drift.sh` PASS : runtime dogfood aligné avec le rendu Copier minimal.
+- `tests/smoke-test.sh` PASS : le rendu template embarque le reminder allégé et la compensation JIT.

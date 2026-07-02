@@ -4,7 +4,6 @@
 # Injecte :
 #   - le contenu statique de .ai/reminder.md
 #   - la liste dynamique des features actives (par scope), filtrée par status
-#   - les dépendances inverses (qui dépend de chaque feature)
 #
 # Source : .ai/.feature-index.json (compilé par build-feature-index.sh)
 #
@@ -68,7 +67,6 @@ ensure_index() {
 
 # ─── Inventaire dynamique ───
 feature_section=""
-reverse_section=""
 if [[ -d "$features_dir" ]]; then
   ensure_index
   if [[ -f "$index_file" ]]; then
@@ -151,34 +149,10 @@ if [[ -d "$features_dir" ]]; then
       feature_section=$'\n\n── Features actives ──\n  (aucune feature documentée — la 1ère tâche DOIT en créer une)\n'
     fi
 
-    # Reverse deps : filter X ET Y dans status visibles ; si focus, ne garde que les paires où X est dans le focus
-    reverse_lines=$(jq -r --argjson v "$visible" --arg focus "$focus" '
-      (.features | map(select(.status as $s | $v | index($s)))) as $visible_features
-      | $visible_features[]
-      | . as $f
-      | ($f.scope + "/" + $f.id) as $key
-      | select($focus == "" or $f.scope == $focus)
-      | (
-          $visible_features
-          | map(select(.depends_on[]? == $key))
-          | map(.scope + "/" + .id)
-        ) as $reverse
-      | select($reverse | length > 0)
-      | if ($reverse | length) > 20 then
-          "  ⚠️  " + $key + " a " + ($reverse | length | tostring) + " dépendants actifs — envisager un découpage"
-        else
-          "  • " + $key + " ← " + ($reverse | join(", "))
-        end
-    ' "$index_file")
-
-    if [[ -n "$reverse_lines" ]]; then
-      reverse_section=$'\n── Dépendances inverses (si tu modifies X, les suivants dépendent de lui) ──\n'
-      reverse_section+="$reverse_lines"$'\n'
-    fi
   fi
 fi
 
-full_reminder="${reminder}${feature_section}${reverse_section}"
+full_reminder="${reminder}${feature_section}"
 
 log_debug "reminder length : ${#full_reminder}"
 

@@ -645,7 +645,7 @@ rmdir "$lock_timeout_dir"
 echo "  ✓ timeout lock : échec explicite sans exécuter la commande protégée"
 
 echo
-echo "[10/28] pre-turn-reminder : dépendances inverses exposées"
+echo "[10/28] pre-turn-reminder lean + JIT depends_on"
 cat > "$OUT/.docs/features/back/base.md" <<'FEAT'
 ---
 id: base
@@ -653,8 +653,7 @@ scope: back
 title: Base feature
 status: active
 depends_on: []
-touches:
-  - src/foo.ts
+touches: []
 ---
 FEAT
 cat > "$OUT/.docs/features/back/child.md" <<'FEAT'
@@ -671,10 +670,21 @@ touches:
 FEAT
 ( cd "$OUT" && bash .ai/scripts/build-feature-index.sh --write )
 if ! ( cd "$OUT" && bash .ai/scripts/pre-turn-reminder.sh ) | grep -q "back/base ← back/child"; then
-  echo "  ✗ reverse deps absent du reminder"
+  :
+else
+  echo "  ✗ reverse deps encore injectées dans le reminder"
   exit 1
 fi
-echo "  ✓ reverse deps présentes"
+jit_out=$( cd "$OUT" && bash .ai/scripts/features-for-path.sh src/foo.ts --with-docs )
+if ! echo "$jit_out" | grep -q -- "--- back/child"; then
+  echo "  ✗ fiche directe absente du JIT"
+  exit 1
+fi
+if ! echo "$jit_out" | grep -q -- "--- back/base"; then
+  echo "  ✗ depends_on absent du JIT"
+  exit 1
+fi
+echo "  ✓ reminder sans reverse deps + JIT injecte direct et depends_on"
 
 echo
 echo "[11/28] build-feature-index : status hors enum → warn (stderr, pas fail)"
@@ -1925,7 +1935,7 @@ fi
 echo
 echo "[bonus] big-mesh : budget tokens + focus graph-aware"
 # Génère 30 features back + 30 features front + dépendances pour stresser
-# l'inventaire et la section reverse_deps. Borne haute pragmatique : 30k chars
+# l'inventaire. Borne haute pragmatique : 30k chars
 # (~7500 tokens borne basse) — au-delà, le coût par tour devient sensible.
 OUT_BIG="/tmp/ai-context-smoke-big-$$"
 copier copy --defaults --trust \

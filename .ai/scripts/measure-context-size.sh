@@ -5,7 +5,7 @@
 # pour chaque source d'injection :
 #   - reminder.md statique
 #   - inventaire features (dynamique)
-#   - reverse deps (dynamique)
+#   - reverse deps si présentes (retirées du UserPromptSubmit par défaut)
 #   - features-for-path (sur un path d'exemple si fourni)
 #
 # Si python3 + tiktoken sont dispos, affiche aussi le compte exact (cl100k_base).
