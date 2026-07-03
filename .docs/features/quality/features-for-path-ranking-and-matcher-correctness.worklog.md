@@ -183,3 +183,10 @@
 ## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
 - Surface partagée touchée : `_lib.sh` source le provider VCS, sans modifier le matcher ni le ranking `features-for-path`.
 - Validation portée par `core/vcs-provider-abstraction` et tests `features-for-path` conservés.
+
+## 2026-07-03 — done
+- Intent : clôturer R2 `features-for-path` ranking tracker.
+- Fichiers/surfaces : `.docs/features/quality/features-for-path-ranking-and-matcher-correctness.md`, `.docs/features/quality/features-for-path-ranking-and-matcher-correctness.worklog.md`.
+- Décision : statut `done`; le signal tracker reste un tie-break best-effort après spécificité, avec opt-out et seuils configurables.
+- Validation : `bash tests/unit/test-features-for-path-relevance-ranking.sh` ; `bash tests/unit/test-matcher-multi-level.sh` ; `bash tests/unit/test-path-matches-touch.sh` ; `bash .ai/scripts/check-dogfood-drift.sh` ; `bash .ai/scripts/check-feature-docs.sh --strict quality/features-for-path-ranking-and-matcher-correctness` ; `bash tests/smoke-test.sh` PASS dans le tour courant.
+- Next : aucune action immédiate ; calibrer les seuils seulement après observation réelle via `context-relevance-report`.

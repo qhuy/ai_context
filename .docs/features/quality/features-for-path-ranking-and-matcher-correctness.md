@@ -2,7 +2,7 @@
 id: features-for-path-ranking-and-matcher-correctness
 scope: quality
 title: Ranker features-for-path et corriger le matcher globstar bash 3.2
-status: active
+status: done
 depends_on: []
 touches:
   - .ai/scripts/features-for-path.sh
@@ -27,11 +27,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "R2 gate verte : pénalité tracker branchée et smoke PASS"
+  phase: done
+  step: "R2 livré : pénalité tracker, matcher et smoke validés"
   blockers: []
-  resume_hint: "prêt à commit : feat(quality): exploiter le tracker dans le ranking features-for-path"
-  updated: 2026-07-02
+  resume_hint: "aucune action immédiate ; calibrer les seuils seulement après observation réelle du tracker"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -247,3 +247,4 @@ Consommateurs directs de `features_matching_path` ou de `features-for-path.sh` q
 - 2026-05-06 : création en draft suite au cross-check Claude/Codex (4 rounds) sur `workflow/intentional-skills`. Bug bash 3.2 confirmé en local : `_lib.sh:82-84` (`enable_globstar()` no-op sur 3.2) + branche spéciale partielle `_lib.sh:118-121` (couvre `prefix/**` simple, pas multi-niveaux). Choix Option B : un seul livrable cohérent ranking+correctness, acceptance bloque livraison sur matcher correct.
 - 2026-05-07 (post-review Codex) : **contrat dual exit code** ajouté. Le draft initial demandait « erreur claire + code retour ≠ 0 » sans distinguer les consommateurs. Risque pointé par Codex : `features-for-path.sh` est consommé par le hook PreToolUse Claude ([settings.json:31](.claude/settings.json:31)), et un exit ≠ 0 sur pattern cassé peut bloquer toute édition de l'agent. Fix : détection mode strict / mode hook (best-effort par défaut). Cible 5 consommateurs identifiés : `aic.sh`, `auto-worklog-log.sh`, `measure-context-size.sh`, hook PreToolUse, hook PostToolUse via `auto-worklog-log.sh`.
 - 2026-07-02 : R2 exploite le tracker de pertinence comme tie-break de ranking. Les features injectées plusieurs fois sans intersection sont pénalisées après la spécificité du matcher, avec opt-out et seuils configurables.
+- 2026-07-03 : clôture DONE après validation ciblée du ranking tracker, du matcher multi-niveau, du path matching, de la parité dogfood et du smoke déjà vert.
