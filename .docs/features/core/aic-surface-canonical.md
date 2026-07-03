@@ -2,7 +2,7 @@
 id: aic-surface-canonical
 scope: core
 title: Surface utilisateur canonique aic
-status: active
+status: done
 depends_on: []
 touches:
   - README_AI_CONTEXT.md
@@ -37,11 +37,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "surface aic implementee et smoke complet PASS"
+  phase: done
+  step: "surface aic canonique livrée, aic-pilot/aic-onboard intégrés et smoke validé"
   blockers: []
-  resume_hint: "Relire le delta puis faire le commit dedie du sous-chantier si le scope convient."
-  updated: 2026-06-26
+  resume_hint: "aucune action immédiate ; rouvrir si une nouvelle commande publique aic ou un alias legacy est ajouté"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -149,3 +149,4 @@ Aucune dependance frontmatter.
   un commit dedie au sous-chantier.
 - 2026-06-19 : ajout de `aic-onboard` a la taxonomie canonique (init/sync/migrate
   de l'overlay projet). Voir `workflow/project-overlay-onboarding`.
+- 2026-07-03 : fiche clôturée en `done`. La surface publique canonique reste `aic`/`aic-*`, `aic-pilot` et `aic-onboard` sont intégrés, et les adaptations VCS n'ont pas changé l'UX commande. Doc Impact Decision : C — fiche feature et worklog mis à jour.

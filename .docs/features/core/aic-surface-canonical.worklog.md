@@ -161,3 +161,11 @@
 ## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
 - Surface partagée touchée : `aic.sh` consomme le provider VCS pour les compteurs de delta, review et ship. La surface commande reste inchangée.
 - Validation portée par `core/vcs-provider-abstraction`.
+
+## 2026-07-03 — done
+- Intent : clôture documentaire de `core/aic-surface-canonical`.
+- Fichiers/surfaces : `.docs/features/core/aic-surface-canonical.md`, `.docs/features/core/aic-surface-canonical.worklog.md`.
+- Décision : statut `done` ; la surface publique `aic`/`aic-*` est stable, `aic-pilot` et `aic-onboard` sont intégrés, et les changements VCS récents n'ont pas ajouté d'alias legacy.
+- Doc Impact Decision : C — fiche feature et worklog mis à jour.
+- Validation prévue : `aic.sh --help`, checks shims/références/features/freshness, mesure contexte et smoke ciblé/full selon coût avant commit.
+- Next : aucune action immédiate ; rouvrir si une nouvelle commande publique `aic` ou un alias legacy est ajouté.
