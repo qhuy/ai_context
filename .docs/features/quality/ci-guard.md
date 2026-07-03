@@ -2,7 +2,7 @@
 id: ci-guard
 scope: quality
 title: Workflow GitHub Actions (check-shims + check-features)
-status: active
+status: done
 depends_on:
   - quality/smoke-test
   - quality/cycle-detection
@@ -11,10 +11,10 @@ touches:
   - .github/workflows/template-smoke-test.yml
   - template/.github/workflows/ai-context-check.yml.jinja
 progress:
-  phase: review
-  step: "A6 livré : shellcheck -S error couvre scripts runtime, hooks exécutables et tests shell"
+  phase: done
+  step: "CI guard livré : shellcheck scripts/hooks/tests, YAML source et dogfood validés"
   blockers: []
-  resume_hint: "relire le delta CI puis valider dogfood drift, YAML et freshness staged avant commit"
+  resume_hint: "aucune action immédiate ; surveiller seulement les évolutions futures de workflows ou de matrix"
   updated: 2026-07-03
 type: feature
 ---
@@ -79,6 +79,7 @@ Rejouer en CI les validations critiques pour rattraper les contournements locaux
 - Les checks enchaînés passent en local : `shellcheck -S error` sur scripts/hooks/tests, `check-shims.sh`, `check-features.sh --no-write`, tests unitaires `tests/unit/*.sh`.
 - `check-dogfood-drift.sh` ignore `.github/workflows/**` (source-only) → l'évolution de la CI source ne déclenche pas de faux drift.
 - YAML valide pour les trois workflows.
+- Clôture 2026-07-03 : shellcheck A6 PASS sur 90 fichiers collectés, YAML source OK, `check-dogfood-drift.sh` PASS, `check-feature-docs.sh --strict quality/ci-guard` PASS, `check-feature-freshness.sh --worktree --strict` OK.
 
 ## Cross-refs
 
@@ -101,3 +102,4 @@ Filet de sécurité au-dessus de `git-hooks` (qui peuvent être contournés loca
   plus à `.ai/scripts/*.sh` : il couvre aussi les hooks Git exécutables et tous
   les scripts `tests/**/*.sh`, via `find` portable Linux/macOS plutôt que
   `globstar`.
+- 2026-07-03 : DONE documentaire après revalidation locale : shellcheck A6 (90 fichiers), YAML source, dogfood drift et docs stricts PASS.

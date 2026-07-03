@@ -55,3 +55,10 @@
 - Décision : utiliser `find` portable Linux/macOS pour collecter les hooks exécutables et `tests/**/*.sh`, au lieu de `globstar` qui n'est pas disponible sur le bash macOS 3.2.
 - Validation : `shellcheck -S error` sur 83 fichiers collectés PASS ; YAML source OK ; `check-feature-docs --strict quality/ci-guard` PASS ; `check-features --no-write` PASS avec warnings OKF préexistants ; `check-feature-freshness --worktree --strict` OK ; `git diff --check` OK ; `check-dogfood-drift` PASS ; `tests/smoke-test.sh` PASS.
 - Next : commit dédié A6, puis reprendre le frame de remédiation.
+
+## 2026-07-03 — done
+- Intent : clôturer `quality/ci-guard` après livraison A6 et revalidation du workflow source/template.
+- Fichiers/surfaces : `.docs/features/quality/ci-guard.md`, `.docs/features/quality/ci-guard.worklog.md`.
+- Décision : statut `done` ; la CI reste le filet d'enforcement au-dessus des hooks locaux, avec Windows best-effort.
+- Validation : `shellcheck -S error` sur 90 fichiers collectés PASS ; YAML source chargé par `yaml.safe_load` ; `bash .ai/scripts/check-dogfood-drift.sh` PASS ; `bash .ai/scripts/check-feature-docs.sh --strict quality/ci-guard` PASS ; `bash .ai/scripts/check-feature-freshness.sh --worktree --strict` OK.
+- Next : aucune action immédiate.
