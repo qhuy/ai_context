@@ -2,7 +2,7 @@
 id: feature-audit
 scope: workflow
 title: Procédure feature-audit — rétro-doc & re-sync des fiches feature
-status: draft
+status: active
 depends_on:
   - core/feature-mesh
   - core/feature-index-cache
@@ -14,11 +14,12 @@ touches:
 touches_shared:
   - tests/smoke-test.sh
 progress:
-  phase: implement
-  step: "procédure déplacée sous .ai/workflows ; modes discover/refresh conservés"
-  blockers: []
-  resume_hint: "valider que /aic-review peut s'appuyer sur .ai/workflows/feature-audit.md sans exposer de skill procédural"
-  updated: 2026-05-03
+  phase: blocked
+  step: "validation aic-review effectuée : procédure feature-audit prête, mais le wrapper aic-review ne pointe pas encore vers elle"
+  blockers:
+    - "HANDOFF core/aic-review-application-skill : décider/ajouter le pointeur aic-review -> .ai/workflows/feature-audit.md"
+  resume_hint: "reprendre côté core/aic-review-application-skill ; ne pas éditer les wrappers aic-review depuis workflow sans confirmation cross-scope"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -107,6 +108,13 @@ Deux modes explicites (argument obligatoire, pas d'auto-détection) :
 - Compatibilité Bash 3.2 et fidélité des chemins à espaces validées par le smoke (cas `src/with space/file.ts`).
 - Fallback `find` hors repo git couvert par le scénario scaffold neuf.
 
+Validation de reprise 2026-07-03 :
+
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/feature-audit` PASS.
+- `bash .ai/scripts/audit-features.sh --help` PASS.
+- `rg "feature-audit|audit-features" ...` confirme la procédure runtime/template, mais aucun wrapper `aic-review` ne la référence explicitement.
+- Conclusion : la procédure est prête ; l'intégration stricte dans `aic-review` relève du scope `core/aic-review-application-skill`.
+
 ## Cross-refs
 
 - **`core/feature-mesh`** : fournit le format frontmatter et les règles de validation que l'audit vérifie.
@@ -123,3 +131,4 @@ Deux modes explicites (argument obligatoire, pas d'auto-détection) :
 - **2026-05-03** — Le smoke-test partagé exécute deux tests unitaires de régression avant les scénarios Copier. Aucun changement sur `audit-features.sh`, mais le fichier `tests/smoke-test.sh` est couvert par cette feature.
 - **2026-05-03** — `tests/smoke-test.sh` passe en `touches_shared` pour signaler le lien de review sans bloquer la fraîcheur documentaire de cette feature à chaque ajout de smoke global.
 - **2026-05-03** — Retrait du skill Claude `/aic-feature-audit` et déplacement de la logique sous `.ai/workflows/feature-audit.md`, appelée via `/aic-review` ou par Codex en langage naturel.
+- **2026-07-03** — HANDOFF requis vers `core/aic-review-application-skill` : les wrappers `aic-review` ne référencent pas encore explicitement `.ai/workflows/feature-audit.md`.

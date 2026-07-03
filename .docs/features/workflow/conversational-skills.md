@@ -2,7 +2,7 @@
 id: conversational-skills
 scope: workflow
 title: Auto-progression invisible (+ skill /aic en override)
-status: draft
+status: done
 depends_on:
   - workflow/claude-skills
   - workflow/auto-worklog
@@ -17,11 +17,11 @@ touches_shared:
   - copier.yml
   - tests/smoke-test.sh
 progress:
-  phase: implement
-  step: "/aic marqué non-auto-invocable sur les 4 surfaces (Claude: disable-model-invocation ; agents: garde prose)"
+  phase: done
+  step: "/aic override non-auto-invocable sur les 4 surfaces, auto-progression et undo validés"
   blockers: []
-  resume_hint: "check-shims + check-dogfood-drift + smoke verts, puis commit FR conventional"
-  updated: 2026-06-02
+  resume_hint: "aucune action immédiate ; rouvrir seulement si l'override /aic, auto-progress ou /aic undo change"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -198,6 +198,15 @@ Le skill `/aic` (mode override) reste Claude-only — acceptable : c'est un mode
 - Override du seuil STALE testé via `progress.stale_after_days: 0` (le bucket STALE inclut alors `back/inprog`).
 - `template/AGENTS.md.jinja` reste un shim mince : vérifié par `check-shims` (les détails runtime vivent dans `.ai/index.md` et les docs, pas dans le shim).
 
+Preuve de clôture 2026-07-03 :
+
+- Relecture des 4 surfaces `/aic` : `disable-model-invocation: true` côté Claude, garde prose côté agents et templates.
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/conversational-skills` PASS.
+- `bash .ai/scripts/check-shims.sh` PASS.
+- `bash .ai/scripts/check-dogfood-drift.sh` PASS.
+- `bash .ai/scripts/check-features.sh --no-write` PASS.
+- `bash tests/smoke-test.sh` PASS.
+
 ## Cross-scope anticipé (à l'implem)
 
 - **quality** (`tests/smoke-test.sh`) : ajouter assertion « auto-progression bump phase après tests verts »
@@ -226,3 +235,4 @@ Le skill `/aic` (mode override) reste Claude-only — acceptable : c'est un mode
 - **2026-05-03** — Audit post-commits : `template/AGENTS.md.jinja` redevient un shim mince. Les détails runtime multi-agents sont conservés dans `.ai/index.md` et les docs, pour préserver l'UX zéro skill sans casser `check-shims`.
 - **2026-05-06** — Resserage `/aic done` : l'override ne patche plus directement `status: done`. Il délègue à `.ai/workflows/feature-done.md` et conserve l'evidence obligatoire (quality gate, build/tests, docs strictes).
 - **2026-06-02** — `/aic` rendu non-auto-invocable sur les 4 surfaces (runtime + template, Claude + agents). Claude : ajout de `disable-model-invocation: true`. Agents : clause « invocation explicite uniquement — ne pas déclencher par matching lexical implicite » dans la description (parité avec les primitives `aic-feature-*`). Origine : analyse comparée du repo `mattpocock/skills` (doctrine commands-vs-skills) — constat que ai_context implémente déjà un modèle 3-tiers plus riche, le seul gain additif propre étant ce marquage. `touches` étendu aux 4 surfaces `/aic`.
+- **2026-07-03** — DONE. Auto-progression, pre-commit universel, `/aic undo` et override non-auto-invocable validés par smoke et relecture des surfaces.

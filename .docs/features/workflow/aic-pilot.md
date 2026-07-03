@@ -2,7 +2,7 @@
 id: aic-pilot
 scope: workflow
 title: Skill aic-pilot pour pilotage transverse et suivi d'audit
-status: active
+status: done
 type: feature
 description: "Ajoute un copilote produit/tech qui transforme les audits larges en registre suivi, sans créer une fausse feature globale."
 depends_on:
@@ -45,11 +45,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: implement
-  step: "skill aic-pilot, débrayage aic-frame et registre pilots livrés ; reclassification exact-multi appliquée"
+  phase: done
+  step: "skill aic-pilot, débrayage aic-frame et registres pilots livrés et validés"
   blockers: []
-  resume_hint: "lancer freshness staged/worktree, dogfood drift, check-features et smoke avant commit"
-  updated: 2026-06-30
+  resume_hint: "aucune action immédiate ; rouvrir seulement si le contrat de pilotage transverse ou le format des registres pilots change"
+  updated: 2026-07-03
 ---
 
 # Skill aic-pilot pour pilotage transverse et suivi d'audit
@@ -132,6 +132,15 @@ Quand `aic-pilot` est utilisé, l'agent :
 - `check-dogfood-drift` ignore les registres datés et détecte la dérive du template.
 - `tests/smoke-test.sh` vérifie la présence du skill.
 
+Preuve de clôture 2026-07-03 :
+
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/aic-pilot` PASS.
+- `bash tests/unit/test-dogfood-update-preserves-frames.sh` PASS.
+- `bash tests/unit/test-dogfood-drift-extra.sh` PASS.
+- `bash .ai/scripts/check-dogfood-drift.sh` PASS.
+- `bash .ai/scripts/check-features.sh --no-write` PASS.
+- `bash tests/smoke-test.sh` PASS.
+
 ## Droits / accès
 
 Non applicable : aucun rôle applicatif ni permission runtime.
@@ -171,3 +180,4 @@ Déploiement via template Copier et dogfood runtime. Rollback : retirer le skill
 ## Historique / décisions
 
 - 2026-06-29 — Création. Origine : besoin d'un copilote produit/tech pour audits larges, avec suivi des points validés sans créer une fiche feature globale.
+- 2026-07-03 — DONE. Skill, registres pilots et règles dogfood validés ; pilotage ZE SOLUTION déjà clos dans le worklog.

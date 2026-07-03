@@ -89,3 +89,10 @@
 ## 2026-06-29 11:39 — auto
 - Fichiers modifiés :
   - template/AGENTS.md.jinja
+
+## 2026-07-03 — done
+- Intent : clôturer l'UX zéro skill et l'override `/aic` après validation des hooks, du smoke et des surfaces non-auto-invocables.
+- Fichiers/surfaces : `.docs/features/workflow/conversational-skills.md`, `.docs/features/workflow/conversational-skills.worklog.md`.
+- Décision : statut `done`; l'override `/aic` reste explicite, l'auto-progression normale reste invisible puis rapportée.
+- Validation : relecture des 4 surfaces `/aic`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/conversational-skills`; `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
+- Next : aucune action immédiate.

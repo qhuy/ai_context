@@ -25,3 +25,11 @@
 ## 2026-04-28 12:04 — auto
 - Fichiers modifiés :
   - tests/smoke-test.sh
+
+## 2026-07-03 — HANDOFF workflow -> core
+- Intent : valider que `/aic-review` peut s'appuyer sur `.ai/workflows/feature-audit.md` sans réexposer un skill procédural.
+- Constat : `.ai/workflows/feature-audit.md` et son template existent ; `audit-features.sh --help` passe ; les tests smoke couvrent discover. En revanche, les wrappers `aic-review` ne pointent pas explicitement vers `feature-audit`.
+- Fichiers/surfaces workflow : `.docs/features/workflow/feature-audit.md`, `.docs/features/workflow/feature-audit.worklog.md`.
+- HANDOFF : `core/aic-review-application-skill` doit décider/ajouter le pointeur léger dans `.agents/skills/aic-review/**`, `.claude/skills/aic-review/**` et templates associés. Ces fichiers sont routés par `features-for-path` vers des fiches `core`, donc pas d'édition silencieuse depuis le scope `workflow`.
+- Validation : `bash .ai/scripts/check-feature-docs.sh --strict workflow/feature-audit`; `bash .ai/scripts/audit-features.sh --help`; `rg "feature-audit|audit-features" ...`.
+- Next : attendre confirmation pour basculer en scope `core`.

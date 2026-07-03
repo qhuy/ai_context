@@ -41,3 +41,10 @@
 - **P6 incr.1 livré** (`84d54aa`, branche `quality/touches-breadth-changelog`) : CHANGELOG.md reclassé `touches_shared:` dans les 6 fiches (2ᵉ vague `quality/touches-breadth-guard`). Cascade freshness supprimée à la racine, vérifié (check-features PASS, breadth-guard ne liste plus CHANGELOG). **Bilan pilotage : tous les axes traités** — P1 fiché ; P2/P3 incr.1 ; P4/P5 différés (mesure/déjà-résolu) ; P6 diagnostiqué + incr.1 ; P7 différé. Seul gros reste = build P1.
 - **P1 incr.1 livré** (`0164289`) : scaffold benchmark (PROTOCOL + runner `--self-check` + tâche + README) ; runner = seam externe `AGENT_CMD`. Runs réels = action mainteneur.
 - **PILOTAGE CLOS** (`status: done`) : les 2 branches feature (`quality/touches-breadth-changelog`, `product/agent-efficacy-benchmark-scaffold`) mergées dans `main` (ff + cherry-pick, historique linéaire) ; main vérifié (check-features/shims/docs + 3 tests d'incréments + run-bench --self-check + breadth-guard sans CHANGELOG). Résiduel = follow-ups feature-level (runs P1 mainteneur, kill_criterion #34235, HANDOFFs smoke, breadth vagues futures) suivis dans les fiches, plus dans le pilot.
+
+## 2026-07-03 — done
+- Intent : clôturer `aic-pilot` après validation du skill, des registres `.docs/pilots/**` et du contrat dogfood.
+- Fichiers/surfaces : `.docs/features/workflow/aic-pilot.md`, `.docs/features/workflow/aic-pilot.worklog.md`.
+- Décision : statut `done`; les follow-ups restent portés par leurs fiches propriétaires, pas par le pilot.
+- Validation : `bash .ai/scripts/check-feature-docs.sh --strict workflow/aic-pilot`; `bash tests/unit/test-dogfood-update-preserves-frames.sh`; `bash tests/unit/test-dogfood-drift-extra.sh`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
+- Next : aucune action immédiate.
