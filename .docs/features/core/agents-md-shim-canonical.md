@@ -2,7 +2,7 @@
 id: agents-md-shim-canonical
 scope: core
 title: Shims dérivés d'AGENTS.md (base canonique + imports)
-status: active
+status: done
 type: feature
 description: "AGENTS.md devient la base de shim unique ; les shims spécifiques d'agent (CLAUDE.md, GEMINI.md, copilot) deviennent des imports @AGENTS.md + lignes agent, avec fallback tailored si l'import n'est pas supporté."
 depends_on:
@@ -10,6 +10,8 @@ depends_on:
   - core/template-engine
   - product/readme-positioning
 touches:
+  - .docs/features/core/agents-md-shim-canonical.md
+  - .docs/features/core/agents-md-shim-canonical.worklog.md
   - AGENTS.md
   - CLAUDE.md
   - template/AGENTS.md.jinja
@@ -37,10 +39,10 @@ doc:
     rollout: true
     observability: false
 progress:
-  phase: review
-  step: "check-shims lit les agents activés depuis .copier-answers.yml ; le collapse Claude est gardé par core/agents-md-native-collapse-path"
+  phase: done
+  step: "modèle AGENTS.md + shims dérivés livré, check-shims dynamique validé, #34235 transféré au registre natif"
   blockers: []
-  resume_hint: "Follow-up #34235 transféré au registre .ai/native-context-support.tsv ; pitch README déjà routé vers product/readme-positioning."
+  resume_hint: "aucune action core immédiate ; rouvrir seulement si le modèle de shims ou .copier-answers.yml évolue."
   updated: 2026-07-03
 ---
 
@@ -96,6 +98,7 @@ Une fiche pour le **modèle de shim multi-agent**, distincte de `aic-surface-can
 - `check-shims.sh` valide : base présente, imports bien formés pour les agents activés, contraintes lean respectées.
 - Codex : `AGENTS.md` est déjà sa surface — gain direct.
 - Agent sans `@import` : shim tailored minimal, validé comme tel.
+- La décision de rendre `CLAUDE.md` optionnel ne relève plus de cette fiche : elle est gardée par `core/agents-md-native-collapse-path` via `.ai/native-context-support.tsv`.
 
 ## Contrats
 
@@ -110,6 +113,7 @@ Une fiche pour le **modèle de shim multi-agent**, distincte de `aic-surface-can
 - `bash .ai/scripts/check-dogfood-drift.sh` (parité ; AGENTS.md+CLAUDE.md dogfoodés).
 - `bash tests/smoke-test.sh` (rendu multi-agents).
 - `bash .ai/scripts/measure-context-size.sh` (shims lean).
+- `bash tests/unit/test-check-shims-dynamic-agents.sh` (agents `.copier-answers.yml` + fallback anciens scaffolds).
 - Cas limites : agent sans `@import` → fallback tailored validé ; `copier update` downstream → conflit documenté ; Windows/CI → import = fichier normal (pas de symlink).
 - **Gate amont (bloquant) avant tout code** : vérifier empiriquement le support `@import` par agent (Claude d'abord).
 
@@ -140,7 +144,7 @@ Non requis (`doc.requires.observability: false`). Preuves attendues : sorties de
 
 - Support `@import` **non garanti** hors Claude (Cursor/Gemini/Copilot) → fallback obligatoire.
 - `copier update` casse les `CLAUDE.md` downstream édités → migration documentée.
-- Si Claude Code lit `AGENTS.md` nativement (issue #34235), même le double-shim Claude devient inutile → kill_criterion à surveiller.
+- Si Claude Code lit `AGENTS.md` nativement (issue #34235), même le double-shim Claude devient inutile → kill_criterion surveillé par `core/agents-md-native-collapse-path`, pas par cette fiche.
 
 ## Cross-refs
 
@@ -153,5 +157,6 @@ Non requis (`doc.requires.observability: false`). Preuves attendues : sorties de
 
 - 2026-06-28 : création via `aic-frame` (item C1 du frame de remédiation `2026-06-28-audit-strategique-remediation`). Arbitrages tranchés : (a) nouvelle fiche dédiée ; (b) import `@AGENTS.md` + fallback tailored (symlink rejeté : aplatit le sur-mesure + fragile Windows). Gate d'implémentation : vérifier le support `@import` par agent AVANT tout code.
 - 2026-06-29 : **import model livré** (dogfood + template). `AGENTS.md` neutralisé (« Shim lean Codex » → « Shim lean » = base agent-neutre) ; `CLAUDE.md` = ligne `> Tu DOIS lire .ai/index.md` (dégradation gracieuse + check-shims) + `@AGENTS.md` + pointeur `.claude/settings.json` (hard rules dé-dupliquées dans AGENTS.md) ; `GEMINI.md.jinja` = `@AGENTS.md` + ligne Gemini. **Cursor/Copilot laissés tailored** (fallback assumé : lisent AGENTS.md nativement, import non fiable). Vérifs : `check-shims` ✅ (AGENTS 15 l., CLAUDE 7 l.), `check-dogfood-drift` ✅ (parité), `tests/smoke-test.sh` ✅. Follow-up : check-shims dynamique par agents activés ; confirmation #34235.
-- 2026-06-29 : **gate `@import` PASSÉ** (vérification 4 plateformes, sources docs officielles). Verdict par agent : **Claude Code** = `@path` import OK (récursif ≤5 hops) **et lirait AGENTS.md nativement** (#34235 rapportée résolue printemps 2026) ; **Gemini CLI** = `@path` import OK (Memory Import Processor) ; **Cursor** = `@file` en `.mdc` non fiable MAIS lit AGENTS.md nativement (racine+nested) ; **Copilot** = pas d'import inline (lien Markdown only) MAIS lit AGENTS.md nativement (depuis 2025-08). Modèle retenu : AGENTS.md = **base neutre** ; `CLAUDE.md`/`GEMINI.md` = `@AGENTS.md` + lignes agent ; Cursor/Copilot = **pas de shim requis** (lecture native) ou tailored minimal. **À confirmer** : la lecture native d'AGENTS.md par Claude Code (un seul agent l'affirme, contredit l'audit initial #34235-ouverte) — n'impacte pas l'import, mais si vrai, renforce le kill_criterion (CLAUDE.md devient optionnel, conservé pour les overrides Claude).
+- 2026-06-29 : **gate `@import` PASSÉ** (vérification 4 plateformes, sources docs officielles). Verdict par agent : **Claude Code** = `@path` import OK (récursif ≤5 hops), mais lecture native d'AGENTS.md non confirmée ; **Gemini CLI** = `@path` import OK (Memory Import Processor) ; **Cursor** = `@file` en `.mdc` non fiable MAIS lit AGENTS.md nativement (racine+nested) ; **Copilot** = pas d'import inline (lien Markdown only) MAIS lit AGENTS.md nativement (depuis 2025-08). Modèle retenu : AGENTS.md = **base neutre** ; `CLAUDE.md`/`GEMINI.md` = `@AGENTS.md` + lignes agent ; Cursor/Copilot = **pas de shim requis** (lecture native) ou tailored minimal. La décision future `CLAUDE.md` optionnel est transférée au registre natif.
 - 2026-07-03 : **check-shims dynamique livré**. Le runtime et le template lisent `agents` depuis `.copier-answers.yml` quand il existe, puis exigent les shims dérivés correspondants (`CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`) en plus d'`AGENTS.md`. Sans answers file (repo source dogfood ou anciens scaffolds), fallback sur les shims présents. Test ciblé : `tests/unit/test-check-shims-dynamic-agents.sh` couvre fallback, liste YAML bloc/inline, et échec si `gemini` est actif mais `GEMINI.md` manque.
+- 2026-07-03 : **DONE** — follow-up #34235 transféré au registre natif de `core/agents-md-native-collapse-path`, docs migration déjà livrées, smoke et dogfood verts. Cette fiche reste propriétaire du modèle de shims et de `check-shims`.

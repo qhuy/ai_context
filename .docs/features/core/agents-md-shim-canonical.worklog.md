@@ -32,3 +32,11 @@
 ## 2026-07-03 — follow-up #34235 transféré au registre natif
 - `core/agents-md-native-collapse-path` porte désormais `.ai/native-context-support.tsv` et `check-agent-native-context.sh --require-confirmed <agent>`.
 - Impact ici : `check-shims` reste propriétaire des shims activés ; la décision de rendre `CLAUDE.md` optionnel ne vit plus dans cette fiche mais dans le registre natif.
+
+## 2026-07-03 — DONE : clôture du modèle de shims dérivés
+- Intent : fermer la fiche C1 après livraison du modèle `AGENTS.md` base + shims dérivés et transfert du kill criterion Claude.
+- Fichiers/surfaces : fiche/worklog `core/agents-md-shim-canonical`.
+- Evidence : `check-feature-docs --strict core/agents-md-shim-canonical` PASS, `check-shims` PASS, `check-dogfood-drift` PASS ; smoke complet déjà passé dans le commit `9affa45` qui a branché le registre natif.
+- Décision : Doc Impact Decision C — fiche feature mise à jour, aucun changement runtime dans ce commit de clôture.
+- Risques : pas de breaking change, pas de migration de données, pas d'impact sécurité/auth/tenancy ; compatibilité arrière inchangée.
+- Next : aucune action immédiate ; rouvrir seulement si le modèle de shims ou le contrat `.copier-answers.yml` change.
