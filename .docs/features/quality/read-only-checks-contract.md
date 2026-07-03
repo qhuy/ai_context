@@ -2,7 +2,7 @@
 id: read-only-checks-contract
 scope: quality
 title: Contrat read-only des checks et diagnostics
-status: active
+status: done
 depends_on:
   - core/index-contract-v2
   - quality/doctor
@@ -54,11 +54,11 @@ doc:
     rollout: true
     observability: false
 progress:
-  phase: review
-  step: "checks, rapports, surface aic, CI et docs migration alignés read-only"
+  phase: done
+  step: "contrat read-only livré : diagnostics, rapports, aic, CI et provider VCS validés no-write"
   blockers: []
-  resume_hint: "relire le delta puis décider si le comportement legacy de check-features sans flag doit être déprécié en release N+1"
-  updated: 2026-06-26
+  resume_hint: "aucune action immédiate ; traiter la dépréciation du comportement legacy check-features dans une release dédiée si nécessaire"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -141,6 +141,7 @@ Cette feature couvre le contrat d'effet de bord des commandes qualité. Elle ne 
 - Test absence d'index : message actionnable, pas écriture silencieuse.
 - Test présence d'index stale : warning ou action explicite selon le contrat retenu.
 - Documentation migration mise à jour si un comportement par défaut change.
+- Clôture 2026-07-03 : `bash tests/unit/test-read-only-checks-contract.sh` PASS après ajout de `_vcs.sh` dans la fixture provider VCS ; `bash tests/unit/test-product-reports-read-only.sh` PASS ; `bash .ai/scripts/check-features.sh --no-write` PASS.
 
 ## Droits / accès
 
@@ -196,3 +197,4 @@ Les preuves attendues sont les tests no-write, les sorties de checks et les entr
 - 2026-05-14 : décision de bloquer l'implémentation sur un contrat d'index v2 clair.
 - 2026-05-14 : première implémentation. `check-feature-freshness`, `check-feature-coverage`, `review-delta` et `pr-report` lisent un index temporaire non repo-local ; `doctor`, `quality-gate` et la CI utilisent `check-features.sh --no-write`. Ajout de `tests/unit/test-read-only-checks-contract.sh`.
 - 2026-05-14 : arbitrage AI Debate `0016` : la correction `aic.sh` est ajoutée au plan. `aic.sh status`, `ship`, `frame` et `diagnose` utilisent un index temporaire et `check-features.sh --no-write`; la surface publique ne reconstruit plus `.ai/.feature-index.json` implicitement.
+- 2026-07-03 : DONE documentaire. Le contrat read-only tient après le passage provider VCS ; la fixture de test copie `_vcs.sh` et garde une fiche OKF complète (`type: feature`), sans écriture de `.ai/.feature-index.json`.

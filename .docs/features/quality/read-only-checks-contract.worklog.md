@@ -204,3 +204,11 @@
 ## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
 - Surface partagée touchée : freshness, review delta, pr-report et doctor utilisent le provider VCS sans écrire de cache supplémentaire.
 - Validation portée par `core/vcs-provider-abstraction` : checks read-only ciblés et index temporaire conservés.
+
+## 2026-07-03 — fix fixture provider VCS + done
+- Intent : clôturer `quality/read-only-checks-contract` après revalidation no-write et correction de fixture.
+- Fichiers/surfaces : `tests/unit/test-read-only-checks-contract.sh`, `.docs/features/quality/read-only-checks-contract.md`, `.docs/features/quality/read-only-checks-contract.worklog.md`.
+- Décision : statut `done` ; la dépréciation du comportement legacy de `check-features.sh` sans flag est une décision de release future, pas un blocker du contrat livré.
+- Correction : la fixture du test copie désormais `.ai/scripts/_vcs.sh` requis par `doctor.sh` depuis `core/vcs-provider-abstraction`, et ajoute `type: feature` à la fiche temporaire pour rester conforme au profil OKF.
+- Validation : `bash tests/unit/test-read-only-checks-contract.sh` PASS ; `bash tests/unit/test-product-reports-read-only.sh` PASS ; `bash .ai/scripts/check-features.sh --no-write` PASS.
+- Next : aucune action immédiate.

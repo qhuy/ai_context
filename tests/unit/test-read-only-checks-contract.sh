@@ -16,7 +16,7 @@ fail() {
 }
 
 mkdir -p "$tmp/.ai/scripts" "$tmp/.ai/schema" "$tmp/.docs/features/core" "$tmp/src"
-for script in _lib.sh aic.sh build-feature-index.sh check-features.sh check-feature-freshness.sh check-feature-coverage.sh check-shims.sh check-product-links.sh review-delta.sh pr-report.sh doctor.sh measure-context-size.sh stop-doc-gate.sh; do
+for script in _lib.sh _vcs.sh aic.sh build-feature-index.sh check-features.sh check-feature-freshness.sh check-feature-coverage.sh check-shims.sh check-product-links.sh review-delta.sh pr-report.sh doctor.sh measure-context-size.sh stop-doc-gate.sh; do
   cp "$repo_root/.ai/scripts/$script" "$tmp/.ai/scripts/$script"
 done
 cp "$repo_root/.ai/schema/feature.schema.json" "$tmp/.ai/schema/feature.schema.json"
@@ -44,6 +44,7 @@ progress:
   blockers: []
   resume_hint: ""
   updated: "2026-05-14"
+type: feature
 ---
 
 # Sample
