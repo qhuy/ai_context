@@ -21,3 +21,10 @@
 
 ## 2026-06-19 — correctif statut
 - `status: draft → active` : oubli au commit 39c0fa2, la feature est implémentée et live (incohérent avec `phase: done`). Aligné sur `core/project-overlay-scope-registry`.
+
+## 2026-07-03 — metadata OKF
+- Intent : backfill metadata `type: feature` signalée par le profil OKF warn-only.
+- Fichiers/surfaces : `.docs/features/workflow/project-overlay-onboarding.md`, `.docs/features/workflow/project-overlay-onboarding.worklog.md`.
+- Décision : ajout metadata uniquement ; aucun changement du skill `aic-onboard` ni de la procédure `project-overlay-sync`.
+- Validation : `bash .ai/scripts/aic.sh migrate okf-type` ne doit plus signaler cette fiche ; `bash .ai/scripts/check-features.sh --no-write` ne doit plus émettre de warning `type` absent.
+- Next : aucune action immédiate.

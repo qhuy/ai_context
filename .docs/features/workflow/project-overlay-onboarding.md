@@ -28,6 +28,7 @@ doc:
     api_contract: false
     rollout: false
     observability: false
+type: feature
 progress:
   phase: done
   step: "skill aic-onboard livré (Claude + Codex), procédure canonique, smoke-test étendu, drift vert"
