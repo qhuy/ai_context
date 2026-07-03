@@ -13,10 +13,10 @@ touches_shared:
   - tests/**
 progress:
   phase: review
-  step: "smoke couvre Pack A lean et exclusions Codex"
+  step: "smoke branche le self-check benchmark ([0s/28])"
   blockers: []
-  resume_hint: "relancer tests/smoke-test.sh après toute évolution du Pack A ou de check-shims"
-  updated: 2026-06-26
+  resume_hint: "relancer tests/smoke-test.sh après toute évolution du Pack A, de check-shims ou du runner benchmark"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -35,6 +35,7 @@ Vérifier en un script que la chaîne complète tient : `copier copy` → check-
 ### Inclus
 
 - Le script orchestrateur `tests/smoke-test.sh` et ses 28 assertions end-to-end, plus les tests ciblés sur le matching `touches:` (`path_matches_touch` dans `_lib.sh`) et le rendu `docs_root=docs`.
+- Le self-check du harnais benchmark (`tests/bench/run-bench.sh --self-check`, étape `[0s/28]`) : plumbing seulement, aucun agent invoqué ; la logique du runner reste portée par `product/agent-efficacy-benchmark`.
 - L'enchaînement réel des scripts générés sur un scaffold jetable dans `/tmp` : shims, mesh, reminder text+json, commit-msg, features-for-path, cycles, coverage, focus graph, i18n, auto-worklog.
 - La couverture des variantes de rendu Copier : profils `tech_profile` (`dotnet-clean-cqrs`, `react-next`, `fullstack-dotnet-react`), `adoption_mode` (`lite`/`strict`), squelettes DS et budget Pack A lean.
 
@@ -115,4 +116,5 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-04-28 : étape [11/28] enrichie pour exiger `depends_on` et `touches` comme clés frontmatter obligatoires (acceptent `[]`), aligné sur `feature.schema.json`. Étape [12/28] enrichie avec `audit-features.sh --help` (annonce du périmètre MVP) et un cas `src/with space/file.ts` pour valider la robustesse aux chemins avec espaces. Étape [2/28] enrichie avec `pr-report.sh --format=json` (sortie JSON valide), `--include-docs` (lève les exclusions par défaut), assertion `docs_excluded ≥ 1` quand un README est touché. Étape [2/28] enrichie avec wrapper `ai-context.sh` (`--help` liste les commandes ; routage vers `shims` ; rejet d'une commande inconnue).
 - **2026-04-28** : extension historique de [19/28] pour `aic-project-guardrails`. Cette attente est obsolète depuis le lean context : `guardrails.md` ne doit plus être forcé dans Pack A.
 - 2026-05-03 : étape [28c/28] rendue compatible Copier 9.14 : le sous-projet d'upgrade est initialisé comme dépôt git-tracké propre, l'answers file local est explicite si Copier ne le matérialise pas, le fichier custom est versionné hors template, et l'échec de `copier update` n'est plus masqué par `|| true`. Le bonus big-mesh relie seulement une partie des features front aux back pour que `AI_CONTEXT_FOCUS=back` teste une vraie réduction au lieu d'un graphe entièrement connexe.
+- 2026-07-03 : ajout [0s/28] — `tests/bench/run-bench.sh --self-check` branché dans le smoke (plumbing du harnais benchmark : tâches valides, parseur tokens, classification infra, gardes `rm -rf`, tie-break matrice ; aucun agent invoqué, aucune écriture sous `docs/benchmarks/`). Ferme le HANDOFF reçu de `product/agent-efficacy-benchmark` (ouvert le 2026-07-01).
 - 2026-06-19 : étape [28c/28] rendue tolérante au crash de *cleanup* post-update de Copier (rmtree du clone temporaire `.git/objects` → `OSError: Directory not empty`, observé sur Copier 9.14.3 + Python 3.14 macOS). L'update lui-même réussit ; seul le teardown de Copier plante. La tolérance ne se déclenche que sur cette signature précise (log contenant « Updating to template version » + `_cleanup`/`Directory not empty`/`copier._vcs.clone`) ; tout autre échec d'`copier update` reste bloquant — la décision 2026-05-03 (pas de masquage par `|| true`) est préservée. Les assertions d'outcome (fichier custom préservé, check-shims, propagation `aic-undo.sh`) restent le verdict réel. Signature vérifiée contre un log de crash réel. La CI n'est pas concernée (elle n'installe pas Copier et ne lance pas le smoke).

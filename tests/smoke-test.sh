@@ -107,6 +107,10 @@ echo "[0r/28] tests unitaires (ranking features-for-path par pertinence tracker)
 bash tests/unit/test-features-for-path-relevance-ranking.sh
 echo
 
+echo "[0s/28] self-check benchmark agent (plumbing, sans agent)"
+bash tests/bench/run-bench.sh --self-check
+echo
+
 echo "[1/28] copier copy (profil par défaut)"
 copier copy --defaults --trust \
   --data project_name=smoke-project \

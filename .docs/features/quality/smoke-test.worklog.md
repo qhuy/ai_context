@@ -232,3 +232,9 @@
 
 - Ajout de l'étape `[0r/28]` : `test-features-for-path-relevance-ranking.sh`.
 - Couverture : baseline sans log, dé-rank d'une feature injectée sans intersection, seuil insuffisant et opt-out `AI_CONTEXT_RELEVANCE_RANKING=0`.
+
+## 2026-07-03 — étape [0s/28] : self-check benchmark dans le smoke
+
+- Nouvelle étape smoke `[0s/28]` : `bash tests/bench/run-bench.sh --self-check`, à la suite des pré-étapes unitaires (`[0r/28]` ranking).
+- Ferme le HANDOFF ouvert par `product/agent-efficacy-benchmark` (2026-07-01) : le plumbing du runner benchmark (validation tâches, parseur tokens, classification infra, gardes `rm -rf`, tie-break matrice) est désormais rejoué par le harnais anti-régression, sans invoquer d'agent ni écrire sous `docs/benchmarks/`.
+- Denominator `/28` préservé (label lettré, comme les autres pré-étapes unitaires).

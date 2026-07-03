@@ -134,3 +134,9 @@
 - Hygiène : JSONL valide (6 lignes), `agent_infra_error=0`, `task_fail=0`, un timeout par condition.
 - Décision : publier comme résultat négatif ; ne pas rerun `0004` tel quel. La prochaine tâche `ai_context` doit rendre la vérité terrain non reconstructible depuis les traces non-mesh.
 - Artefacts : synthèse `docs/benchmarks/reports/2026-07-02-codex-n3-ai-context-next-handoff-summary.md`, rapport repo/TSV/JSONL et logs sous `docs/benchmarks/runs/2026-07-02-codex-n3-ai-context-next-handoff/`.
+
+## 2026-07-03 — HANDOFF quality/smoke-test clos
+
+- Le self-check du runner (`run-bench.sh --self-check`) est branché dans le harnais anti-régression : étape `[0s/28]` de `tests/smoke-test.sh`, livrée en scope primaire `quality/smoke-test` (voir son worklog du jour).
+- Le `resume_hint` de cette fiche ne porte plus de handoff ouvert ; conséquence assumée : la tâche `0004-next-handoff` (grader basé sur le motif `HANDOFF … restant = …`) devient non-gradable telle quelle — cohérent avec la décision « ne pas rerun tel quel » de l'incrément 12.
+- Reste au backlog produit : concevoir la tâche `ai_context` dont la vérité terrain n'est pas reconstructible hors mesh, pour la décision produit du 2026-07-15.

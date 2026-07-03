@@ -47,7 +47,7 @@ progress:
   phase: implement
   step: "incr.12 : 0004 publié, signal nul"
   blockers: []
-  resume_hint: "0004-next-handoff publié : with 2/3 vs without 2/3, Δ 0 ; probe techniquement valide mais non discriminant, ne pas rerun tel quel. Prochaine reprise : concevoir une tâche ai_context dont la vérité terrain n'est pas reconstructible hors mesh. HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
+  resume_hint: "0004-next-handoff publié : with 2/3 vs without 2/3, Δ 0 ; probe techniquement valide mais non discriminant, ne pas rerun tel quel. Prochaine reprise : concevoir une tâche ai_context dont la vérité terrain n'est pas reconstructible hors mesh. HANDOFF quality/smoke-test clos le 2026-07-03 (self-check branché dans le smoke, étape [0s/28])"
   updated: 2026-07-03
 ---
 
