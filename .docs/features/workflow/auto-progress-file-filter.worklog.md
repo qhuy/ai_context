@@ -57,3 +57,10 @@
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-07-03 — done
+- Intent : clôturer `workflow/auto-progress-file-filter` après audit du runtime livré.
+- Fichiers/surfaces : `.docs/features/workflow/auto-progress-file-filter.md`, `.docs/features/workflow/auto-progress-file-filter.worklog.md`, `.ai/scripts/_lib.sh`, `.ai/scripts/auto-progress.sh`, `template/.ai/scripts/_lib.sh.jinja`, `template/.ai/scripts/auto-progress.sh.jinja`, `tests/unit/test-auto-progress-filter.sh`.
+- Décision : statut `done`. Pas de nouveau delta runtime : le helper structurel, la revalidation `touches:` direct et le test dédié étaient déjà présents ; ce commit aligne la fiche sur l'état réel.
+- Validation : `bash tests/unit/test-auto-progress-filter.sh` PASS (26 cas) ; `bash .ai/scripts/check-feature-docs.sh --strict workflow/auto-progress-file-filter` PASS ; `bash .ai/scripts/check-feature-freshness.sh --worktree --strict` OK ; `bash .ai/scripts/check-dogfood-drift.sh` PASS.
+- Next : aucune action immédiate ; `workflow/stop-hook-idempotence` peut consommer le helper dans un tour dédié.

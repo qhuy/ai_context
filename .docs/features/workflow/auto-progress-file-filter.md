@@ -2,7 +2,7 @@
 id: auto-progress-file-filter
 scope: workflow
 title: Filtrer la transition spec→implement par type de fichier édité
-status: draft
+status: done
 depends_on: []
 touches:
   - .ai/scripts/auto-progress.sh
@@ -26,11 +26,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "implémentation livrée, 22 cas test PASS, prêt à commit"
+  phase: done
+  step: "filtre auto-progress livré : helper structurel, revalidation touches direct et 26 cas tests PASS"
   blockers: []
-  resume_hint: "commit feat(workflow) ; #5 stop-hook-idempotence consommera le helper dans un turn dédié"
-  updated: 2026-06-26
+  resume_hint: "aucune action immédiate ; workflow/stop-hook-idempotence peut consommer le helper dans un tour dédié"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -40,7 +40,7 @@ type: feature
 
 Aujourd'hui, le hook Stop côté Claude bumpe `progress.phase` de `spec` à `implement` dès qu'un fichier est édité dans le tour, peu importe le fichier. Éditer un README, un test, un commentaire ou une fiche feature suffit à faire passer la feature en `implement`. Conséquence : `progress.phase` perd son pouvoir de signal pour `aic-status` et la reprise.
 
-Cette fiche couvre le filtrage de la transition : ne bumper la phase que si le fichier édité correspond réellement à une implémentation (matche un `touches:` direct de la feature, pas `touches_shared:`, et n'est pas une extension purement documentaire/test/config).
+Cette fiche couvre le filtrage de la transition : ne bumper la phase que si le fichier édité correspond réellement à une implémentation (matche un `touches:` direct de la feature, pas `touches_shared:`, et n'est pas un fichier de métadonnées ou de bruit de session).
 
 ## Objectif
 
@@ -51,7 +51,7 @@ Restaurer la sémantique de `progress.phase` comme signal vrai de l'avancement i
 ### Inclus
 
 - Lire le code actuel de `auto-progress.sh` et identifier où la décision de bump se prend.
-- Définir le critère « édit structurel » : fichier matche `touches:` direct (pas `touches_shared:`) ET extension ∈ liste autorisée (probablement code source du projet, à exclure : `.md`, `.txt`, `.lock`, `.json` hors config-driven, fichiers de tests, fixtures).
+- Définir le critère « édit structurel » : fichier matche `touches:` direct (pas `touches_shared:`) ET ne fait pas partie des exclusions de bruit (`.docs/features/**`, `*.worklog.md`, `.lock`, fichiers cachés `.ai/.*`). Les fichiers de test et les `.md` hors fiches feature restent structurels si la feature les possède en `touches:`.
 - Implémenter le filtre dans `auto-progress.sh` : si zéro fichier édité ne passe le filtre, no-op sur la transition spec→implement.
 - Tests reproductibles : édit `.md` seul → no bump ; édit fichier dans `touches_shared` seul → no bump ; édit fichier dans `touches:` direct → bump.
 - Documentation du filtre dans le workflow associé (`.ai/workflows/feature-update.md` ou nouvelle section).
@@ -115,7 +115,7 @@ Refactor dans `_lib.sh` pour partage avec Phase 2 #5 (`stop-hook-idempotence`) s
 `auto-progress.sh` invoqué par le hook Stop avec la liste des fichiers édités dans le tour :
 
 1. Récupérer la feature en `progress.phase: spec` ciblée par le tour.
-2. Pour chaque fichier édité, vérifier qu'il matche un `touches:` direct (pas `touches_shared:`) ET n'a pas une extension exclue.
+2. Pour chaque fichier édité, vérifier qu'il matche encore un `touches:` direct dans l'index courant (pas `touches_shared:`, pas trace stale) ET passe `is_structural_feature_edit`.
 3. Si au moins un fichier passe le filtre → bumper `phase` à `implement` et appender le tour au worklog.
 4. Si zéro fichier passe → no-op sur la transition (mais peut continuer à appender un freshness au worklog selon `workflow/stop-hook-idempotence`).
 
@@ -138,7 +138,8 @@ Tests obligatoires (Codex post cross-check, 7 cas) :
 7. Override env d'extensions exclues si ajoutée (optionnel v1).
 
 Plus :
-- `bash tests/smoke-test.sh` PASS après intégration.
+- `bash tests/unit/test-auto-progress-filter.sh` PASS : 26 cas, dont helper isolé et E2E `auto-progress.sh` (source direct → bump, fiche seule → no-bump, trace stale → no-bump, mix fiche+source → bump).
+- `bash .ai/scripts/check-dogfood-drift.sh` PASS après intégration runtime/template.
 - Non-régression : édit fichier source légitime continue de bumper.
 
 ## Risques
@@ -159,3 +160,4 @@ Plus :
 ## Historique / décisions
 
 - 2026-05-06 : création en draft suite au cross-check Claude/Codex (4 rounds) sur `workflow/intentional-skills`. Bug de signal identifié : `progress.phase` devient bruyant car bumpé sur n'importe quelle édition. Fix : filtre déterministe par `touches:` direct + extension structurelle. Indépendant des autres fiches Phase 2 (peut être livré sans #1, #2, #3) mais devient calibré après matcher correct.
+- 2026-07-03 : DONE documentaire. L'implémentation déjà présente dans `_lib.sh`/`auto-progress.sh` est validée : helper `is_structural_feature_edit`, revalidation `touches:` direct contre l'index courant, 26 cas tests PASS. `workflow/stop-hook-idempotence` reste le prochain consommateur possible du helper, hors scope de cette fiche.
