@@ -33,3 +33,10 @@
 - HANDOFF : `core/aic-review-application-skill` doit décider/ajouter le pointeur léger dans `.agents/skills/aic-review/**`, `.claude/skills/aic-review/**` et templates associés. Ces fichiers sont routés par `features-for-path` vers des fiches `core`, donc pas d'édition silencieuse depuis le scope `workflow`.
 - Validation : `bash .ai/scripts/check-feature-docs.sh --strict workflow/feature-audit`; `bash .ai/scripts/audit-features.sh --help`; `rg "feature-audit|audit-features" ...`.
 - Next : attendre confirmation pour basculer en scope `core`.
+
+## 2026-07-03 — done
+- Intent : lever le blocker après traitement du HANDOFF core.
+- Fichiers/surfaces : `.docs/features/workflow/feature-audit.md`, `.docs/features/workflow/feature-audit.worklog.md`.
+- Décision : statut `done`; `feature-audit` reste procédure interne, routée depuis `aic-review` en lecture seule.
+- Validation : commit `2967507`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/feature-audit`; `bash .ai/scripts/check-features.sh --no-write`; `bash .ai/scripts/check-feature-freshness.sh --worktree --strict`.
+- Next : aucune action immédiate.

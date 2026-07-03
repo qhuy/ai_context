@@ -2,7 +2,7 @@
 id: feature-audit
 scope: workflow
 title: Procédure feature-audit — rétro-doc & re-sync des fiches feature
-status: active
+status: done
 depends_on:
   - core/feature-mesh
   - core/feature-index-cache
@@ -14,11 +14,10 @@ touches:
 touches_shared:
   - tests/smoke-test.sh
 progress:
-  phase: blocked
-  step: "validation aic-review effectuée : procédure feature-audit prête, mais le wrapper aic-review ne pointe pas encore vers elle"
-  blockers:
-    - "HANDOFF core/aic-review-application-skill : décider/ajouter le pointeur aic-review -> .ai/workflows/feature-audit.md"
-  resume_hint: "reprendre côté core/aic-review-application-skill ; ne pas éditer les wrappers aic-review depuis workflow sans confirmation cross-scope"
+  phase: done
+  step: "procédure feature-audit prête et routée depuis aic-review en lecture seule"
+  blockers: []
+  resume_hint: "aucune action immédiate ; rouvrir seulement si le mode refresh scripté ou le contrat rétro-doc/resync change"
   updated: 2026-07-03
 type: feature
 ---
@@ -115,6 +114,14 @@ Validation de reprise 2026-07-03 :
 - `rg "feature-audit|audit-features" ...` confirme la procédure runtime/template, mais aucun wrapper `aic-review` ne la référence explicitement.
 - Conclusion : la procédure est prête ; l'intégration stricte dans `aic-review` relève du scope `core/aic-review-application-skill`.
 
+Preuve de clôture 2026-07-03 :
+
+- HANDOFF `core/aic-review-application-skill` traité par le commit `2967507`.
+- Les wrappers `aic-review` runtime/template lisent désormais `.ai/workflows/feature-audit.md` en lecture seule pour router rétro-doc/orphelins/resync.
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/feature-audit` PASS.
+- `bash .ai/scripts/check-features.sh --no-write` PASS.
+- `bash .ai/scripts/check-feature-freshness.sh --worktree --strict` PASS.
+
 ## Cross-refs
 
 - **`core/feature-mesh`** : fournit le format frontmatter et les règles de validation que l'audit vérifie.
@@ -132,3 +139,4 @@ Validation de reprise 2026-07-03 :
 - **2026-05-03** — `tests/smoke-test.sh` passe en `touches_shared` pour signaler le lien de review sans bloquer la fraîcheur documentaire de cette feature à chaque ajout de smoke global.
 - **2026-05-03** — Retrait du skill Claude `/aic-feature-audit` et déplacement de la logique sous `.ai/workflows/feature-audit.md`, appelée via `/aic-review` ou par Codex en langage naturel.
 - **2026-07-03** — HANDOFF requis vers `core/aic-review-application-skill` : les wrappers `aic-review` ne référencent pas encore explicitement `.ai/workflows/feature-audit.md`.
+- **2026-07-03** — DONE. HANDOFF core traité ; `aic-review` route désormais vers `feature-audit` sans écrire depuis la review.
