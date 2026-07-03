@@ -34,6 +34,8 @@ mkdir -p .docs/frames
 mkdir -p .docs/pilots
 printf '# Frame de test à préserver\n' > "$frame"
 printf '# Pilot de test à préserver\n' > "$pilot"
+printf '# Guardrails source-only à préserver\n' > .ai/guardrails.md
+printf 'core/sample\n' > .ai/.session-docs.log
 
 if ! bash .ai/scripts/dogfood-update.sh --apply >/dev/null 2>&1; then
   echo "✗ dogfood-update.sh --apply a échoué"
@@ -46,6 +48,18 @@ if [[ ! -f "$frame" ]]; then
 fi
 if [[ ! -f "$pilot" ]]; then
   echo "✗ dogfood-update.sh --apply a supprimé le pilot daté $pilot"
+  exit 1
+fi
+if ! grep -q 'Guardrails source-only' .ai/guardrails.md; then
+  echo "✗ dogfood-update.sh --apply a écrasé .ai/guardrails.md"
+  exit 1
+fi
+if [[ ! -f .ai/.session-docs.log ]]; then
+  echo "✗ dogfood-update.sh --apply a supprimé .ai/.session-docs.log"
+  exit 1
+fi
+if [[ ! -f .ai/scripts/dogfood-runtime-lib.sh ]]; then
+  echo "✗ dogfood-update.sh --apply a supprimé le helper source-only dogfood-runtime-lib.sh"
   exit 1
 fi
 

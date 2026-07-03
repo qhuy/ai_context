@@ -442,3 +442,11 @@
 - Branchement dans `tests/smoke-test.sh` via `quality/smoke-test` pour rejouer la garde avant les assertions de scaffold.
 - Objectif A11 : détecter au plus tôt les templates capables de casser Copier quand Jinja interprète `{#` comme début de commentaire.
 - Validation : `test-template-jinja-raw-braces` PASS, shellcheck PASS, `check-feature-docs --strict core/dogfood-runtime-sync` PASS, `check-dogfood-drift` PASS, `tests/smoke-test.sh` PASS, `check-features --no-write` PASS, `check-feature-freshness --worktree --strict` PASS, `git diff --check` PASS.
+
+## 2026-07-03 — A12 : exclusions dogfood centralisées + drift multi-profil
+
+- Ajout de `.ai/scripts/dogfood-runtime-lib.sh` (source-only) : source unique des exclusions `rsync` et des ignores runtime pour `dogfood-update.sh` et `check-dogfood-drift.sh`.
+- `dogfood-update.sh --apply` exclut désormais les mêmes fichiers source-only/volatils que le drift, notamment `.ai/guardrails.md`, `.ai/.session-docs.log` et le helper dogfood lui-même.
+- `check-dogfood-drift.sh` garde la comparaison stricte du profil dogfood minimal, puis rend le profil conditionnel `fullstack-cursor` (`fullstack`, `strict`, `fullstack-dotnet-react`, agents Claude/Codex/Cursor/Gemini/Copilot) pour attraper les erreurs Jinja hors profil minimal.
+- Tests renforcés : `test-dogfood-drift-extra.sh` exige le rendu `fullstack-cursor`; `test-dogfood-update-preserves-frames.sh` prouve que les frames/pilots datés, `.ai/guardrails.md`, `.ai/.session-docs.log` et `dogfood-runtime-lib.sh` survivent à `--apply`.
+- Validation : `bash -n` PASS ; `shellcheck -S error` PASS ; `test-dogfood-drift-extra` PASS ; `test-dogfood-update-preserves-frames` PASS ; `check-feature-docs --strict core/dogfood-runtime-sync` PASS ; `check-dogfood-drift` PASS (`dogfood-minimal` + `fullstack-cursor`) ; `check-features --no-write` PASS avec warnings OKF historiques ; `check-feature-freshness --worktree --strict` PASS ; `git diff --check` PASS ; `tests/smoke-test.sh` PASS.

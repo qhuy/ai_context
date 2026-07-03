@@ -22,6 +22,7 @@ fi
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$script_dir/../.." && pwd)"
+source "$script_dir/dogfood-runtime-lib.sh"
 cd "$repo_root"
 
 if [[ "$mode" == "dry-run" ]]; then
@@ -42,13 +43,7 @@ out="$(mktemp -d /tmp/ai-context-dogfood-XXXXXX)"
 copy_log="$(mktemp /tmp/ai-context-dogfood-copy.log.XXXXXX)"
 trap 'rm -rf "$src_copy" "$out"; rm -f "$copy_log"' EXIT
 
-rsync -a --delete \
-  --exclude='.git' \
-  --exclude='.ai/.feature-index.json' \
-  --exclude='.ai/.progress-history.jsonl' \
-  --exclude='.ai/.session-edits.log' \
-  --exclude='.ai/.session-edits.flushed' \
-  "$repo_root/" "$src_copy/"
+rsync -a --delete "${DOGFOOD_SOURCE_COPY_RSYNC_EXCLUDES[@]}" "$repo_root/" "$src_copy/"
 
 if ! copier copy --defaults --trust \
   --data project_name=ai_context \
@@ -81,13 +76,7 @@ run_rsync() {
 }
 
 run_rsync "$out/.ai/" ".ai/" \
-  --exclude='.feature-index.json' \
-  --exclude='.progress-history.jsonl' \
-  --exclude='.session-edits.log' \
-  --exclude='.session-edits.flushed' \
-  --exclude='project' \
-  --exclude='scripts/dogfood-update.sh' \
-  --exclude='scripts/check-dogfood-drift.sh'
+  "${DOGFOOD_AI_RUNTIME_RSYNC_EXCLUDES[@]}"
 run_rsync "$out/.claude/settings.json" ".claude/settings.json"
 run_rsync "$out/.claude/skills/" ".claude/skills/"
 run_rsync "$out/.agents/" ".agents/"
@@ -101,21 +90,14 @@ run_rsync "$out/.docs/FEATURE_TEMPLATE.md" ".docs/FEATURE_TEMPLATE.md"
 # On les exclut de la synchro : sous --delete, un fichier exclu est protégé de
 # la suppression. Cohérent avec l'ignore de check-dogfood-drift.sh.
 run_rsync "$out/.docs/frames/" ".docs/frames/" \
-  --exclude='[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.md'
+  "${DOGFOOD_DATED_DOC_RSYNC_EXCLUDES[@]}"
 # Les registres pilot datés suivent la même règle : le template fournit
 # seulement 0000-template.md, les suivis projet sont conservés localement.
 run_rsync "$out/.docs/pilots/" ".docs/pilots/" \
-  --exclude='[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.md'
+  "${DOGFOOD_DATED_DOC_RSYNC_EXCLUDES[@]}"
 
-cat <<'NOTE'
-
-Source-only conservé volontairement :
-- .github/workflows/ai-context-check.yml (plus strict que le rendu downstream)
-- .github/workflows/template-smoke-test.yml
-- README.md / CHANGELOG.md / PROJECT_STATE.md / MIGRATION.md
-- tests/**
-- template/**
-NOTE
+echo
+dogfood_print_source_only_ignored
 
 if [[ "$mode" == "apply" ]]; then
   chmod +x .ai/scripts/*.sh

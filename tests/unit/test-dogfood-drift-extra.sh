@@ -71,4 +71,11 @@ if ! bash .ai/scripts/check-dogfood-drift.sh >/dev/null; then
   exit 1
 fi
 
+out="$(bash .ai/scripts/check-dogfood-drift.sh 2>&1)"
+if ! echo "$out" | grep -q "profile-render: fullstack-cursor"; then
+  echo "✗ check-dogfood-drift should render the conditional fullstack-cursor profile"
+  echo "$out"
+  exit 1
+fi
+
 echo "✅ test-dogfood-drift-extra PASS"
