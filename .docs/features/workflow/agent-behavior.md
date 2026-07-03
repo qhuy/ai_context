@@ -2,7 +2,7 @@
 id: agent-behavior
 scope: workflow
 title: Couche comportementale agent légère
-status: active
+status: done
 depends_on:
   - workflow/claude-skills
 touches:
@@ -16,11 +16,11 @@ touches_shared:
   - copier.yml
   - README.md
 progress:
-  phase: implement
-  step: "couche agent sortie du Pack A Codex"
+  phase: done
+  step: "couche comportementale agent maintenue on-demand, hors Pack A et hors reminder"
   blockers: []
-  resume_hint: "vérifier check-shims, measure-context-size et smoke-test après changement Pack A"
-  updated: 2026-06-01
+  resume_hint: "aucune action immédiate ; rouvrir seulement si .ai/agent/* entre dans Pack A ou si aic-diagnose change de contrat"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -96,6 +96,14 @@ La couche doit améliorer la proactivité, l'écoute, le diagnostic, la capacit�
 - `smoke-test.sh` / `copier copy` : le template rend `.ai/agent/*` et le skill `aic-diagnose` sans erreur Jinja.
 - `check-dogfood-drift.sh` : `.ai/agent/*`, `.ai/index.md` et `.claude/skills/aic-diagnose/*` restent alignés sur le rendu Copier minimal.
 
+Preuve de clôture 2026-07-03 :
+
+- `bash .ai/scripts/check-shims.sh` PASS.
+- `bash .ai/scripts/measure-context-size.sh` PASS (`reverse_deps=0`, total 964 chars sur le run de clôture).
+- `bash .ai/scripts/check-dogfood-drift.sh` PASS.
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/agent-behavior` PASS.
+- `bash tests/smoke-test.sh` PASS.
+
 ## Cross-refs
 
 - `workflow/claude-skills` : le nouveau skill suit la convention `SKILL.md.jinja` + `workflow.md.jinja`.
@@ -112,3 +120,4 @@ La couche doit améliorer la proactivité, l'écoute, le diagnostic, la capacit�
 - 2026-05-03 — `.ai/index.md` documente le lien entre posture agent et initiatives product sans injecter cette couche dans le reminder.
 - 2026-05-04 — `.ai/index.md` recadre le product loop comme traceability/governance compatible artefacts externes (`external_refs`), sans augmenter le reminder.
 - 2026-05-04 — Lean Codex : `.ai/agent/*` sort du Pack A. La couche reste disponible on-demand pour diagnostic/posture/style, mais le démarrage ne charge plus les fichiers agent.
+- 2026-07-03 — DONE. Couche agent confirmée on-demand ; aucune charge Pack A ni reminder.

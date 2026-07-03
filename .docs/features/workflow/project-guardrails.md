@@ -2,7 +2,7 @@
 id: project-guardrails
 scope: workflow
 title: Procédure project-guardrails — non-goals + glossaire métier pour orienter l'agent
-status: active
+status: done
 depends_on:
   - workflow/claude-skills
   - core/feature-mesh
@@ -17,11 +17,11 @@ touches_shared:
   - copier.yml
   - tests/smoke-test.sh
 progress:
-  phase: implement
-  step: "guardrails conservé hors Pack A"
+  phase: done
+  step: "guardrails non-goals/glossaire conservés on-demand, hors Pack A et validés"
   blockers: []
-  resume_hint: "vérifier que project-guardrails reste on-demand dans index, workflow et smoke-test"
-  updated: 2026-06-01
+  resume_hint: "aucune action immédiate ; rouvrir seulement si guardrails.md entre dans Pack A ou si le contrat non-goals/glossaire change"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -110,6 +110,15 @@ La procédure cible spécifiquement ce qui n'est *pas* déjà dans le README —
 - Ré-exécution sur un `.ai/guardrails.md` existant : mode `update` proposé, contenu conservé (idempotence).
 - Aucune référence à la procédure dans `pre-turn-reminder.sh` → coût tokens nul vérifiable.
 
+Preuve de clôture 2026-07-03 :
+
+- Relecture `.ai/index.md` : `.ai/guardrails.md` reste on-demand, pas Pack A.
+- `bash .ai/scripts/check-shims.sh` PASS.
+- `bash .ai/scripts/check-dogfood-drift.sh` PASS.
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/project-guardrails` PASS.
+- `bash .ai/scripts/check-features.sh --no-write` PASS.
+- `bash tests/smoke-test.sh` PASS.
+
 ## Cross-refs
 
 - **`workflow/claude-skills`** : catalogue parent. La procédure n'est plus exposée comme skill Claude.
@@ -130,3 +139,4 @@ La procédure cible spécifiquement ce qui n'est *pas* déjà dans le README —
 - **2026-05-04** — La doc d'update ajoute `repair-copier-metadata` et `template-diff`; le cadrage projet reste séparé des métadonnées Copier, mais README_AI_CONTEXT est synchronisé sur la nouvelle surface CLI.
 - **2026-05-04** — Lean Codex : la procédure ne demande plus d'ajouter `.ai/guardrails.md` dans Pack A. Elle vérifie au contraire que les guardrails restent on-demand.
 - **2026-05-04** — Le template feature renforcé sépare les guardrails projet des décisions de feature : les non-goals/glossaire restent dans `.ai/guardrails.md`, tandis que les décisions fonctionnelles et techniques vivent dans la fiche feature concernée.
+- **2026-07-03** — DONE. Guardrails maintenus on-demand ; aucune injection Pack A ni pre-turn.

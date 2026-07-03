@@ -2,7 +2,7 @@
 id: claude-skills
 scope: workflow
 title: Skills /aic* publics + procédures internes
-status: active
+status: done
 depends_on:
   - core/feature-mesh
   - workflow/auto-worklog
@@ -10,11 +10,11 @@ touches:
   - template/.claude/skills/**
   - template/.ai/workflows/**
 progress:
-  phase: implement
-  step: "skills Claude maintenus hors contexte Codex obligatoire"
+  phase: done
+  step: "skills Claude publics et workflows internes maintenus on-demand, hors contexte Codex obligatoire"
   blockers: []
-  resume_hint: "valider que les workflows internes restent accessibles sans être chargés par défaut"
-  updated: 2026-06-02
+  resume_hint: "aucune action immédiate ; rouvrir seulement si le catalogue public /aic* ou la frontière workflows internes change"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -102,6 +102,14 @@ Exposer côté Claude uniquement les intentions lisibles, et déplacer les étap
 - Le smoke-test du template rend `.claude/skills/**` et `.ai/workflows/**` sans erreur Jinja.
 - `context-ignore.md` documente l'exclusion de `.claude/skills/**` et `.ai/workflows/**` du Pack A.
 
+Preuve de clôture 2026-07-03 :
+
+- `bash .ai/scripts/check-shims.sh` PASS.
+- `bash .ai/scripts/check-dogfood-drift.sh` PASS.
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/claude-skills` PASS.
+- `bash .ai/scripts/check-features.sh --no-write` PASS.
+- `bash tests/smoke-test.sh` PASS.
+
 ## Cross-refs
 
 - **`workflow/conversational-skills`** : fiche pilote de la bascule v3. Définit le contrat d'UX « 0 skill par défaut » dont cette fiche est la réalisation côté catalogue Claude.
@@ -121,3 +129,4 @@ Exposer côté Claude uniquement les intentions lisibles, et déplacer les étap
 - **2026-05-06** — Ajout de `/aic-document-feature` comme skill public Claude. Il pointe vers `.ai/workflows/document-feature.md` et reste générique, avec `legacy` documenté comme scope custom non scaffoldé.
 - **2026-05-06** — Alignement sécurité : `/aic done` et `/aic force done` délèguent à `feature-done` au lieu de patcher directement `status: done`, afin de préserver quality gate, build/tests et docs strictes.
 - **2026-06-19** — Ajout de `/aic-onboard` au catalogue public (8ᵉ skill exposé). Peuple/maintient/migre l'overlay projet `.ai/project` comme registre de scopes ; pointe vers la procédure interne `.ai/workflows/project-overlay-sync.md`. Voir `workflow/project-overlay-onboarding` et `core/project-overlay-scope-registry`.
+- **2026-07-03** — DONE. Catalogue public et workflows internes validés ; ils restent disponibles on-demand et exclus du contexte obligatoire Codex.

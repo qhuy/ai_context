@@ -67,3 +67,10 @@
 ## 2026-06-26 17:25 — auto
 - Fichiers modifiés :
   - template/.ai/workflows/feature-update.md.jinja
+
+## 2026-07-03 — done
+- Intent : clôturer le catalogue `/aic*` après vérification que les workflows internes restent accessibles sans être chargés par défaut.
+- Fichiers/surfaces : `.docs/features/workflow/claude-skills.md`, `.docs/features/workflow/claude-skills.worklog.md`.
+- Décision : statut `done`; catalogue public et procédures internes restent on-demand, hors contexte Codex obligatoire.
+- Validation : `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/claude-skills`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
+- Next : aucune action immédiate.

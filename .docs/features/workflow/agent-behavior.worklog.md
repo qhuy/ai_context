@@ -43,3 +43,10 @@
 - Fichiers modifiés :
   - .ai/index.md
   - template/.ai/index.md.jinja
+
+## 2026-07-03 — done
+- Intent : clôturer la couche comportementale agent après vérification Pack A, coût contexte et dogfood.
+- Fichiers/surfaces : `.docs/features/workflow/agent-behavior.md`, `.docs/features/workflow/agent-behavior.worklog.md`.
+- Décision : statut `done`; `.ai/agent/*` et `aic-diagnose` restent on-demand.
+- Validation : `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/measure-context-size.sh`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/agent-behavior`; `bash tests/smoke-test.sh`.
+- Next : aucune action immédiate.

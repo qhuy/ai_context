@@ -59,3 +59,10 @@
 - Fichiers modifiés :
   - .ai/index.md
   - template/.ai/index.md.jinja
+
+## 2026-07-03 — done
+- Intent : clôturer `project-guardrails` après vérification que `.ai/guardrails.md` reste hors Pack A et on-demand.
+- Fichiers/surfaces : `.docs/features/workflow/project-guardrails.md`, `.docs/features/workflow/project-guardrails.worklog.md`.
+- Décision : statut `done`; réouverture seulement si guardrails.md devient contexte obligatoire ou si le contrat non-goals/glossaire change.
+- Validation : relecture `.ai/index.md`; `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/project-guardrails`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
+- Next : aucune action immédiate.

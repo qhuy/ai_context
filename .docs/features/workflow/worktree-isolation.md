@@ -2,7 +2,7 @@
 id: worktree-isolation
 scope: workflow
 title: Isolation worktree des tâches d'agent concurrentes
-status: active
+status: done
 depends_on:
   - workflow/auto-worklog
   - core/dogfood-runtime-sync
@@ -22,11 +22,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: implement
-  step: "règle worktree + cycle de vie (fetch/-b/teardown/ff-only) alignés canonique + dogfood"
+  phase: done
+  step: "règle worktree + cycle de vie alignés runtime/template et validés"
   blockers: []
-  resume_hint: "règle amendée après challenge (detached HEAD corrigé) ; vérifier check-dogfood-drift + check-shims ; teardown reste manuel"
-  updated: 2026-06-18
+  resume_hint: "aucune action immédiate ; rouvrir seulement si le cycle worktree, le teardown ou la règle de concurrence change"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -89,6 +89,14 @@ Une 2ᵉ tâche démarre alors qu'une session tourne sur le checkout principal :
 - `bash .ai/scripts/check-feature-docs.sh workflow/worktree-isolation` : fiche complète.
 - `bash .ai/scripts/check-features.sh` : intégrité du mesh.
 
+Preuve de clôture 2026-07-03 :
+
+- `bash .ai/scripts/check-dogfood-drift.sh` PASS.
+- `bash .ai/scripts/check-shims.sh` PASS.
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/worktree-isolation` PASS.
+- `bash .ai/scripts/check-features.sh --no-write` PASS.
+- `bash tests/smoke-test.sh` PASS.
+
 ## Risques
 
 - `ps aux | grep 'claude --output-format'` peut rater une session non-Claude : atténué par l'annotation « ou l'équivalent Codex » et par la règle « worktree par défaut » (non conditionnée au grep).
@@ -107,3 +115,4 @@ Une 2ᵉ tâche démarre alors qu'une session tourne sur le checkout principal :
 
 - 2026-06-18 : création suite au cas réel de double implémentation timezone en parallèle ; règle d'isolation worktree ajoutée à la règle workflow canonique et dogfoodée.
 - 2026-06-18 : challenge utilisateur sur la staleness. Vérifié que `git worktree add origin/<base>` produit une HEAD détachée → correction `-b <tache>` + `git fetch` préalable. Distinction posée : la staleness n'est pas intrinsèque au worktree (le checkout principal n'avance pas seul après un merge remote ; le worktree + sa branche survivent au ticket). Cycle de vie ajouté (refresh `merge --ff-only`, teardown `worktree remove` + branche), initialement classé hors périmètre.
+- 2026-07-03 : DONE. Règle runtime/template alignée ; teardown manuel conservé hors automatisation.

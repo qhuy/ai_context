@@ -16,3 +16,10 @@
 - Fichiers modifiés :
   - .ai/rules/workflow.md
   - template/.ai/rules/workflow.md.jinja
+
+## 2026-07-03 — done
+- Intent : clôturer la règle d'isolation worktree après validation dogfood et shims.
+- Fichiers/surfaces : `.docs/features/workflow/worktree-isolation.md`, `.docs/features/workflow/worktree-isolation.worklog.md`.
+- Décision : statut `done`; teardown manuel conservé, automatisation hors périmètre.
+- Validation : `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/worktree-isolation`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
+- Next : aucune action immédiate.
