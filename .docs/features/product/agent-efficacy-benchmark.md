@@ -44,10 +44,10 @@ doc:
     rollout: false
     observability: true
 progress:
-  phase: implement
-  step: "incr.14 : run 0005 N=3 publié"
+  phase: review
+  step: "lecture produit 2026-07-15 prête"
   blockers: []
-  resume_hint: "Run Codex N=3 0005 publié : global with 6/6 vs without 2/6, ai_debate 3/3 vs 0/3, ai_context 3/3 vs 2/3 + 1 timeout, task_invalid=0. Prochaine reprise : lire les runs 0002/0005 pour la décision produit du 2026-07-15 ; R1 workflow/pre-turn-reminder peut démarrer séparément."
+  resume_hint: "Readout produit prêt : tâches contextuelles 0002+0005 = with 12/12 vs without 4/12, Δ +66.7 pts, IC Newcombe [14.8 ; 86.2], tokens/run -39.6%. Prochaine reprise : arbitrer decision_state le 2026-07-15 (recommandation : commit avec réserves, pas scale public)."
   updated: 2026-07-03
 ---
 
@@ -200,6 +200,13 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   `ai_context` reste partiellement discriminant (`with` 3/3, `without` 2/3 +
   un timeout). Hygiène : `agent_infra_error=0`, `task_invalid=0`, donc aucune
   fuite hors mesh détectée par la garde 0005.
+- 2026-07-03 : incr.15 — lecture produit préparée pour la décision du 2026-07-15.
+  L'agrégat contextuel exploitable (`0002-feature-resume` + `0005-resume-hors-traces`)
+  donne `with` 12/12 vs `without` 4/12, Δ +66.7 points, IC approx. Newcombe
+  [14.8 ; 86.2]. Les tokens moyens passent de 88752 (`without`) à 53566 (`with`),
+  soit -39.6%. Recommandation du readout : `commit` avec réserves, pas `scale`
+  public tant qu'un repo réellement indépendant et/ou un N plus grand ne confirme
+  pas le signal.
 - 2026-06-30 : création via pilotage `aic-pilot` (pilot `2026-06-30-ze-solution`, item P1).
   Axe directeur « prouver & positionner » retenu. Métrique primaire tranchée = **taux de
   succès de tâche** ; coût tokens = leading indicator. Cadres posés : v1 maintainer-only,

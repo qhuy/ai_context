@@ -157,3 +157,12 @@
 - Hygiène : JSONL valide (12 lignes), `agent_infra_error=0`, `task_invalid=0`, `task_fail=3` tous sur `ai_debate/without`, `timeout=1` sur `ai_context/without`.
 - Décision : publier comme signal positif, mais conserver la réserve statistique (N=3, IC larges). Les runs 0002/0005 suffisent maintenant à préparer la lecture produit du 2026-07-15 ; R1 peut démarrer séparément en scope `workflow/pre-turn-reminder`.
 - Artefacts : synthèse `docs/benchmarks/reports/2026-07-03-codex-n3-0005-hors-traces-summary.md`, rapports par repo, TSV/JSONL et logs sous `docs/benchmarks/runs/2026-07-03-codex-n3-0005-hors-traces/`.
+
+## 2026-07-03 — lecture produit pour décision 2026-07-15
+
+- Intent : transformer les runs publiés en lecture décisionnelle, sans relancer de benchmark.
+- Agrégat retenu : tâches contextuelles `0002-feature-resume` + `0005-resume-hors-traces`, car elles mesurent directement la reprise depuis le mesh ; `0001` reste trivial et `0003`/`0004` sont des probes de design.
+- Résultat : `with` 12/12 (IC Wilson [75.8% ; 100.0%]) vs `without` 4/12 (IC Wilson [13.8% ; 60.9%]), Δ +66.7 points avec IC approx. Newcombe [14.8 ; 86.2].
+- Coût tokens agrégé : `with` 53566 tokens/run vs `without` 88752, soit -35186 (-39.6%) sur les runs mesurés.
+- Décision recommandée : passer la preuve en `commit` au 2026-07-15, avec réserves explicites ; ne pas passer en `scale` public avant un repo vraiment indépendant, un N plus grand, ou un second modèle.
+- Artefact : `docs/benchmarks/reports/2026-07-03-product-decision-readout.md`.
