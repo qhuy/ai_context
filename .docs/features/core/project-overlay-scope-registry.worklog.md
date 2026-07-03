@@ -92,3 +92,11 @@
 
 ## 2026-06-28 — couverture incidente (A1 : fix fallback build-feature-index)
 - Surface partagée touchée (`tests/unit/**` ou `build-feature-index.sh.jinja`) via glob `touches:`. Aucun changement de comportement propre à cette feature. (Taxe de sur-couverture `touches:` — cf. quality/touches-breadth-guard.)
+
+## 2026-07-03 — done
+- Intent : clôture documentaire de `core/project-overlay-scope-registry`.
+- Fichiers/surfaces : `.docs/features/core/project-overlay-scope-registry.md`, `.docs/features/core/project-overlay-scope-registry.worklog.md`.
+- Décision : statut `done` aligné avec `progress.phase: done`; ajout de `type: feature` pour le profil OKF ; resume hint actualisé car `workflow/project-overlay-onboarding` est déjà livré.
+- Doc Impact Decision : C — fiche feature et worklog mis à jour.
+- Validation prévue : `check-feature-docs --strict core/project-overlay-scope-registry`, test overlay ciblé, checks feature/freshness et gate ship avant commit.
+- Next : aucune action immédiate ; rouvrir seulement si le contrat `.ai/project/{scope}/index.md` change.

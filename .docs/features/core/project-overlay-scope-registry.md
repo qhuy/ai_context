@@ -2,7 +2,8 @@
 id: project-overlay-scope-registry
 scope: core
 title: Overlay projet comme registre de scopes
-status: active
+status: done
+type: feature
 depends_on:
   - core/project-overlay-stable
 touches:
@@ -31,10 +32,10 @@ doc:
     observability: false
 progress:
   phase: done
-  step: "contrat livré, tests verts, quality gate passée"
+  step: "contrat overlay de scopes livré, tests verts, quality gate passée"
   blockers: []
-  resume_hint: "DONE. Prochain : workflow/project-overlay-onboarding (skill aic-onboard). HANDOFF core → workflow à ouvrir."
-  updated: 2026-06-19
+  resume_hint: "aucune action immédiate ; workflow/project-overlay-onboarding est déjà livré, rouvrir seulement si le contrat .ai/project/{scope}/index.md change"
+  updated: 2026-07-03
 ---
 
 # Overlay projet comme registre de scopes
@@ -43,7 +44,7 @@ progress:
 
 ## Résumé
 
-Faire de l'overlay projet `.ai/project/**` un **registre de scopes** structuré et versionné : chaque scope du projet consommateur (app, couche, préoccupation — `bo-front`, `bo-back`, `sql`, `infra`…) possède son propre dossier `.ai/project/<scope>/` et un `index.md` privé jouant le rôle de routeur + manifeste. Cette feature livre **le contrat de forme**, pas l'outil qui le remplit.
+Faire de l'overlay projet `.ai/project/**` un **registre de scopes** structuré et versionné : chaque scope du projet consommateur (app, couche, préoccupation — `bo-front`, `bo-back`, `sql`, `infra`…) possède son propre dossier `.ai/project/{scope}/` et un `index.md` privé jouant le rôle de routeur + manifeste. Cette feature livre **le contrat de forme**, pas l'outil qui le remplit.
 
 ## Objectif
 
@@ -53,11 +54,11 @@ Donner un foyer durable, project-owned et divergence-safe aux spécificités de 
 
 ### Inclus
 
-- **Contrat de forme** de `.ai/project/<scope>/index.md` : front-matter (`scope`, `paths`, `meta`) + sections fixes (`conventions` durables, `derived` pointeurs volatils).
+- **Contrat de forme** de `.ai/project/{scope}/index.md` : front-matter (`scope`, `paths`, `meta`) + sections fixes (`conventions` durables, `derived` pointeurs volatils).
 - **`overlay_contract_version`** : stamp de version du contrat, vivant **une seule fois** dans le front-matter de `.ai/project/index.md` (racine) — versionne l'overlay entier, pas chaque scope ; socle d'idempotence des migrations futures.
-- **Extension du contrat de chargement** : `.ai/project/index.md` route `path → scope` ; `.ai/project/<scope>/index.md` route `path → feuille`. Descente **d'un niveau, bornée, par pointeur explicite** — pas une récursion aveugle.
-- **Tolérance des checks vérifiée** : `check-dogfood-drift.sh` (le motif `case` `project/*` matche déjà la profondeur) et `check-ai-references.sh` acceptent `.ai/project/<scope>/**` sans la signaler — couvert par test, **aucune modification de script nécessaire**.
-- **Doc d'exemple** : `.ai/templates/project-overlay/README.md` illustre la forme `<scope>/index.md`.
+- **Extension du contrat de chargement** : `.ai/project/index.md` route `path → scope` ; `.ai/project/{scope}/index.md` route `path → feuille`. Descente **d'un niveau, bornée, par pointeur explicite** — pas une récursion aveugle.
+- **Tolérance des checks vérifiée** : `check-dogfood-drift.sh` (le motif `case` `project/*` matche déjà la profondeur) et `check-ai-references.sh` acceptent `.ai/project/{scope}/**` sans la signaler — couvert par test, **aucune modification de script nécessaire**.
+- **Doc d'exemple** : `.ai/templates/project-overlay/README.md` illustre la forme `{scope}/index.md`.
 
 ### Hors périmètre
 
@@ -81,18 +82,18 @@ Donner un foyer durable, project-owned et divergence-safe aux spécificités de 
 ## Décisions
 
 - **Un dossier + un `index.md` privé par scope** (pattern fractal du système), plutôt qu'un fichier plat par scope : structure machine-maintenue, évolution zéro-migration. Le lean punit le *load*, pas l'*existence* sur disque.
-- **`.ai/project/<scope>/` = pendant project-owned de `.ai/rules/<scope>.md`** (upstream-managed, intouchable sans drift).
+- **`.ai/project/{scope}/` = pendant project-owned de `.ai/rules/{scope}.md`** (upstream-managed, intouchable sans drift).
 - Le `index.md` de scope doit être **routeur + manifeste**, jamais une redirection vide → justifie un contrat de forme (discipline `feature.schema.json`).
 - **Nouvelle feature** plutôt qu'extension de `core/project-overlay-stable` : celle-ci a livré « overlay stable et optionnel » et exclut explicitement migration et obligation d'index ; le registre structuré est un livrable distinct, en dépendance.
 
 ## Comportement attendu
 
-Quand un overlay conforme existe, un agent qui touche un path donné est routé : `.ai/index.md` → `.ai/project/index.md` (résout le scope) → `.ai/project/<scope>/index.md` (résout les feuilles utiles : conventions durables, pointeurs dérivés, méta) → feuilles chargées à la demande. En l'absence d'overlay ou face à une forme ancienne, le comportement actuel est préservé sans erreur.
+Quand un overlay conforme existe, un agent qui touche un path donné est routé : `.ai/index.md` → `.ai/project/index.md` (résout le scope) → `.ai/project/{scope}/index.md` (résout les feuilles utiles : conventions durables, pointeurs dérivés, méta) → feuilles chargées à la demande. En l'absence d'overlay ou face à une forme ancienne, le comportement actuel est préservé sans erreur.
 
 ## Contrats
 
 - **Entrée** : `.ai/project/index.md` (route `path → scope`), inchangée comme point d'entrée unique.
-- **Nouveau** : `.ai/project/<scope>/index.md` — front-matter `scope`, `paths`, `meta` ; sections `conventions`, `derived`. Pas de `overlay_contract_version` ici (global, racine).
+- **Nouveau** : `.ai/project/{scope}/index.md` — front-matter `scope`, `paths`, `meta` ; sections `conventions`, `derived`. Pas de `overlay_contract_version` ici (global, racine).
 - **Stamp global** : `overlay_contract_version` dans le front-matter de `.ai/project/index.md`.
 - **Schéma** : contrat **documentaire** (prose dans `.ai/templates/project-overlay/README.md`), décision tranchée en `aic-dev-plan`. Pas de JSON Schema exécutable v1 ; il s'ajoutera si le skill `aic-onboard` doit valider sa sortie.
 - **Ownership** inchangé : tout `.ai/project/**` est projet ; `.ai/index.md`, `.ai/rules/**`, `.ai/schema/**`, `.ai/templates/**` restent template.
@@ -100,8 +101,8 @@ Quand un overlay conforme existe, un agent qui touche un path donné est routé 
 
 ## Validation
 
-- `check-dogfood-drift.sh` reste vert avec une arborescence `.ai/project/<scope>/**` présente.
-- `check-ai-references.sh` accepte les liens vers `.ai/project/<scope>/**`.
+- `check-dogfood-drift.sh` reste vert avec une arborescence `.ai/project/{scope}/**` présente.
+- `check-ai-references.sh` accepte les liens vers `.ai/project/{scope}/**`.
 - Un overlay conforme valide contre `.ai/schema/overlay-scope.schema.json` (si schéma exécutable retenu).
 - Un repo sans overlay et un overlay plat existant : aucun échec de chargement, aucun bruit de check.
 - Quality gate + smoke-test verts.
@@ -124,3 +125,4 @@ Quand un overlay conforme existe, un agent qui touche un path donné est routé 
 
 - 2026-06-19 — Feature créée à partir du cadrage `aic-frame` ([frame](../../frames/2026-06-19-project-overlay-scope-registry.md)), après 4 tours de design convergés et HANDOFF `workflow → core` confirmé par l'utilisateur. Découpage retenu : contrat core (cette fiche) → skill workflow → rattachement doc produit.
 - 2026-06-19 — Implémentation du contrat : `aic-dev-plan` lancé, arbitrages tranchés (schéma documentaire, matching prose agent-driven). Contrat de forme livré dans `.ai/templates/project-overlay/README.md(.jinja)`, contrat de chargement étendu dans `.ai/index.md(.jinja)` et `.ai/OWNERSHIP.md(.jinja)`, `check-dogfood-drift.sh` adapté pour `project/*/*` et `project/*/*/*`. Checks verts : dogfood-drift, ai-references, check-shims, check-features, smoke-test.
+- 2026-07-03 — Clôture de statut : `status: done` aligné avec `progress.phase: done`, ajout de `type: feature` (profil OKF) et resume hint actualisé après livraison de `workflow/project-overlay-onboarding`. Doc Impact Decision : C — fiche feature et worklog mis à jour.
