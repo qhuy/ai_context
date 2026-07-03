@@ -45,10 +45,10 @@ doc:
     observability: true
 progress:
   phase: implement
-  step: "incr.11 : IC succès + probe handoff ai_context"
+  step: "incr.12 : 0004 publié, signal nul"
   blockers: []
-  resume_hint: "Runner enrichi avec IC Wilson/Newcombe ; probe 0003 ai_context : with 3/3 vs without 2/3, IC large [-50.0 ; 79.2]. Prochaine reprise : concevoir une tâche ai_context plus discriminante et moins suggérée par le prompt ; HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
-  updated: 2026-07-02
+  resume_hint: "0004-next-handoff publié : with 2/3 vs without 2/3, Δ 0 ; probe techniquement valide mais non discriminant, ne pas rerun tel quel. Prochaine reprise : concevoir une tâche ai_context dont la vérité terrain n'est pas reconstructible hors mesh. HANDOFF quality/smoke-test restant = brancher run-bench.sh --self-check dans le smoke"
+  updated: 2026-07-03
 ---
 
 # Benchmark d'efficacité agent — preuve de valeur ai_context
@@ -281,3 +281,15 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   Δ +33.3 points avec IC très large [-50.0 ; 79.2]. Lecture : tâche utile mais
   trop suggérée par le prompt pour servir seule de renforcement statistique ;
   concevoir ensuite une tâche ai_context moins devinable sans mesh.
+- 2026-07-02 : **incrément 12 — tâche next-handoff moins devinable**. Ajout de
+  `0004-next-handoff` : le prompt demande la prochaine passation cross-scope
+  encore ouverte pour l'initiative benchmark, mais ne donne ni la cible
+  `quality/smoke-test`, ni l'action `brancher run-bench.sh --self-check dans le
+  smoke`. Le grader dérive la vérité terrain depuis `progress.resume_hint` de
+  `product/agent-efficacy-benchmark` dans le repo source et exige un JSON exact.
+  Validation ciblée : syntaxe, cas positif/négatif du grader, `run-bench.sh
+  --self-check`, et run d'intégration factice `with` PASS / `without` FAIL.
+  Run Codex `N=3` stampé `2026-07-02-codex-n3-ai-context-next-handoff` :
+  `with` 2/3 vs `without` 2/3, Δ 0 point, IC très large [-73.1 ; 73.1].
+  Lecture : la tâche est techniquement valide mais non discriminante, car la
+  condition `without` reconstruit aussi la réponse ; ne pas rerun tel quel.

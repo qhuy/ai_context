@@ -63,9 +63,10 @@ au `BENCH_STAMP`, pour éviter qu'une configuration invalide déclenche une supp
 - **Suite de tâches** : `tests/bench/tasks/<id>/` = `task.md` (prompt + critère
   humain-lisible) + `task.class` (classe d'analyse tokens, fallback = `<id>`) +
   `check.sh` (grader objectif, exécuté dans le repo de travail après l'agent).
-  La suite v1 contient une fumée de format (`0001`, classe `trivial`) et deux
-  tâches discriminantes ai_context (`0002` reprise feature mesh, classe
-  `contextual` ; `0003` handoff cross-scope, classe `handoff`).
+  La suite v1 contient une fumée de format (`0001`, classe `trivial`), une tâche
+  de reprise feature mesh (`0002`, classe `contextual`) et deux tâches handoff
+  (`0003`, décision explicite ; `0004`, prochain handoff sans cible exposée dans
+  le prompt).
 - **Runner** : `tests/bench/run-bench.sh` — orchestre repos × tâches × conditions
   × N, invoque l'agent via le **seam `AGENT_CMD`**, applique le grader, agrège.
 - **Rapport** : `docs/benchmarks/reports/<date>-<repo-slug>.md` — succès par condition,
@@ -143,8 +144,11 @@ relancer et retrouver le même Δ (aux intervalles près).
 - ✅ Run agent réel `N=3` publié : `with` 12/12 vs `without` 9/12 ; signal fort
   sur `ai_debate/0002` (`with` 3/3, `without` 0/3), mais `ai_context/0002`
   reste trop facile sans contexte (`without` 3/3).
-- ⏳ À venir : renforcer encore la suite pour `ai_context`, puis décider si
-  `0003` devient portable pour repos externes ou reste une tâche repo-spécifique.
+- ✅ Probe `0004-next-handoff` exécuté sur `ai_context` : `with` 2/3 vs `without`
+  2/3, donc non discriminant malgré un coût tokens plus bas avec contexte.
+- ⏳ À venir : concevoir une tâche `ai_context` dont la vérité terrain n'est pas
+  reconstructible hors mesh, puis décider si les tâches handoff deviennent
+  portables pour repos externes ou restent repo-spécifiques.
 - Le runner tourne en `--self-check` (valide le plumbing sans invoquer d'agent).
   Les **runs agents réels** restent une action mainteneur (clés + coût +
   non-déterminisme).

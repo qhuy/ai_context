@@ -118,3 +118,19 @@
 - Validation : `bash -n tests/bench/run-bench.sh` ; `bash tests/bench/run-bench.sh --self-check` ; run d'intégration local agent factice vérifiant le rendu IC ; `check-feature-docs --strict product/agent-efficacy-benchmark` ; `check-feature-freshness --worktree --strict` ; `check-features --no-write` ; `check-feature-docs` ; `check-feature-coverage` ; `check-touches-breadth` ; `measure-context-size` ; `git diff --check` hors logs bruts. Logs bruts conservés tels que produits par l'agent, avec quelques espaces finaux. Warnings inchangés : 2 fiches historiques sans `type`, 6 tests unitaires orphelins, advisory touches breadth.
 - Décision : `0003` renforce légèrement le côté `ai_context`, mais le prompt suggère trop la décision attendue pour en faire une preuve forte ; prochaine tâche à concevoir avec moins d'indices dans le prompt et un grader objectif.
 - Artefacts : synthèse `docs/benchmarks/reports/2026-07-02-codex-n3-ai-context-handoff-ci-summary.md`, rapports/TSV/JSONL et logs sous `docs/benchmarks/runs/2026-07-02-codex-n3-ai-context-handoff-ci/`.
+
+## 2026-07-02 — incrément 12 : tâche next-handoff moins devinable
+
+- Changement suite : ajout de `tests/bench/tasks/0004-next-handoff/` (`task.md`, `task.class`, `check.sh`) pour demander le prochain handoff ouvert sans révéler la cible ni l'action dans le prompt.
+- Contrat grader : vérité terrain dérivée dynamiquement depuis `progress.resume_hint` de `.docs/features/product/agent-efficacy-benchmark.md` dans le repo source ; JSON exact attendu avec `source`, `target`, `next`, `evidence`.
+- Validation ciblée : `bash -n` runner + grader ; test positif du grader sur `quality/smoke-test` / `brancher run-bench.sh --self-check dans le smoke` ; test négatif sur cible erronée ; `bash tests/bench/run-bench.sh --self-check` ; run d'intégration factice `0004` avec `with` PASS et `without` FAIL.
+- Next : run Codex `N=3` ciblé sur `ai_context` pour mesurer si `0004` discrimine mieux que `0003`.
+
+## 2026-07-03 — run N=3 0004 next-handoff : signal nul
+
+- Run : Codex `N=3` sur `ai_context` seul, tâche `0004-next-handoff`, `BENCH_SEED=42`, `BENCH_TIMEOUT_SECONDS=300`, stamp `2026-07-02-codex-n3-ai-context-next-handoff`.
+- Résultat succès : `with` 2/3 (IC Wilson [20.8% ; 93.9%]) vs `without` 2/3 (IC Wilson [20.8% ; 93.9%]), Δ 0.0 point avec IC approx. Newcombe [-73.1 ; 73.1].
+- Coût tokens `handoff` sur runs mesurés : `with` 49432 tokens/run vs `without` 131940, soit -82508 (-62.5%). Lecture secondaire car le signal succès est nul et deux cellules sont en timeout.
+- Hygiène : JSONL valide (6 lignes), `agent_infra_error=0`, `task_fail=0`, un timeout par condition.
+- Décision : publier comme résultat négatif ; ne pas rerun `0004` tel quel. La prochaine tâche `ai_context` doit rendre la vérité terrain non reconstructible depuis les traces non-mesh.
+- Artefacts : synthèse `docs/benchmarks/reports/2026-07-02-codex-n3-ai-context-next-handoff-summary.md`, rapport repo/TSV/JSONL et logs sous `docs/benchmarks/runs/2026-07-02-codex-n3-ai-context-next-handoff/`.

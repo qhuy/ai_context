@@ -1,0 +1,5 @@
+Fait : [BENCH_RESULT/next-handoff.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.7UQWoR/ai_context-1982850439-0004-next-handoff-without-3/work/BENCH_RESULT/next-handoff.json) contient les quatre clés exactes.
+
+Vérifications passées :
+- JSON valide via `jq`
+- `check.sh` de `0004-next-handoff` exécuté avec succès (`ok`)

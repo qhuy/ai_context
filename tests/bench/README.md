@@ -112,3 +112,8 @@ possible, avec critères écrits + échantillon vérifié à la main (cf. PROTOC
   feature mesh et écrit une reprise JSON objective (`contextual`).
 - `0003-handoff-decision` (`handoff`) : vérifie la décision de handoff cross-scope
   pour le branchement du benchmark dans le smoke-test.
+- `0004-next-handoff` (`handoff`) : retrouve la prochaine passation cross-scope
+  encore ouverte dans le feature mesh, sans exposer la cible ni l'action dans le
+  prompt. Probe publié comme non discriminant sur `ai_context` (`with` 2/3 vs
+  `without` 2/3), utile pour diagnostiquer la difficulté de construction des
+  tâches repo-spécifiques.
