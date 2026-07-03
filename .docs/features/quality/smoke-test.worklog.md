@@ -245,3 +245,10 @@
 - Le self-check benchmark passe de `[0s/28]` à `[0t/28]`; le denominator `/28` reste inchangé car ces pré-étapes sont lettrées.
 - HANDOFF reçu de `core/dogfood-runtime-sync` (A11) : empêcher une expansion Bash `${#...}` non protégée dans `template/**/*.jinja`, qui peut casser le rendu Copier via l'interprétation Jinja de `{#`.
 - Validation : `tests/smoke-test.sh` PASS complet ; les nouvelles étapes `[0s/28]` et `[0t/28]` passent avant le scaffold principal.
+
+## 2026-07-03 — étape [0h2/28] : check-shims agents dynamiques
+
+- Nouvelle étape smoke `[0h2/28]` : `bash tests/unit/test-check-shims-dynamic-agents.sh`, après le test agent config.
+- HANDOFF reçu de `core/agents-md-shim-canonical` : couvrir le contrat `.copier-answers.yml` → shims requis (`CLAUDE.md`, `GEMINI.md`, Copilot) et le cas négatif shim activé manquant.
+- Denominator `/28` préservé (pré-étape lettrée).
+- Validation : test ciblé PASS et `bash tests/smoke-test.sh` PASS complet.

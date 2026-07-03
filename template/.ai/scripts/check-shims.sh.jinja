@@ -17,20 +17,128 @@ cd "$(dirname "$0")/../.."
 MAX_LINES=15
 MAX_PACK_A_WORDS=520
 INDEX=".ai/index.md"
+ANSWERS_FILE=".copier-answers.yml"
 
-# Shims à vérifier (dérivés des agents activés au scaffold)
-SHIMS=(
-  "AGENTS.md"
-{%- if 'claude' in agents %}
-  "CLAUDE.md"
-{%- endif %}
-{%- if 'gemini' in agents %}
-  "GEMINI.md"
-{%- endif %}
-{%- if 'copilot' in agents %}
-  ".github/copilot-instructions.md"
-{%- endif %}
-)
+AGENTS_SELECTED=()
+SHIMS=()
+
+array_count() {
+  local count=0
+  local _item
+  for _item in "$@"; do
+    count=$((count + 1))
+  done
+  printf '%s' "$count"
+}
+
+add_agent() {
+  local candidate="$1"
+  local existing
+
+  candidate="${candidate//\"/}"
+  candidate="${candidate//\'/}"
+  candidate="$(printf '%s' "$candidate" | tr -d '[:space:]')"
+
+  case "$candidate" in
+    claude|codex|cursor|gemini|copilot) ;;
+    *) return 0 ;;
+  esac
+
+  for existing in ${AGENTS_SELECTED[@]+"${AGENTS_SELECTED[@]}"}; do
+    [[ "$existing" == "$candidate" ]] && return 0
+  done
+  AGENTS_SELECTED+=("$candidate")
+}
+
+add_shim() {
+  local candidate="$1"
+  local existing
+
+  for existing in ${SHIMS[@]+"${SHIMS[@]}"}; do
+    [[ "$existing" == "$candidate" ]] && return 0
+  done
+  SHIMS+=("$candidate")
+}
+
+answers_agents() {
+  local file="$1"
+  local yq_out
+
+  [[ -f "$file" ]] || return 0
+
+  if command -v yq >/dev/null 2>&1; then
+    yq_out="$(yq eval -r '.agents[]? // empty' "$file" 2>/dev/null || true)"
+    if [[ -n "$yq_out" ]]; then
+      printf '%s\n' "$yq_out"
+      return 0
+    fi
+  fi
+
+  awk '
+    /^[[:space:]]*agents:[[:space:]]*\[/ {
+      line=$0
+      sub(/^[^[]*\[/, "", line)
+      sub(/\].*$/, "", line)
+      gsub(/[" \t]/, "", line)
+      n=split(line, values, ",")
+      for (i = 1; i <= n; i++) if (values[i] != "") print values[i]
+      next
+    }
+    /^[[:space:]]*agents:[[:space:]]*$/ { in_agents=1; next }
+    in_agents && /^[^[:space:]-]/ { in_agents=0 }
+    in_agents && /^[[:space:]]*-/ {
+      line=$0
+      sub(/^[[:space:]]*-[[:space:]]*/, "", line)
+      sub(/[[:space:]]+#.*$/, "", line)
+      gsub(/[" \t]/, "", line)
+      if (line != "") print line
+    }
+  ' "$file"
+}
+
+load_agents() {
+  local agent
+
+  if [[ -f "$ANSWERS_FILE" ]]; then
+    while IFS= read -r agent; do
+      add_agent "$agent"
+    done < <(answers_agents "$ANSWERS_FILE")
+  fi
+
+  # Le repo source dogfood n'a pas toujours de .copier-answers.yml. Dans ce cas,
+  # conserver le comportement historique en validant les shims présents.
+  if [[ "$(array_count ${AGENTS_SELECTED[@]+"${AGENTS_SELECTED[@]}"})" -eq 0 ]]; then
+    [[ -f "CLAUDE.md" ]] && add_agent "claude"
+    [[ -f "GEMINI.md" ]] && add_agent "gemini"
+    [[ -f ".github/copilot-instructions.md" ]] && add_agent "copilot"
+    [[ -d ".cursor" ]] && add_agent "cursor"
+    [[ -d ".agents" ]] && add_agent "codex"
+  fi
+
+  return 0
+}
+
+shim_for_agent() {
+  case "$1" in
+    claude) printf 'CLAUDE.md' ;;
+    gemini) printf 'GEMINI.md' ;;
+    copilot) printf '.github/copilot-instructions.md' ;;
+    *) return 1 ;;
+  esac
+}
+
+build_shims() {
+  local agent
+  local shim
+
+  add_shim "AGENTS.md"
+  load_agents
+  for agent in ${AGENTS_SELECTED[@]+"${AGENTS_SELECTED[@]}"}; do
+    if shim="$(shim_for_agent "$agent")"; then
+      add_shim "$shim"
+    fi
+  done
+}
 
 CANONICAL=(
   ".ai/index.md"
@@ -42,6 +150,8 @@ CANONICAL=(
 {%- endfor %}
 )
 
+build_shims
+
 fail=0
 ok() { printf "  \033[32m✓\033[0m %s\n" "$1"; }
 ko() { printf "  \033[31m✗\033[0m %s\n" "$1"; fail=1; }
@@ -51,8 +161,8 @@ echo "═══ check-shims ═══"
 echo "[1/4] Index $INDEX"
 if [[ -f "$INDEX" ]]; then ok "$INDEX présent"; else ko "$INDEX manquant"; fi
 
-echo "[2/4] Shims ({% raw %}${#SHIMS[@]}{% endraw %} agents)"
-for shim in "${SHIMS[@]}"; do
+echo "[2/4] Shims ($(array_count ${SHIMS[@]+"${SHIMS[@]}"}) fichiers)"
+for shim in ${SHIMS[@]+"${SHIMS[@]}"}; do
   if [[ ! -f "$shim" ]]; then
     ko "$shim manquant"
     continue

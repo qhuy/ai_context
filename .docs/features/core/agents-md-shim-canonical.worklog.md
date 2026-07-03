@@ -21,3 +21,10 @@
 - `check-shims.sh` (surface possédée ici) : nouvelle assertion exigeant les hard rules inline dans `AGENTS.md` — échoue si le shim est réduit à un simple pointeur. Verrouille la précondition du chemin de collapse (AGENTS.md seul suffit aux règles).
 - Runtime + `.jinja` (parité). Test dédié `tests/unit/test-agents-md-self-sufficient.sh`. check-shims réel PASS (nouvelle ligne « AGENTS.md auto-suffisant »), dogfood-drift aligné.
 - Initiative portée par `core/agents-md-native-collapse-path` (P2, pilot `2026-06-30-ze-solution`) ; recoupe le follow-up « check-shims dynamique par agents activés » listé ci-dessus (non traité ici).
+
+## 2026-07-03 — check-shims dynamique par agents activés
+- Intent : fermer le follow-up C1 restant — `check-shims.sh` ne doit plus vérifier seulement `AGENTS.md` + `CLAUDE.md` en dur.
+- Fichiers/surfaces : `.ai/scripts/check-shims.sh`, `template/.ai/scripts/check-shims.sh.jinja`, `tests/unit/test-check-shims-dynamic-agents.sh`.
+- Décision : lire `agents` depuis `.copier-answers.yml` quand il existe ; fallback dogfood/anciens scaffolds sur les shims présents ; `codex` et `cursor` n'ajoutent pas de root shim dédié.
+- Validation : `bash -n` runtime/template, `shellcheck -S error`, `bash tests/unit/test-check-shims-dynamic-agents.sh`, `bash .ai/scripts/check-shims.sh`, rendu Copier ciblé `claude+gemini+copilot`, `bash .ai/scripts/check-dogfood-drift.sh`, `bash .ai/scripts/check-features.sh --no-write`, freshness worktree strict et `bash tests/smoke-test.sh` PASS.
+- Next : confirmer séparément la lecture native d'`AGENTS.md` par Claude (#34235) pour décider si `CLAUDE.md` devient optionnel.
