@@ -2,7 +2,7 @@
 id: doc-freshness
 scope: quality
 title: Fraicheur documentaire des features
-status: active
+status: done
 depends_on: []
 touches:
   - .ai/scripts/check-feature-freshness.sh
@@ -17,11 +17,11 @@ touches:
   - template/.ai/quality/QUALITY_GATE.md.jinja
   - template/.github/workflows/ai-context-check.yml.jinja
 progress:
-  phase: implement
-  step: "quality gate alignée sur Pack A lean"
+  phase: done
+  step: "freshness livré : staged/worktree strict, coverer primaire, warn historique et gate Pack A lean validés"
   blockers: []
-  resume_hint: "vérifier check-feature-freshness --warn et staged strict avant commit"
-  updated: 2026-06-26
+  resume_hint: "aucune action immédiate ; traiter les warnings historiques au cas par cas quand les fiches concernées sont rouvertes"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -88,6 +88,7 @@ Garantir qu'une evolution de comportement couverte par une feature ne puisse pas
 - `tests/unit/test-freshness-primary-coverer.sh` verrouille le contrat (a') : exact-primaire documenté passe, 0 doc bloque, tie 1/N bloque, tie N/N passe, dispatcher reclassé → owner seul, `--worktree` idem `--staged` sans écrire l'index.
 - Au commit local : `check-feature-freshness.sh --staged --strict` via le hook `commit-msg` (un fichier couvert sans doc/worklog stage bloque).
 - En CI : `check-feature-freshness.sh --warn` puis `--strict` selon le contexte ; `check-feature-docs.sh` en warning sur les projets legacy.
+- Clôture 2026-07-03 : `test-check-feature-freshness`, `test-freshness-primary-coverer`, `test-review-delta-shared`, `test-stop-turn-doc-gate` et `test-check-commit-features-relevance` PASS ; `check-feature-freshness.sh --warn` OK avec un warning historique non bloquant sur `workflow/claude-skills`.
 
 ## Cross-refs
 
@@ -101,3 +102,4 @@ Aucune dependance de feature declaree.
 - 2026-04-29 : creation du filet de securite doc/code freshness pour completer `check-features.sh`, qui valide la structure mais pas la maintenance semantique.
 - 2026-05-04 : quality gate reformulée pour ne plus impliquer le chargement initial de `QUALITY_GATE.md`; elle reste bloquante avant DONE, en cohérence avec Pack A lean.
 - 2026-05-04 : ajout de `check-feature-docs.sh` pour compléter le filet sémantique côté fiche : sections noyau, modules conditionnels via `doc.requires.*`, warnings par défaut et strict avant DONE.
+- 2026-07-03 : DONE documentaire. Les contrats staged/worktree/read-only/provider VCS sont livrés ; les warnings historiques restent volontairement en `--warn` et ne bloquent pas la clôture.

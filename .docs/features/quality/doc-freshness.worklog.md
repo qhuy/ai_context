@@ -101,3 +101,10 @@
 ## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
 - Surface partagée touchée : `check-feature-freshness.sh` et `check-commit-features.sh` lisent les deltas via provider VCS. Politique freshness inchangée ; en TFVC, `--staged` signifie pending changes.
 - Validation portée par `core/vcs-provider-abstraction`.
+
+## 2026-07-03 — done
+- Intent : clôturer `quality/doc-freshness` après validation des modes staged/worktree, du contrat coverer primaire et de la politique `--warn`.
+- Fichiers/surfaces : `.docs/features/quality/doc-freshness.md`, `.docs/features/quality/doc-freshness.worklog.md`.
+- Décision : statut `done` ; le warning historique `workflow/claude-skills` observé en `--warn` reste non bloquant, à traiter seulement si la fiche concernée est rouverte.
+- Validation : `bash tests/unit/test-check-feature-freshness.sh` PASS ; `bash tests/unit/test-freshness-primary-coverer.sh` PASS ; `bash tests/unit/test-review-delta-shared.sh` PASS ; `bash tests/unit/test-stop-turn-doc-gate.sh` PASS ; `bash tests/unit/test-check-commit-features-relevance.sh` PASS ; `bash .ai/scripts/check-feature-freshness.sh --warn` OK.
+- Next : aucune action immédiate.
