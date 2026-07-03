@@ -196,3 +196,7 @@
 
 ## 2026-06-29 — couverture incidente (contrat a' dans check-feature-freshness.sh)
 - `check-feature-freshness.sh` (+ `.jinja`) modifié par le contrat (a') porté par `quality/doc-freshness` (obligation par coverer primaire au lieu de tous). **Aucun changement du contrat read-only propre** : le gate reste read-only (index temporaire `mktemp`, pas d'écriture de `.ai/.feature-index.json` ; `--worktree` vérifié sans écrire). Couverture exacte partagée avec doc-freshness (tie).
+
+## 2026-07-03 — couverture incidente (A6 ci-guard)
+- `.github/workflows/ai-context-check.yml` (+ template jinja) touché pour élargir `shellcheck -S error` aux hooks exécutables et aux tests shell. Aucun changement du contrat read-only propre : les commandes de diagnostic/check restent non mutantes, et `check-features.sh --no-write` reste inchangé.
+- Validation portée par `quality/ci-guard` : shellcheck élargi PASS, YAML OK, `check-dogfood-drift` PASS, `tests/smoke-test.sh` PASS.

@@ -48,3 +48,10 @@
 - Ajout d'une vérification sha256 épinglée (checksums officiels mikefarah/yq v4.44.3) entre download et chmod : Linux via `sha256sum -c`, macOS via `shasum -a 256 -c` (hash par arch arm64/amd64). Un asset corrompu ou substitué fait échouer le job.
 - Hashes vérifiés contre les vrais binaires : linux_amd64, darwin_arm64, darwin_amd64 → match exact. Template rendu OK (la CI générée hérite du checksum).
 - NB : à mettre à jour si `YQ_VERSION` change (les 3 hashes sont liés à v4.44.3).
+
+## 2026-07-03 — A6 shellcheck hooks/tests
+- Intent : fermer l'item A6 du frame de remédiation 2026-06-28 en lintant le code d'enforcement réel au-delà de `.ai/scripts/*.sh`.
+- Fichiers/surfaces : `.github/workflows/ai-context-check.yml`, `.github/workflows/template-smoke-test.yml`, `template/.github/workflows/ai-context-check.yml.jinja`.
+- Décision : utiliser `find` portable Linux/macOS pour collecter les hooks exécutables et `tests/**/*.sh`, au lieu de `globstar` qui n'est pas disponible sur le bash macOS 3.2.
+- Validation : `shellcheck -S error` sur 83 fichiers collectés PASS ; YAML source OK ; `check-feature-docs --strict quality/ci-guard` PASS ; `check-features --no-write` PASS avec warnings OKF préexistants ; `check-feature-freshness --worktree --strict` OK ; `git diff --check` OK ; `check-dogfood-drift` PASS ; `tests/smoke-test.sh` PASS.
+- Next : commit dédié A6, puis reprendre le frame de remédiation.

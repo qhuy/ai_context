@@ -86,9 +86,21 @@ jobs:
             yq --version
           fi
 
-      - name: shellcheck runtime scripts
+      - name: shellcheck scripts, hooks et tests
         if: runner.os != 'Windows'
-        run: shellcheck -S error .ai/scripts/*.sh
+        run: |
+          files=(.ai/scripts/*.sh)
+          if [[ -d .githooks ]]; then
+            while IFS= read -r h; do
+              [[ -x "$h" ]] && files+=("$h")
+            done < <(find .githooks -maxdepth 1 -type f -print)
+          fi
+          if [[ -d tests ]]; then
+            while IFS= read -r t; do
+              files+=("$t")
+            done < <(find tests -type f -name "*.sh" -print)
+          fi
+          shellcheck -S error "${files[@]}"
 
       - name: dogfood drift
         run: bash .ai/scripts/check-dogfood-drift.sh

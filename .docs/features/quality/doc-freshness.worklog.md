@@ -93,3 +93,7 @@
 - Runtime + jinja (parité ✓, drift ✓). Test : `tests/unit/test-freshness-primary-coverer.sh` (5 cas moat). Non-régression : `test-check-feature-freshness.sh` ✓.
 - Démonstration : ce commit lui-même n'exige plus que doc-freshness + read-only-checks-contract (tie exact sur check-feature-freshness.sh) ; `core/dogfood-runtime-sync` (glob `.ai/**`) passe en advisory.
 - Reste (companion, suivi `quality/touches-breadth-guard`) : reclasser les dispatchers exact-multi — `aic.sh` → `core/aic-surface-canonical` seul exact, les 7 autres en `touches_shared`. HANDOFF Codex pour `aic-pilot.md` (son fichier non commité), puis aic-pilot committe propre.
+
+## 2026-07-03 — couverture incidente (A6 ci-guard)
+- `.github/workflows/ai-context-check.yml` (+ template jinja) touché pour élargir `shellcheck -S error` aux hooks exécutables et aux tests shell. Aucun changement de politique freshness : le job continue de lancer `check-feature-freshness.sh --warn`.
+- Validation portée par `quality/ci-guard` : shellcheck élargi PASS, YAML OK, `check-dogfood-drift` PASS, `tests/smoke-test.sh` PASS.

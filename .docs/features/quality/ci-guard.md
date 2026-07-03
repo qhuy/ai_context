@@ -12,10 +12,10 @@ touches:
   - template/.github/workflows/ai-context-check.yml.jinja
 progress:
   phase: review
-  step: "freshness documentaire rafraîchie après dogfood"
+  step: "A6 livré : shellcheck -S error couvre scripts runtime, hooks exécutables et tests shell"
   blockers: []
-  resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-06-01
+  resume_hint: "relire le delta CI puis valider dogfood drift, YAML et freshness staged avant commit"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -35,6 +35,8 @@ Rejouer en CI les validations critiques pour rattraper les contournements locaux
 
 - Les trois workflows : `ai-context-check.yml` (source), `template-smoke-test.yml` (rendu Copier complet, source-only) et `template/.github/workflows/ai-context-check.yml.jinja` (CI livrée aux projets générés).
 - Matrice `ubuntu-latest` + `macos-latest`, installation jq/yq/shellcheck (+ copier pour le smoke).
+- Lint `shellcheck -S error` sur les scripts runtime, les hooks Git exécutables
+  et les tests shell.
 - Enchaînement des checks read-only et des tests unitaires de contrat.
 
 ### Hors périmètre
@@ -53,7 +55,7 @@ Rejouer en CI les validations critiques pour rattraper les contournements locaux
 ## Comportement attendu
 
 - Trigger : `push` + `pull_request`.
-- Workflow généré : matrix `ubuntu-latest` + `macos-latest`, install jq/yq/shellcheck → `check-shims.sh` → `check-features.sh --no-write`.
+- Workflow généré : matrix `ubuntu-latest` + `macos-latest`, install jq/yq/shellcheck → shellcheck scripts/hooks/tests → `check-shims.sh` → `check-features.sh --no-write`.
 - Le workflow source du repo lance aussi les tests unitaires des contrats critiques d'index et de read-only.
 - `check-feature-docs.sh` est exécuté en mode warning par défaut pour détecter les fiches faibles sans bloquer les projets legacy.
 - Workflow template repo : install jq/yq/copier → `tests/smoke-test.sh`.
@@ -74,7 +76,7 @@ Rejouer en CI les validations critiques pour rattraper les contournements locaux
 ## Validation
 
 - `copier copy` rend la CI générée sans erreur Jinja (couvert par le smoke-test).
-- Les checks enchaînés passent en local : `check-shims.sh`, `check-features.sh --no-write`, tests unitaires `tests/unit/*.sh`.
+- Les checks enchaînés passent en local : `shellcheck -S error` sur scripts/hooks/tests, `check-shims.sh`, `check-features.sh --no-write`, tests unitaires `tests/unit/*.sh`.
 - `check-dogfood-drift.sh` ignore `.github/workflows/**` (source-only) → l'évolution de la CI source ne déclenche pas de faux drift.
 - YAML valide pour les trois workflows.
 
@@ -95,3 +97,7 @@ Filet de sécurité au-dessus de `git-hooks` (qui peuvent être contournés loca
 - 2026-05-04 : ajout de `check-feature-docs.sh` au workflow généré et dogfoodé en mode non strict. Objectif : signaler la dette documentaire "bible feature" sans casser les projets existants.
 - 2026-05-03 : freshness documentaire rafraîchie après dogfood ; aucun changement de contrat CI.
 - 2026-05-14 : le workflow check utilise `check-features.sh --no-write` pour valider le mesh sans régénérer `.ai/.feature-index.json` dans le workspace CI. Le workflow source lance en plus les tests unitaires `index contract`, `read-only checks` et `product reports read-only`.
+- 2026-07-03 : A6 du frame de remédiation livré. Le shellcheck CI ne se limite
+  plus à `.ai/scripts/*.sh` : il couvre aussi les hooks Git exécutables et tous
+  les scripts `tests/**/*.sh`, via `find` portable Linux/macOS plutôt que
+  `globstar`.
