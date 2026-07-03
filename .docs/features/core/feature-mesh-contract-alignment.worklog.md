@@ -50,3 +50,11 @@
 
 ## 2026-06-29 — couverture incidente (clôture A1 : résiduel fallback build-feature-index)
 - `build-feature-index.sh` + `.jinja` touchés via glob `touches:` (bornage external_refs/product/progress du parseur fallback). Aucun changement propre à cette feature ni à l'alignement du contrat mesh. (Taxe sur-couverture `touches:` — cf. quality/touches-breadth-guard.)
+
+## 2026-07-03 — done
+- Intent : clôture documentaire de `core/feature-mesh-contract-alignment`.
+- Fichiers/surfaces : `.docs/features/core/feature-mesh-contract-alignment.md`, `.docs/features/core/feature-mesh-contract-alignment.worklog.md`.
+- Décision : statut `done` ; le fallback sans `yq` couvre les champs `product.portfolio.*` consommés par le scoring produit. `kill_criteria` reste hors fallback car aucun rapport/check actuel ne le consomme ; l'ajouter serait du parsing non utilisé.
+- Doc Impact Decision : C — fiche feature et worklog mis à jour.
+- Validation prévue : `test-build-feature-index-fallback`, `test-build-feature-index-contract`, `test-product-reports-read-only`, `check-feature-docs --strict core/feature-mesh-contract-alignment`, checks feature/freshness et dogfood avant commit.
+- Next : aucune action immédiate ; rouvrir si un rapport consomme `kill_criteria` ou un nouveau champ product absent du fallback.

@@ -2,7 +2,7 @@
 id: feature-mesh-contract-alignment
 scope: core
 title: Alignement schema et parser du feature mesh
-status: active
+status: done
 depends_on:
   - core/feature-mesh
   - core/index-contract-v2
@@ -35,11 +35,11 @@ doc:
     rollout: true
     observability: false
 progress:
-  phase: review
-  step: "fallback product.portfolio implémenté et testé"
+  phase: done
+  step: "fallback product.portfolio livré ; kill_criteria laissé hors fallback car non consommé"
   blockers: []
-  resume_hint: "relire le delta core puis décider si kill_criteria doit aussi être couvert par le fallback"
-  updated: 2026-06-26
+  resume_hint: "aucune action immédiate ; rouvrir si un rapport consomme kill_criteria ou un nouveau champ product absent du fallback"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -154,3 +154,4 @@ La preuve attendue est le test unitaire forçant le fallback.
 
 - 2026-05-14 : création après la tranche P0 read-only/index ; le prochain écart fiable identifié est la divergence `yq` vs fallback sur `product.portfolio`.
 - 2026-05-14 : implémentation du parser fallback ciblé pour `product.portfolio.*` et test unitaire forçant l'absence de `yq`.
+- 2026-07-03 : fiche clôturée en `done`. Décision `kill_criteria` : ne pas l'ajouter au fallback tant qu'aucun rapport/check ne le consomme ; le fallback reste borné aux champs explicitement utiles au scoring `product-portfolio`. Doc Impact Decision : C — fiche feature et worklog mis à jour.
