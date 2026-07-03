@@ -64,3 +64,10 @@
 ## 2026-06-25 12:34 — auto
 - Fichiers modifiés :
   - copier.yml
+
+## 2026-07-03 — done
+- Intent : clôturer `core/preset-ds-skeletons` après confirmation que la V1 est livrée.
+- Fichiers/surfaces : `.docs/features/core/preset-ds-skeletons.md`, `.docs/features/core/preset-ds-skeletons.worklog.md`.
+- Décision : statut `done`; le `resume_hint` historique décrivait encore le travail initial alors que les deux squelettes existent et que l'exclusion `tech_profile` est couverte par le smoke.
+- Validation : inspection ciblée de `template/docs/design-system-registry.md.jinja`, `template/docs/atomic-design-map.md.jinja`, `copier.yml` et `tests/smoke-test.sh`; `bash tests/smoke-test.sh` PASS ; `bash .ai/scripts/check-feature-docs.sh --strict core/preset-ds-skeletons` et gate repo exécutés pendant la clôture.
+- Next : aucune action immédiate ; rouvrir si les conventions DS React ou le contrat `tech_profile` changent.

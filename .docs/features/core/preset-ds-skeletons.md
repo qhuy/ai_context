@@ -2,7 +2,7 @@
 id: preset-ds-skeletons
 scope: core
 title: Squelettes bootstrap pour DS registry et atomic map
-status: active
+status: done
 depends_on:
   - core/template-engine
 touches:
@@ -11,11 +11,11 @@ touches:
 touches_shared:
   - copier.yml
 progress:
-  phase: review
-  step: "V1 livrée — 2 squelettes + exclusion + smoke-test étendu ; freshness template renforcé"
+  phase: done
+  step: "squelettes DS React livrés et smoke complet validé"
   blockers: []
-  resume_hint: "créer 2 fichiers .jinja dans template/docs/ rendus uniquement si tech_profile ∈ {react-next, fullstack-dotnet-react} ; structure par catégorie + 1 composant commenté d'exemple"
-  updated: 2026-06-25
+  resume_hint: "aucune action immédiate ; rouvrir si les conventions DS React ou le contrat tech_profile changent"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -97,3 +97,4 @@ Objectif : moissonner deux squelettes minimalistes dès `copier copy` quand le `
 - 2026-05-03 : `copier.yml` modifié pour la surface skills intentionnelle. Aucun changement sur les squelettes DS ; entrée ajoutée car la fiche conserve historiquement `copier.yml` dans `touches`.
 - 2026-05-03 : `copier.yml` modifié pour le retrait des skills procéduraux exposés. Aucun changement sur les squelettes DS.
 - 2026-05-03 : `copier.yml` ajoute `product` au socle des profils. Aucun changement sur les squelettes DS ; entrée ajoutée car la fiche conserve historiquement `copier.yml` dans `touches`.
+- 2026-07-03 : clôture DONE après vérification des deux squelettes, des exclusions `tech_profile` dans `copier.yml` et du `tests/smoke-test.sh` complet.
