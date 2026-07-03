@@ -37,3 +37,10 @@
 ## 2026-06-29 — docstring corrigée (finding #6 audit hebdo)
 - En-tête de `auto-worklog-flush.sh` (+ jinja) corrigé : il prétendait encore « bump progress.updated dans le frontmatter », alors que le code ne le fait plus depuis le fix anti-churn (A9 / audit U4). La docstring décrit désormais le réel : append worklog uniquement ; `updated` géré par `auto-progress.sh` (transition) ou `.ai/workflows/feature-update.md`.
 - Commentaire seul, aucun changement de comportement. Parité runtime↔jinja vérifiée.
+
+## 2026-07-03 — done
+- Intent : clôturer `workflow/auto-worklog` après validation des incréments no-churn et anti-doublon.
+- Fichiers/surfaces : `.docs/features/workflow/auto-worklog.md`, `.docs/features/workflow/auto-worklog.worklog.md`, `.ai/scripts/auto-worklog-log.sh`, `.ai/scripts/auto-worklog-flush.sh`, templates Jinja associés, `tests/unit/test-auto-worklog-flush.sh`.
+- Décision : statut `done`. Le suivi “dériver updated au build-index” n'est pas un blocker de cette feature ; il devra être cadré séparément si la sémantique de staleness change.
+- Validation : `bash tests/unit/test-auto-worklog-flush.sh` PASS ; `bash tests/unit/test-stop-hook-idempotence.sh` PASS ; `bash -n` runtime/template PASS ; `bash .ai/scripts/check-dogfood-drift.sh` PASS ; `bash .ai/scripts/check-feature-docs.sh --strict workflow/auto-worklog` PASS.
+- Next : aucune action immédiate.

@@ -2,7 +2,7 @@
 id: auto-worklog
 scope: workflow
 title: Auto-logging silencieux des éditions vers worklog feature
-status: active
+status: done
 depends_on:
   - core/feature-mesh
   - core/feature-index-cache
@@ -12,11 +12,11 @@ touches:
   - .ai/scripts/auto-worklog-log.sh
   - .ai/scripts/auto-worklog-flush.sh
 progress:
-  phase: review
-  step: "anti-churn : le flush saute le bloc auto si la feature est documentée manuellement ce tour"
+  phase: done
+  step: "auto-worklog livré : capture structurelle, anti-churn doc manuelle, no-bump updated et tests ciblés validés"
   blockers: []
-  resume_hint: "anti-churn marker (.session-docs.log) livré ; suivi possible = option 1 (dériver updated: au build-index)"
-  updated: 2026-06-28
+  resume_hint: "aucune action immédiate ; cadrer séparément une dérivation updated au build-index si ce signal redevient prioritaire"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -80,6 +80,7 @@ Capturer sans friction les modifications d'une session Claude vers les worklog d
 - Un path hors `touches:` ne crée aucune entrée de worklog (pas d'orphan).
 - Un path contenant une quote produit du JSONL valide (échappement vérifié).
 - Le lock `mkdir` empêche la troncature du JSONL si le flush échoue.
+- Clôture 2026-07-03 : `test-auto-worklog-flush` PASS ; `test-stop-hook-idempotence` PASS ; `bash -n` sur runtime/template PASS ; `check-dogfood-drift` PASS ; `check-feature-docs --strict workflow/auto-worklog` PASS.
 
 ## Cross-refs
 
@@ -93,3 +94,4 @@ Trigger amont : `claude-skills` (les skills déclenchent des éditions). Source 
 - 2026-04-24 : `auto-worklog-log.sh` délègue le matching `touches:` à `_lib.sh` pour rester aligné avec `features-for-path.sh` et le hook git `pre-commit`.
 - 2026-06-26 : **fix churn date** (réouverture, cadrage `aic-frame` option 2). `auto-worklog-flush.sh` ne bumpe plus `progress.updated` — constat consumer : 63 fiches modifiées juste pour la date. La date n'est désormais stampée que sur transition de phase (`auto-progress.sh`) ou édit manuel (`feature-update.md`). Régression : `tests/unit/test-auto-worklog-flush.sh`. HANDOFF léger `quality/doc-freshness` (sémantique staleness) ; option 1 (dériver `updated:` au build-index) laissée en suivi.
 - 2026-06-28 : **anti-churn bloc auto** (item A9 du frame `2026-06-28-audit-strategique-remediation`). Constat : le flush appendait un bloc `## DATE — auto / Fichiers modifiés` même quand la feature avait déjà été **documentée manuellement** dans le même tour → doublon, bruit git à chaque commit. Fix : `auto-worklog-log.sh` marque dans `.ai/.session-docs.log` (volatile, gitignoré) toute feature dont la fiche ou le worklog est édité ; `auto-worklog-flush.sh` saute le bloc auto pour ces features, puis nettoie le marqueur. **Le filet de sécurité reste intact** : une feature éditée en code sans doc reçoit toujours son bloc auto (test cas 7). Décision : ne pas dédupliquer cross-session (préserver le log par tour pour les sessions silencieuses) — on cible uniquement le doublon intra-tour. Régression : `tests/unit/test-auto-worklog-flush.sh` (cas 4-7). Parité jinja conservée.
+- 2026-07-03 : DONE documentaire. Les incréments livrés couvrent le contrat : capture structurelle, marqueur `.session-docs.log`, flush sans bump `updated`, trace `.flushed` conservée pour `auto-progress.sh`, et tests ciblés verts. La dérivation éventuelle de `updated:` au build-index reste un sujet séparé si le produit veut changer la sémantique de staleness.
