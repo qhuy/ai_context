@@ -35,3 +35,10 @@ Source session : automation veille-techno
 ## 2026-06-26 15:03 — auto
 - Fichiers modifiés :
   - .ai/workflows/codex-hooks-parity.md
+
+## 2026-07-03 — done
+- Intent : clôturer `codex-hooks-parity` après clôture de `git-hooks` et confirmation du choix opt-in.
+- Fichiers/surfaces : `.docs/features/workflow/codex-hooks-parity.md`, `.docs/features/workflow/codex-hooks-parity.worklog.md`.
+- Décision : statut `done`; pas de `.codex/` par défaut, parité documentée via hooks Git universels + recette Codex opt-in.
+- Validation : `bash .ai/scripts/check-feature-docs.sh --strict workflow/codex-hooks-parity`; `bash .ai/scripts/check-agent-config.sh`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
+- Next : aucune action immédiate.

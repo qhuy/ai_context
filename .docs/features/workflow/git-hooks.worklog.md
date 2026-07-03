@@ -21,3 +21,10 @@
 - Surface partagée touchée : `template/.ai/scripts/check-commit-features.sh.jinja` lit le delta via provider VCS. En Git, le hook commit-msg garde la même sémantique staged.
 - En TFVC, `.githooks` n'est pas scaffoldé ; les checks sont exposés en commandes manuelles/CI.
 - Validation portée par `core/vcs-provider-abstraction`.
+
+## 2026-07-03 — done
+- Intent : clôturer `git-hooks` après vérification que l'assertion pre-commit demandée existe déjà dans le smoke.
+- Fichiers/surfaces : `.docs/features/workflow/git-hooks.md`, `.docs/features/workflow/git-hooks.worklog.md`.
+- Décision : statut `done`; hooks Git restent le point de convergence universel, activation locale documentée.
+- Validation : relecture `tests/smoke-test.sh` bloc `[18/28]`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/git-hooks`; `bash .ai/scripts/check-features.sh --no-write`; `bash .ai/scripts/check-feature-freshness.sh --worktree --strict`; `bash tests/smoke-test.sh`.
+- Next : aucune action immédiate.

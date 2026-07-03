@@ -2,7 +2,7 @@
 id: git-hooks
 scope: workflow
 title: Git hooks (commit-msg + post-checkout + pre-commit)
-status: active
+status: done
 depends_on:
   - core/feature-mesh
   - core/feature-index-cache
@@ -12,11 +12,11 @@ touches:
   - template/.ai/scripts/check-commit-features.sh.jinja
   - .githooks/**
 progress:
-  phase: implement
-  step: "freshness documentaire rafraîchie après dogfood"
+  phase: done
+  step: "hooks commit-msg/post-checkout/pre-commit livrés ; assertion pre-commit spec->implement couverte par le smoke"
   blockers: []
-  resume_hint: "écrire assertion smoke-test pour pre-commit (staged → bascule phase spec→implement via git commit)"
-  updated: 2026-05-03
+  resume_hint: "aucune action immédiate ; rouvrir seulement si le contrat des hooks Git ou la convergence pre-commit change"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -81,6 +81,14 @@ Faire respecter le mesh au moment du commit et tenir l'index à jour entre branc
 - Non-blocage `pre-commit` : un environnement sans `jq` ou sans `.feature-index.json` doit aboutir à exit 0 sans bloquer le commit.
 - Idempotence : un second `git commit` immédiat (phases déjà basculées) est un no-op.
 
+Preuve de clôture 2026-07-03 :
+
+- Relecture `tests/smoke-test.sh` : bloc `[18/28] auto-progress : pre-commit bascule spec -> implement + snapshot history` couvre le resume hint.
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/git-hooks` PASS.
+- `bash .ai/scripts/check-features.sh --no-write` PASS.
+- `bash .ai/scripts/check-feature-freshness.sh --worktree --strict` PASS.
+- `bash tests/smoke-test.sh` PASS.
+
 ## Cross-refs
 
 - Côté CI : `ci-guard` rejoue `check-features.sh` même si le hook local a été contourné (`--no-verify`).
@@ -94,3 +102,4 @@ Faire respecter le mesh au moment du commit et tenir l'index à jour entre branc
 - **2026-04-24** — Refactor : `pre-commit` source `_lib.sh` et utilise `features_matching_path`, au lieu de dupliquer une logique `jq startswith/endswith`.
 - 2026-05-03 : freshness documentaire rafraîchie après dogfood ; les contrats `commit-msg`, `post-checkout` et `pre-commit` restent inchangés.
 - **2026-06-28** — **dogfooding de l'enforcement** (Phase 0 / A2 du frame `2026-06-28-audit-strategique-remediation`). Le repo source avait `core.hooksPath=/dev/null` (moat désactivé chez lui) — incohérent avec la promesse « convergence universelle au commit » qu'il vend. Réactivation : `git config core.hooksPath .githooks` sur le clone mainteneur (config git locale, non versionnable). Décision : `doctor` signale déjà l'absence (warn + action explicite) ; **pas** de hard-fail en `--strict` car les clones CI n'ont jamais `core.hooksPath` défini → faux positif garanti. La garantie en CI reste portée par `quality/ci-guard` (rejoue `check-features`), pas par les hooks locaux. L'activation reste donc un geste local documenté (`_message_after_copy` étape 2 + README).
+- 2026-07-03 : DONE. Le smoke couvre la bascule pre-commit `spec -> implement`, snapshot history et idempotence.

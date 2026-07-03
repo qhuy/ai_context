@@ -2,7 +2,7 @@
 id: codex-hooks-parity
 scope: workflow
 title: Pilote hooks Codex déterministes
-status: active
+status: done
 depends_on:
   - workflow/git-hooks
   - workflow/subagent-contract
@@ -28,11 +28,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "pilote documenté + recette parité fraîcheur fin de turn (stop-turn-doc-gate)"
+  phase: done
+  step: "pilote hooks Codex documenté, opt-in, sans .codex/ par défaut"
   blockers: []
-  resume_hint: "prêt à review ; ne pas ajouter .codex/ par défaut sans décision séparée"
-  updated: 2026-06-26
+  resume_hint: "aucune action immédiate ; rouvrir seulement si une configuration .codex/ est ajoutée ou si le contrat hooks Codex change"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -95,6 +95,14 @@ Un projet peut activer des hooks Codex pour alerter ou bloquer une commande dang
 - Vérifier les hooks futurs : `bash .ai/scripts/check-agent-config.sh`.
 - Garder la protection stable : `bash .ai/scripts/check-commit-features.sh` et hooks Git.
 
+Preuve de clôture 2026-07-03 :
+
+- Dépendance `workflow/git-hooks` clôturée dans le même change ; `workflow/subagent-contract` déjà clôturée.
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/codex-hooks-parity` PASS.
+- `bash .ai/scripts/check-agent-config.sh` PASS.
+- `bash .ai/scripts/check-features.sh --no-write` PASS.
+- `bash tests/smoke-test.sh` PASS.
+
 ## Risques
 
 - Une API hooks Codex mouvante peut rendre une config obsolète.
@@ -111,3 +119,4 @@ Un projet peut activer des hooks Codex pour alerter ou bloquer une commande dang
 
 - 2026-05-12 : création suite à la veille officielle OpenAI Codex hooks.
 - 2026-06-26 : ajout de la recette « Parité fraîcheur fin de turn » (workflow/stop-turn-doc-gate). Le gate Stop étant Claude-only, on documente la parité Codex à deux niveaux — `commit-msg --staged --strict` universel (toujours actif) + hook Codex opt-in appelant le primitive `check-feature-freshness.sh --worktree --strict`. Surface Codex `Stop` (config.toml `[hooks]`) notée « à valider » ; aucun `.codex/` livré par défaut (décision inchangée).
+- 2026-07-03 : DONE. Pilote documenté seulement ; aucune config `.codex/` livrée par défaut.
