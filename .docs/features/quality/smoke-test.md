@@ -2,7 +2,7 @@
 id: smoke-test
 scope: quality
 title: Smoke-test end-to-end (28 assertions)
-status: active
+status: done
 depends_on:
   - core/template-engine
   - core/feature-mesh
@@ -12,10 +12,10 @@ touches:
 touches_shared:
   - tests/**
 progress:
-  phase: review
-  step: "smoke branche les tests AGENTS self-sufficient ([0h1/28]), shims dynamiques ([0h2/28]) et support natif par agent ([0h3/28])"
+  phase: done
+  step: "smoke complet validé deux fois avec prélude AGENTS, provider VCS, benchmark self-check et Jinja raw"
   blockers: []
-  resume_hint: "relancer tests/smoke-test.sh après toute évolution du Pack A, des templates Jinja, de check-shims ou du runner benchmark"
+  resume_hint: "aucune action immédiate ; relancer après toute évolution Pack A, templates Jinja, check-shims, provider VCS ou runner benchmark"
   updated: 2026-07-03
 type: feature
 ---
@@ -81,6 +81,7 @@ Vérifier en un script que la chaîne complète tient : `copier copy` → check-
 - Rejeu automatique en CI via `quality/ci-guard` (repo template uniquement) sur `push`/`pull_request`.
 - Tests ciblés inclus dans le script : `path_matches_touch` (matching exact, dossier, glob `**`, faux positifs proches) et rendu `docs_root=docs` (`check-features`, `features-for-path`, index JSON).
 - Garde de compatibilité Bash 3.2 vérifiée sur les scripts générés (ex. absence de `mapfile` dans `pr-report.sh`).
+- Clôture 2026-07-03 : `bash tests/smoke-test.sh` PASS deux fois consécutives, dont validation des pré-étapes `[0h1]`, `[0h2]`, `[0h3]`, `[0s2]`, `[0t]`, et du bonus big-mesh.
 
 ## Cross-refs
 
@@ -126,3 +127,4 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-07-03 : ajout [0h2/28] — `tests/unit/test-check-shims-dynamic-agents.sh` branché dans le smoke. HANDOFF reçu de `core/agents-md-shim-canonical` : verrouiller que `check-shims` lit les agents activés depuis `.copier-answers.yml` et échoue si un shim dérivé activé manque.
 - 2026-07-03 : ajout [0h3/28] — `tests/unit/test-agent-native-context.sh` branché dans le smoke. HANDOFF reçu de `core/agents-md-native-collapse-path` : verrouiller que le kill criterion AGENTS.md natif reste explicite avant de rendre un shim optionnel.
 - 2026-06-19 : étape [28c/28] rendue tolérante au crash de *cleanup* post-update de Copier (rmtree du clone temporaire `.git/objects` → `OSError: Directory not empty`, observé sur Copier 9.14.3 + Python 3.14 macOS). L'update lui-même réussit ; seul le teardown de Copier plante. La tolérance ne se déclenche que sur cette signature précise (log contenant « Updating to template version » + `_cleanup`/`Directory not empty`/`copier._vcs.clone`) ; tout autre échec d'`copier update` reste bloquant — la décision 2026-05-03 (pas de masquage par `|| true`) est préservée. Les assertions d'outcome (fichier custom préservé, check-shims, propagation `aic-undo.sh`) restent le verdict réel. Signature vérifiée contre un log de crash réel. La CI n'est pas concernée (elle n'installe pas Copier et ne lance pas le smoke).
+- 2026-07-03 : DONE documentaire. Le smoke complet passe deux fois consécutives après les ajouts AGENTS natif, check-shims dynamique, provider VCS, Jinja raw et benchmark self-check.

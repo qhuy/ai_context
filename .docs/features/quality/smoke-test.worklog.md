@@ -270,3 +270,10 @@
 ## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
 - Surface partagée touchée : `tests/smoke-test.sh` lance le nouveau test unitaire provider VCS en pré-étape `[0s2/28]`. Denominator `/28` conservé.
 - Validation portée par `core/vcs-provider-abstraction`.
+
+## 2026-07-03 — done
+- Intent : clôturer `quality/smoke-test` après les ajouts récents du prélude et une double validation complète.
+- Fichiers/surfaces : `.docs/features/quality/smoke-test.md`, `.docs/features/quality/smoke-test.worklog.md`.
+- Décision : statut `done` ; la fiche reste le filet end-to-end, à rouvrir seulement quand le script ou ses contrats changent.
+- Validation : `bash tests/smoke-test.sh` PASS ; second `bash tests/smoke-test.sh` PASS (sortie réduite, verdict final PASS).
+- Next : aucune action immédiate.
