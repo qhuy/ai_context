@@ -1,0 +1,888 @@
+2026-07-03T09:54:20.454897Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+2026-07-03T09:54:20.455801Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+2026-07-03T09:54:20.515591Z ERROR codex_core::session::session: failed to load skill /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work/.agents/skills/aic-ship/SKILL.md: invalid YAML: mapping values are not allowed in this context at line 2 column 44
+2026-07-03T09:54:20.515608Z ERROR codex_core::session::session: failed to load skill /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work/.agents/skills/aic-status/SKILL.md: invalid YAML: mapping values are not allowed in this context at line 2 column 42
+2026-07-03T09:54:20.541661Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-07-03T09:54:20.554663Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:20.566362Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-07-03T09:54:20.591118Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+2026-07-03T09:54:20.604401Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+2026-07-03T09:54:20.605043Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.codex/plugins/cache/openai-primary-runtime/template-creator/26.630.12135/.codex-plugin/plugin.json
+2026-07-03T09:54:20.615656Z  WARN codex_rollout::list: state db discrepancy during find_thread_path_by_id_str_in_subdir: falling_back
+OpenAI Codex v0.139.0
+--------
+workdir: /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work
+model: gpt-5.5
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 019f2766-8e76-7311-a5e6-7494a673a646
+--------
+user
+# Tâche 0005 — reprise à vérité terrain hors traces
+
+## Prompt (donné à l'agent)
+
+Inspecte le repo et identifie la feature `ai_context` active la plus probable à
+reprendre maintenant. Utilise les fichiers de contexte repo-native s'ils existent.
+
+Crée `BENCH_RESULT/resume-context.json` à la racine du repo avec exactement ces
+clés JSON :
+
+```json
+{
+  "feature": "<scope/id>",
+  "step": "<progress.step>",
+  "next": "<progress.resume_hint>"
+}
+```
+
+Sélectionne la feature `status: active` dont `progress.updated` est le plus récent
+et dont `progress.step` et `progress.resume_hint` sont non vides. En cas d'égalité,
+choisis le scope/id lexicalement le plus petit. Reprends `step` et `next` sans
+reformulation. N'ajoute aucun autre champ.
+
+## Critère de succès (humain-lisible)
+
+Le JSON existe, il est valide, et ses trois valeurs correspondent exactement à la
+feature active la plus fraîche (avec `step` et `resume_hint` non vides) du feature
+mesh source. Le grader objectif est `check.sh`.
+
+## Garde de validité (spécifique à cette tâche)
+
+En condition `without`, le grader vérifie d'abord que la vérité terrain (`step` et
+`resume_hint` exacts) n'est **pas** reconstructible depuis la copie de travail
+dépouillée : si l'un des deux textes apparaît hors mesh (docs, état projet, traces
+quelconques), le grader sort en exit 3 (`failure_kind=task_invalid`) et le run est
+invalidé comme preuve — la cellule ne compte ni comme succès ni comme échec d'agent.
+C'est la réponse au constat des probes 0002/0004 : sans cette garde, un Δ nul peut
+venir d'une fuite d'information, pas d'une capacité de l'agent.
+
+2026-07-03T09:54:20.687182Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-03T09:54:20.691477Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:20.707117Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:20.708577Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:20.708960Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:20.708971Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:20.709334Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:20.709342Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:20.709685Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:20.709692Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:20.710034Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:20.710042Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:20.710787Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:20.710794Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:21.085779Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:21.093405Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:21.093427Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:23.345317Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-03T09:54:23.351509Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:23.373056Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:23.373081Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:23.373440Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:23.373458Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:23.373863Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:23.373877Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:23.374276Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:23.374283Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:23.374662Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:23.374670Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:23.375436Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:23.375443Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:23.793175Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:23.801608Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:23.801642Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Je commence par lire l’index `.ai` exigé par le repo, puis je chercherai uniquement dans le mesh de features la fiche active la plus récente avec `step` et `resume_hint`.
+exec
+/bin/zsh -lc "sed -n '1,220p' .ai/index.md" in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work
+ succeeded in 0ms:
+# AI Context Index — ai_context
+
+> Template copier pour industrialiser le contexte des agents IA
+
+Entrée unique des agents. Mode par défaut : **lean context**.
+
+## Pack A — always load
+
+Lire uniquement ceci au démarrage :
+
+- Requête utilisateur.
+- Ce fichier (`.ai/index.md`).
+- `git status --short`.
+- Fichiers d'implémentation les plus proches, trouvés par `rg` ciblé.
+
+Invariants :
+- Un scope primaire par tâche. Cross-scope ⇒ `HANDOFF` explicite + confirmation.
+- Ne charger que le contexte nécessaire. Pas de docs/catalog/index/cache/logs/full diff par défaut.
+- Avant `feat:` : une fiche `.docs/features/<scope>/<id>.md` doit être créée ou mise à jour.
+- Avant DONE : exécuter la delivery gate et mettre à jour les docs impactées.
+- Commits en français.
+
+## Commit & Doc Level
+
+Choisir le type de commit selon l'intention :
+
+- `feat:` : nouveau comportement utilisateur, agent, workflow ou contrat ; exige une fiche feature créée ou mise à jour dans le même commit.
+- `fix:` : correction d'un comportement cassé ou dangereux ; rattacher à une fiche existante si un `touches:` couvre la surface.
+- `refactor:` : restructuration sans changement de comportement attendu ; documenter l'impact dans le worklog de la feature couvrante.
+- `chore:` : maintenance, outillage ou métadonnées sans effet produit direct ; pas de contournement pour livrer une vraie feature sans fiche.
+- `docs:` : documentation seule ; utiliser si le delta ne modifie ni comportement runtime ni contrat.
+
+`doc.level` :
+
+- `brief` : changement interne étroit, faible risque, sans nouveau contrat durable.
+- `standard` : défaut pour une feature ou un contrat maintenu.
+- `full` : surface critique, sécurité, données, rollout, observabilité, API stable ou impact multi-scope.
+
+## Scope Routing
+
+Ne charge `.ai/rules/<scope>.md` que si le scope est clair et utile à l'édition.
+Si le scope est incertain, utiliser cette table puis charger **un seul** fichier de scope.
+
+| Scope | Quand charger |
+|---|---|
+| `core` | Règles propres au scope `core` |
+| `quality` | Règles qualité spécifiques au projet, près de DONE |
+| `workflow` | Routage ou procédure si le flux est ambigu |
+| `product` | Initiative, roadmap, décision produit, traceability |
+
+## Project Overlay
+
+Si `.ai/project/index.md` existe, le lire maintenant. Ne pas précharger le reste de `.ai/project/**` : ce fichier projet décide seul quelles règles locales charger. Si ce fichier route un path vers `.ai/project/<scope>/index.md`, charger cet index de scope sur match de path — descente d'un niveau, par pointeur explicite, jamais de récursion aveugle.
+
+## On Demand
+
+- Feature docs : charger seulement si l'intent ou les paths matchent une feature ; si un path est connu, préférer `bash .ai/scripts/features-for-path.sh <path> --with-docs` avant tout listing de dossiers.
+- `depends_on` : suivre seulement les dépendances nécessaires à la décision ou à l'édition.
+- Quality gate : charger `.ai/quality/QUALITY_GATE.md` ou `.ai/workflows/quality-gate.md` près de DONE, ou tôt pour tâches risquées (contrat, doc canonique, sécurité, DB).
+- Agent guidance : `.ai/agent/*` est optionnel, jamais Pack A.
+- Guardrails projet : charger `.ai/guardrails.md` seulement pour cadrage produit, non-goals ou glossaire métier.
+- Legacy/local rules : charger seulement le pointeur ou fichier local qui matche les paths touchés.
+- Catalogues, références, worklogs, changelogs, skills, indexes générés, caches et diffs complets : recherche ciblée uniquement.
+
+## Exclusions
+
+Pour la récupération de contexte Codex, considérer on-demand seulement : `.claude/skills/**`, `.ai/docs/**`, `.ai/tests/**`, `docs/reference/**`, docs de migration, caches générés, logs/worklogs, diffs complets, larges listings récursifs. Détail : `.ai/context-ignore.md`.
+
+2026-07-03T09:54:36.562894Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-03T09:54:36.566914Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:36.584114Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:36.584132Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:36.584461Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:36.584473Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:36.584797Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:36.584802Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:36.585140Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:36.585147Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:36.585529Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:36.585534Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:36.586307Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:36.586320Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:36.941262Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:36.948263Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:36.948296Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Le repo impose aussi un contexte lean. La demande correspond au flux de reprise `aic-feature-resume`, donc je lis ses instructions avant d’interroger le mesh.
+exec
+/bin/zsh -lc "sed -n '1,240p' /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work/.agents/skills/aic-feature-resume/SKILL.md" in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work
+ succeeded in 0ms:
+---
+name: aic-feature-resume
+description: Reprend le travail en cours sur une feature via l'index et les buckets EN COURS / BLOQUÉES / STALE / À FAIRE. Primitive interne (fallback) ; usage recommandé via aic-status qui s'appuie sur .ai/workflows/feature-resume.md. Ne pas invoquer par matching lexical implicite ("reprise", "où en est").
+---
+
+Suivre `workflow.md` dans ce dossier.
+
+2026-07-03T09:54:46.551218Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-03T09:54:46.557229Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:46.576707Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:46.576719Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:46.577088Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:46.577100Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:46.577472Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:46.577485Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:46.577845Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:46.577853Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:46.578223Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:46.578231Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:46.579024Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:46.579032Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:46.954745Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:46.962434Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:46.962458Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+La skill renvoie vers son workflow local ; je le charge complètement, puis je resterai sur la sortie demandée par le benchmark.
+exec
+/bin/zsh -lc "sed -n '1,260p' /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work/.agents/skills/aic-feature-resume/workflow.md" in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work
+ succeeded in 0ms:
+# Workflow — aic-feature-resume
+
+## Invocation guard
+
+Primitive interne (fallback). N'exécuter que sur invocation explicite :
+
+- nom littéral `aic-feature-resume` cité par l'utilisateur ;
+- chemin `.ai/workflows/feature-resume.md` cité ;
+- instruction explicite "utilise la primitive feature-resume".
+
+Sur sélection implicite par matching lexical ("reprise", "où en est", "continuer", "où je suis") → STOP, ne pas exécuter, rediriger vers `aic-status`. Chemin propre : intention publique → `.ai/workflows/feature-resume.md`, sans retour vers cette primitive.
+
+## Procédure canonique
+
+Lire et suivre :
+
+```text
+.ai/workflows/feature-resume.md
+```
+
+2026-07-03T09:54:53.725689Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-03T09:54:53.730733Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:53.749687Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:53.749710Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:53.750120Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:53.750133Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:53.750483Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:53.750492Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:53.750840Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:53.750850Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:53.751302Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:53.751310Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:53.752084Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:53.752092Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:54:54.114702Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:54.122157Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:54:54.122179Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Je vais maintenant vérifier l’état Git demandé par l’index et voir si un overlay projet existe. Ensuite je ciblerai `.docs/features` plutôt qu’un listing large.
+exec
+/bin/zsh -lc 'git status --short' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work
+ exited 128 in 0ms:
+fatal: not a git repository (or any of the parent directories): .git
+
+exec
+/bin/zsh -lc "sed -n '1,220p' .ai/project/index.md" in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work
+ exited 1 in 0ms:
+sed: .ai/project/index.md: No such file or directory
+
+2026-07-03T09:55:07.513965Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-03T09:55:07.519094Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:07.536479Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:07.536496Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:07.536833Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:07.536845Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:07.537189Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:07.537196Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:07.537517Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:07.537523Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:07.537857Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:07.537864Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:07.538621Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:07.538633Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:07.913191Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:07.920916Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:07.920947Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+`git status` n’est pas disponible ici car ce répertoire n’est pas reconnu comme dépôt Git, et il n’y a pas d’overlay `.ai/project/index.md`. Je continue avec le mesh de features demandé.
+exec
+/bin/zsh -lc 'rg --files .docs/features' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work
+ succeeded in 0ms:
+.docs/features/workflow/auto-worklog.md
+.docs/features/workflow/claude-skills.worklog.md
+.docs/features/workflow/feature-consolidation-nudge.md
+.docs/features/workflow/codex-hooks-parity.worklog.md
+.docs/features/workflow/subagent-contract.worklog.md
+.docs/features/workflow/worktree-isolation.worklog.md
+.docs/features/workflow/aic-frame-external-reference.md
+.docs/features/workflow/worktree-isolation.md
+.docs/features/workflow/feature-granularity.md
+.docs/features/workflow/project-overlay-onboarding.worklog.md
+.docs/features/workflow/subagent-contract.md
+.docs/features/workflow/stop-turn-doc-gate.worklog.md
+.docs/features/workflow/conversational-skills.md
+.docs/features/workflow/git-hooks.worklog.md
+.docs/features/workflow/intentional-skills.worklog.md
+.docs/features/workflow/auto-worklog.worklog.md
+.docs/features/workflow/agent-behavior.md
+.docs/features/workflow/project-guardrails.worklog.md
+.docs/features/workflow/feature-audit.worklog.md
+.docs/features/workflow/claude-skills.md
+.docs/features/workflow/aic-pilot.worklog.md
+.docs/features/workflow/mcp-policy.md
+.docs/features/workflow/dev-plan-skill.md
+.docs/features/workflow/aic-pilot.md
+.docs/features/workflow/pre-turn-reminder.worklog.md
+.docs/features/workflow/feature-new-approval-step.worklog.md
+.docs/features/workflow/codex-hooks-parity.md
+.docs/features/workflow/pre-turn-reminder.md
+.docs/features/workflow/intentional-skills.md
+.docs/features/workflow/feature-audit.md
+.docs/features/workflow/git-hooks.md
+.docs/features/workflow/auto-progress-file-filter.worklog.md
+.docs/features/workflow/feature-new-approval-step.md
+.docs/features/workflow/aic-frame-external-reference.worklog.md
+.docs/features/workflow/feature-granularity.worklog.md
+.docs/features/workflow/stop-hook-idempotence.md
+.docs/features/workflow/dev-plan-skill.worklog.md
+.docs/features/workflow/mcp-policy.worklog.md
+.docs/features/workflow/stop-turn-doc-gate.md
+.docs/features/workflow/project-overlay-onboarding.md
+.docs/features/workflow/project-guardrails.md
+.docs/features/workflow/stop-hook-idempotence.worklog.md
+.docs/features/workflow/agent-behavior.worklog.md
+.docs/features/workflow/conversational-skills.worklog.md
+.docs/features/workflow/auto-progress-file-filter.md
+.docs/features/workflow/feature-consolidation-nudge.worklog.md
+.docs/features/product/ai-context-stability-migration.md
+.docs/features/product/knowledge-federation.md
+.docs/features/product/product-portfolio-loop.md
+.docs/features/product/agent-efficacy-benchmark.md
+.docs/features/product/product-portfolio-loop.worklog.md
+.docs/features/product/readme-positioning.md
+.docs/features/product/readme-positioning.worklog.md
+.docs/features/product/agent-efficacy-benchmark.worklog.md
+.docs/features/product/knowledge-federation.worklog.md
+.docs/features/product/ai-context-stability-migration.worklog.md
+.docs/features/core/project-overlay-stable.md
+.docs/features/core/aic-surface-canonical.worklog.md
+.docs/features/core/aic-review-application-skill.md
+.docs/features/core/template-engine.md
+.docs/features/core/agents-md-native-collapse-path.md
+.docs/features/core/agents-md-shim-canonical.worklog.md
+.docs/features/core/codex-skills-install.md
+.docs/features/core/preset-ds-skeletons.worklog.md
+.docs/features/core/dogfood-runtime-sync.worklog.md
+.docs/features/core/graph-aware-injection.md
+.docs/features/core/index-contract-v2.md
+.docs/features/core/graph-aware-injection.worklog.md
+.docs/features/core/feature-index-cache.worklog.md
+.docs/features/core/aic-surface-canonical.md
+.docs/features/core/feature-mesh-contract-alignment.worklog.md
+.docs/features/core/aic-review-application-skill.worklog.md
+.docs/features/core/feature-index-cache.md
+.docs/features/core/project-overlay-scope-registry.md
+.docs/features/core/agents-md-native-collapse-path.worklog.md
+.docs/features/core/agents-md-shim-canonical.md
+.docs/features/core/project-overlay-stable.worklog.md
+.docs/features/core/template-engine.worklog.md
+.docs/features/core/feature-mesh.md
+.docs/features/core/okf-strict-profile.md
+.docs/features/core/project-overlay-scope-registry.worklog.md
+.docs/features/core/codex-skills-install.worklog.md
+.docs/features/core/feature-mesh-contract-alignment.md
+.docs/features/core/dogfood-runtime-sync.md
+.docs/features/core/index-contract-v2.worklog.md
+.docs/features/core/preset-ds-skeletons.md
+.docs/features/core/okf-strict-profile.worklog.md
+.docs/features/core/feature-mesh.worklog.md
+.docs/features/quality/ci-guard.worklog.md
+.docs/features/quality/index-lock-contract.md
+.docs/features/quality/context-relevance-tracker.md
+.docs/features/quality/cycle-detection.md
+.docs/features/quality/touches-breadth-guard.worklog.md
+.docs/features/quality/smoke-test.md
+.docs/features/quality/ci-guard.md
+.docs/features/quality/context-relevance-tracker.worklog.md
+.docs/features/quality/targeted-regression-coverage.md
+.docs/features/quality/features-for-path-ranking-and-matcher-correctness.md
+.docs/features/quality/pr-report.md
+.docs/features/quality/feature-schema-validator.md
+.docs/features/quality/feature-schema-validator.worklog.md
+.docs/features/quality/review-delta-uncommitted-coverage.md
+.docs/features/quality/agent-config-validation.md
+.docs/features/quality/doc-freshness.worklog.md
+.docs/features/quality/touches-breadth-guard.md
+.docs/features/quality/features-for-path-ranking-and-matcher-correctness.worklog.md
+.docs/features/quality/index-lock-contract.worklog.md
+.docs/features/quality/read-only-checks-contract.md
+.docs/features/quality/doctor.md
+.docs/features/quality/pr-report.worklog.md
+.docs/features/quality/read-only-checks-contract.worklog.md
+.docs/features/quality/doc-freshness.md
+.docs/features/quality/review-delta-uncommitted-coverage.worklog.md
+.docs/features/quality/smoke-test.worklog.md
+.docs/features/quality/doctor.worklog.md
+.docs/features/quality/agent-config-validation.worklog.md
+.docs/features/quality/cycle-detection.worklog.md
+.docs/features/quality/targeted-regression-coverage.worklog.md
+
+exec
+/bin/zsh -lc 'rg -n "''^(status:|progress:|  updated:|  step:|  resume_hint:)" .docs/features' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work
+ succeeded in 0ms:
+.docs/features/workflow/auto-worklog.md:5:status: active
+.docs/features/workflow/auto-worklog.md:14:progress:
+.docs/features/workflow/auto-worklog.md:16:  step: "anti-churn : le flush saute le bloc auto si la feature est documentée manuellement ce tour"
+.docs/features/workflow/auto-worklog.md:18:  resume_hint: "anti-churn marker (.session-docs.log) livré ; suivi possible = option 1 (dériver updated: au build-index)"
+.docs/features/workflow/auto-worklog.md:19:  updated: 2026-06-28
+.docs/features/workflow/conversational-skills.md:5:status: draft
+.docs/features/workflow/conversational-skills.md:19:progress:
+.docs/features/workflow/conversational-skills.md:21:  step: "/aic marqué non-auto-invocable sur les 4 surfaces (Claude: disable-model-invocation ; agents: garde prose)"
+.docs/features/workflow/conversational-skills.md:23:  resume_hint: "check-shims + check-dogfood-drift + smoke verts, puis commit FR conventional"
+.docs/features/workflow/conversational-skills.md:24:  updated: 2026-06-02
+.docs/features/workflow/subagent-contract.md:5:status: active
+.docs/features/workflow/subagent-contract.md:30:progress:
+.docs/features/workflow/subagent-contract.md:32:  step: "contrat documenté, validations PASS"
+.docs/features/workflow/subagent-contract.md:34:  resume_hint: "prêt à review ; vérifier le wording multi-agent si besoin"
+.docs/features/workflow/subagent-contract.md:35:  updated: 2026-05-12
+.docs/features/workflow/agent-behavior.md:5:status: active
+.docs/features/workflow/agent-behavior.md:18:progress:
+.docs/features/workflow/agent-behavior.md:20:  step: "couche agent sortie du Pack A Codex"
+.docs/features/workflow/agent-behavior.md:22:  resume_hint: "vérifier check-shims, measure-context-size et smoke-test après changement Pack A"
+.docs/features/workflow/agent-behavior.md:23:  updated: 2026-06-01
+.docs/features/workflow/auto-progress-file-filter.md:5:status: draft
+.docs/features/workflow/auto-progress-file-filter.md:28:progress:
+.docs/features/workflow/auto-progress-file-filter.md:30:  step: "implémentation livrée, 22 cas test PASS, prêt à commit"
+.docs/features/workflow/auto-progress-file-filter.md:32:  resume_hint: "commit feat(workflow) ; #5 stop-hook-idempotence consommera le helper dans un turn dédié"
+.docs/features/workflow/auto-progress-file-filter.md:33:  updated: 2026-06-26
+.docs/features/workflow/project-overlay-onboarding.md:5:status: active
+.docs/features/workflow/project-overlay-onboarding.md:31:progress:
+.docs/features/workflow/project-overlay-onboarding.md:33:  step: "skill aic-onboard livré (Claude + Codex), procédure canonique, smoke-test étendu, drift vert"
+.docs/features/workflow/project-overlay-onboarding.md:35:  resume_hint: "DONE côté implémentation. Validation end-to-end naturelle : exercer aic-onboard sur un vrai consumer multi-app. Décision migrate-legacy déjà couverte par la procédure."
+.docs/features/workflow/project-overlay-onboarding.md:36:  updated: 2026-06-19
+.docs/features/workflow/git-hooks.md:5:status: active
+.docs/features/workflow/git-hooks.md:14:progress:
+.docs/features/workflow/git-hooks.md:16:  step: "freshness documentaire rafraîchie après dogfood"
+.docs/features/workflow/git-hooks.md:18:  resume_hint: "écrire assertion smoke-test pour pre-commit (staged → bascule phase spec→implement via git commit)"
+.docs/features/workflow/git-hooks.md:19:  updated: 2026-05-03
+.docs/features/workflow/feature-consolidation-nudge.md:5:status: active
+.docs/features/workflow/feature-consolidation-nudge.md:34:progress:
+.docs/features/workflow/feature-consolidation-nudge.md:36:  step: "hook + test + wiring + doc livrés"
+.docs/features/workflow/feature-consolidation-nudge.md:38:  resume_hint: "MVP livré (nudge seul). Suivi possible : détecteur d'overlap touches: (mode consolidate de feature-audit)."
+.docs/features/workflow/feature-consolidation-nudge.md:39:  updated: 2026-06-26
+.docs/features/workflow/worktree-isolation.md:5:status: active
+.docs/features/workflow/worktree-isolation.md:24:progress:
+.docs/features/workflow/worktree-isolation.md:26:  step: "règle worktree + cycle de vie (fetch/-b/teardown/ff-only) alignés canonique + dogfood"
+.docs/features/workflow/worktree-isolation.md:28:  resume_hint: "règle amendée après challenge (detached HEAD corrigé) ; vérifier check-dogfood-drift + check-shims ; teardown reste manuel"
+.docs/features/workflow/worktree-isolation.md:29:  updated: 2026-06-18
+.docs/features/workflow/stop-turn-doc-gate.md:5:status: active
+.docs/features/workflow/stop-turn-doc-gate.md:47:progress:
+.docs/features/workflow/stop-turn-doc-gate.md:49:  step: "gate + --worktree + sequencer implémentés et testés ; reste ship (drift + freshness staged)"
+.docs/features/workflow/stop-turn-doc-gate.md:51:  resume_hint: "lancer tests/smoke-test.sh + check-dogfood-drift.sh ; traiter les obligations freshness staged (multi-features via _lib.sh)"
+.docs/features/workflow/stop-turn-doc-gate.md:52:  updated: 2026-06-26
+.docs/features/workflow/codex-hooks-parity.md:5:status: active
+.docs/features/workflow/codex-hooks-parity.md:30:progress:
+.docs/features/workflow/codex-hooks-parity.md:32:  step: "pilote documenté + recette parité fraîcheur fin de turn (stop-turn-doc-gate)"
+.docs/features/workflow/codex-hooks-parity.md:34:  resume_hint: "prêt à review ; ne pas ajouter .codex/ par défaut sans décision séparée"
+.docs/features/workflow/codex-hooks-parity.md:35:  updated: 2026-06-26
+.docs/features/workflow/dev-plan-skill.md:5:status: done
+.docs/features/workflow/dev-plan-skill.md:34:progress:
+.docs/features/workflow/dev-plan-skill.md:36:  step: ""
+.docs/features/workflow/dev-plan-skill.md:38:  resume_hint: ""
+.docs/features/workflow/dev-plan-skill.md:39:  updated: 2026-06-02
+.docs/features/workflow/pre-turn-reminder.md:5:status: active
+.docs/features/workflow/pre-turn-reminder.md:13:progress:
+.docs/features/workflow/pre-turn-reminder.md:15:  step: "R1 livré : reverse_deps=0 et JIT depends_on couvert"
+.docs/features/workflow/pre-turn-reminder.md:17:  resume_hint: "R1 clos ; prochaine action recommandée : R2 ranking tracker des features jamais touchées"
+.docs/features/workflow/pre-turn-reminder.md:18:  updated: 2026-07-02
+.docs/features/workflow/aic-frame-external-reference.md:5:status: done
+.docs/features/workflow/aic-frame-external-reference.md:36:progress:
+.docs/features/workflow/aic-frame-external-reference.md:38:  step: "arbitrage AI Debate 0015 livré : niveaux low/standard/high, incertitudes, template frames, external_refs.frame et wrapper frame bootstrap"
+.docs/features/workflow/aic-frame-external-reference.md:40:  resume_hint: "Feature clôturée ; reprendre seulement pour itération post-usage."
+.docs/features/workflow/aic-frame-external-reference.md:41:  updated: 2026-06-25
+.docs/features/workflow/aic-pilot.md:5:status: active
+.docs/features/workflow/aic-pilot.md:47:progress:
+.docs/features/workflow/aic-pilot.md:49:  step: "skill aic-pilot, débrayage aic-frame et registre pilots livrés ; reclassification exact-multi appliquée"
+.docs/features/workflow/aic-pilot.md:51:  resume_hint: "lancer freshness staged/worktree, dogfood drift, check-features et smoke avant commit"
+.docs/features/workflow/aic-pilot.md:52:  updated: 2026-06-30
+.docs/features/quality/index-lock-contract.md:5:status: done
+.docs/features/quality/index-lock-contract.md:24:progress:
+.docs/features/quality/index-lock-contract.md:26:  step: ""
+.docs/features/quality/index-lock-contract.md:28:  resume_hint: "feature clôturée le 2026-05-12"
+.docs/features/quality/index-lock-contract.md:29:  updated: 2026-06-26
+.docs/features/workflow/feature-granularity.md:5:status: done
+.docs/features/workflow/feature-granularity.md:23:progress:
+.docs/features/workflow/feature-granularity.md:25:  step: ""
+.docs/features/workflow/feature-granularity.md:27:  resume_hint: "feature clôturée le 2026-05-04"
+.docs/features/workflow/feature-granularity.md:28:  updated: 2026-05-06
+.docs/features/workflow/stop-hook-idempotence.md:5:status: done
+.docs/features/workflow/stop-hook-idempotence.md:28:progress:
+.docs/features/workflow/stop-hook-idempotence.md:30:  step: ""
+.docs/features/workflow/stop-hook-idempotence.md:32:  resume_hint: "feature clôturée le 2026-06-18 (impl. live depuis 2b66ae6)"
+.docs/features/workflow/stop-hook-idempotence.md:33:  updated: 2026-06-18
+.docs/features/workflow/intentional-skills.md:5:status: active
+.docs/features/workflow/intentional-skills.md:46:progress:
+.docs/features/workflow/intentional-skills.md:48:  step: "round 4 appliqué, validation PASS, prêt à commit"
+.docs/features/workflow/intentional-skills.md:50:  resume_hint: "commit FR conventional puis attendre evidence DONE pour bumper phase=done"
+.docs/features/workflow/intentional-skills.md:51:  updated: 2026-06-26
+.docs/features/workflow/project-guardrails.md:5:status: active
+.docs/features/workflow/project-guardrails.md:19:progress:
+.docs/features/workflow/project-guardrails.md:21:  step: "guardrails conservé hors Pack A"
+.docs/features/workflow/project-guardrails.md:23:  resume_hint: "vérifier que project-guardrails reste on-demand dans index, workflow et smoke-test"
+.docs/features/workflow/project-guardrails.md:24:  updated: 2026-06-01
+.docs/features/workflow/mcp-policy.md:5:status: active
+.docs/features/workflow/mcp-policy.md:30:progress:
+.docs/features/workflow/mcp-policy.md:32:  step: "politique MCP documentée, validations PASS"
+.docs/features/workflow/mcp-policy.md:34:  resume_hint: "prêt à review ; garder MCP opt-in"
+.docs/features/workflow/mcp-policy.md:35:  updated: 2026-05-12
+.docs/features/workflow/claude-skills.md:5:status: active
+.docs/features/workflow/claude-skills.md:12:progress:
+.docs/features/workflow/claude-skills.md:14:  step: "skills Claude maintenus hors contexte Codex obligatoire"
+.docs/features/workflow/claude-skills.md:16:  resume_hint: "valider que les workflows internes restent accessibles sans être chargés par défaut"
+.docs/features/workflow/claude-skills.md:17:  updated: 2026-06-02
+.docs/features/product/ai-context-stability-migration.md:5:status: done
+.docs/features/product/ai-context-stability-migration.md:50:progress:
+.docs/features/product/ai-context-stability-migration.md:52:  step: "initiative clôturée — P0 read-only/index/fallback/OKF livré (v0.13)"
+.docs/features/product/ai-context-stability-migration.md:54:  resume_hint: "clôturée ; le durcissement continu est porté par .docs/frames/2026-06-28-audit-strategique-remediation.md, pas par une initiative stabilisation perpétuelle"
+.docs/features/product/ai-context-stability-migration.md:55:  updated: 2026-06-28
+.docs/features/product/readme-positioning.md:5:status: active
+.docs/features/product/readme-positioning.md:37:progress:
+.docs/features/product/readme-positioning.md:39:  step: "repositionnement étendu : canonicité README, honnêteté multi-agent en tête, AGENTS.md source unique"
+.docs/features/product/readme-positioning.md:41:  resume_hint: "exécuter A5 (canonicité README_AI_CONTEXT), A10 (honnêteté multi-agent dès la 1ère ligne) puis cadrer C1 (AGENTS.md source unique) — cf. frame 2026-06-28"
+.docs/features/product/readme-positioning.md:42:  updated: "2026-06-28"
+.docs/features/workflow/feature-new-approval-step.md:5:status: active
+.docs/features/workflow/feature-new-approval-step.md:24:progress:
+.docs/features/workflow/feature-new-approval-step.md:26:  step: "proposition validable dogfoodée dans le template"
+.docs/features/workflow/feature-new-approval-step.md:28:  resume_hint: "Relire la propagation template/runtime puis clôturer si les checks passent."
+.docs/features/workflow/feature-new-approval-step.md:29:  updated: 2026-05-06
+.docs/features/quality/context-relevance-tracker.md:5:status: draft
+.docs/features/quality/context-relevance-tracker.md:35:progress:
+.docs/features/quality/context-relevance-tracker.md:37:  step: "implémentation livrée, 8/8 cas test PASS, prêt à commit"
+.docs/features/quality/context-relevance-tracker.md:39:  resume_hint: "commit feat(quality) puis valider en utilisation réelle (run report --last 50 après quelques tours pour voir précision/rappel)"
+.docs/features/quality/context-relevance-tracker.md:40:  updated: 2026-06-26
+.docs/features/workflow/feature-audit.md:5:status: draft
+.docs/features/workflow/feature-audit.md:16:progress:
+.docs/features/workflow/feature-audit.md:18:  step: "procédure déplacée sous .ai/workflows ; modes discover/refresh conservés"
+.docs/features/workflow/feature-audit.md:20:  resume_hint: "valider que /aic-review peut s'appuyer sur .ai/workflows/feature-audit.md sans exposer de skill procédural"
+.docs/features/workflow/feature-audit.md:21:  updated: 2026-05-03
+.docs/features/product/knowledge-federation.md:5:status: active
+.docs/features/product/knowledge-federation.md:42:progress:
+.docs/features/product/knowledge-federation.md:44:  step: "cadrage initial de l'initiative et du MVP knowledge source"
+.docs/features/product/knowledge-federation.md:46:  resume_hint: "definir le contrat minimal d'une connaissance partagee puis choisir le premier backend MVP"
+.docs/features/product/knowledge-federation.md:47:  updated: 2026-06-29
+.docs/features/quality/agent-config-validation.md:5:status: active
+.docs/features/quality/agent-config-validation.md:33:progress:
+.docs/features/quality/agent-config-validation.md:35:  step: "check-agent-config livré et smoke-test PASS"
+.docs/features/quality/agent-config-validation.md:37:  resume_hint: "prêt à review ; shellcheck non lancé car absent localement"
+.docs/features/quality/agent-config-validation.md:38:  updated: 2026-06-26
+.docs/features/quality/pr-report.md:5:status: active
+.docs/features/quality/pr-report.md:22:progress:
+.docs/features/quality/pr-report.md:24:  step: "aic expose frame/document-feature/review/ship"
+.docs/features/quality/pr-report.md:26:  resume_hint: "ajouter une intégration CI (commentaire PR automatique) — passer en review une fois la surface aic stabilisée"
+.docs/features/quality/pr-report.md:27:  updated: 2026-06-25
+.docs/features/product/product-portfolio-loop.md:5:status: done
+.docs/features/product/product-portfolio-loop.md:57:progress:
+.docs/features/product/product-portfolio-loop.md:59:  step: "couche traceability product read-only livrée et testée"
+.docs/features/product/product-portfolio-loop.md:61:  resume_hint: "clos ; durcissement scoring portfolio + WARN CI next_decision_date dépassée = feature dédiée si priorisés (cf. frame 2026-06-28, bac B5)"
+.docs/features/product/product-portfolio-loop.md:62:  updated: 2026-06-28
+.docs/features/quality/cycle-detection.md:5:status: active
+.docs/features/quality/cycle-detection.md:13:progress:
+.docs/features/quality/cycle-detection.md:15:  step: "bootstrap dog-fooding ; check-features partagé avec touches_shared"
+.docs/features/quality/cycle-detection.md:17:  resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
+.docs/features/quality/cycle-detection.md:18:  updated: 2026-06-25
+.docs/features/quality/doc-freshness.md:5:status: active
+.docs/features/quality/doc-freshness.md:19:progress:
+.docs/features/quality/doc-freshness.md:21:  step: "quality gate alignée sur Pack A lean"
+.docs/features/quality/doc-freshness.md:23:  resume_hint: "vérifier check-feature-freshness --warn et staged strict avant commit"
+.docs/features/quality/doc-freshness.md:24:  updated: 2026-06-26
+.docs/features/quality/touches-breadth-guard.md:5:status: active
+.docs/features/quality/touches-breadth-guard.md:31:progress:
+.docs/features/quality/touches-breadth-guard.md:33:  step: "guard + test + wiring livrés ; reclassifications incrémentales exact-multi en cours"
+.docs/features/quality/touches-breadth-guard.md:35:  resume_hint: "reclasser incrémentalement les fichiers flagués (README*, _lib.sh, aic.sh, CHANGELOG…) en touches_shared quand on touche leur feature"
+.docs/features/quality/touches-breadth-guard.md:36:  updated: 2026-06-26
+.docs/features/quality/feature-schema-validator.md:5:status: draft
+.docs/features/quality/feature-schema-validator.md:34:progress:
+.docs/features/quality/feature-schema-validator.md:36:  step: "incrément 1 livré : clés requises dérivées du schéma (.required) dans check-features via read_schema_enum (zéro dép) ; test + parité OK"
+.docs/features/quality/feature-schema-validator.md:38:  resume_hint: "follow-ups : (1) HANDOFF quality/smoke-test = brancher le test dans smoke [0q/28] ; (2) entrée CHANGELOG (différée, couplage) ; (3) suite optionnelle : dériver le pattern id ((?:→() et enums imbriqués product.portfolio. Runtime reste bash/jq/yq, AUCUN validateur externe (décision vs éthos schéma)"
+.docs/features/quality/feature-schema-validator.md:39:  updated: 2026-06-30
+.docs/features/quality/doctor.md:5:status: active
+.docs/features/quality/doctor.md:17:progress:
+.docs/features/quality/doctor.md:19:  step: "MVP script doctor (checks dépendances/hooks/index + next actions) ; smoke-test couvre les régressions review"
+.docs/features/quality/doctor.md:21:  resume_hint: "évaluer extraction future vers ai-context doctor (CLI) avec flags --json/--strict"
+.docs/features/quality/doctor.md:22:  updated: 2026-04-28
+.docs/features/quality/read-only-checks-contract.md:5:status: active
+.docs/features/quality/read-only-checks-contract.md:56:progress:
+.docs/features/quality/read-only-checks-contract.md:58:  step: "checks, rapports, surface aic, CI et docs migration alignés read-only"
+.docs/features/quality/read-only-checks-contract.md:60:  resume_hint: "relire le delta puis décider si le comportement legacy de check-features sans flag doit être déprécié en release N+1"
+.docs/features/quality/read-only-checks-contract.md:61:  updated: 2026-06-26
+.docs/features/product/agent-efficacy-benchmark.md:5:status: active
+.docs/features/product/agent-efficacy-benchmark.md:46:progress:
+.docs/features/product/agent-efficacy-benchmark.md:48:  step: "incr.13 : tâche 0005 hors-traces + garde task_invalid"
+.docs/features/product/agent-efficacy-benchmark.md:50:  resume_hint: "0005-resume-hors-traces livrée avec garde de fuite (task_invalid si vérité terrain reconstructible hors mesh) ; dry-run réel ai_context : with PASS, without échoue sans fuite détectée. Prochaine reprise : run Codex N=3 incluant 0005 sur ai_context + ai_debate, puis lecture pour la décision produit du 2026-07-15"
+.docs/features/product/agent-efficacy-benchmark.md:51:  updated: 2026-07-03
+.docs/features/quality/review-delta-uncommitted-coverage.md:5:status: draft
+.docs/features/quality/review-delta-uncommitted-coverage.md:27:progress:
+.docs/features/quality/review-delta-uncommitted-coverage.md:29:  step: "implémentation livrée + 6 tests PASS, prêt à commit"
+.docs/features/quality/review-delta-uncommitted-coverage.md:31:  resume_hint: "commit feat(quality) puis valider en utilisation réelle sur un commit suivant"
+.docs/features/quality/review-delta-uncommitted-coverage.md:32:  updated: 2026-06-26
+.docs/features/quality/smoke-test.md:5:status: active
+.docs/features/quality/smoke-test.md:14:progress:
+.docs/features/quality/smoke-test.md:16:  step: "smoke branche le self-check benchmark ([0s/28])"
+.docs/features/quality/smoke-test.md:18:  resume_hint: "relancer tests/smoke-test.sh après toute évolution du Pack A, de check-shims ou du runner benchmark"
+.docs/features/quality/smoke-test.md:19:  updated: 2026-07-03
+.docs/features/quality/ci-guard.md:5:status: active
+.docs/features/quality/ci-guard.md:13:progress:
+.docs/features/quality/ci-guard.md:15:  step: "freshness documentaire rafraîchie après dogfood"
+.docs/features/quality/ci-guard.md:17:  resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
+.docs/features/quality/ci-guard.md:18:  updated: 2026-06-01
+.docs/features/core/project-overlay-stable.md:5:status: active
+.docs/features/core/project-overlay-stable.md:31:progress:
+.docs/features/core/project-overlay-stable.md:33:  step: "implémentation overlay projet"
+.docs/features/core/project-overlay-stable.md:35:  resume_hint: "Vérifier que .ai/project reste project-owned, optionnel et ignoré par les checks de drift."
+.docs/features/core/project-overlay-stable.md:36:  updated: 2026-06-26
+.docs/features/quality/targeted-regression-coverage.md:5:status: done
+.docs/features/quality/targeted-regression-coverage.md:33:progress:
+.docs/features/quality/targeted-regression-coverage.md:35:  step: ""
+.docs/features/quality/targeted-regression-coverage.md:37:  resume_hint: "Feature cloturee le 2026-05-12."
+.docs/features/quality/targeted-regression-coverage.md:38:  updated: 2026-06-26
+.docs/features/core/feature-index-cache.md:5:status: active
+.docs/features/core/feature-index-cache.md:16:progress:
+.docs/features/core/feature-index-cache.md:18:  step: "bootstrap dog-fooding (v0.9 historique)"
+.docs/features/core/feature-index-cache.md:20:  resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
+.docs/features/core/feature-index-cache.md:21:  updated: 2026-06-29
+.docs/features/quality/features-for-path-ranking-and-matcher-correctness.md:5:status: active
+.docs/features/quality/features-for-path-ranking-and-matcher-correctness.md:29:progress:
+.docs/features/quality/features-for-path-ranking-and-matcher-correctness.md:31:  step: "R2 gate verte : pénalité tracker branchée et smoke PASS"
+.docs/features/quality/features-for-path-ranking-and-matcher-correctness.md:33:  resume_hint: "prêt à commit : feat(quality): exploiter le tracker dans le ranking features-for-path"
+.docs/features/quality/features-for-path-ranking-and-matcher-correctness.md:34:  updated: 2026-07-02
+.docs/features/core/aic-surface-canonical.md:5:status: active
+.docs/features/core/aic-surface-canonical.md:39:progress:
+.docs/features/core/aic-surface-canonical.md:41:  step: "surface aic implementee et smoke complet PASS"
+.docs/features/core/aic-surface-canonical.md:43:  resume_hint: "Relire le delta puis faire le commit dedie du sous-chantier si le scope convient."
+.docs/features/core/aic-surface-canonical.md:44:  updated: 2026-06-26
+.docs/features/core/index-contract-v2.md:5:status: active
+.docs/features/core/index-contract-v2.md:40:progress:
+.docs/features/core/index-contract-v2.md:42:  step: "schema_version opérationnalisé (snapshot de clés couplé) ; contrat stdout/write validé"
+.docs/features/core/index-contract-v2.md:44:  resume_hint: "C2c fait. Reste C2 hors-scope index-contract-v2 : appliquer le schéma + réconcilier la divergence id/depends_on schema↔checker = feature d'alignement schema/checker (touche check-features.sh, scope feature-mesh)."
+.docs/features/core/index-contract-v2.md:45:  updated: 2026-06-29
+.docs/features/core/project-overlay-scope-registry.md:5:status: active
+.docs/features/core/project-overlay-scope-registry.md:32:progress:
+.docs/features/core/project-overlay-scope-registry.md:34:  step: "contrat livré, tests verts, quality gate passée"
+.docs/features/core/project-overlay-scope-registry.md:36:  resume_hint: "DONE. Prochain : workflow/project-overlay-onboarding (skill aic-onboard). HANDOFF core → workflow à ouvrir."
+.docs/features/core/project-overlay-scope-registry.md:37:  updated: 2026-06-19
+.docs/features/core/codex-skills-install.md:5:status: done
+.docs/features/core/codex-skills-install.md:27:progress:
+.docs/features/core/codex-skills-install.md:29:  step: ""
+.docs/features/core/codex-skills-install.md:31:  resume_hint: "feature clôturée le 2026-05-04"
+.docs/features/core/codex-skills-install.md:32:  updated: 2026-06-26
+.docs/features/core/agents-md-native-collapse-path.md:5:status: draft
+.docs/features/core/agents-md-native-collapse-path.md:39:progress:
+.docs/features/core/agents-md-native-collapse-path.md:41:  step: "incrément 1 livré : self-suffisance d'AGENTS.md verrouillée par check-shims (hard rules inline exigés) + test ; runtime + .jinja ; parité OK"
+.docs/features/core/agents-md-native-collapse-path.md:43:  resume_hint: "suite : (1) opérationnaliser le kill_criterion #34235 (veille/signal par agent) ; (2) doc migration warn downstream ; (3) HANDOFF quality/smoke-test = brancher test-agents-md-self-sufficient dans smoke. Invariant .ai/ source unique préservé (AGENTS.md = entrée, pas contenu)"
+.docs/features/core/agents-md-native-collapse-path.md:44:  updated: 2026-06-30
+.docs/features/core/preset-ds-skeletons.md:5:status: active
+.docs/features/core/preset-ds-skeletons.md:13:progress:
+.docs/features/core/preset-ds-skeletons.md:15:  step: "V1 livrée — 2 squelettes + exclusion + smoke-test étendu ; freshness template renforcé"
+.docs/features/core/preset-ds-skeletons.md:17:  resume_hint: "créer 2 fichiers .jinja dans template/docs/ rendus uniquement si tech_profile ∈ {react-next, fullstack-dotnet-react} ; structure par catégorie + 1 composant commenté d'exemple"
+.docs/features/core/preset-ds-skeletons.md:18:  updated: 2026-06-25
+.docs/features/core/feature-mesh-contract-alignment.md:5:status: active
+.docs/features/core/feature-mesh-contract-alignment.md:37:progress:
+.docs/features/core/feature-mesh-contract-alignment.md:39:  step: "fallback product.portfolio implémenté et testé"
+.docs/features/core/feature-mesh-contract-alignment.md:41:  resume_hint: "relire le delta core puis décider si kill_criteria doit aussi être couvert par le fallback"
+.docs/features/core/feature-mesh-contract-alignment.md:42:  updated: 2026-06-26
+.docs/features/core/graph-aware-injection.md:5:status: active
+.docs/features/core/graph-aware-injection.md:10:progress:
+.docs/features/core/graph-aware-injection.md:12:  step: "freshness documentaire rafraîchie après dogfood"
+.docs/features/core/graph-aware-injection.md:14:  resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
+.docs/features/core/graph-aware-injection.md:15:  updated: 2026-05-03
+.docs/features/core/aic-review-application-skill.md:5:status: active
+.docs/features/core/aic-review-application-skill.md:30:progress:
+.docs/features/core/aic-review-application-skill.md:32:  step: "contrat .ai/review et wrappers aic-review Claude/Codex ajoutés"
+.docs/features/core/aic-review-application-skill.md:34:  resume_hint: "Valider les checks puis décider si l'intégration stricte dans aic-ship/feature-done passe par un chantier workflow dédié."
+.docs/features/core/aic-review-application-skill.md:35:  updated: 2026-06-10
+.docs/features/core/template-engine.md:5:status: active
+.docs/features/core/template-engine.md:16:progress:
+.docs/features/core/template-engine.md:18:  step: "template sécurise le cycle install→update Copier"
+.docs/features/core/template-engine.md:20:  resume_hint: "Valider les commandes repair-copier-metadata/template-diff et smoke-test"
+.docs/features/core/template-engine.md:21:  updated: 2026-06-26
+.docs/features/core/dogfood-runtime-sync.md:5:status: active
+.docs/features/core/dogfood-runtime-sync.md:27:progress:
+.docs/features/core/dogfood-runtime-sync.md:29:  step: "runtime dogfoodé + frames locaux ignorés"
+.docs/features/core/dogfood-runtime-sync.md:31:  resume_hint: "vérifier check-shims, dogfood drift, measure-context-size et smoke-test complet"
+.docs/features/core/dogfood-runtime-sync.md:32:  updated: 2026-06-26
+.docs/features/core/agents-md-shim-canonical.md:5:status: active
+.docs/features/core/agents-md-shim-canonical.md:38:progress:
+.docs/features/core/agents-md-shim-canonical.md:40:  step: "import model livré : AGENTS.md neutre + CLAUDE.md/GEMINI.md = @AGENTS.md ; Cursor/Copilot tailored (fallback) ; checks verts"
+.docs/features/core/agents-md-shim-canonical.md:42:  resume_hint: "Reste (follow-up) : (1) étendre check-shims aux agents activés via .copier-answers (aujourd'hui AGENTS.md+CLAUDE.md en dur) ; (2) confirmer la lecture native d'AGENTS.md par Claude (#34235) → si vrai, CLAUDE.md devient optionnel ; (3) HANDOFF pitch readme-positioning."
+.docs/features/core/agents-md-shim-canonical.md:43:  updated: 2026-06-29
+.docs/features/core/feature-mesh.md:5:status: active
+.docs/features/core/feature-mesh.md:30:progress:
+.docs/features/core/feature-mesh.md:32:  step: "heuristique placeholder durci (faux positif comparaison)"
+.docs/features/core/feature-mesh.md:34:  resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
+.docs/features/core/feature-mesh.md:35:  updated: 2026-06-30
+.docs/features/core/okf-strict-profile.md:5:status: draft
+.docs/features/core/okf-strict-profile.md:48:progress:
+.docs/features/core/okf-strict-profile.md:50:  step: "Phase 0 implémentée et validée (smoke-test + 19 tests unitaires dont test-okf-type + dogfood-drift) en régime warn-only"
+.docs/features/core/okf-strict-profile.md:52:  resume_hint: "Phase 0 livrée. Reste : confirmer HANDOFF quality/product/workflow, puis planifier le release d'enforce vN+1 (type dans required[] + check exit 1 ; si bump schema_version un jour, mettre à jour l'assertion == \"1\" du smoke-test)"
+.docs/features/core/okf-strict-profile.md:53:  updated: 2026-06-26
+
+2026-07-03T09:55:20.456970Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-03T09:55:20.462667Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:20.482646Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:20.482673Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:20.483066Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:20.483080Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:20.483456Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:20.483466Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:20.483813Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:20.483822Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:20.484192Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:20.484199Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:20.484950Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:20.484957Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:20.871864Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:20.879968Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:20.879992Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Le mesh donne deux features actives au `2026-07-03`; le tie-break lexical place `product/agent-efficacy-benchmark` avant `quality/smoke-test`. Je crée maintenant le JSON exact dans `BENCH_RESULT/resume-context.json`.
+exec
+/bin/zsh -lc 'mkdir -p BENCH_RESULT' in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work
+ succeeded in 0ms:
+2026-07-03T09:55:30.363328Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-03T09:55:30.370819Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:30.391043Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:30.391072Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:30.391420Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:30.391427Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:30.391809Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:30.391822Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:30.392191Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:30.392212Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:30.392582Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:30.392588Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:30.393353Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:30.393359Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:30.788785Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:30.795921Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:30.795950Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+apply patch
+patch: completed
+/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work/BENCH_RESULT/resume-context.json
+diff --git a/BENCH_RESULT/resume-context.json b/BENCH_RESULT/resume-context.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..95270230449acc76b8891105d63c1cf86d1ae47a
+--- /dev/null
++++ b/BENCH_RESULT/resume-context.json
+@@ -0,0 +1,5 @@
++{
++  "feature": "product/agent-efficacy-benchmark",
++  "step": "incr.13 : tâche 0005 hors-traces + garde task_invalid",
++  "next": "0005-resume-hors-traces livrée avec garde de fuite (task_invalid si vérité terrain reconstructible hors mesh) ; dry-run réel ai_context : with PASS, without échoue sans fuite détectée. Prochaine reprise : run Codex N=3 incluant 0005 sur ai_context + ai_debate, puis lecture pour la décision produit du 2026-07-15"
++}
+
+diff --git a/BENCH_RESULT/resume-context.json b/BENCH_RESULT/resume-context.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..95270230449acc76b8891105d63c1cf86d1ae47a
+--- /dev/null
++++ b/BENCH_RESULT/resume-context.json
+@@ -0,0 +1,5 @@
++{
++  "feature": "product/agent-efficacy-benchmark",
++  "step": "incr.13 : tâche 0005 hors-traces + garde task_invalid",
++  "next": "0005-resume-hors-traces livrée avec garde de fuite (task_invalid si vérité terrain reconstructible hors mesh) ; dry-run réel ai_context : with PASS, without échoue sans fuite détectée. Prochaine reprise : run Codex N=3 incluant 0005 sur ai_context + ai_debate, puis lecture pour la décision produit du 2026-07-15"
++}
+
+2026-07-03T09:55:35.503935Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-03T09:55:35.507202Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:35.523512Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:35.523534Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:35.523868Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:35.523877Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:35.524218Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:35.524225Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:35.524531Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:35.524540Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:35.524866Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:35.524871Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:35.525602Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:35.525612Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:35.913795Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:35.922079Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:35.922117Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Le fichier est écrit. Je lance une vérification JSON locale et le grader `check.sh` s’il est présent à la racine.
+exec
+/bin/zsh -lc "jq -e 'type == \"object\" and (keys_unsorted == [\"feature\", \"step\", \"next\"])' BENCH_RESULT/resume-context.json" in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work
+ succeeded in 0ms:
+true
+
+exec
+/bin/zsh -lc ./check.sh in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work
+ exited 127 in 0ms:
+zsh:1: no such file or directory: ./check.sh
+
+2026-07-03T09:55:47.860699Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-03T09:55:47.867433Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+diff --git a/BENCH_RESULT/resume-context.json b/BENCH_RESULT/resume-context.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..95270230449acc76b8891105d63c1cf86d1ae47a
+--- /dev/null
++++ b/BENCH_RESULT/resume-context.json
+@@ -0,0 +1,5 @@
++{
++  "feature": "product/agent-efficacy-benchmark",
++  "step": "incr.13 : tâche 0005 hors-traces + garde task_invalid",
++  "next": "0005-resume-hors-traces livrée avec garde de fuite (task_invalid si vérité terrain reconstructible hors mesh) ; dry-run réel ai_context : with PASS, without échoue sans fuite détectée. Prochaine reprise : run Codex N=3 incluant 0005 sur ai_context + ai_debate, puis lecture pour la décision produit du 2026-07-15"
++}
+
+2026-07-03T09:55:47.888650Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:47.888671Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:47.889085Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:47.889099Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:47.889536Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:47.889545Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:47.889974Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:47.889984Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:47.890377Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:47.890389Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:47.891327Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:47.891336Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:48.268769Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:48.276619Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:48.276645Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+La validation JSON passe. `./check.sh` n’existe pas à la racine de cette copie, donc je localise le script avant de décider s’il est disponible ailleurs.
+exec
+/bin/zsh -lc "rg --files | rg '("'^|/)check'"\\.sh"'$'"'" in /private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work
+ exited 1 in 0ms:
+2026-07-03T09:55:54.280946Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=/Users/huy/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime/plugins/template-creator/.codex-plugin/plugin.json
+2026-07-03T09:55:54.285993Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+diff --git a/BENCH_RESULT/resume-context.json b/BENCH_RESULT/resume-context.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..95270230449acc76b8891105d63c1cf86d1ae47a
+--- /dev/null
++++ b/BENCH_RESULT/resume-context.json
+@@ -0,0 +1,5 @@
++{
++  "feature": "product/agent-efficacy-benchmark",
++  "step": "incr.13 : tâche 0005 hors-traces + garde task_invalid",
++  "next": "0005-resume-hors-traces livrée avec garde de fuite (task_invalid si vérité terrain reconstructible hors mesh) ; dry-run réel ai_context : with PASS, without échoue sans fuite détectée. Prochaine reprise : run Codex N=3 incluant 0005 sur ai_context + ai_debate, puis lecture pour la décision produit du 2026-07-15"
++}
+
+2026-07-03T09:55:54.305717Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:54.305734Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:54.306130Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:54.306147Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:54.306559Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:54.306568Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:54.306946Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:54.306955Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:54.307357Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:54.307368Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:54.308186Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:54.308195Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-07-03T09:55:54.669180Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:54.676625Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+2026-07-03T09:55:54.676651Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt[0]: prompt must be at most 128 characters path=/Users/huy/.codex/.tmp/plugins/plugins/ngs-analysis/.codex-plugin/plugin.json
+codex
+Créé : [BENCH_RESULT/resume-context.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work/BENCH_RESULT/resume-context.json:1)
+
+Feature retenue : `product/agent-efficacy-benchmark`, car elle est `active`, datée `2026-07-03`, avec `step` et `resume_hint` non vides. Elle gagne le tie-break lexical contre `quality/smoke-test`.
+
+Vérification JSON locale OK. Je n’ai pas pu lancer `check.sh` : aucun `check.sh` n’est présent dans cette copie de travail.
+diff --git a/BENCH_RESULT/resume-context.json b/BENCH_RESULT/resume-context.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..95270230449acc76b8891105d63c1cf86d1ae47a
+--- /dev/null
++++ b/BENCH_RESULT/resume-context.json
+@@ -0,0 +1,5 @@
++{
++  "feature": "product/agent-efficacy-benchmark",
++  "step": "incr.13 : tâche 0005 hors-traces + garde task_invalid",
++  "next": "0005-resume-hors-traces livrée avec garde de fuite (task_invalid si vérité terrain reconstructible hors mesh) ; dry-run réel ai_context : with PASS, without échoue sans fuite détectée. Prochaine reprise : run Codex N=3 incluant 0005 sur ai_context + ai_debate, puis lecture pour la décision produit du 2026-07-15"
++}
+
+2026-07-03T09:56:06.577744Z  WARN codex_mcp::rmcp_client: failed to initialize MCP client during shutdown: MCP startup failed: Environment variable GITHUB_PAT_TOKEN for MCP server 'github' is not set
+tokens used
+64 094

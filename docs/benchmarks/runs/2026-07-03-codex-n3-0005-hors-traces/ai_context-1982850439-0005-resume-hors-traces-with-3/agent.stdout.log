@@ -1,0 +1,3 @@
+Créé [BENCH_RESULT/resume-context.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-3/work/BENCH_RESULT/resume-context.json).
+
+J’ai validé le JSON avec `jq` : trois clés exactement, valeurs reprises depuis la feature active la plus fraîche après tie-break lexical. `check.sh` n’est pas présent dans cette copie, donc je n’ai pas pu lancer le grader local.

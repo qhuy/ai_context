@@ -1,0 +1,3 @@
+Terminé : [BENCH_RESULT/resume-context.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_debate-3501606685-0005-resume-hors-traces-without-1/work/BENCH_RESULT/resume-context.json) contient exactement `feature`, `step`, `next`.
+
+Validation effectuée : `check.sh` avec `BENCH_SOURCE_REPO=/Users/huy/Documents/Perso/ai_context` et `BENCH_CONDITION=without` retourne `ok`.

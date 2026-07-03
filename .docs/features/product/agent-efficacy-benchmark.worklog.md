@@ -147,3 +147,13 @@
 - Design : même join de reprise que 0002 (feature active la plus fraîche, tie-break scope/id) mais champs `step` + `resume_hint` exacts, et garde de fuite dans le grader — en `without`, la vérité terrain retrouvée hors mesh invalide la cellule au lieu de compter comme échec/succès d'agent.
 - Validation : `bash -n` runner + grader ; `run-bench.sh --self-check` PASS (probe task_invalid incluse) ; intégration agent factice honnête : repo sain `with` PASS / `without` task_fail (exit 0) ; fuite plantée (`NOTES.md` contenant le resume_hint) → `task_invalid` + « run invalide » ; **dry-run sur le repo réel ai_context** : `with` PASS, `without` échoue sans déclencher la garde — la vérité terrain actuelle n'est pas reconstructible hors mesh.
 - Next : run Codex `N=3` incluant `0005` sur `ai_context` + `ai_debate` (action mainteneur, après quota), lecture pour la décision produit du 2026-07-15.
+
+## 2026-07-03 — run N=3 0005 hors-traces publié
+
+- Run : Codex `N=3`, tâche ciblée `0005-resume-hors-traces`, repos `ai_context` + worktree propre `ai_debate` à `d6cdc17`, `BENCH_SEED=42`, `BENCH_TIMEOUT_SECONDS=300`, stamp `2026-07-03-codex-n3-0005-hors-traces`.
+- Résultat global : `with` 6/6 (IC Wilson [61.0% ; 100.0%]) vs `without` 2/6 (IC Wilson [9.7% ; 70.0%]), Δ +66.7 points avec IC approx. Newcombe [-9.0 ; 90.3].
+- Résultat par repo : `ai_debate` réplique un signal externe fort (`with` 3/3 vs `without` 0/3) ; `ai_context` reste partiellement discriminant (`with` 3/3 vs `without` 2/3, un timeout).
+- Coût tokens contextual sur runs mesurés : global `with` ≈ 47746 tokens/run vs `without` ≈ 82171, soit environ -34425 (-41.9%) avec ai_context ; par repo, `ai_context` -52241 (-49.2%) et `ai_debate` -24613 (-37.2%).
+- Hygiène : JSONL valide (12 lignes), `agent_infra_error=0`, `task_invalid=0`, `task_fail=3` tous sur `ai_debate/without`, `timeout=1` sur `ai_context/without`.
+- Décision : publier comme signal positif, mais conserver la réserve statistique (N=3, IC larges). Les runs 0002/0005 suffisent maintenant à préparer la lecture produit du 2026-07-15 ; R1 peut démarrer séparément en scope `workflow/pre-turn-reminder`.
+- Artefacts : synthèse `docs/benchmarks/reports/2026-07-03-codex-n3-0005-hors-traces-summary.md`, rapports par repo, TSV/JSONL et logs sous `docs/benchmarks/runs/2026-07-03-codex-n3-0005-hors-traces/`.

@@ -1,0 +1,5 @@
+Créé : [BENCH_RESULT/resume-context.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-with-2/work/BENCH_RESULT/resume-context.json:1)
+
+Feature retenue : `product/agent-efficacy-benchmark`, car elle est `active`, datée `2026-07-03`, avec `step` et `resume_hint` non vides. Elle gagne le tie-break lexical contre `quality/smoke-test`.
+
+Vérification JSON locale OK. Je n’ai pas pu lancer `check.sh` : aucun `check.sh` n’est présent dans cette copie de travail.

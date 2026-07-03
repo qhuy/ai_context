@@ -1,0 +1,6 @@
+Fait : [BENCH_RESULT/resume-context.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_debate-3501606685-0005-resume-hors-traces-with-3/work/BENCH_RESULT/resume-context.json) contient exactement les 3 clés demandées.
+
+Vérifications :
+- JSON valide avec `jq -e`.
+- Sélection recoupée avec `.ai/.feature-index.json`.
+- `check.sh` n’est pas présent dans cette copie de travail, donc je ne l’ai pas lancé.

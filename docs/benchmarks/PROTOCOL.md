@@ -152,8 +152,11 @@ relancer et retrouver le même Δ (aux intervalles près).
 - ✅ Tâche `0005-resume-hors-traces` : vérité terrain gardée par une détection
   de fuite dans le grader ; dry-run déterministe sur le repo réel `ai_context` :
   `with` PASS, `without` échoue sans déclencher la garde (aucune fuite détectée).
-- ⏳ À venir : run agent réel `N=3` incluant `0005`, puis décider si les tâches handoff deviennent
-  portables pour repos externes ou restent repo-spécifiques.
+- ✅ Run agent réel `N=3` ciblé `0005` publié : global `with` 6/6 vs `without`
+  2/6, `task_invalid=0`, signal fort sur `ai_debate` et partiel sur `ai_context`.
+- ⏳ À venir : lecture produit des runs 0002/0005 pour la décision du 2026-07-15,
+  puis décider si les tâches handoff deviennent portables pour repos externes ou
+  restent repo-spécifiques.
 - Le runner tourne en `--self-check` (valide le plumbing sans invoquer d'agent).
   Les **runs agents réels** restent une action mainteneur (clés + coût +
   non-déterminisme).

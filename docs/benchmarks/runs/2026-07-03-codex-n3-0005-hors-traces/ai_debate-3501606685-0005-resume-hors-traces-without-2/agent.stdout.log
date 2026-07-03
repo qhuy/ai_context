@@ -1,0 +1,5 @@
+Créé : [BENCH_RESULT/resume-context.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_debate-3501606685-0005-resume-hors-traces-without-2/work/BENCH_RESULT/resume-context.json)
+
+Sélection retenue : `product/agent-efficacy-benchmark`, active au `2026-07-03`. Il y avait une égalité avec `quality/smoke-test`, résolue lexicalement.
+
+Validation effectuée avec `jq` : JSON valide, exactement les trois clés demandées. `check.sh` n’est pas présent dans cette copie de travail, donc je ne l’ai pas exécuté.

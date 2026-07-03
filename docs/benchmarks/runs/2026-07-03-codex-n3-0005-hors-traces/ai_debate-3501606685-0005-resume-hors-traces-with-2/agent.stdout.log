@@ -1,0 +1,5 @@
+Créé : [BENCH_RESULT/resume-context.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_debate-3501606685-0005-resume-hors-traces-with-2/work/BENCH_RESULT/resume-context.json)
+
+Feature retenue : `workflow/aib-debate-plan-action-v1`, active la plus récente avec `progress.step` et `progress.resume_hint` non vides (`updated: 2026-06-17`).
+
+Validation : JSON valide avec exactement les trois clés demandées. `check.sh` n’est pas présent dans ce workspace, donc je n’ai pas pu le lancer.

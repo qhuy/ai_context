@@ -1,0 +1,5 @@
+Fait : [BENCH_RESULT/resume-context.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_context-1982850439-0005-resume-hors-traces-without-1/work/BENCH_RESULT/resume-context.json) contient exactement `feature`, `step`, `next`.
+
+Validation effectuée :
+- JSON valide avec clés exactes.
+- `check.sh` exécuté en condition `without` : `ok`.

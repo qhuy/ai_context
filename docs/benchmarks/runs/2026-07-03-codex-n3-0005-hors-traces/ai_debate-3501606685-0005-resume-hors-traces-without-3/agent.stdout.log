@@ -1,0 +1,5 @@
+Fichier créé : [BENCH_RESULT/resume-context.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_debate-3501606685-0005-resume-hors-traces-without-3/work/BENCH_RESULT/resume-context.json)
+
+Feature retenue : `product/agent-efficacy-benchmark`, issue du mesh source `/Users/huy/Documents/Perso/ai_context/.docs/features`, avec tie-break lexical sur les deux features actives datées du `2026-07-03`.
+
+Validation faite avec `jq` : JSON valide, trois clés exactes, valeurs exactes. Je n’ai pas trouvé de `check.sh` local à exécuter.

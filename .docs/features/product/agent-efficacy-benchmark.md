@@ -45,9 +45,9 @@ doc:
     observability: true
 progress:
   phase: implement
-  step: "incr.13 : tâche 0005 hors-traces + garde task_invalid"
+  step: "incr.14 : run 0005 N=3 publié"
   blockers: []
-  resume_hint: "0005-resume-hors-traces livrée avec garde de fuite (task_invalid si vérité terrain reconstructible hors mesh) ; dry-run réel ai_context : with PASS, without échoue sans fuite détectée. Prochaine reprise : run Codex N=3 incluant 0005 sur ai_context + ai_debate, puis lecture pour la décision produit du 2026-07-15"
+  resume_hint: "Run Codex N=3 0005 publié : global with 6/6 vs without 2/6, ai_debate 3/3 vs 0/3, ai_context 3/3 vs 2/3 + 1 timeout, task_invalid=0. Prochaine reprise : lire les runs 0002/0005 pour la décision produit du 2026-07-15 ; R1 workflow/pre-turn-reminder peut démarrer séparément."
   updated: 2026-07-03
 ---
 
@@ -192,6 +192,14 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   `agent_infra_error`). Répond au constat 0002/0004 (« Δ nul par fuite, pas par capacité »)
   et au kill-criterion « preuve creuse ». Caveat documenté : l'agent peut techniquement
   écrire la réponse hors `BENCH_RESULT/` dans son workdir ; jugé acceptable v1.
+- 2026-07-03 : incr.14 — run Codex `N=3` ciblé `0005-resume-hors-traces`,
+  repos `ai_context` + worktree propre `ai_debate` (`d6cdc17`), seed `42`,
+  timeout 300s, stamp `2026-07-03-codex-n3-0005-hors-traces`. Résultat global :
+  `with` 6/6 vs `without` 2/6, Δ +66.7 points, IC approx. Newcombe [-9.0 ;
+  90.3]. Signal externe fort sur `ai_debate` (`with` 3/3, `without` 0/3) ;
+  `ai_context` reste partiellement discriminant (`with` 3/3, `without` 2/3 +
+  un timeout). Hygiène : `agent_infra_error=0`, `task_invalid=0`, donc aucune
+  fuite hors mesh détectée par la garde 0005.
 - 2026-06-30 : création via pilotage `aic-pilot` (pilot `2026-06-30-ze-solution`, item P1).
   Axe directeur « prouver & positionner » retenu. Métrique primaire tranchée = **taux de
   succès de tâche** ; coût tokens = leading indicator. Cadres posés : v1 maintainer-only,

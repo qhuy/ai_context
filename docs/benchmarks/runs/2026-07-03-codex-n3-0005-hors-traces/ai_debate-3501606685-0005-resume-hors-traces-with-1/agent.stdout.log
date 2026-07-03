@@ -1,0 +1,5 @@
+Fichier créé : [BENCH_RESULT/resume-context.json](/private/var/folders/c_/d6wllyyx16j6thgf7n33jlnc0000gn/T/ai-context-bench.3gxfwn/ai_debate-3501606685-0005-resume-hors-traces-with-1/work/BENCH_RESULT/resume-context.json:1)
+
+Feature retenue : `workflow/aib-debate-plan-action-v1`, active, `progress.updated: 2026-06-17`, avec `step` et `resume_hint` non vides.
+
+Validation locale : JSON valide, exactement 3 clés. `check.sh` n’existe pas à la racine, donc je n’ai pas pu le lancer.
