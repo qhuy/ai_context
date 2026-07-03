@@ -35,11 +35,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: implement
-  step: "repositionnement étendu : canonicité README, honnêteté multi-agent en tête, AGENTS.md source unique"
+  phase: review
+  step: "A5/A10 intégrés : README canonique clarifié, honnêteté runtime en tête, pitch AGENTS.md aligné C1"
   blockers: []
-  resume_hint: "exécuter A5 (canonicité README_AI_CONTEXT), A10 (honnêteté multi-agent dès la 1ère ligne) puis cadrer C1 (AGENTS.md source unique) — cf. frame 2026-06-28"
-  updated: "2026-06-28"
+  resume_hint: "relire le delta README puis décider si la fiche peut passer DONE après checks ; product-review signale encore l'absence de dev slice liée, acceptable ou à router séparément"
+  updated: "2026-07-03"
 type: feature
 ---
 
@@ -63,6 +63,10 @@ puis accéder à la référence technique seulement quand nécessaire.
 - Repositionner le haut du README autour de la valeur utilisateur.
 - Simplifier le sommaire et le parcours de lecture.
 - Mettre en avant `aic`, Codex/Claude, le contexte lean et les garde-fous.
+- Clarifier que `README.md` est l'entrée canonique du repo source, tandis que
+  `README_AI_CONTEXT.md` est le guide rendu dans les projets consommateurs.
+- Refléter le pitch C1 : `AGENTS.md` est l'entrée agent standard, `.ai/index.md`
+  reste la source lean chargée juste-à-temps.
 - Conserver les informations critiques : installation, migration, capacités par agent,
   fichiers générés, scripts, variables, FAQ.
 
@@ -80,6 +84,8 @@ Un seul livrable : README racine plus accessible et plus convaincant.
 
 - Ne pas masquer les limites actuelles : Claude garde plus d'automatisation runtime
   que Codex et les autres agents.
+- Ne pas présenter Codex comme une parité runtime Claude : c'est le pilote
+  multi-agent le plus outillé après Claude, avec intervention plus explicite.
 - Le langage public reste `aic` / `aic-*`.
 - Le README doit rester utile à un mainteneur, pas seulement à un visiteur GitHub.
 
@@ -88,6 +94,8 @@ Un seul livrable : README racine plus accessible et plus convaincant.
 - Garder un README unique : pitch + quickstart + référence.
 - Déplacer la complexité après l'installation et le workflow quotidien.
 - Préférer des tableaux courts et commandes copiables aux longs paragraphes.
+- Garder `README_AI_CONTEXT.md` à la racine pour le dogfood/template, mais
+  nommer explicitement `README.md` comme porte d'entrée canonique du repo source.
 
 ## Comportement attendu
 
@@ -126,3 +134,8 @@ Un lecteur doit pouvoir répondre rapidement à quatre questions :
 
 - 2026-05-06 : création du chantier après validation de la surface `aic`.
 - 2026-06-28 : `decision_state` explore→commit. Le bet « README vendeur » est validé (le README réécrit existe et tient) ; le chantier reste ouvert et absorbe les items du frame de remédiation 2026-06-28 — A5 (canonicité de `README_AI_CONTEXT.md`, sorti de la racine), A10 (honnêteté multi-agent remontée dès la 1ère ligne, Codex requalifié « pilote »), et le futur cadrage C1 (`AGENTS.md` source unique + symlink/import). `next_decision_date` re-datée au 2026-07-31.
+- 2026-07-03 : A5/A10 exécutés dans `README.md`. C1 est reflété côté pitch
+  produit sans rouvrir le scope core : `AGENTS.md` est décrit comme entrée agent
+  standard et `.ai/index.md` comme source de contexte lean. `README_AI_CONTEXT.md`
+  reste présent comme guide généré, mais n'est plus ambigu comme porte d'entrée
+  canonique du repo source.

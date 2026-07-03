@@ -1,7 +1,14 @@
 # ai_context
 
-Le template qui rend Claude, Codex et les autres agents beaucoup plus fiables sur
-un repo réel.
+Le template qui rend les agents IA plus fiables sur un repo réel sans promettre
+la même automatisation partout : Claude Code est le runtime le plus intégré,
+Codex est le pilote multi-agent le mieux outillé après Claude, et les autres
+agents s'appuient surtout sur `AGENTS.md`, les hooks git et les checks.
+
+`README.md` est la porte d'entrée canonique du repo source. Le fichier
+`README_AI_CONTEXT.md` est le guide rendu dans les projets consommateurs ; il
+montre le résultat du template, mais ne remplace pas cette page pour comprendre
+ou maintenir `ai_context`.
 
 `ai_context` installe une couche de contexte versionnée dans ton projet :
 instructions agents, feature mesh, worklogs, hooks, checks, skills `aic-*` et
@@ -24,7 +31,7 @@ testé.
 
 | Ce que tu veux | Ce que le template installe |
 |---|---|
-| Une source unique de vérité pour tous les agents | `.ai/index.md` + shims `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, Copilot, Cursor |
+| Une entrée agent standard sans duplication | `AGENTS.md` auto-suffisant + `.ai/index.md` lean, avec shims/imports dérivés selon l'agent |
 | Reprendre une feature sans redemander l'historique | fiches `.docs/features/<scope>/<id>.md` + worklogs append-only |
 | Eviter le contexte géant | Pack A lean, règles on-demand, mesure de coût tokens |
 | Relier code, doc, commit et review | `touches:`, `depends_on`, checks feature, freshness staged |
@@ -159,12 +166,13 @@ flowchart LR
 
 Le principe :
 
-1. Les shims racine pointent vers `.ai/index.md`.
-2. `.ai/index.md` charge peu de contexte au départ.
-3. Les fichiers ciblés déclenchent la recherche des fiches feature liées.
-4. Les worklogs gardent la mémoire entre sessions.
-5. Les hooks et checks empêchent les commits incohérents.
-6. `aic` sert de langage commun entre humain, Claude, Codex et terminal.
+1. `AGENTS.md` donne l'entrée standard et les règles dures suffisantes.
+2. `.ai/index.md` reste la source de contexte lean chargée juste-à-temps.
+3. Les shims dérivés importent ou pointent vers `AGENTS.md` selon l'agent.
+4. Les fichiers ciblés déclenchent la recherche des fiches feature liées.
+5. Les worklogs gardent la mémoire entre sessions.
+6. Les hooks et checks empêchent les commits incohérents.
+7. `aic` sert de langage commun entre humain, Claude, Codex et terminal.
 
 ## Honnêteté runtime
 
@@ -183,7 +191,8 @@ Tous les agents ne reçoivent pas le même niveau d'automatisation.
 Conclusion pragmatique :
 
 - Claude Code a l'expérience la plus automatisée.
-- Codex a une bonne expérience via skills locaux, `.ai/index.md` et `aic.sh`.
+- Codex est le pilote multi-agent le plus outillé après Claude via skills locaux,
+  `.ai/index.md` et `aic.sh`.
 - Les autres agents bénéficient surtout des shims, règles, hooks git et checks.
 
 ## Contrats multi-agent
@@ -336,7 +345,8 @@ runtime automatiques.
 **Pourquoi ne pas tout mettre dans `AGENTS.md` ou `CLAUDE.md` ?**
 
 Parce que ces fichiers grossissent vite et deviennent chers en tokens. Ici, les
-shims restent minces et `.ai/index.md` charge le reste juste-à-temps.
+shims restent minces. `AGENTS.md` porte l'entrée standard et les règles dures ;
+`.ai/index.md` charge le reste juste-à-temps.
 
 **Où mettre les règles spécifiques à mon projet ?**
 
@@ -355,7 +365,7 @@ Oui. Utilise `docs_root=docs` si nécessaire et crée des scopes adaptés
 
 ## Documentation
 
-- [README_AI_CONTEXT.md](README_AI_CONTEXT.md) - guide généré dans les projets consommateurs
+- [README_AI_CONTEXT.md](README_AI_CONTEXT.md) - guide généré dans les projets consommateurs ; dans ce repo source, `README.md` reste l'entrée canonique
 - [docs/getting-started.md](docs/getting-started.md) - démarrage détaillé
 - [MIGRATION.md](MIGRATION.md) - migration brownfield
 - [docs/upgrading.md](docs/upgrading.md) - updates Copier
