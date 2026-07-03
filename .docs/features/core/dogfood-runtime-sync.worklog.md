@@ -450,3 +450,11 @@
 - `check-dogfood-drift.sh` garde la comparaison stricte du profil dogfood minimal, puis rend le profil conditionnel `fullstack-cursor` (`fullstack`, `strict`, `fullstack-dotnet-react`, agents Claude/Codex/Cursor/Gemini/Copilot) pour attraper les erreurs Jinja hors profil minimal.
 - Tests renforcés : `test-dogfood-drift-extra.sh` exige le rendu `fullstack-cursor`; `test-dogfood-update-preserves-frames.sh` prouve que les frames/pilots datés, `.ai/guardrails.md`, `.ai/.session-docs.log` et `dogfood-runtime-lib.sh` survivent à `--apply`.
 - Validation : `bash -n` PASS ; `shellcheck -S error` PASS ; `test-dogfood-drift-extra` PASS ; `test-dogfood-update-preserves-frames` PASS ; `check-feature-docs --strict core/dogfood-runtime-sync` PASS ; `check-dogfood-drift` PASS (`dogfood-minimal` + `fullstack-cursor`) ; `check-features --no-write` PASS avec warnings OKF historiques ; `check-feature-freshness --worktree --strict` PASS ; `git diff --check` PASS ; `tests/smoke-test.sh` PASS.
+
+## 2026-07-03 — done
+- Intent : clôture documentaire de `core/dogfood-runtime-sync`.
+- Fichiers/surfaces : `.docs/features/core/dogfood-runtime-sync.md`, `.docs/features/core/dogfood-runtime-sync.worklog.md`.
+- Décision : statut `done` ; la synchronisation runtime, les exclusions source-only, la garde raw Jinja et le drift multi-profil sont livrés et validés.
+- Doc Impact Decision : C — fiche feature et worklog mis à jour.
+- Validation prévue : `check-feature-docs --strict core/dogfood-runtime-sync`, checks dogfood/shims/features/références/contexte et freshness avant commit.
+- Next : aucune action immédiate ; rouvrir si le contrat dogfood-update/check-dogfood-drift ou le miroir template change.

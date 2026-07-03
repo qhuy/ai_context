@@ -2,7 +2,7 @@
 id: dogfood-runtime-sync
 scope: core
 title: Synchronisation dogfooding du runtime ai_context
-status: active
+status: done
 depends_on:
   - core/template-engine
   - workflow/agent-behavior
@@ -27,10 +27,10 @@ touches_shared:
   - README_AI_CONTEXT.md
   - tests/smoke-test.sh
 progress:
-  phase: review
-  step: "A12 livré : exclusions dogfood centralisées et drift multi-profil validé"
+  phase: done
+  step: "runtime dogfood synchronisé ; exclusions centralisées et drift multi-profil validés"
   blockers: []
-  resume_hint: "surveiller les prochains changements dogfood avec check-dogfood-drift multi-profil"
+  resume_hint: "aucune action immédiate ; rouvrir si le contrat dogfood-update/check-dogfood-drift ou le miroir template change"
   updated: 2026-07-03
 type: feature
 ---
@@ -136,3 +136,4 @@ Faire consommer au repo source `ai_context` la même couche runtime que celle g�
 - 2026-06-19 : fix — `dogfood-update.sh --apply` supprimait les frames datés via `rsync --delete` (le rendu ne fournit que `0000-template.md`), incohérent avec l'ignore du drift check (asymétrie destructive sur des fichiers committés project-owned). Ajout de `--exclude='[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.md'` à la sync des frames (sous `--delete`, un exclu est protégé de la suppression). Test de non-régression `tests/unit/test-dogfood-update-preserves-frames.sh` qui exerce le vrai `--apply` sur une copie jetable.
 - 2026-07-03 : ajout de `tests/unit/test-template-jinja-raw-braces.sh`, branché dans le smoke, pour bloquer toute expansion Bash `${#...}` non protégée par `{% raw %}` dans `template/**/*.jinja`.
 - 2026-07-03 : A12 — ajout de `dogfood-runtime-lib.sh` comme source unique des exclusions dogfood ; `check-dogfood-drift.sh` compare le profil dogfood minimal et rend aussi `fullstack-cursor` pour couvrir les templates conditionnels.
+- 2026-07-03 : fiche clôturée en `done` après validation du drift dogfood multi-profil, des gardes raw Jinja, des exclusions source-only et de la gate documentaire. Doc Impact Decision : C — fiche feature et worklog mis à jour.
