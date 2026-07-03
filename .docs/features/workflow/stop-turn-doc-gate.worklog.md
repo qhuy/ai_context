@@ -25,3 +25,10 @@
 ## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
 - Surface partagée touchée : `stop-doc-gate.sh` utilise le provider VCS pour lister les changements locaux. Comportement bloquant inchangé.
 - Validation portée par `core/vcs-provider-abstraction`.
+
+## 2026-07-03 — done
+- Intent : clôturer `workflow/stop-turn-doc-gate` après validation du gate Stop, du mode `--worktree` et du sequencer gate -> archivage.
+- Fichiers/surfaces : `.docs/features/workflow/stop-turn-doc-gate.md`, `.docs/features/workflow/stop-turn-doc-gate.worklog.md`.
+- Décision : statut `done`; aucune action immédiate, réouverture seulement si le contrat Stop, la fraîcheur `--worktree` ou l'ordre gate -> archivage change.
+- Validation : `bash tests/unit/test-stop-turn-doc-gate.sh`; `bash tests/unit/test-read-only-checks-contract.sh`; `bash -n .ai/scripts/stop-doc-gate.sh .ai/scripts/stop-sequence.sh .ai/scripts/check-feature-freshness.sh template/.ai/scripts/stop-doc-gate.sh.jinja template/.ai/scripts/stop-sequence.sh.jinja template/.ai/scripts/check-feature-freshness.sh.jinja`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash tests/smoke-test.sh`.
+- Next : aucune action immédiate.

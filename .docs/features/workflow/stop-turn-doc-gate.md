@@ -2,7 +2,7 @@
 id: stop-turn-doc-gate
 scope: workflow
 title: Forcer la fraîcheur documentaire en fin de tour (gate Stop)
-status: active
+status: done
 type: feature
 description: "Hook Stop bloquant qui force la mise à jour de la fiche feature impactée avant de clore un tour, pas seulement au commit."
 depends_on:
@@ -45,11 +45,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: test
-  step: "gate + --worktree + sequencer implémentés et testés ; reste ship (drift + freshness staged)"
+  phase: done
+  step: "gate Stop livré : --worktree, stop-doc-gate, sequencer, contrat read-only, dogfood drift et smoke complet validés"
   blockers: []
-  resume_hint: "lancer tests/smoke-test.sh + check-dogfood-drift.sh ; traiter les obligations freshness staged (multi-features via _lib.sh)"
-  updated: 2026-06-26
+  resume_hint: "aucune action immédiate ; rouvrir seulement si le contrat Stop, la fraîcheur --worktree ou l'ordre gate->archivage change"
+  updated: 2026-07-03
 ---
 
 # Forcer la fraîcheur documentaire en fin de tour (gate Stop)
@@ -135,6 +135,14 @@ Read-only : `tests/unit/test-read-only-checks-contract.sh` étendu (`--worktree 
 
 Preuve attendue : `bash tests/smoke-test.sh` PASS + `bash .ai/scripts/check-dogfood-drift.sh` aligné.
 
+Preuve de clôture 2026-07-03 :
+
+- `bash tests/unit/test-stop-turn-doc-gate.sh` PASS.
+- `bash tests/unit/test-read-only-checks-contract.sh` PASS.
+- `bash -n .ai/scripts/stop-doc-gate.sh .ai/scripts/stop-sequence.sh .ai/scripts/check-feature-freshness.sh template/.ai/scripts/stop-doc-gate.sh.jinja template/.ai/scripts/stop-sequence.sh.jinja template/.ai/scripts/check-feature-freshness.sh.jinja` PASS.
+- `bash .ai/scripts/check-dogfood-drift.sh` PASS.
+- `bash tests/smoke-test.sh` PASS.
+
 ## Risques
 
 - **Coverage multi-features de `_lib.sh`** : `_lib.sh` est dans le `touches:` direct de ~8 features. Toute édition déclenche l'obligation de toucher leurs docs (déjà vrai au commit gate ; le gate Stop le rend visible plus tôt). Atténuation : le filtre « substantiel » et l'échappatoire ; reclassement `touches_shared:` à envisager (hors périmètre).
@@ -154,3 +162,4 @@ Preuve attendue : `bash tests/smoke-test.sh` PASS + `bash .ai/scripts/check-dogf
 ## Historique / décisions
 
 - 2026-06-26 : création. Cause racine corrigée (working-tree vs historique). Découverte du parallélisme des hooks Stop → design sequencer (confirmé avec l'utilisateur). 3 décisions de cadrage tranchées : cross-scope workflow+quality, blocage jusqu'à résolution, anti-bruit via `coverage`.
+- 2026-07-03 : DONE. Gate Stop livré et validé par tests ciblés, contrat read-only, dogfood drift et smoke complet.
