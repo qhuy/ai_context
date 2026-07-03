@@ -29,3 +29,10 @@
 - Risk ledger : pas de breaking change Git attendu ; pas de migration de données ; pas d'auth/data/UX ; nouveau contrat runtime `vcs.provider` documenté ; TFVC reste best-effort sur le parsing de `tf status`.
 - Doc Impact Decision : C — fiche, worklog, README, config Copier et handoffs worklogs mis à jour.
 - Next : commit `feat(core): abstraire le provider VCS`.
+## 2026-07-03 — routage aic knowledge sans changement VCS
+
+- Intent : tracer le changement de `aic.sh` imposé par `workflow/knowledge-publish-search-link`.
+- Fichiers/surfaces : `.ai/scripts/aic.sh`, `template/.ai/scripts/aic.sh.jinja`.
+- Décision : aucun comportement VCS modifié ; le wrapper route `knowledge` vers un script dédié, comme les autres sous-commandes.
+- Validation : le test workflow passe via `aic.sh knowledge`; freshness stricte doit constater ce worklog core dans le delta.
+- Next : aucune action VCS ; rouvrir seulement si les commandes knowledge doivent lire le provider VCS courant.

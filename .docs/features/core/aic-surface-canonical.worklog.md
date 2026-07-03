@@ -169,3 +169,10 @@
 - Doc Impact Decision : C — fiche feature et worklog mis à jour.
 - Validation prévue : `aic.sh --help`, checks shims/références/features/freshness, mesure contexte et smoke ciblé/full selon coût avant commit.
 - Next : aucune action immédiate ; rouvrir si une nouvelle commande publique `aic` ou un alias legacy est ajouté.
+## 2026-07-03 — routage aic knowledge
+
+- Intent : tracer l'extension minimale de la surface CLI publique `aic` pour la feature `workflow/knowledge-publish-search-link`.
+- Fichiers/surfaces : `.ai/scripts/aic.sh`, `template/.ai/scripts/aic.sh.jinja`.
+- Décision : `aic.sh` ajoute seulement l'aide et le dispatch `knowledge` vers `knowledge.sh`; la logique publish/search/link/import reste en scope workflow.
+- Validation : couverte par `bash tests/unit/test-knowledge-workflow.sh`, `bash tests/unit/test-template-jinja-raw-braces.sh`, `bash .ai/scripts/check-dogfood-drift.sh`, puis freshness stricte à relancer.
+- Next : aucune action core ; rouvrir seulement si la taxonomie publique `aic` change au-delà du routage knowledge.

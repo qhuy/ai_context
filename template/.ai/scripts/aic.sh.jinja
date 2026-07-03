@@ -44,6 +44,8 @@ Commandes utilisateur :
                avec path : contexte feature juste-à-temps pour ce fichier
   review       synthèse review-friendly du delta courant
   ship         rapport de sortie : delta, docs, checks, commit proposé
+  knowledge <publish|search|link|import|freshness>
+               hub knowledge Git/Markdown : publier explicitement, chercher, lier, importer
 
 Commandes maintenance :
   repair [--apply]
@@ -890,6 +892,7 @@ EOF
   repair-copier-metadata) run_repair_copier_metadata "$@" ;;
   template-diff) run_template_diff "$@" ;;
   ship)       run_ship "$@" ;;
+  knowledge)  exec bash "$script_dir/knowledge.sh" "$@" ;;
   product-status) exec bash "$script_dir/product-status.sh" "$@" ;;
   product-portfolio) exec bash "$script_dir/product-portfolio.sh" "$@" ;;
   product-review) exec bash "$script_dir/product-review.sh" "$@" ;;
