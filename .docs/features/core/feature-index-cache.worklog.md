@@ -131,3 +131,11 @@
 ## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
 - Surface partagée touchée : `_lib.sh` et `pr-report.sh` consomment le nouveau provider VCS. Aucun changement du contrat d'index feature ; le fallback `_lib.sh` préserve les fixtures historiques.
 - Validation portée par `core/vcs-provider-abstraction` : tests provider, review-delta, pr-report et freshness ciblés.
+
+## 2026-07-03 — done
+- Intent : clôture documentaire de `core/feature-index-cache`.
+- Fichiers/surfaces : `.docs/features/core/feature-index-cache.md`, `.docs/features/core/feature-index-cache.worklog.md`.
+- Décision : statut `done` ; le cache JSON déterministe, le fallback borné au frontmatter et les résiduels body-leak sont livrés et documentés.
+- Doc Impact Decision : C — fiche feature et worklog mis à jour.
+- Validation prévue : `check-feature-docs --strict core/feature-index-cache`, tests unitaires build-index ciblés, build d'index JSON, checks feature/freshness et gate ship avant commit.
+- Next : aucune action immédiate ; rouvrir seulement si le contrat `.ai/.feature-index.json` ou `build-feature-index.sh` change.

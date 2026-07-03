@@ -2,7 +2,7 @@
 id: feature-index-cache
 scope: core
 title: Cache JSON déterministe du feature mesh
-status: active
+status: done
 depends_on:
   - core/feature-mesh
 touches:
@@ -13,12 +13,15 @@ touches:
   - template/.ai/scripts/pr-report.sh.jinja
   - .ai/scripts/pr-report.sh
   - tests/unit/test-build-feature-index-robust.sh
+  - tests/unit/test-build-feature-index-fallback-frontmatter.sh
+  - .docs/features/core/feature-index-cache.md
+  - .docs/features/core/feature-index-cache.worklog.md
 progress:
-  phase: review
-  step: "bootstrap dog-fooding (v0.9 historique)"
+  phase: done
+  step: "cache index déterministe livré, fallback borné au frontmatter et résiduels body-leak clos"
   blockers: []
-  resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-06-29
+  resume_hint: "aucune action immédiate ; rouvrir seulement si le contrat .ai/.feature-index.json ou build-feature-index.sh change"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -101,3 +104,4 @@ type: feature
 - 2026-06-26 : **fix robustesse** — l'invariant « fiche invalide exclue + warning, build jamais arrêté » (déjà documenté) n'était PAS implémenté côté `yq` : un frontmatter YAML malformé (ex. titre non quoté finissant par `:`) faisait planter `build-feature-index` et, en cascade, tous les hooks qui l'appellent (`features-for-path`, `pre-turn-reminder`, auto-worklog…), bloquant toute édition. Fix : validation `yq -e` du frontmatter AVANT extraction (warn + `return 1` si illisible) + isolation par fiche dans la boucle (`if entry=$(feature_to_json …)`), sous `set -e`. Le fallback awk était déjà tolérant. Test : `tests/unit/test-build-feature-index-robust.sh`. `check-features` reste le validateur strict (signale + exit 1, sans cascade).
 - 2026-06-28 : **fix fallback body-leak** (item A1 du frame `2026-06-28-audit-strategique-remediation`). Le parseur sans `yq` (`extract_scalar_awk` / `extract_list_awk`) scannait le fichier ENTIER, pas le frontmatter : un `status:` / `depends_on:` / `touches:` présent dans le corps markdown injectait de fausses valeurs dans l'index — bien formé, sans signal, sur tout environnement sans yq (CI nue, conteneur), polluant injection contextuelle, détection de cycles et rapports. Les deux extracteurs sont désormais **bornés au 1er bloc `---...---`**, et `extract_list_awk` gère aussi le **flow-style** (`touches: [a, b]`, auparavant vidé en fallback). Parité jinja conservée (aucun hazard `{% raw %}`). Test : `tests/unit/test-build-feature-index-fallback-frontmatter.sh`. Résiduel documenté (risque moindre, champs reports/best-effort) : les awk inline `product` scalaires, `external_refs` et `progress` du fallback restaient à border — clos le 2026-06-29 (entrée suivante).
 - 2026-06-29 : **fix résiduel fallback body-leak (clôture A1)** — les awk inline `external_refs`, `product` (scalaires) et `progress` (`phase`/`step`/`resume_hint`/`updated`/`blockers`) scannaient encore le fichier entier ; un `product:`/`external_refs:`/`progress:` en colonne 0 dans le corps injectait des valeurs fantômes en fallback (reproduit empiriquement sur HEAD pré-fix). Même prélude `fence` que A1 appliqué à chaque awk inline → extraction bornée au 1er bloc frontmatter (`extract_product_portfolio_scalar_awk` était déjà fence-aware). Plus aucun champ fallback non borné. Parité jinja conservée (single-brace awk, pas de `{% raw %}`) ; drift + smoke-test ✅. Test étendu : fiche-piège `objleak`. Worklog : voir `.worklog.md`.
+- 2026-07-03 : fiche clôturée en `done` après validation du contrat d'index, du fallback frontmatter et de la fraîcheur documentaire. Doc Impact Decision : C — fiche feature et worklog mis à jour pour refléter la livraison effective.
