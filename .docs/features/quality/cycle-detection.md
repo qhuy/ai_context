@@ -2,7 +2,7 @@
 id: cycle-detection
 scope: quality
 title: Détection de cycles dans depends_on (tri topologique jq)
-status: active
+status: done
 depends_on:
   - core/feature-mesh
   - core/feature-index-cache
@@ -11,11 +11,11 @@ touches:
 touches_shared:
   - template/.ai/scripts/check-features.sh.jinja
 progress:
-  phase: review
-  step: "bootstrap dog-fooding ; check-features partagé avec touches_shared"
+  phase: done
+  step: "détection de cycles Kahn O(V+E) livrée et garde diamant validée"
   blockers: []
-  resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-06-25
+  resume_hint: "aucune action immédiate ; rouvrir seulement si le graphe depends_on ou check-features change"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -72,6 +72,7 @@ Refuser tout mesh qui contient un cycle dans le graphe `depends_on` (A → B →
 - Tests de contrat du mesh rejoués par `feature-mesh`, `smoke-test` et `ci-guard`.
 - Un mesh portant un cycle `depends_on` fait sortir `check-features.sh` en non-zéro (liste des cycles affichée).
 - Un mesh sain (sans cycle) passe `check-features.sh --no-write`, y compris en présence d'arêtes `touches_shared`.
+- Clôture 2026-07-03 : `bash tests/unit/test-cycle-detection-diamond.sh` PASS et `bash .ai/scripts/check-features.sh --no-write` PASS.
 
 ## Cross-refs
 
@@ -82,3 +83,4 @@ Validation côté `feature-mesh` ; rejoué par `smoke-test` et `ci-guard`.
 - Choix `jq` plutôt que Python : zéro runtime supplémentaire, déjà requis par `feature-index-cache`.
 - 2026-05-03 : `check-features.sh` valide aussi les chemins optionnels `touches_shared`. Aucun changement sur la détection de cycles, mais le fichier script partagé reste couvert par cette fiche.
 - 2026-06-29 : **DFS récursive → tri topologique de Kahn** (audit A13). L'ancienne DFS threadait `$visited` par chemin (pas de mémoïsation globale) → ré-exploration exponentielle sur un DAG en diamant (mesuré : k=20 ≈ 76s, k≥22 timeout). L'invariant « O(V+E) » de cette fiche était donc **faux**. Kahn (point fixe : on résout itérativement tout nœud dont les deps sont déjà résolues ; le reste est cyclique) le rend **vrai** : diamant k=24 instantané. Message d'erreur : liste des features impliquées au lieu d'un chemin `A → B → A` (le smoke ne vérifiait que l'exit non-zéro). Garde de non-régression : `tests/unit/test-cycle-detection-diamond.sh`. Code dans `check-features.sh` (commit `fix(core)`), HANDOFF appliqué ici.
+- 2026-07-03 : DONE documentaire. La garde Kahn est livrée, testée par `test-cycle-detection-diamond`, et le fichier runtime partagé reste en `touches_shared` pour éviter la sur-couverture.
