@@ -2,7 +2,7 @@
 id: pr-report
 scope: quality
 title: Rapport PR markdown (features impactées + warnings)
-status: active
+status: done
 depends_on:
   - core/feature-index-cache
   - core/feature-mesh
@@ -20,11 +20,11 @@ touches_shared:
   - CHANGELOG.md
   - tests/smoke-test.sh
 progress:
-  phase: implement
-  step: "aic expose frame/document-feature/review/ship"
+  phase: done
+  step: "pr-report/review-delta livrés : markdown, JSON, exclusions docs, aic review/ship et no-write validés"
   blockers: []
-  resume_hint: "ajouter une intégration CI (commentaire PR automatique) — passer en review une fois la surface aic stabilisée"
-  updated: 2026-06-25
+  resume_hint: "aucune action immédiate ; cadrer une feature séparée pour le commentaire PR automatique si nécessaire"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -90,6 +90,7 @@ Rendre visible la valeur du mesh dans les PRs via un rapport markdown simple: fe
 - `tests/unit/test-review-delta-shared.sh` couvre le rapport `review-delta` (features directes/shared, risques, checks).
 - `bash .ai/scripts/pr-report.sh --base=<ref> --head=<ref>` produit un markdown stable (entête base/head, features impactées, warnings) ; idem `review-delta.sh --staged`.
 - Le smoke partagé rejoue les tests unitaires de régression avant les scénarios Copier.
+- Clôture 2026-07-03 : `test-review-delta-shared` PASS ; `pr-report.sh --base=HEAD~1 --head=HEAD` PASS ; `pr-report.sh --format=json` parsé par `jq` ; `review-delta.sh --committed-only` PASS.
 
 ## Cross-refs
 
@@ -111,3 +112,4 @@ Rendre visible la valeur du mesh dans les PRs via un rapport markdown simple: fe
 - 2026-05-04 : `ai-context.sh first-run` ajouté au wrapper. Aucun changement de `pr-report.sh`, mais la surface CLI de sortie/review reste documentée dans cette fiche partagée.
 - 2026-05-04 : `ai-context.sh` ajoute `repair-copier-metadata` et `template-diff`; aucun changement de `pr-report.sh`, mais le smoke partagé et la surface CLI documentée sont étendus.
 - 2026-05-04 : `ai-context.sh` expose `check-docs` et le smoke partagé couvre `check-feature-docs.sh` (warning legacy, strict ciblé, wrapper). Aucun changement de `pr-report.sh`.
+- 2026-07-03 : DONE documentaire. La surface rapport est stable et non destructive ; l'intégration CI en commentaire PR reste hors périmètre et devra être cadrée séparément.

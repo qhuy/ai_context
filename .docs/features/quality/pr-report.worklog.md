@@ -123,6 +123,13 @@
 - Fichiers modifiés :
   - template/.ai/scripts/aic.sh.jinja
 
+## 2026-07-03 — done
+- Intent : clôturer `quality/pr-report` après stabilisation de la surface `aic` et validation des rapports.
+- Fichiers/surfaces : `.docs/features/quality/pr-report.md`, `.docs/features/quality/pr-report.worklog.md`.
+- Décision : statut `done` ; le commentaire PR automatique reste hors périmètre et doit être une feature séparée si priorisé.
+- Validation : `bash tests/unit/test-review-delta-shared.sh` PASS ; `bash .ai/scripts/pr-report.sh --base=HEAD~1 --head=HEAD` PASS ; `bash .ai/scripts/pr-report.sh --base=HEAD~1 --head=HEAD --format=json | jq ...` PASS ; `bash .ai/scripts/review-delta.sh --committed-only` PASS.
+- Next : aucune action immédiate.
+
 ## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
 - Surface partagée touchée : `pr-report.sh` reste ref-based en Git et bascule sur pending/local changes hors Git. Le rapport expose `vcs_provider`.
 - Validation portée par `core/vcs-provider-abstraction`.
