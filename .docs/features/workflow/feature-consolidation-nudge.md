@@ -2,7 +2,7 @@
 id: feature-consolidation-nudge
 scope: workflow
 title: Nudge de consolidation à l'édition d'une fiche
-status: active
+status: done
 type: feature
 description: "Hook PreToolUse advisory qui, à l'édition d'une fiche, réinterroge sa raison d'être et liste les fiches sœurs (anti-prolifération edit-time)."
 depends_on:
@@ -32,11 +32,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "hook + test + wiring + doc livrés"
+  phase: done
+  step: "MVP nudge livré et validé : hook, wiring, test ciblé, dogfood drift et smoke complet"
   blockers: []
-  resume_hint: "MVP livré (nudge seul). Suivi possible : détecteur d'overlap touches: (mode consolidate de feature-audit)."
-  updated: 2026-06-26
+  resume_hint: "aucune action immédiate ; cadrer séparément un détecteur d'overlap touches: si le mode consolidate de feature-audit devient prioritaire"
+  updated: 2026-07-03
 ---
 
 # Nudge de consolidation à l'édition d'une fiche
@@ -107,6 +107,14 @@ Surface = un hook de contexte + une discipline edit-time. Distinct de `feature-n
 
 Preuve : `bash tests/smoke-test.sh` PASS + `check-dogfood-drift.sh` aligné.
 
+Preuve de clôture 2026-07-03 :
+
+- `bash tests/unit/test-fiche-consolidation-nudge.sh` PASS.
+- `bash -n .ai/scripts/fiche-consolidation-nudge.sh template/.ai/scripts/fiche-consolidation-nudge.sh.jinja` PASS.
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/feature-consolidation-nudge` PASS.
+- `bash .ai/scripts/check-dogfood-drift.sh` PASS.
+- `bash tests/smoke-test.sh` PASS.
+
 ## Risques
 
 - **Bruit** : se déclenche à chaque édition de fiche. Atténué par le ton advisory court + cap. Suivi possible : rate-limit par fiche/session si jugé bavard.
@@ -124,3 +132,4 @@ Preuve : `bash tests/smoke-test.sh` PASS + `check-dogfood-drift.sh` aligné.
 ## Historique / décisions
 
 - 2026-06-26 : création. Cadrage `aic-frame` (high), décisions : MVP nudge seul + signal même-scope/famille-d'id (advisory, honore la décision no-blocking de feature-granularity). Détecteur d'overlap laissé en suivi.
+- 2026-07-03 : DONE. MVP nudge livré ; le détecteur d'overlap `touches:` reste une feature séparée si priorisé.

@@ -11,3 +11,10 @@
   - `tests/unit/test-fiche-consolidation-nudge.sh` (4 cas) + enregistrement smoke [0k].
 - Vérif live : édition de `core/feature-mesh.md` → `feature-mesh-contract-alignment` marquée famille d'id, `feature-index-cache` correctement NON-famille ; worklog/code → rien.
 - Suivi laissé : détecteur d'overlap `touches:` (Jaccard hors boilerplate) comme mode `consolidate` de `workflow/feature-audit`.
+
+## 2026-07-03 — done
+- Intent : clôturer le MVP `feature-consolidation-nudge` après validation du hook advisory et de la propagation dogfood.
+- Fichiers/surfaces : `.docs/features/workflow/feature-consolidation-nudge.md`, `.docs/features/workflow/feature-consolidation-nudge.worklog.md`.
+- Décision : statut `done`; le détecteur d'overlap `touches:` reste hors périmètre et devra être cadré séparément s'il devient prioritaire.
+- Validation : `bash tests/unit/test-fiche-consolidation-nudge.sh`; `bash -n .ai/scripts/fiche-consolidation-nudge.sh template/.ai/scripts/fiche-consolidation-nudge.sh.jinja`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/feature-consolidation-nudge`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash tests/smoke-test.sh`.
+- Next : aucune action immédiate.
