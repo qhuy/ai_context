@@ -16,7 +16,7 @@ product:
   target_user: "Mainteneurs de projets utilisant ai_context, equipes de migration, tech leads et non-techs qui doivent consulter ou valider des connaissances projet."
   success_metric: "Une connaissance produite dans un projet source peut etre retrouvee, referencee et reutilisee dans un projet consommateur avec provenance, fraicheur et sensibilite explicites."
   leading_indicator: "Un MVP de knowledge source permet publish/search/link sur deux projets reels sans duplication manuelle de l'analyse initiale."
-  decision_state: explore
+  decision_state: commit
   next_decision_date: 2026-07-15
   kill_criteria:
     - "La solution remplace le .ai local au lieu de le completer."
@@ -40,11 +40,11 @@ doc:
     rollout: true
     observability: true
 progress:
-  phase: spec
-  step: "cadrage initial de l'initiative et du MVP knowledge source"
+  phase: review
+  step: "contrat minimal et backend MVP Git/Markdown décidés"
   blockers: []
-  resume_hint: "definir le contrat minimal d'une connaissance partagee puis choisir le premier backend MVP"
-  updated: 2026-06-29
+  resume_hint: "créer ensuite core/knowledge-source-contract puis workflow/knowledge-publish-search-link dans des tours dédiés ; ne pas mélanger avec R1"
+  updated: 2026-07-03
 ---
 
 # Federation de connaissances ai_context
@@ -97,13 +97,17 @@ Cette fiche est une initiative produit. Elle ne doit pas devenir une feature tec
 ## Décisions
 
 - Demarrer par une federation de connaissances, pas par une centralisation du feature mesh.
-- Considerer Git comme backend canonique possible pour le MVP, mais ne pas en faire l'interface imposee aux non-techs.
+- **MVP retenu 2026-07-03** : backend canonique Git/Markdown, avec fiches
+  versionnées, index généré et publication explicite. Git sert de source de vérité
+  maintainer ; il ne devient pas l'interface imposée aux non-techs.
 - Distinguer trois couches :
   - contexte local du repo ;
   - knowledge source partagee ;
   - vue publiee lisible ou commentable.
 - Ne pas embarquer le hub en submodule par defaut ; preferer une source configuree ou un cache local.
 - Prevoir une evolution vers API ou MCP si les droits, la recherche ou les usages non-techs le justifient.
+- Ne pas demarrer par une base de donnees, une API centrale ou une application web :
+  ces options restent des evolutions si le MVP Git/Markdown prouve le besoin.
 
 ## Comportement attendu
 
@@ -145,6 +149,32 @@ source_refs:
 usable_by:
   - migration-project
 ```
+
+Champs obligatoires du MVP :
+
+- `id` : identifiant stable, unique dans le hub.
+- `type` : nature de la connaissance (`domain_knowledge`, `technical_decision`,
+  `migration_note`, etc.).
+- `title` et `summary` : titre humain et synthese courte réutilisable.
+- `source_project` et `source_refs` : provenance vérifiable.
+- `owner` : responsable de validation ou de fraîcheur.
+- `confidence` : niveau de confiance explicite.
+- `freshness.checked_at` : date de dernière vérification.
+- `sensitivity` : classification minimale (`public`, `internal`, `restricted`).
+- `usable_by` : projets, équipes ou contextes autorisés.
+- `status` : `draft`, `published`, `deprecated` ou `retracted`.
+
+Structure MVP du hub :
+
+```text
+knowledge/
+  legacy-erp/
+    legacy-billing-invoice-rules.md
+index.json
+```
+
+`index.json` est généré depuis les frontmatters pour la recherche locale ou un
+futur connecteur ; le Markdown reste la source canonique relue et versionnée.
 
 Contrat attendu cote repo consommateur :
 
@@ -219,7 +249,15 @@ Commandes ou intents cibles :
 
 ## Cross-refs
 
-Aucune dependance technique stricte n'est declaree pour l'instant.
+Aucune dependance technique stricte n'est declaree pour l'instant. Les livrables
+techniques suivants doivent être cadrés séparément :
+
+- `core/knowledge-source-contract` : schema, conventions de stockage, génération
+  d'index, validation du frontmatter.
+- `workflow/knowledge-publish-search-link` : commandes ou skills `publish`,
+  `search`, `link`, `import`.
+- `quality/knowledge-freshness-checks` : contrôles de fraîcheur, owner,
+  sensibilité et références cassées.
 
 Cette initiative est conceptuellement reliee a `product/ai-context-stability-migration`, mais elle poursuit un palier produit distinct : partager les connaissances entre projets et avec des lecteurs non-techs.
 
@@ -227,3 +265,6 @@ Cette initiative est conceptuellement reliee a `product/ai-context-stability-mig
 
 - 2026-06-29 : cadrage initial apres constat que `ai_context` couvre presque tous les usages repo-locaux mais ne mutualise pas encore les connaissances entre projets.
 - 2026-06-29 : decision de privilegier une federation de connaissances plutot qu'un hub qui remplace le contexte local.
+- 2026-07-03 : décision MVP — `decision_state=commit`, backend Git/Markdown,
+  contrat minimal obligatoire et passations vers futures features `core`,
+  `workflow` et `quality`.

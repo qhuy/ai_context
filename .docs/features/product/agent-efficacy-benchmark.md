@@ -2,7 +2,7 @@
 id: agent-efficacy-benchmark
 scope: product
 title: Benchmark d'efficacité agent — preuve de valeur ai_context
-status: active
+status: done
 type: feature
 description: "Initiative produit : prouver de façon reproductible qu'ai_context améliore le taux de succès des tâches d'un agent vs un repo nu, pour transformer le claim de valeur en preuve."
 depends_on: []
@@ -20,7 +20,7 @@ product:
   target_user: "Décideurs d'adoption ai_context (tech leads, mainteneurs) et l'auteur lui-même, qui doivent fonder le positionnement 'solution de référence' sur une preuve."
   success_metric: "Δ taux de succès de tâche (% de tâches d'une suite figée complétées correctement, jugé objectivement) entre un agent AVEC ai_context et le même agent sur repo NU, sur >=2 repos de référence et N runs pour absorber la stochasticité."
   leading_indicator: "Δ coût de contexte (tokens chargés par tâche) avec vs sans ai_context — disponible avant le grader complet, valide tôt la direction."
-  decision_state: explore
+  decision_state: commit
   next_decision_date: 2026-07-15
   kill_criteria:
     - "Aucun Δ de succès significatif après itération du protocole sur >=2 repos réels."
@@ -28,7 +28,7 @@ product:
     - "Le protocole n'est pas rejouable par un tiers (résultats non reproductibles)."
   portfolio:
     appetite: medium
-    confidence: low
+    confidence: medium
     expected_impact: high
     urgency: high
     strategic_fit: high
@@ -44,10 +44,10 @@ doc:
     rollout: false
     observability: true
 progress:
-  phase: review
-  step: "lecture produit 2026-07-15 prête"
+  phase: done
+  step: "décision produit avancée au 2026-07-03 : commit avec réserves, pas scale public"
   blockers: []
-  resume_hint: "Readout produit prêt : tâches contextuelles 0002+0005 = with 12/12 vs without 4/12, Δ +66.7 pts, IC Newcombe [14.8 ; 86.2], tokens/run -39.6%. Prochaine reprise : arbitrer decision_state le 2026-07-15 (recommandation : commit avec réserves, pas scale public)."
+  resume_hint: "Initiative close côté décision produit. Suite éventuelle hors R4/P1 : cadrer une preuve indépendante avant scale public (repo vraiment externe, N plus grand ou second modèle)."
   updated: 2026-07-03
 ---
 
@@ -110,7 +110,13 @@ fourre-tout. Ne pas confondre avec un test de non-régression du template (`smok
   Le coût tokens reste *leading indicator*, pas la métrique de titre.
 - **v1 maintainer-only** : prouver d'abord dans `ai_context`, packager pour consommateurs ensuite.
 - **>=2 repos + N runs** : un seul run/repo = bruit, pas preuve.
-- Choix du **runner** et du **grader** : ouverts (voir Risques / prochaine décision).
+- **Runner/grader v1** : harnais local `tests/bench/`, tâches versionnées, graders
+  objectifs et rapports `docs/benchmarks/` ; packaging consommateur hors v1.
+- **Décision produit 2026-07-03** : passer l'initiative en `commit` avec réserves.
+  Le rendez-vous initial du 2026-07-15 est avancé par instruction mainteneur. Le
+  signal contextuel (`0002` + `0005`) suffit pour orienter le backlog et le
+  positionnement maintainer ; il ne suffit pas encore pour un `scale` public sans
+  repo vraiment indépendant, N plus grand ou second modèle.
 
 ## Comportement attendu
 
@@ -184,6 +190,11 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
 
 ## Historique / décisions
 
+- 2026-07-03 : décision produit avancée — `decision_state=commit`, `status=done`.
+  Evidence retenue : tâches contextuelles `0002-feature-resume` + `0005-resume-hors-traces`
+  avec `with` 12/12 vs `without` 4/12, Δ +66.7 points, IC approx. Newcombe
+  [14.8 ; 86.2], tokens/run -39.6%. Réserve explicite : pas de `scale` public avant
+  confirmation par repo vraiment indépendant, N plus grand ou second modèle.
 - 2026-07-03 : incr.13 — tâche `0005-resume-hors-traces` (classe `contextual`) : reprise
   `feature/step/next` sur la feature active la plus fraîche, avec **garde de fuite** dans le
   grader : en condition `without`, si `step` ou `resume_hint` exacts sont trouvés hors mesh

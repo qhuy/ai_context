@@ -166,3 +166,13 @@
 - Coût tokens agrégé : `with` 53566 tokens/run vs `without` 88752, soit -35186 (-39.6%) sur les runs mesurés.
 - Décision recommandée : passer la preuve en `commit` au 2026-07-15, avec réserves explicites ; ne pas passer en `scale` public avant un repo vraiment indépendant, un N plus grand, ou un second modèle.
 - Artefact : `docs/benchmarks/reports/2026-07-03-product-decision-readout.md`.
+
+## 2026-07-03 — décision produit avancée
+
+- Intent : clore l'initiative produit benchmark après instruction mainteneur de dérouler les deux initiatives produit restantes, sans attendre le rendez-vous initial du 2026-07-15.
+- Fichiers/surfaces : `.docs/features/product/agent-efficacy-benchmark.md`, `.docs/features/product/agent-efficacy-benchmark.worklog.md`.
+- Décision : `decision_state=commit`, `status=done`, `confidence=medium`. La preuve est suffisante pour orienter le backlog et le positionnement maintainer ; elle ne justifie pas encore un `scale` public.
+- Evidence : agrégat contextuel `0002` + `0005` = `with` 12/12 vs `without` 4/12, Δ +66.7 points, IC approx. Newcombe [14.8 ; 86.2], tokens/run -39.6%.
+- Réserves : confirmer avant communication publique par un repo vraiment indépendant, un N plus grand ou un second modèle.
+- Validation : checks documentaires et gate repo à lancer dans ce tour avant commit.
+- Next : aucune action immédiate sur R4/P1 ; une suite benchmark indépendante doit être cadrée comme nouvelle initiative ou nouveau livrable si le projet passe au scale public.
