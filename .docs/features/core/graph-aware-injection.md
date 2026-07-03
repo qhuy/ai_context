@@ -2,17 +2,19 @@
 id: graph-aware-injection
 scope: core
 title: Injection contextuelle filtrée par graphe (AI_CONTEXT_FOCUS)
-status: active
+status: done
 depends_on:
   - core/feature-index-cache
 touches:
+  - .docs/features/core/graph-aware-injection.md
+  - .docs/features/core/graph-aware-injection.worklog.md
   - template/.ai/scripts/pre-turn-reminder.sh.jinja
 progress:
-  phase: review
-  step: "freshness documentaire rafraîchie après dogfood"
+  phase: done
+  step: "contrat AI_CONTEXT_FOCUS livré, validé et inchangé après R1 pre-turn lean"
   blockers: []
-  resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-05-03
+  resume_hint: "aucune action immédiate ; rouvrir seulement si AI_CONTEXT_FOCUS ou le voisinage graphe change."
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -74,6 +76,7 @@ Sur un mesh > 100 features, injecter l'inventaire complet à chaque tour explose
 - Focus invalide (scope inexistant, id introuvable) → warn émis et inventaire complet injecté, jamais de sortie vide.
 - Sans la variable, l'injection reste identique au comportement complet historique.
 - `check-features` et le build d'index donnent le même résultat avec ou sans focus (non affectés).
+- Smoke-test bonus big-mesh : vérifie que `AI_CONTEXT_FOCUS` réduit effectivement la taille du reminder.
 
 ## Cross-refs
 
@@ -83,3 +86,4 @@ Optimisation au-dessus de `feature-index-cache`. Ne remplace pas le filtrage par
 
 - v0.9.0 : introduction. Gain mesuré ~5× sur mesh ~100 features.
 - 2026-05-03 : freshness documentaire rafraîchie après dogfood ; le contrat `AI_CONTEXT_FOCUS` reste inchangé.
+- 2026-07-03 : **DONE** — contrat inchangé après R1 pre-turn lean ; le graphe détaillé reste consommé en JIT par `features-for-path.sh --with-docs`, et le smoke bonus big-mesh couvre la réduction `AI_CONTEXT_FOCUS`.
