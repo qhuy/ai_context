@@ -32,3 +32,10 @@ Source session : automation veille-techno
 ## 2026-05-12 10:35 — validation
 - Validation : `check-feature-docs --strict workflow/mcp-policy` PASS, `check-ai-references` PASS, `check-shims` PASS, `check-features` PASS, `tests/smoke-test.sh` PASS.
 - Décision : feature en `review`, MCP reste opt-in.
+
+## 2026-07-03 — done
+- Intent : clôturer la politique MCP minimale après revalidation des checks et maintien du contrat opt-in.
+- Fichiers/surfaces : `.docs/features/workflow/mcp-policy.md`, `.docs/features/workflow/mcp-policy.worklog.md`.
+- Décision : statut `done`; aucun MCP par défaut, réouverture seulement si le template ou la politique opt-in change.
+- Validation : `bash .ai/scripts/check-feature-docs.sh --strict workflow/mcp-policy`; `bash .ai/scripts/check-ai-references.sh`; `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
+- Next : aucune action immédiate.

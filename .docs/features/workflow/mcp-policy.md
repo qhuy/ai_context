@@ -2,7 +2,7 @@
 id: mcp-policy
 scope: workflow
 title: Politique MCP minimale
-status: active
+status: done
 depends_on:
   - workflow/subagent-contract
 touches:
@@ -28,11 +28,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "politique MCP documentée, validations PASS"
+  phase: done
+  step: "politique MCP opt-in documentée et validée ; aucun serveur MCP par défaut"
   blockers: []
-  resume_hint: "prêt à review ; garder MCP opt-in"
-  updated: 2026-05-12
+  resume_hint: "aucune action immédiate ; rouvrir seulement si un serveur MCP est ajouté au template ou si la politique opt-in change"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -95,6 +95,14 @@ Quand une tâche nécessite MCP, l'agent annonce l'outil, la raison, les donnée
 - Vérifier la fiche : `bash .ai/scripts/check-feature-docs.sh --strict workflow/mcp-policy`.
 - Vérifier les références : `bash .ai/scripts/check-ai-references.sh`.
 
+Preuve de clôture 2026-07-03 :
+
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/mcp-policy` PASS.
+- `bash .ai/scripts/check-ai-references.sh` PASS.
+- `bash .ai/scripts/check-shims.sh` PASS.
+- `bash .ai/scripts/check-features.sh --no-write` PASS.
+- `bash tests/smoke-test.sh` PASS.
+
 ## Risques
 
 - Couplage trop fort à Claude ou Codex.
@@ -108,3 +116,4 @@ Quand une tâche nécessite MCP, l'agent annonce l'outil, la raison, les donnée
 ## Historique / décisions
 
 - 2026-05-12 : création suite à la veille officielle Claude Code / OpenAI Codex sur MCP.
+- 2026-07-03 : DONE. Politique MCP maintenue opt-in, sans serveur par défaut ni chargement Pack A.

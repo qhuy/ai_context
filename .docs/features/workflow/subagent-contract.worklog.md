@@ -32,3 +32,10 @@ Source session : automation veille-techno
 ## 2026-05-12 10:35 — validation
 - Validation : `check-feature-docs --strict workflow/subagent-contract` PASS, `check-shims` PASS, `check-features` PASS, `check-dogfood-drift` PASS, `tests/smoke-test.sh` PASS.
 - Décision : feature en `review`, aucun blocker.
+
+## 2026-07-03 — done
+- Intent : clôturer le contrat subagents multi-agent après revalidation du wording et des checks structurels.
+- Fichiers/surfaces : `.docs/features/workflow/subagent-contract.md`, `.docs/features/workflow/subagent-contract.worklog.md`.
+- Décision : statut `done`; le contrat reste on-demand et ne gonfle pas Pack A.
+- Validation : `bash .ai/scripts/check-feature-docs.sh --strict workflow/subagent-contract`; `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/check-features.sh --no-write`; `bash .ai/scripts/measure-context-size.sh`; `bash tests/smoke-test.sh`.
+- Next : aucune action immédiate.

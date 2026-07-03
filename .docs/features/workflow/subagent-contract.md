@@ -2,7 +2,7 @@
 id: subagent-contract
 scope: workflow
 title: Contrat subagents multi-agent
-status: active
+status: done
 depends_on:
   - workflow/intentional-skills
 touches:
@@ -28,11 +28,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "contrat documenté, validations PASS"
+  phase: done
+  step: "contrat subagents multi-agent documenté, on-demand et validé"
   blockers: []
-  resume_hint: "prêt à review ; vérifier le wording multi-agent si besoin"
-  updated: 2026-05-12
+  resume_hint: "aucune action immédiate ; rouvrir seulement si le contrat de délégation, le fanout ou les règles cross-scope changent"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -98,6 +98,14 @@ Avant de déléguer, l'agent principal identifie le scope, le résultat attendu,
 - `bash .ai/scripts/check-feature-docs.sh --strict workflow/subagent-contract`
 - `bash .ai/scripts/measure-context-size.sh`
 
+Preuve de clôture 2026-07-03 :
+
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/subagent-contract` PASS.
+- `bash .ai/scripts/check-shims.sh` PASS.
+- `bash .ai/scripts/check-features.sh --no-write` PASS.
+- `bash .ai/scripts/measure-context-size.sh` PASS.
+- `bash tests/smoke-test.sh` PASS.
+
 ## Risques
 
 - Un contrat trop détaillé pourrait gonfler Pack A s'il est placé au mauvais endroit.
@@ -111,3 +119,4 @@ Avant de déléguer, l'agent principal identifie le scope, le résultat attendu,
 ## Historique / décisions
 
 - 2026-05-12 : création suite à la veille officielle Claude Code / OpenAI Codex sur subagents.
+- 2026-07-03 : DONE. Contrat de délégation multi-agent maintenu on-demand, sans impact Pack A.
