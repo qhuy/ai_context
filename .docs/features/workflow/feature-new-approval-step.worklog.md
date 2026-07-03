@@ -26,3 +26,10 @@
 ## 2026-05-06 22:46 — auto
 - Fichiers modifiés :
   - .agents/skills/aic-feature-new/workflow.md
+
+## 2026-07-03 — done
+- Intent : clôturer `feature-new-approval-step` après relecture de la propagation runtime/template et du wrapper Codex.
+- Fichiers/surfaces : `.docs/features/workflow/feature-new-approval-step.md`, `.docs/features/workflow/feature-new-approval-step.worklog.md`.
+- Décision : statut `done`; le contrat reste : proposition courte, validation explicite, aucune écriture avant feu vert.
+- Validation : relecture `.ai/workflows/feature-new.md`, `template/.ai/workflows/feature-new.md.jinja`, `.agents/skills/aic-feature-new/workflow.md`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/feature-new-approval-step`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
+- Next : aucune action immédiate.

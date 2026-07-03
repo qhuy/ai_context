@@ -2,7 +2,7 @@
 id: feature-new-approval-step
 scope: workflow
 title: Validation explicite avant création et développement feature
-status: active
+status: done
 depends_on:
   - workflow/feature-granularity
 touches:
@@ -22,11 +22,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "proposition validable dogfoodée dans le template"
+  phase: done
+  step: "proposition validable avant écriture livrée, propagée runtime/template et vérifiée"
   blockers: []
-  resume_hint: "Relire la propagation template/runtime puis clôturer si les checks passent."
-  updated: 2026-05-06
+  resume_hint: "aucune action immédiate ; rouvrir seulement si le contrat feature-new ou la validation explicite avant écriture change"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -89,6 +89,14 @@ Quand l'utilisateur demande une nouvelle feature, l'agent propose d'abord ce qu'
 - `bash .ai/scripts/check-features.sh`
 - `bash .ai/scripts/check-feature-docs.sh workflow/feature-new-approval-step`
 
+Preuve de clôture 2026-07-03 :
+
+- Relecture `.ai/workflows/feature-new.md`, `template/.ai/workflows/feature-new.md.jinja` et `.agents/skills/aic-feature-new/workflow.md`.
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/feature-new-approval-step` PASS.
+- `bash .ai/scripts/check-dogfood-drift.sh` PASS.
+- `bash .ai/scripts/check-features.sh --no-write` PASS.
+- `bash tests/smoke-test.sh` PASS.
+
 ## Droits / accès
 
 Non requis : workflow documentaire uniquement.
@@ -123,3 +131,4 @@ Rollback par revert documentaire des deux workflows modifiés.
 2026-05-04 : création pour ajouter une étape de proposition validable à `feature-new`.
 2026-05-04 : phase de proposition avant écriture ajoutée au workflow canonique et au skill.
 2026-05-04 : phase propagée au template Copier et dogfood runtime aligné.
+2026-07-03 : DONE. Contrat relu côté runtime/template/wrapper Codex ; validation explicite conservée avant toute écriture.
