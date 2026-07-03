@@ -2,7 +2,7 @@
 id: aic-review-application-skill
 scope: core
 title: Revue applicative métier modulaire
-status: active
+status: done
 depends_on:
   - core/aic-surface-canonical
   - workflow/intentional-skills
@@ -28,11 +28,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: implement
-  step: "contrat .ai/review et wrappers aic-review Claude/Codex ajoutés"
+  phase: done
+  step: "contrat review applicative, modules et wrappers alignés validés"
   blockers: []
-  resume_hint: "Valider les checks puis décider si l'intégration stricte dans aic-ship/feature-done passe par un chantier workflow dédié."
-  updated: 2026-06-10
+  resume_hint: "aucune action core immédiate ; l'intégration stricte dans aic-ship/feature-done reste portée par le HANDOFF workflow/intentional-skills"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -217,3 +217,7 @@ Déclenchement recommandé :
 - 2026-06-10 : ajout du contrat `.ai/review/application-review.md`, des modules
   commun/métier/documentation/C#/React/Python et des wrappers `aic-review`
   Claude/Codex alignés.
+- 2026-07-03 : clôture DONE du livrable core après validation de la route
+  `aic.sh review`, de la parité runtime/template, du dogfood drift et des tests
+  `review-delta` ciblés. L'intégration bloquante dans `aic-ship` /
+  `feature-done` reste un HANDOFF workflow séparé.

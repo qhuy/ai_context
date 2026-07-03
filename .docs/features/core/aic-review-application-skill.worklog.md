@@ -39,3 +39,11 @@
 - Correction issue de la revue : passer la fiche en `status: active` et déclarer
   `workflow/intentional-skills` dans `depends_on`, car les wrappers Claude/Codex
   existants font partie de cette surface intentionnelle.
+
+## 2026-07-03 — done
+
+- Intent : clôturer le livrable core de revue applicative modulaire.
+- Fichiers/surfaces : `.docs/features/core/aic-review-application-skill.md`, `.docs/features/core/aic-review-application-skill.worklog.md`.
+- Décision : statut `done` pour la surface core ; l'intégration stricte dans `aic-ship` et `feature-done` reste le HANDOFF workflow déjà consigné, pas un changement à mélanger ici.
+- Validation : `bash .ai/scripts/aic.sh review --help` ; `bash .ai/scripts/check-dogfood-drift.sh` ; `bash .ai/scripts/check-feature-docs.sh --strict core/aic-review-application-skill` ; `bash tests/unit/test-review-delta-shared.sh` ; `bash tests/unit/test-review-delta-uncommitted.sh` ; parité `cmp` runtime/template pour les wrappers `aic-review` et `.ai/review/application-review.md`.
+- Next : aucune action core immédiate ; reprendre côté `workflow/intentional-skills` si l'evidence de revue doit devenir bloquante dans ship/done.
