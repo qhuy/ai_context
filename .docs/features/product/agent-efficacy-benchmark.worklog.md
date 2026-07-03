@@ -140,3 +140,10 @@
 - Le self-check du runner (`run-bench.sh --self-check`) est branché dans le harnais anti-régression : étape `[0s/28]` de `tests/smoke-test.sh`, livrée en scope primaire `quality/smoke-test` (voir son worklog du jour).
 - Le `resume_hint` de cette fiche ne porte plus de handoff ouvert ; conséquence assumée : la tâche `0004-next-handoff` (grader basé sur le motif `HANDOFF … restant = …`) devient non-gradable telle quelle — cohérent avec la décision « ne pas rerun tel quel » de l'incrément 12.
 - Reste au backlog produit : concevoir la tâche `ai_context` dont la vérité terrain n'est pas reconstructible hors mesh, pour la décision produit du 2026-07-15.
+
+## 2026-07-03 — incrément 13 : tâche 0005 à vérité terrain gardée
+
+- Livré : `tests/bench/tasks/0005-resume-hors-traces/` (`task.md`, `task.class` contextual, `check.sh`) + runner : nouveau `failure_kind=task_invalid` (check exit 3), comptage en fin de run avec warn + exit 2, note de rapport, probe self-check.
+- Design : même join de reprise que 0002 (feature active la plus fraîche, tie-break scope/id) mais champs `step` + `resume_hint` exacts, et garde de fuite dans le grader — en `without`, la vérité terrain retrouvée hors mesh invalide la cellule au lieu de compter comme échec/succès d'agent.
+- Validation : `bash -n` runner + grader ; `run-bench.sh --self-check` PASS (probe task_invalid incluse) ; intégration agent factice honnête : repo sain `with` PASS / `without` task_fail (exit 0) ; fuite plantée (`NOTES.md` contenant le resume_hint) → `task_invalid` + « run invalide » ; **dry-run sur le repo réel ai_context** : `with` PASS, `without` échoue sans déclencher la garde — la vérité terrain actuelle n'est pas reconstructible hors mesh.
+- Next : run Codex `N=3` incluant `0005` sur `ai_context` + `ai_debate` (action mainteneur, après quota), lecture pour la décision produit du 2026-07-15.

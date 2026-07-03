@@ -66,7 +66,10 @@ au `BENCH_STAMP`, pour éviter qu'une configuration invalide déclenche une supp
   La suite v1 contient une fumée de format (`0001`, classe `trivial`), une tâche
   de reprise feature mesh (`0002`, classe `contextual`) et deux tâches handoff
   (`0003`, décision explicite ; `0004`, prochain handoff sans cible exposée dans
-  le prompt).
+  le prompt), plus une tâche de reprise à vérité terrain gardée (`0005`, classe
+  `contextual`) : son grader invalide la cellule (`failure_kind=task_invalid`,
+  check exit 3) si `step`/`resume_hint` exacts sont reconstructibles hors mesh
+  dans la copie `without`.
 - **Runner** : `tests/bench/run-bench.sh` — orchestre repos × tâches × conditions
   × N, invoque l'agent via le **seam `AGENT_CMD`**, applique le grader, agrège.
 - **Rapport** : `docs/benchmarks/reports/<date>-<repo-slug>.md` — succès par condition,
@@ -146,8 +149,10 @@ relancer et retrouver le même Δ (aux intervalles près).
   reste trop facile sans contexte (`without` 3/3).
 - ✅ Probe `0004-next-handoff` exécuté sur `ai_context` : `with` 2/3 vs `without`
   2/3, donc non discriminant malgré un coût tokens plus bas avec contexte.
-- ⏳ À venir : concevoir une tâche `ai_context` dont la vérité terrain n'est pas
-  reconstructible hors mesh, puis décider si les tâches handoff deviennent
+- ✅ Tâche `0005-resume-hors-traces` : vérité terrain gardée par une détection
+  de fuite dans le grader ; dry-run déterministe sur le repo réel `ai_context` :
+  `with` PASS, `without` échoue sans déclencher la garde (aucune fuite détectée).
+- ⏳ À venir : run agent réel `N=3` incluant `0005`, puis décider si les tâches handoff deviennent
   portables pour repos externes ou restent repo-spécifiques.
 - Le runner tourne en `--self-check` (valide le plumbing sans invoquer d'agent).
   Les **runs agents réels** restent une action mainteneur (clés + coût +

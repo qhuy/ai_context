@@ -45,9 +45,9 @@ doc:
     observability: true
 progress:
   phase: implement
-  step: "incr.12 : 0004 publié, signal nul"
+  step: "incr.13 : tâche 0005 hors-traces + garde task_invalid"
   blockers: []
-  resume_hint: "0004-next-handoff publié : with 2/3 vs without 2/3, Δ 0 ; probe techniquement valide mais non discriminant, ne pas rerun tel quel. Prochaine reprise : concevoir une tâche ai_context dont la vérité terrain n'est pas reconstructible hors mesh. HANDOFF quality/smoke-test clos le 2026-07-03 (self-check branché dans le smoke, étape [0s/28])"
+  resume_hint: "0005-resume-hors-traces livrée avec garde de fuite (task_invalid si vérité terrain reconstructible hors mesh) ; dry-run réel ai_context : with PASS, without échoue sans fuite détectée. Prochaine reprise : run Codex N=3 incluant 0005 sur ai_context + ai_debate, puis lecture pour la décision produit du 2026-07-15"
   updated: 2026-07-03
 ---
 
@@ -184,6 +184,14 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
 
 ## Historique / décisions
 
+- 2026-07-03 : incr.13 — tâche `0005-resume-hors-traces` (classe `contextual`) : reprise
+  `feature/step/next` sur la feature active la plus fraîche, avec **garde de fuite** dans le
+  grader : en condition `without`, si `step` ou `resume_hint` exacts sont trouvés hors mesh
+  dans la copie de travail (hors `BENCH_RESULT/`), le check sort en exit 3 et le runner classe
+  la cellule `failure_kind=task_invalid` + run non-zéro (même sémantique d'invalidation que
+  `agent_infra_error`). Répond au constat 0002/0004 (« Δ nul par fuite, pas par capacité »)
+  et au kill-criterion « preuve creuse ». Caveat documenté : l'agent peut techniquement
+  écrire la réponse hors `BENCH_RESULT/` dans son workdir ; jugé acceptable v1.
 - 2026-06-30 : création via pilotage `aic-pilot` (pilot `2026-06-30-ze-solution`, item P1).
   Axe directeur « prouver & positionner » retenu. Métrique primaire tranchée = **taux de
   succès de tâche** ; coût tokens = leading indicator. Cadres posés : v1 maintainer-only,

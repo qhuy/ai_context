@@ -425,6 +425,8 @@ failure_kind_for() {
     printf "agent_infra_error"
   elif [[ "$agent_exit" -ne 0 ]]; then
     printf "agent_error"
+  elif [[ "$check_exit" -eq 3 ]]; then
+    printf "task_invalid"
   elif [[ "$check_exit" -ne 0 ]]; then
     printf "task_fail"
   else
@@ -515,6 +517,7 @@ if [[ "$mode" == "self-check" ]]; then
   [[ "$(failure_kind_for 1 1 "$parser_probe")" == "agent_infra_error" ]] && ok "failure_kind infra agent" || ko "failure_kind infra agent"
   printf "contenu repo: auth, secrets, rate limiting et provisioning\n" > "$parser_probe"
   [[ "$(failure_kind_for 0 1 "$parser_probe")" == "task_fail" ]] && ok "failure_kind task_fail malgré contenu infra" || ko "failure_kind task_fail malgré contenu infra"
+  [[ "$(failure_kind_for 0 3 "$parser_probe")" == "task_invalid" ]] && ok "failure_kind task_invalid (check exit 3)" || ko "failure_kind task_invalid (check exit 3)"
   rm -f "$parser_probe"
   rm_target_is_safe "" && ko "garde rm -rf cible vide" || ok "garde rm -rf cible vide"
   rm_target_is_safe "/" && ko "garde rm -rf racine" || ok "garde rm -rf racine"
@@ -741,11 +744,13 @@ while IFS= read -r repo_slug; do
     echo "- \`AGENT_CMD\` n'est pas écrit dans le rapport pour éviter de consigner des secrets ; utiliser \`BENCH_AGENT_LABEL\` pour tracer le modèle/runner."
     echo "- Les échecs de tâche sont des données de benchmark : le runner termine et les agrège au lieu de s'arrêter au premier échec."
     echo "- \`failure_kind=agent_infra_error\` signale une erreur d'environnement agent (quota, auth, provider) : le run est alors invalide comme preuve benchmark."
+    echo "- \`failure_kind=task_invalid\` (check exit 3) signale que la vérité terrain de la tâche est reconstructible dans la copie \`without\` (fuite hors mesh) : la cellule ne prouve rien et le run sort en non-zéro."
   } > "$report"
   report_files+=("$report")
 done < <(awk -F '\t' 'NR > 1 { print $1 }' "$results_tsv" | sort -u)
 
 infra_errors="$(awk -F '\t' 'NR > 1 && $8 == "agent_infra_error" { count += 1 } END { print count + 0 }' "$results_tsv")"
+invalid_cells="$(awk -F '\t' 'NR > 1 && $8 == "task_invalid" { count += 1 } END { print count + 0 }' "$results_tsv")"
 
 echo
 echo "✅ run terminé"
@@ -754,5 +759,9 @@ echo "  résultats : $final_results_tsv"
 echo "  jsonl : $final_results_jsonl"
 if [[ "$infra_errors" -gt 0 ]]; then
   warn "run invalide pour benchmark : $infra_errors erreur(s) infra agent détectée(s)"
+  exit 2
+fi
+if [[ "$invalid_cells" -gt 0 ]]; then
+  warn "run invalide pour benchmark : $invalid_cells cellule(s) task_invalid (vérité terrain reconstructible hors mesh)"
   exit 2
 fi

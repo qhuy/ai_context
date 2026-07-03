@@ -54,8 +54,10 @@ les TSV/JSONL et ajoute au rapport un tableau de Δ tokens/run par classe
 (`with` - `without`) pour éviter qu'une moyenne globale masque des tâches de
 nature différente. La synthèse succès expose aussi un IC Wilson 95% par condition
 et un IC approximatif Newcombe pour le Δ `with` - `without`.
-Le champ `failure_kind` distingue `task_fail`, `timeout`, `agent_error` et
-`agent_infra_error`. Une erreur infra agent (quota, auth, provider) invalide le
+Le champ `failure_kind` distingue `task_fail`, `timeout`, `agent_error`,
+`agent_infra_error` et `task_invalid` (check exit 3 : vérité terrain
+reconstructible hors mesh dans la copie `without` — la cellule ne prouve rien
+et le run sort en non-zéro). Une erreur infra agent (quota, auth, provider) invalide le
 run comme preuve benchmark ; le runner publie les artefacts de diagnostic puis
 sort en non-zéro. La classification `agent_infra_error` requiert une commande
 agent sortie non-zéro : un contenu de repo qui mentionne du rate limiting ne doit
@@ -117,3 +119,9 @@ possible, avec critères écrits + échantillon vérifié à la main (cf. PROTOC
   prompt. Probe publié comme non discriminant sur `ai_context` (`with` 2/3 vs
   `without` 2/3), utile pour diagnostiquer la difficulté de construction des
   tâches repo-spécifiques.
+- `0005-resume-hors-traces` (`contextual`) : même reprise que `0002` (feature
+  active la plus fraîche, `step` + `resume_hint` exacts), mais le grader vérifie
+  d'abord en condition `without` que la vérité terrain n'apparaît nulle part
+  hors mesh dans la copie de travail (exit 3 → `failure_kind=task_invalid`
+  sinon). Réponse au constat 0002/0004 : un Δ nul par fuite d'information est
+  détecté au lieu d'être compté.
