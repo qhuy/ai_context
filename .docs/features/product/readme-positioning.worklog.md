@@ -27,3 +27,19 @@
 - Décision : `README.md` est nommé comme porte d'entrée canonique du repo source ; `README_AI_CONTEXT.md` reste le guide rendu dans les projets consommateurs. La première promesse explicite l'asymétrie runtime : Claude Code est le plus automatisé, Codex est le pilote multi-agent le mieux outillé après Claude, les autres agents reposent surtout sur `AGENTS.md`, hooks et checks.
 - Validation : `check-ai-references` PASS ; `check-product-links` OK en warn (signal connu : initiative docs sans dev slice) ; `check-feature-docs --strict product/readme-positioning` PASS ; `check-features` PASS avec warnings OKF préexistants ; `check-feature-freshness --worktree --strict` OK ; `git diff --check` OK.
 - Next : relire le delta README puis décider si la fiche peut passer DONE ; traiter séparément le signal `product-review` sur les initiatives docs sans dev slice si nécessaire.
+
+## 2026-07-03 12:36 — DONE
+
+### Evidence
+- Build : `bash .ai/scripts/check-features.sh --no-write` PASS (warnings OKF préexistants, non bloquants) ; `bash .ai/scripts/check-shims.sh` PASS ; `bash .ai/scripts/check-agent-config.sh` PASS
+- Tests/docs : `bash .ai/scripts/check-ai-references.sh` PASS ; `bash .ai/scripts/check-feature-docs.sh` PASS ; `bash .ai/scripts/check-feature-docs.sh --strict product/readme-positioning` PASS ; `bash .ai/scripts/check-feature-coverage.sh` OK avec 6 orphelins historiques ; `bash .ai/scripts/check-feature-freshness.sh --worktree --warn` OK ; `bash .ai/scripts/check-touches-breadth.sh` advisory ; `bash .ai/scripts/measure-context-size.sh` OK 2040 chars, reverse_deps=0
+- Doc Impact Decision : C — fiche feature mise à jour et README racine déjà commité.
+
+### Résumé livré
+- README racine repositionné comme porte d'entrée canonique du repo source.
+- `README_AI_CONTEXT.md` clarifié comme guide généré pour les projets consommateurs.
+- Honnêteté runtime remontée en tête : Claude Code automatisé, Codex pilote outillé, autres agents via shims/hooks/checks.
+- Pitch C1 reflété sans rouvrir le scope core : `AGENTS.md` entrée agent standard, `.ai/index.md` source lean juste-à-temps.
+
+### Commit suggéré
+docs(product): clôturer le repositionnement README

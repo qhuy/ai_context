@@ -2,7 +2,7 @@
 id: readme-positioning
 scope: product
 title: README accessible et vendeur
-status: active
+status: done
 depends_on:
   - core/aic-surface-canonical
 touches:
@@ -35,10 +35,10 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "A5/A10 intégrés : README canonique clarifié, honnêteté runtime en tête, pitch AGENTS.md aligné C1"
+  phase: done
+  step: ""
   blockers: []
-  resume_hint: "relire le delta README puis décider si la fiche peut passer DONE après checks ; product-review signale encore l'absence de dev slice liée, acceptable ou à router séparément"
+  resume_hint: "feature clôturée le 2026-07-03"
   updated: "2026-07-03"
 type: feature
 ---
