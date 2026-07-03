@@ -2,7 +2,7 @@
 id: template-engine
 scope: core
 title: Moteur de template copier (profils + scopes conditionnels)
-status: active
+status: done
 depends_on: []
 touches:
   - copier.yml
@@ -14,11 +14,11 @@ touches_shared:
   - .ai/scripts/aic.sh
   - template/**
 progress:
-  phase: review
-  step: "template sécurise le cycle install→update Copier"
+  phase: done
+  step: "commandes de maintenance Copier et smoke complet validés"
   blockers: []
-  resume_hint: "Valider les commandes repair-copier-metadata/template-diff et smoke-test"
-  updated: 2026-06-26
+  resume_hint: "aucune action immédiate ; rouvrir si une nouvelle variable Copier, un nouveau rendu conditionnel ou un contrat install/update change"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -128,3 +128,4 @@ Ce moteur produit le squelette consommé par `feature-mesh`, `feature-index-cach
 - 2026-05-04 : retour projet post-upgrade intégré — documentation de `copier update --vcs-ref=HEAD`, ajout des commandes CLI non destructives `repair-copier-metadata` (recréation contrôlée de `.copier-answers.yml`) et `template-diff` (rendu `/tmp` pour prévisualiser l'update sur worktree sale). `.copier-answers.yml` est explicitement traité comme metadata à versionner.
 - 2026-05-04 : le template rend un Pack A lean pour Codex, ajoute `.ai/context-ignore.md` et met `check-shims.sh` en garde anti-bloat (taille Pack A + interdiction quality gate/agent docs/skills/listings en chargement obligatoire).
 - 2026-05-04 : le template rend `check-feature-docs.sh`, expose `ai-context.sh check-docs`, enrichit le schema `doc.*` et met à jour le template de fiche feature. Le mode strict est ciblable par `scope/id` pour préserver les projets legacy.
+- 2026-07-03 : clôture DONE après validation non destructive de `repair-copier-metadata`, `template-diff --src-path . --vcs-ref HEAD` et `tests/smoke-test.sh`.

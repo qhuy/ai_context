@@ -410,4 +410,10 @@
 ## 2026-06-30 — message Copier aic-pilot + ownership copier.yml
 - `_message_after_copy` mentionne `/aic-pilot` pour les audits et suivis transverses.
 - Reclassification freshness `(a')` : `copier.yml` garde `core/template-engine` comme propriétaire exact unique ; les features qui ne font qu'exposer une ligne de message passent en `touches_shared`.
-# Worklog — core/template-engine
+
+## 2026-07-03 — done
+- Intent : clôturer `core/template-engine` après validation du cycle maintenance Copier.
+- Fichiers/surfaces : `.docs/features/core/template-engine.md`, `.docs/features/core/template-engine.worklog.md`.
+- Décision : statut `done`; les commandes `repair-copier-metadata` et `template-diff` sont validées en mode non destructif, le smoke complet couvre `copier copy`, `copier update v0.11.0 → HEAD`, `docs_root`, focus et self-check benchmark.
+- Validation : `bash .ai/scripts/aic.sh repair-copier-metadata --src-path . --commit HEAD` ; `bash .ai/scripts/aic.sh template-diff --src-path . --vcs-ref HEAD` ; `bash tests/smoke-test.sh`.
+- Next : aucune action immédiate ; rouvrir si une variable Copier, un rendu conditionnel ou un contrat install/update change.
