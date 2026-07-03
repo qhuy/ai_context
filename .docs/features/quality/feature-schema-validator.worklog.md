@@ -19,3 +19,10 @@
 - **HANDOFF `quality/smoke-test`** : brancher `test-schema-driven-required.sh` dans `tests/smoke-test.sh` (étape `[0q/28]`) — **non fait ici** pour rester focalisé (même pattern que `test-check-features-yaml-strict` → cf. worklog `core/feature-mesh`). Le test tourne en standalone.
 - **Follow-up CHANGELOG** : entrée Unreleased différée (CHANGELOG.md est en `touches:` de 6 features → couplage freshness ; à batcher avec la suite de P3). Illustre directement le constat P6 (taxe de cérémonie).
 - Suite : dériver le pattern `id` (`(?:`→`(` pour ERE) et enums imbriqués `product.portfolio` si utile — toujours zéro dépendance externe.
+
+## 2026-07-03 — done
+- Intent : clôturer l'incrément `quality/feature-schema-validator` sur le contrat réellement livré : champs requis dérivés du schéma, sans validateur externe.
+- Fichiers/surfaces : `.docs/features/quality/feature-schema-validator.md`, `.docs/features/quality/feature-schema-validator.worklog.md`, `.ai/scripts/check-features.sh`, `template/.ai/scripts/check-features.sh.jinja`, `tests/unit/test-schema-driven-required.sh`, `tests/smoke-test.sh`.
+- Décision : statut `done`. Le follow-up smoke `[0q/28]` est déjà branché ; l'entrée CHANGELOG n'est plus un blocker de clôture ; les suites pattern `id` et enums imbriqués doivent être cadrées séparément si elles deviennent prioritaires.
+- Validation : `bash tests/unit/test-schema-driven-required.sh` PASS ; `rg` confirme le branchement smoke `[0q/28]`.
+- Next : aucune action immédiate.

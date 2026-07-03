@@ -2,7 +2,7 @@
 id: touches-breadth-guard
 scope: quality
 title: "Garde-fou advisory contre la sur-couverture touches:"
-status: active
+status: done
 type: feature
 description: "Check advisory qui signale les fichiers infra partagés (et globs trop larges) en touches: direct, candidats à touches_shared, pour réduire la taxe du gate freshness --staged."
 depends_on:
@@ -29,11 +29,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "guard + test + wiring livrés ; reclassifications incrémentales exact-multi en cours"
+  phase: done
+  step: "guard advisory livré : signaux A/B, test, wiring quality-gate/smoke et vagues de reclassement validés"
   blockers: []
-  resume_hint: "reclasser incrémentalement les fichiers flagués (README*, _lib.sh, aic.sh, CHANGELOG…) en touches_shared quand on touche leur feature"
-  updated: 2026-06-26
+  resume_hint: "aucune action immédiate ; traiter les signaux advisory restants au fil de l'eau quand leurs features propriétaires sont rouvertes"
+  updated: 2026-07-03
 ---
 
 # Garde-fou advisory contre la sur-couverture touches:
@@ -89,6 +89,8 @@ Rendre **visible et réductible au fil de l'eau** la sur-couverture `touches:`, 
 
 `tests/unit/test-check-touches-breadth.sh` (smoke [0l]) : Signal A flague un fichier partagé par > K features ; Signal B flague un glob top-level ; un fichier mono-feature n'est pas flagué ; exit 0 ; pas de création d'index.
 
+Clôture 2026-07-03 : `bash .ai/scripts/check-touches-breadth.sh` PASS advisory (signaux restants attendus, exit 0) ; `bash tests/unit/test-check-touches-breadth.sh` PASS.
+
 ## Risques
 
 - **Bruit** : flague beaucoup au départ (README*, _lib.sh, aic.sh…). C'est le but (surfacer la dette) ; advisory, à traiter au fil de l'eau. `K` ajustable.
@@ -105,3 +107,4 @@ Rendre **visible et réductible au fil de l'eau** la sur-couverture `touches:`, 
 - 2026-06-26 : création (cadrage `aic-frame`, approche hybride confirmée). Guard A+B + wiring + test. 1ʳᵉ vague reclassement `tests/smoke-test.sh` → `touches_shared:` sur `core/aic-surface-canonical`, `core/codex-skills-install`, `product/product-portfolio-loop`, `quality/index-lock-contract`. Reste surfacé par le guard pour traitement incrémental (README*, `_lib.sh`, `aic.sh`, `CHANGELOG.md`, `.ai/**`, `template/**`…).
 - 2026-06-28 : **2ᵉ vague — globs catch-all (Signal B)** (frame de remédiation 2026-06-28, suite à la taxe observée : guardrails 5 fiches, fix A1 12 fiches, moat git désormais actif). Reclassés `touches:` → `touches_shared:`/affinés : `core/template-engine` `template/**` → `touches_shared` (garde `copier.yml` direct = le moteur) ; `quality/smoke-test` `tests/**` → `tests/smoke-test.sh` direct + `tests/**` shared ; `core/project-overlay-scope-registry` et `core/project-overlay-stable` `tests/**` → `tests/unit/test-project-overlay.sh` direct. Signal B ne liste plus que les globs **légitimes** (`dogfood-runtime-sync → .ai/**`, `git-hooks → .githooks/**`). Dé-taxe vérifiée : un édit `.jinja` n'exige plus `template-engine`. **Volontairement non reclassé** : `build-feature-index.sh`/`.jinja` reste direct sur `index-contract-v2`, `feature-mesh-contract-alignment`, `okf-strict-profile` — co-propriété légitime (contrat/parser/champ type), reclasser créerait de la sous-couverture. Reste : Signal A (README*, `_lib.sh`, `aic.sh`) + globs 2-segments non détectés par B (`tests/unit/**`), au fil de l'eau.
 - 2026-06-30 : **3ᵉ vague — dispatchers et docs publiques exact-multi** après livraison du contrat freshness `(a')`. Propriétaires exacts retenus : `core/aic-surface-canonical` pour `aic.sh` / `README_AI_CONTEXT`, `core/template-engine` pour `copier.yml`, `product/readme-positioning` pour `README.md`, `core/dogfood-runtime-sync` pour `dogfood-update.sh` / `check-dogfood-drift.sh`, `quality/smoke-test` pour `tests/smoke-test.sh`, `workflow/aic-frame-external-reference` pour `aic-frame` et les templates de frames. Les features consommatrices passent en `touches_shared:` pour garder le signal sans cascade.
+- 2026-07-03 : DONE documentaire. Le guard est livré et reste volontairement advisory ; les signaux résiduels (`_lib.sh`, `.ai/index.md`, `build-feature-index.sh`, globs légitimes) sont une dette de reclassement au fil de l'eau, pas un blocker de cette feature.

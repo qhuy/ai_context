@@ -1,10 +1,10 @@
 ---
 id: feature-schema-validator
 scope: quality
-title: Validateur JSON-Schema réel des fiches feature (enforce le contrat, fallback bash conservé)
-status: draft
+title: Validation des fiches feature pilotée par le schéma
+status: done
 type: feature
-description: "Remplacer l'heuristique bash de validation du frontmatter par un vrai validateur JSON-Schema qui consomme .ai/schema/feature.schema.json, avec dégradation gracieuse (fallback bash) si le binaire est absent. Débloque C2a."
+description: "Durcir check-features en dérivant les champs requis depuis .ai/schema/feature.schema.json, sans dépendance externe, avec fallback bash conservé. Débloque l'incrément C2a compatible avec l'éthos bash/jq/yq."
 depends_on:
   - core/okf-strict-profile
   - core/feature-mesh
@@ -32,43 +32,45 @@ doc:
     rollout: true
     observability: false
 progress:
-  phase: implement
-  step: "incrément 1 livré : clés requises dérivées du schéma (.required) dans check-features via read_schema_enum (zéro dép) ; test + parité OK"
+  phase: done
+  step: "incrément schema-driven livré : .required dérivé du schéma, test branché dans le smoke et parité template validée"
   blockers: []
-  resume_hint: "follow-ups : (1) HANDOFF quality/smoke-test = brancher le test dans smoke [0q/28] ; (2) entrée CHANGELOG (différée, couplage) ; (3) suite optionnelle : dériver le pattern id ((?:→() et enums imbriqués product.portfolio. Runtime reste bash/jq/yq, AUCUN validateur externe (décision vs éthos schéma)"
-  updated: 2026-06-30
+  resume_hint: "aucune action immédiate ; cadrer une feature séparée pour dériver le pattern id, les enums imbriqués ou introduire un validateur externe"
+  updated: 2026-07-03
 ---
 
-# Validateur JSON-Schema réel des fiches feature
+# Validation des fiches feature pilotée par le schéma
 
 ## Résumé
 
-Aujourd'hui le frontmatter des fiches est validé par des heuristiques Bash
-(`check-features.sh`) : le système **impose un schéma qu'il ne valide pas
-rigoureusement**. Cette feature introduit un **vrai validateur JSON-Schema** qui
-consomme `.ai/schema/feature.schema.json`, avec **dégradation gracieuse** : si le
-binaire validateur est absent, on retombe sur l'heuristique Bash (qui reste le
-plancher). Débloque le finding **C2a** de l'audit de remédiation.
+Le frontmatter des fiches était validé par une liste de champs requis codée en
+dur dans `check-features.sh`, alors que le contrat canonique vit dans
+`.ai/schema/feature.schema.json`. Cette feature ferme l'écart principal en
+lisant le schéma comme donnée : les clés `.required` sont dérivées via
+`read_schema_enum` (`jq/yq`) avec fallback Bash conservé, sans dépendance externe
+de type `ajv` ou `check-jsonschema`. Débloque l'incrément **C2a** compatible avec
+l'éthos runtime du projet.
 
 ## Objectif
 
-Fermer l'écart « contrat affirmé / contrat non vérifié ». Une fiche au frontmatter
-invalide (enum hors liste, champ requis manquant, type erroné, structure
-`product.*` malformée) doit être **rejetée par le schéma lui-même**, avec un
-message pointant la règle violée — pas par une regex bash approximative.
+Fermer l'écart « contrat affirmé / contrat dupliqué dans le script » pour les
+clés requises. Une clé ajoutée à `.ai/schema/feature.schema.json.required` doit
+être exigée par `check-features.sh` sans rééditer le script.
 
 ## Périmètre
 
 ### Inclus
 
-- Intégration d'un validateur JSON-Schema réel consommant le schéma existant.
-- Branchement dans `check-features.sh` en **mode warn** d'abord (parité avec la stratégie OKF).
-- **Fallback Bash conservé** : si le binaire est absent, warning + heuristique actuelle (jamais de hard-fail sur dépendance manquante).
-- Tests valides **et** invalides (enum, required, type, `product.portfolio.*`).
-- Migration consommateurs documentée (warn → fail en vN+1).
+- Dérivation des champs requis depuis `.ai/schema/feature.schema.json.required`.
+- Branchement dans `check-features.sh` et son miroir Jinja.
+- **Fallback Bash conservé** : si la lecture du schéma échoue, la liste historique reste le plancher.
+- Test discriminant : un schéma temporaire qui ajoute `owner` à `.required` doit faire échouer une fiche sans `owner`.
+- Branchement du test dans le smoke.
 
 ### Hors périmètre
 
+- Introduire un validateur externe JSON-Schema (`ajv`, `check-jsonschema`) : rejeté pour cet incrément, car contraire à l'éthos runtime documenté.
+- Dériver le pattern `id`, les enums de premier niveau ou les enums imbriqués (`product.portfolio.*`) → feature séparée si priorisée.
 - Définir/étendre le contrat lui-même (champs requis, `type` dans `required[]`) → `core/okf-strict-profile`.
 - Aligner le parser fallback sans `yq` → `core/feature-mesh-contract-alignment`.
 - Réécrire le moteur d'index/graphe en Python (P4) → chantier séparé, fortes deps inverses.
@@ -84,34 +86,32 @@ contrat (`okf-strict-profile`) et de l'alignement parser (`feature-mesh-contract
 - Le schéma `.ai/schema/feature.schema.json` reste la **source de vérité unique** du contrat (les énums Bash en dérivent déjà via `_lib.sh`).
 - **Aucune dépendance dure** : binaire absent ⇒ dégradation gracieuse, jamais de blocage d'un environnement minimaliste.
 - Parité runtime/template tenue (dogfood drift) si `check-features` est modifié des deux côtés.
-- Un résultat de validation doit pointer la **règle de schéma** violée (chemin JSON), pas un message opaque.
+- Un champ requis manquant doit être reporté explicitement par nom de clé.
 
 ## Décisions
 
 - **Runtime tranché (2026-06-30) : zéro dépendance, dérivation jq/yq.** Le spike a montré que le schéma documente lui-même l'éthos « bash/jq/yq, AUCUNE dépendance ajv/check-jsonschema » (`$comment`) ; recommander `check-jsonschema` aurait contredit une décision actée. Le « vrai validateur » devient donc : `check-features` lit le schéma comme **donnée** (`read_schema_enum`, générique) au lieu de listes codées en dur. Décision de recadrage prise via `aic-pilot` (P3, option « durcir via jq/yq »).
 - **Incrément 1 = clés requises dérivées du schéma** (`.required`). Avant : liste hardcodée `id scope title status depends_on touches` dans `check-features.sh`. Après : `REQUIRED_FIELDS="$(read_schema_enum '.required' ...)"`. Une clé ajoutée au schéma est exigée sans rééditer le script.
 - **Surface = `core/feature-mesh`** : `check-features.sh` est possédé par `core/feature-mesh` (`touches:`) ; cette feature (quality) en est l'initiative, le code vit côté core (cross-ref + worklog core/feature-mesh).
-- **Suite** : pattern `id` (traduire `(?:`→`(` pour ERE) et enums imbriqués (`product.portfolio`) si jugé utile — toujours bash/jq, jamais de validateur externe.
+- **Suite hors feature** : pattern `id` (traduire `(?:`→`(` pour ERE) et enums imbriqués (`product.portfolio`) si jugé utile — toujours bash/jq, jamais de validateur externe sauf nouvelle décision explicite.
 
 ## Comportement attendu
 
-- `check-features.sh` valide chaque fiche contre le schéma via le binaire si présent ; sinon warning + heuristique Bash.
-- Frontmatter invalide ⇒ message désignant la règle (`properties.status.enum`, `required`, etc.).
-- Environnement sans binaire ⇒ aucun blocage : warning explicite + comportement actuel.
+- `check-features.sh` lit les champs requis depuis `.ai/schema/feature.schema.json.required` via `read_schema_enum`.
+- Frontmatter sans champ requis ⇒ échec avec le nom de clé manquante.
+- Lecture du schéma indisponible ⇒ fallback vers la liste historique, sans dépendance externe.
 
 ## Contrats
 
 - **Entrée** : fiche `.docs/features/<scope>/<id>.md` (frontmatter YAML) + `.ai/schema/feature.schema.json`.
-- **Sortie** : exit 0 si conforme ; en mode fail (vN+1), exit ≠ 0 + liste des violations (chemin de schéma + fiche).
-- **Dégradation** : binaire absent ⇒ exit selon heuristique Bash + warning « validateur réel indisponible ».
+- **Sortie** : exit 0 si conforme ; exit ≠ 0 si une clé requise par le schéma est absente.
+- **Dégradation** : lecture du schéma indisponible ⇒ liste fallback historique.
 
 ## Validation
 
-- Fiche valide ⇒ PASS validateur réel.
-- Fiche invalide par cas (enum, required, type, `product.portfolio.*`) ⇒ rejet avec règle pointée.
-- Binaire absent ⇒ fallback Bash + warning, pas de hard-fail.
-- Tests unitaires dédiés + au moins une assertion `smoke-test`.
-- DONE : validateur réel branché en warn, fallback prouvé, tests valides/invalides verts, doc migration warn→fail écrite.
+- `bash tests/unit/test-schema-driven-required.sh` : ajoute `owner` à `.required` dans un schéma temporaire ; une fiche sans `owner` échoue, puis passe quand `owner` est ajouté.
+- `tests/smoke-test.sh` exécute ce test en étape `[0q/28]`.
+- DONE : `.required` dérivé du schéma, miroir Jinja aligné, test standalone et smoke branché, aucun validateur externe introduit.
 
 ## Droits / accès
 
@@ -131,17 +131,15 @@ Non requis (`doc.requires.observability: false`). Preuves = sorties `check-featu
 
 ## Déploiement / rollback
 
-- Release N : validateur réel en **mode warn** dans `check-features` ; fallback Bash actif ; doc consommateurs.
-- Release N+1 : **flip fail** (exit ≠ 0 sur frontmatter invalide), coordonné avec `okf-strict-profile`.
-- Rollback : revenir au mode warn (le fallback Bash reste le plancher inchangé).
-- Vérifs post-déploiement : `check-features` réel + simulation binaire absent + `smoke-test` verts.
+- Déploiement immédiat : `check-features` continue de bloquer les clés requises manquantes ; seule la source de la liste passe du hardcode au schéma.
+- Rollback : revenir à la liste hardcodée historique dans `check-features.sh`.
+- Vérifs post-déploiement : `check-features --no-write`, `test-schema-driven-required`, `smoke-test`, `check-dogfood-drift`.
 
 ## Risques
 
-- **Nouvelle dépendance** : atténué par le fallback (jamais dure) et le choix d'un binaire de l'écosystème déjà requis (pip).
-- **Divergence schéma ↔ énums Bash** de `_lib.sh` : le validateur réel doit devenir la référence ; surveiller la cohérence.
-- **Bruit au flip fail** : des fiches legacy peuvent devenir invalides → migration warn d'abord, comme OKF.
-- Décision ouverte : runtime exact (pip/node/lib) et emplacement (script dédié vs inline check-features).
+- **Divergence résiduelle** : les enums et types restent partiellement validés par Bash ; à traiter dans une feature séparée si le signal le justifie.
+- **Surprise future** : ajouter une clé à `.required` devient immédiatement bloquant ; c'est voulu, mais doit être documenté côté contrat.
+- **Fallback silencieux** : un environnement sans `jq/yq` retombe sur la liste historique ; le smoke couvre l'environnement nominal.
 
 ## Cross-refs
 
@@ -157,3 +155,4 @@ Non requis (`doc.requires.observability: false`). Preuves = sorties `check-featu
   avec fallback bash. Décisions : validateur réel + fallback (pas de remplacement brutal) ;
   runtime recommandé `check-jsonschema` (pip) car Python/pip déjà requis par Copier ;
   migration warn→fail alignée sur `okf-strict-profile`. Décision ouverte : runtime exact.
+- 2026-07-03 : DONE documentaire après recadrage livré. Le runtime externe est abandonné ; l'incrément clos dérive `.required` depuis le schéma via `read_schema_enum`, garde le fallback Bash, et le test discriminant est branché dans le smoke `[0q/28]`. Les suites pattern `id` / enums imbriqués deviennent des features séparées si priorisées.

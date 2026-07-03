@@ -39,3 +39,10 @@
 - Déclencheur : ajout prévu d'une note migration C1 (shims/AGENTS.md) dans `docs/upgrading.md` ; le fichier était en `touches:` exact de 6 features et aurait forcé 5 worklogs sans rapport.
 - Décision : conserver l'ownership direct sur `product/ai-context-stability-migration` (page de migration globale), reclasser en `touches_shared:` les consommateurs `core/aic-surface-canonical`, `core/okf-strict-profile`, `core/project-overlay-stable`, `core/template-engine`, `quality/read-only-checks-contract`.
 - Effet attendu : `docs/upgrading.md` reste visible en review/report pour ces features, mais ne bloque plus la fraîcheur staged quand une note d'upgrade appartient à une autre feature.
+
+## 2026-07-03 — done
+- Intent : clôturer `quality/touches-breadth-guard` après livraison du guard advisory et des premières vagues de reclassement.
+- Fichiers/surfaces : `.docs/features/quality/touches-breadth-guard.md`, `.docs/features/quality/touches-breadth-guard.worklog.md`, `.ai/scripts/check-touches-breadth.sh`, `tests/unit/test-check-touches-breadth.sh`.
+- Décision : statut `done`. Les signaux restants restent volontairement non bloquants et doivent être traités au fil de l'eau quand les features propriétaires sont rouvertes.
+- Validation : `bash .ai/scripts/check-touches-breadth.sh` PASS advisory ; `bash tests/unit/test-check-touches-breadth.sh` PASS.
+- Next : aucune action immédiate.
