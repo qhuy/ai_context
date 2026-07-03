@@ -238,3 +238,10 @@
 - Nouvelle étape smoke `[0s/28]` : `bash tests/bench/run-bench.sh --self-check`, à la suite des pré-étapes unitaires (`[0r/28]` ranking).
 - Ferme le HANDOFF ouvert par `product/agent-efficacy-benchmark` (2026-07-01) : le plumbing du runner benchmark (validation tâches, parseur tokens, classification infra, gardes `rm -rf`, tie-break matrice) est désormais rejoué par le harnais anti-régression, sans invoquer d'agent ni écrire sous `docs/benchmarks/`.
 - Denominator `/28` préservé (label lettré, comme les autres pré-étapes unitaires).
+
+## 2026-07-03 — étape [0s/28] : lint Jinja raw, benchmark décalé
+
+- Nouvelle étape smoke `[0s/28]` : `bash tests/unit/test-template-jinja-raw-braces.sh`, avant le self-check benchmark.
+- Le self-check benchmark passe de `[0s/28]` à `[0t/28]`; le denominator `/28` reste inchangé car ces pré-étapes sont lettrées.
+- HANDOFF reçu de `core/dogfood-runtime-sync` (A11) : empêcher une expansion Bash `${#...}` non protégée dans `template/**/*.jinja`, qui peut casser le rendu Copier via l'interprétation Jinja de `{#`.
+- Validation : `tests/smoke-test.sh` PASS complet ; les nouvelles étapes `[0s/28]` et `[0t/28]` passent avant le scaffold principal.

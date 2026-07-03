@@ -107,7 +107,11 @@ echo "[0r/28] tests unitaires (ranking features-for-path par pertinence tracker)
 bash tests/unit/test-features-for-path-relevance-ranking.sh
 echo
 
-echo "[0s/28] self-check benchmark agent (plumbing, sans agent)"
+echo "[0s/28] tests unitaires (lint Jinja raw pour \${#...})"
+bash tests/unit/test-template-jinja-raw-braces.sh
+echo
+
+echo "[0t/28] self-check benchmark agent (plumbing, sans agent)"
 bash tests/bench/run-bench.sh --self-check
 echo
 

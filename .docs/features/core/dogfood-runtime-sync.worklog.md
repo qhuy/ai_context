@@ -435,3 +435,10 @@
 - Surface dogfoodée : `.ai/scripts/features-for-path.sh` et son miroir `.jinja`.
 - Changement fonctionnel porté par `quality/features-for-path-ranking-and-matcher-correctness` : ajout d'une pénalité de ranking issue du tracker local.
 - Validation : `check-dogfood-drift.sh` PASS après miroir template.
+
+## 2026-07-03 — garde raw Jinja pour expansions Bash
+
+- Ajout de `tests/unit/test-template-jinja-raw-braces.sh` : scan portable Bash/AWK de `template/**/*.jinja`, échec si une expansion Bash `${#...}` apparaît hors bloc `{% raw %}`.
+- Branchement dans `tests/smoke-test.sh` via `quality/smoke-test` pour rejouer la garde avant les assertions de scaffold.
+- Objectif A11 : détecter au plus tôt les templates capables de casser Copier quand Jinja interprète `{#` comme début de commentaire.
+- Validation : `test-template-jinja-raw-braces` PASS, shellcheck PASS, `check-feature-docs --strict core/dogfood-runtime-sync` PASS, `check-dogfood-drift` PASS, `tests/smoke-test.sh` PASS, `check-features --no-write` PASS, `check-feature-freshness --worktree --strict` PASS, `git diff --check` PASS.
