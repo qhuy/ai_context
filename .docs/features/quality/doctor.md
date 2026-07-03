@@ -2,7 +2,7 @@
 id: doctor
 scope: quality
 title: Diagnostic d'installation non destructif (doctor)
-status: active
+status: done
 depends_on:
   - quality/ci-guard
   - core/template-engine
@@ -15,11 +15,11 @@ touches_shared:
   - CHANGELOG.md
   - tests/smoke-test.sh
 progress:
-  phase: implement
-  step: "MVP script doctor (checks dépendances/hooks/index + next actions) ; smoke-test couvre les régressions review"
+  phase: done
+  step: "MVP doctor livré : diagnostic read-only, mode strict, provider VCS et smoke validés"
   blockers: []
-  resume_hint: "évaluer extraction future vers ai-context doctor (CLI) avec flags --json/--strict"
-  updated: 2026-04-28
+  resume_hint: "aucune action immédiate ; cadrer une feature séparée si extraction CLI ai-context doctor --json devient prioritaire"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -86,6 +86,7 @@ Réduire la friction d'adoption en fournissant un point d'entrée unique de diag
 - `doctor.sh` (mode défaut) tourne sur un repo sain et retourne `0` ; `doctor.sh --strict` retourne non-zéro sur dépendance/fichier critique manquant.
 - Le gabarit `template/.ai/scripts/doctor.sh.jinja` est rendu sans erreur Jinja par `copier copy` (couvert par le smoke-test).
 - Vérifié au sanity check post-tag : présence des scripts via `[[ -f ]]` (pas de faux positif lié au bit `+x` après rendu Copier).
+- Clôture 2026-07-03 : `bash .ai/scripts/doctor.sh` PASS, `bash .ai/scripts/doctor.sh --strict` PASS, `bash tests/smoke-test.sh` PASS deux fois dans le tour de clôture `quality/smoke-test`.
 
 ## Cross-refs
 
@@ -103,3 +104,4 @@ Réduire la friction d'adoption en fournissant un point d'entrée unique de diag
 - 2026-05-03 : correction du contrôle `.githooks` : `doctor --strict` vérifie désormais uniquement les vrais hooks exécutables (`commit-msg`, `pre-commit`, `post-checkout`) et ignore `.githooks/README.md`. Évite de demander `chmod +x` sur une documentation.
 - 2026-05-03 : `tests/smoke-test.sh` embarque les tests unitaires de régression `check-feature-freshness` multi-feature et drift dogfood destination-only. Pas de changement de comportement `doctor.sh`, mais la garantie globale exécutée avec le doctor strict reste synchronisée.
 - 2026-05-03 : les surfaces transverses `README.md`, `PROJECT_STATE.md`, `CHANGELOG.md` et `tests/smoke-test.sh` passent en `touches_shared` pour rester visibles en review sans rendre chaque édition transverse bloquante pour cette fiche.
+- 2026-07-03 : DONE documentaire. Le MVP Bash reste le contrat livré ; l'extraction CLI `ai-context doctor --json` devient un chantier distinct à cadrer si nécessaire.

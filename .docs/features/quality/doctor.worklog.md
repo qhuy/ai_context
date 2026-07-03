@@ -44,3 +44,10 @@
 ## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
 - Surface partagée touchée : `doctor.sh` ajoute le diagnostic `vcs provider` et ne signale plus l'absence de Git comme anomalie quand `vcs.provider=tfvc`.
 - Validation portée par `core/vcs-provider-abstraction`.
+
+## 2026-07-03 — done
+- Intent : clôturer `quality/doctor` après stabilisation du MVP Bash et validation provider VCS.
+- Fichiers/surfaces : `.docs/features/quality/doctor.md`, `.docs/features/quality/doctor.worklog.md`.
+- Décision : statut `done` ; l'extraction future vers une CLI `ai-context doctor --json/--strict` n'est pas un blocker de livraison.
+- Validation : `bash .ai/scripts/doctor.sh` PASS ; `bash .ai/scripts/doctor.sh --strict` PASS ; `tests/smoke-test.sh` PASS deux fois dans la clôture `quality/smoke-test`.
+- Next : aucune action immédiate.
