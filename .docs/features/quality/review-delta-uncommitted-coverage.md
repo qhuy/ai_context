@@ -2,7 +2,7 @@
 id: review-delta-uncommitted-coverage
 scope: quality
 title: Couvrir le delta uncommitted dans review-delta.sh
-status: draft
+status: done
 depends_on: []
 touches:
   - .ai/scripts/review-delta.sh
@@ -25,11 +25,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "implémentation livrée + 6 tests PASS, prêt à commit"
+  phase: done
+  step: "delta local changes livré : review-delta couvre committed + local changes avec 8 cas tests validés"
   blockers: []
-  resume_hint: "commit feat(quality) puis valider en utilisation réelle sur un commit suivant"
-  updated: 2026-06-26
+  resume_hint: "aucune action immédiate ; surveiller les consommateurs si un autre VCS ajoute un format de pending changes différent"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -67,7 +67,7 @@ Cette fiche couvre l'outil de review pre-commit ; pas la pertinence d'injection 
 
 - `aic.sh review` ne doit jamais bénir un commit dont le delta réel n'a pas été analysé.
 - Le script doit rester agent-agnostic (Bash, pas de dépendance hookée Claude).
-- La sortie doit identifier clairement la frontière commit/uncommitted pour que l'agent et l'humain comprennent ce qui a été couvert.
+- La sortie doit identifier clairement la frontière committed/local changes pour que l'agent et l'humain comprennent ce qui a été couvert.
 
 ## Décisions
 
@@ -79,25 +79,26 @@ Tranchées post cross-check Codex 2026-05-07 :
 - **Libellé section committed** : « Delta committed reference » (pas « Delta committed (HEAD~1..HEAD) »). Ne pas figer la base de comparaison comme contrat.
 - **Features impactées** : garder `features_matching_path` direct (déjà utilisé par `review-delta.sh`). **Ne pas migrer** vers `features-for-path.sh` — évite mélange avec Phase 2 #2. Mode best-effort (`2>/dev/null || true` neutralise les erreurs). **Pas de warning émis** par le matcher tant que Phase 2 #2 n'est pas livrée — la fiche ne le promet pas dans #1.
 - **Tests** : unit-test dédié `tests/unit/test-review-delta-uncommitted.sh`, 5 cas. Pas de gonflement de `smoke-test.sh`.
+- **Évolution provider VCS 2026-07-03** : la section suffixe s'appelle désormais « Delta local changes » et la source passe par le provider VCS. En backend Git, elle reste alimentée par `collect_uncommitted_paths` et `git status --porcelain=v1 -z --untracked-files=all`.
 
 ## Comportement attendu
 
 `bash .ai/scripts/review-delta.sh` sans argument doit :
 
 1. Lister le delta committed via la logique existante (préserver le contrat actuel).
-2. Lister le delta uncommitted via `git status --porcelain=v1 -z --untracked-files=all` (NUL-terminé, robuste sur paths quotés/espaces/`a -> b.txt`), normaliser les paths (deletions visibles ; pour renames/copies, retourner le path nouveau).
+2. Lister les changements locaux via le provider VCS ; en Git, `collect_uncommitted_paths` s'appuie sur `git status --porcelain=v1 -z --untracked-files=all` (NUL-terminé, robuste sur paths quotés/espaces/`a -> b.txt`), normalise les paths (deletions visibles ; pour renames/copies, retourne le path nouveau).
 3. Croiser chaque liste avec les features via `features_matching_path` ([_lib.sh:130](.ai/scripts/_lib.sh:130)) en mode best-effort. Aucun fail hard sur matcher dans ce scope.
-4. Sortir un rapport markdown avec deux sections explicites : « Delta committed reference » (logique existante préservée) et « Delta uncommitted (working tree + index + untracked) » (nouvelle).
+4. Sortir un rapport markdown avec deux sections explicites : « Delta committed reference » (logique existante préservée) et « Delta local changes (...) » (nouvelle).
 5. Avec `--committed-only`, n'afficher que la première section (compat ascendante stricte).
 6. Code retour 0 si le script s'exécute sans erreur catastrophique (jq absent, repo non-git). Pattern matcher cassé → warning stderr, pas d'échec.
 
 ## Contrats
 
 - Sortie markdown stable consommable par `aic.sh review` et lisible humainement.
-- **Compat ascendante stricte** : la portion « committed reference » conserve le format actuel. La section uncommitted s'ajoute en suffixe. Un consommateur qui parsait l'ancienne sortie continue de fonctionner.
+- **Compat ascendante stricte** : la portion « committed reference » conserve le format actuel. La section local changes s'ajoute en suffixe. Un consommateur qui parsait l'ancienne sortie continue de fonctionner.
 - Flag `--committed-only` restaure l'ancien comportement strict (uniquement committed).
 - Code retour 0 sur exécution normale (présence ou absence de delta n'est pas un échec). Code retour ≠ 0 uniquement sur erreur catastrophique (jq absent, repo non-git, index manquant).
-- Variables d'environnement : `AI_CONTEXT_REVIEW_DELTA_BASE` pour override la base de comparaison committed (utile en CI). Pas d'env var pour uncommitted (toujours `git status --porcelain=v1 -z --untracked-files=all`).
+- Variables d'environnement : `AI_CONTEXT_REVIEW_DELTA_BASE` pour override la base de comparaison committed (utile en CI). Pas d'env var pour local changes : la source vient du provider VCS.
 
 ## Validation
 
@@ -111,7 +112,8 @@ Test unit-test dédié `tests/unit/test-review-delta-uncommitted.sh` couvrant 5 
 
 Plus :
 - `bash tests/smoke-test.sh` PASS après intégration (smoke peut invoquer le test unit s'il suit le pattern local, sinon test unit autonome).
-- Validation manuelle : `bash .ai/scripts/aic.sh review` produit un rapport dont la liste uncommitted matche exactement `git status --porcelain=v1 -z --untracked-files=all` (au path près, normalisation des renames acceptée).
+- Validation manuelle Git : `bash .ai/scripts/aic.sh review` produit un rapport dont la liste local changes matche `git status --porcelain=v1 -z --untracked-files=all` (au path près, normalisation des renames acceptée).
+- Clôture 2026-07-03 : `bash tests/unit/test-review-delta-uncommitted.sh` PASS (8 cas).
 
 ## Risques
 
@@ -129,3 +131,4 @@ Plus :
 - 2026-05-06 : création en draft suite au cross-check Claude/Codex (4 rounds) sur `workflow/intentional-skills`. Bug confirmé en local (`bash .ai/scripts/review-delta.sh` sort 1 fichier `HEAD~1..HEAD` alors que `git status --short` montre 30+ uncommitted). Ordre Phase 2 fixé : cette fiche en #1, avant `quality/features-for-path-ranking-and-matcher-correctness` (#2).
 - 2026-05-07 : cross-check Codex pre-implémentation. 4 corrections actées : (1) Approche A confirmée + compat parsabilité stricte ; (2) source de vérité uncommitted = `git status --porcelain=v1 -z --untracked-files=all` (durci post-review au commit `ce3a558`), pas `git diff HEAD` qui rate les untracked ; (3) libellé section « Delta committed reference », ne pas figer `HEAD~1..HEAD` comme contrat ; (4) garder `features_matching_path` direct, ne pas migrer vers `features-for-path.sh` (évite mélange avec Phase 2 #2). Tests : unit-test dédié `tests/unit/test-review-delta-uncommitted.sh`, 5 cas. Phase bumpée spec → implement.
 - 2026-05-07 : **implémentation livrée**. `collect_uncommitted_paths` extrait dans `_lib.sh` (réutilisable, testable). `review-delta.sh` étendu : flag `--committed-only`, section « Delta committed reference » + nouvelle section « Delta uncommitted (working tree + index + untracked) », sous-titres `####` pour la portion committed afin de structurer sans casser le format. Parité template appliquée (`_lib.sh.jinja` + `review-delta.sh.jinja`). Test unit `tests/unit/test-review-delta-uncommitted.sh` couvre 6 cas (les 5 demandés + rename). Validation : check-shims, check-features, check-dogfood-drift, smoke-test, test-unit PASS. Phase bumpée implement → review.
+- 2026-07-03 : DONE documentaire. Le contrat est généralisé via provider VCS sous le libellé « Delta local changes » ; le backend Git conserve la robustesse `porcelain=v1 -z`. Test ciblé PASS (8 cas).

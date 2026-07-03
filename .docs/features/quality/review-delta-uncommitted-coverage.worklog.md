@@ -147,3 +147,10 @@
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
+
+## 2026-07-03 — done
+- Intent : clôturer `quality/review-delta-uncommitted-coverage` après livraison historique et généralisation provider VCS.
+- Fichiers/surfaces : `.docs/features/quality/review-delta-uncommitted-coverage.md`, `.docs/features/quality/review-delta-uncommitted-coverage.worklog.md`.
+- Décision : statut `done` ; le contrat se lit maintenant comme `Delta local changes`, tout en conservant le backend Git robuste `porcelain=v1 -z`.
+- Validation : `bash tests/unit/test-review-delta-uncommitted.sh` PASS (8 cas), gate feature/docs/freshness à relancer avant commit.
+- Next : aucune action immédiate.
