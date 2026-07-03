@@ -75,3 +75,12 @@
 - Runtime + `.jinja` (parité dogfood vérifiée). Test dédié `tests/unit/test-schema-driven-required.sh` (clé `owner` ajoutée au schéma temp → exigée).
 - HANDOFF `quality/smoke-test` : brancher ce test dans `tests/smoke-test.sh` — non fait ici pour rester focalisé (même pattern que yaml-strict).
 - Initiative portée par `quality/feature-schema-validator` (P3 du pilot `2026-06-30-ze-solution`) ; `check-features.sh` reste surface `core/feature-mesh`, d'où cette entrée.
+
+## 2026-07-03 — done
+- Intent : clôture documentaire de `core/feature-mesh`.
+- Fichiers/surfaces : `.docs/features/core/feature-mesh.md`, `.docs/features/core/feature-mesh.worklog.md`.
+- Décision : statut `done` ; le contrat frontmatter, le strict documentaire, les checks `check-features`/`check-feature-docs`, la réconciliation C2b et la clarification C2a sont documentés et validés.
+- C2a : résolu comme clarification de rôle, sans dépendance de validateur JSON-Schema complet ; le schéma reste source de contrat appliquée par dérivation bash/jq/yq. Les suites optionnelles restent suivies par `quality/feature-schema-validator`.
+- Doc Impact Decision : C — fiche feature et worklog mis à jour.
+- Validation prévue : `check-feature-docs --strict core/feature-mesh`, tests unitaires feature-mesh ciblés, checks feature/freshness et gate ship avant commit.
+- Next : aucune action immédiate ; rouvrir si le frontmatter feature, le schéma ou `check-features.sh` change.

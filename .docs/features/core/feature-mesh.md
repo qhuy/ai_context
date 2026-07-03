@@ -2,7 +2,7 @@
 id: feature-mesh
 scope: core
 title: Feature mesh markdown (frontmatter + dépendances cross-scope)
-status: active
+status: done
 depends_on: []
 touches:
   - .docs/FEATURE_TEMPLATE.md
@@ -28,11 +28,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "heuristique placeholder durci (faux positif comparaison)"
+  phase: done
+  step: "contrat feature mesh stabilisé ; C2a clarifié et checks alignés"
   blockers: []
-  resume_hint: "aucune action requise — fiche bootstrap post-shipping ; rouvrir si modification du code touché"
-  updated: 2026-06-30
+  resume_hint: "aucune action immédiate ; rouvrir si le frontmatter feature, le schéma ou check-features.sh change"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -109,3 +109,4 @@ Inclus : contrat frontmatter, structure documentaire, dépendances cross-scope, 
 - 2026-05-04 : passage au modèle "bible feature" progressif. Le template de fiche ajoute `doc.level`, `doc.requires.*`, `Résumé`, `Périmètre`, `Invariants`, `Décisions`, `Validation` et les modules conditionnels (`Droits / accès`, `Données`, `UX`, `Observabilité`, `Déploiement / rollback`). Nouveau `check-feature-docs.sh` séparé de `check-features.sh` : warnings par défaut pour préserver le legacy, `--strict` avant DONE.
 - 2026-06-30 : **durcissement du heuristique `has_placeholder` de `check-feature-docs.sh`** (faux positif CI). Le motif `<[^>]+>` lisait une comparaison « x < y … z > n » (ex. ligne de clôture `ratio … < 1:1 et 0 draft gelé > 30 j` d'une fiche `done`) comme un placeholder de remplissage et bloquait le step `check-feature-docs`. Resserré en `<[^>[:space:]][^>]*>` : un placeholder a un libellé collé au `<` (`<Titre court…>`, `<product | … >`), une comparaison a un espace juste après `<`. La variante naïve « aucun espace interne » aurait cassé les vrais placeholders du template (`<Titre court de la feature>`, `<product | back | …>`) — écartée. Runtime + `.jinja` (parité), garde `tests/unit/test-feature-docs-placeholder-heuristic.sh` (régression + anti-relâche).
 - 2026-06-29 : **réconciliation `id` schema↔checker** (item C2b du frame de remédiation, HANDOFF depuis `core/index-contract-v2`). Le schéma déclarait `id` en kebab-case strict (`^[a-z0-9]+(?:-[a-z0-9]+)*$`) mais `check-features.sh` tolérait l'underscore (`^[a-z0-9][a-z0-9_-]*$`) → le schéma « mentait » (audit : `foo_bar` passait le checker, violait le schéma). Checker aligné sur le schéma (ERE-équivalent `^[a-z0-9]+(-[a-z0-9]+)*$`), runtime + `.jinja`. **0 fiche sur 54 en violation** → zéro casse (vérifié). `scope` laissé tel quel (le schéma n'a pas de pattern `scope`, donc pas de divergence). Test différentiel `tests/unit/test-id-schema-checker-parity.sh` : snapshot du pattern schéma + rejet underscore + acceptation kebab → verrouille contre la re-divergence. Reste C2a (appliquer/retirer le schéma décoratif) à cadrer.
+- 2026-07-03 : clôture de la fiche. C2a est clarifié par le `$comment` de `.ai/schema/feature.schema.json` et par `core/index-contract-v2` : pas de validateur JSON-Schema complet au runtime, le schéma sert de source de contrat appliquée par `check-features.sh` (required, enums, pattern `id`) dans l'éthos bash/jq/yq. Les suites éventuelles de durcissement restent routées côté `quality/feature-schema-validator` et ne bloquent plus le contrat core.
