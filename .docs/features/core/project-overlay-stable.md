@@ -2,7 +2,7 @@
 id: project-overlay-stable
 scope: core
 title: Overlay projet stable
-status: active
+status: done
 depends_on: []
 touches:
   - "template/.ai/index.md.jinja"
@@ -29,11 +29,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: implement
-  step: "implémentation overlay projet"
+  phase: done
+  step: "overlay projet stable, optionnel et project-owned validé"
   blockers: []
-  resume_hint: "Vérifier que .ai/project reste project-owned, optionnel et ignoré par les checks de drift."
-  updated: 2026-06-26
+  resume_hint: "aucune action immédiate ; rouvrir si _skip_if_exists, l'ownership .ai/project/** ou le chargement Pack A changent"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -92,3 +92,5 @@ Si `.ai/project/index.md` existe, l'agent le lit après les règles générales 
 ## Historique / décisions
 
 Créé pour stabiliser les règles locales des repos consommateurs pendant `copier update`.
+
+- 2026-07-03 : fiche clôturée en `done`. Le contrat socle est validé : `.ai/project/**` reste absent du scaffold par défaut, project-owned via `_skip_if_exists`, chargé seulement si `.ai/project/index.md` existe, et ignoré par le drift dogfood. L'extension registre de scopes est portée séparément par `core/project-overlay-scope-registry`, déjà clôturée. Doc Impact Decision : C — fiche feature et worklog mis à jour.

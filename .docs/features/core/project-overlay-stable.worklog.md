@@ -234,3 +234,12 @@
 
 ## 2026-06-29 — couverture incidente (fix .session-docs.log dans exclusions drift)
 - Surface partagee touchee (check-dogfood-drift.sh). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)
+
+## 2026-07-03 — done
+- Intent : clôture documentaire de `core/project-overlay-stable`.
+- Fichiers/surfaces : `.docs/features/core/project-overlay-stable.md`, `.docs/features/core/project-overlay-stable.worklog.md`.
+- Décision : statut `done` ; le socle `.ai/project/**` est optionnel, project-owned, préservé par `_skip_if_exists`, non scaffoldé par défaut et ignoré par le drift dogfood.
+- Note : l'extension registre de scopes vit dans `core/project-overlay-scope-registry`, déjà clôturée ; elle ne bloque plus cette fiche socle.
+- Doc Impact Decision : C — fiche feature et worklog mis à jour.
+- Validation prévue : `check-feature-docs --strict core/project-overlay-stable`, `test-project-overlay`, checks shims/références/dogfood/features/freshness avant commit.
+- Next : aucune action immédiate ; rouvrir si `_skip_if_exists`, l'ownership `.ai/project/**` ou le chargement Pack A changent.
