@@ -12,6 +12,8 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=_vcs.sh
+. "$script_dir/_vcs.sh"
 repo_root="$(cd "$script_dir/../.." && pwd)"
 cd "$repo_root"
 
@@ -65,14 +67,33 @@ else
   add_action "installer copier (pipx/pip/brew)"
 fi
 
+vcs="$(vcs_provider)"
+ok "vcs provider: $vcs"
+
 inside_git=0
-if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  inside_git=1
-  ok "git repo detected"
-else
-  warn "not inside a git repository"
-  add_action "initialiser git (git init) pour activer hooks/flows de commit"
-fi
+case "$vcs" in
+  git)
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+      inside_git=1
+      ok "git repo detected"
+    else
+      ko "vcs.provider=git mais aucun repo git detecte"
+      add_action "corriger .ai/config.yml ou initialiser git"
+    fi
+    ;;
+  tfvc)
+    if [[ -n "$(_vcs_tf_cmd)" ]]; then
+      ok "tfvc command found"
+    else
+      ko "vcs.provider=tfvc mais commande tf/tf.exe introuvable"
+      add_action "installer Team Explorer Everywhere / tf.exe ou corriger .ai/config.yml"
+    fi
+    ;;
+  none)
+    warn "aucun provider VCS detecte"
+    add_action "configurer .ai/config.yml : vcs.provider: git|tfvc"
+    ;;
+esac
 
 if [[ -f ".ai/index.md" ]]; then
   ok ".ai/index.md found"
@@ -93,7 +114,7 @@ else
   add_action "lancer bash .ai/scripts/build-feature-index.sh --write"
 fi
 
-if [[ "$inside_git" -eq 1 ]]; then
+if [[ "$vcs" == "git" && "$inside_git" -eq 1 ]]; then
   hooks_path="$(git config --get core.hooksPath || true)"
   if [[ "$hooks_path" == ".githooks" ]]; then
     ok "git hooks path configured (.githooks)"
@@ -102,7 +123,7 @@ if [[ "$inside_git" -eq 1 ]]; then
     add_action "git config core.hooksPath .githooks"
   fi
 else
-  warn "git hooks check skipped (not a git repository)"
+  warn "git hooks check skipped (provider VCS: $vcs)"
 fi
 
 if [[ -f ".ai/scripts/check-shims.sh" ]]; then
@@ -175,7 +196,7 @@ if [[ -f ".claude/settings.json" ]] && command -v jq >/dev/null 2>&1; then
 fi
 
 # Hooks exécutables (si core.hooksPath pointe vers .githooks)
-if [[ "$inside_git" -eq 1 ]] && [[ -d ".githooks" ]]; then
+if [[ "$vcs" == "git" && "$inside_git" -eq 1 ]] && [[ -d ".githooks" ]]; then
   hooks_path_check="$(git config --get core.hooksPath || true)"
   if [[ "$hooks_path_check" == ".githooks" ]]; then
     not_exec=()

@@ -29,6 +29,45 @@ AI_CONTEXT_DOCS_ROOT="${AI_CONTEXT_DOCS_ROOT:-.docs}"
 AI_CONTEXT_FEATURES_DIR="$AI_CONTEXT_DOCS_ROOT/features"
 AI_CONTEXT_SCHEMA_FILE="${AI_CONTEXT_SCHEMA_FILE:-.ai/schema/feature.schema.json}"
 
+_ai_context_lib_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -f "$_ai_context_lib_dir/_vcs.sh" ]]; then
+  # shellcheck source=_vcs.sh
+  . "$_ai_context_lib_dir/_vcs.sh"
+else
+  # Fallback pour fixtures historiques qui copient _lib.sh seul.
+  vcs_provider() { echo "git"; }
+  vcs_root() { git rev-parse --show-toplevel 2>/dev/null || pwd; }
+  vcs_has_staging_area() { return 0; }
+  vcs_staged_label() { echo "staged"; }
+  vcs_changes_label() { echo "working tree"; }
+  vcs_pending_paths() {
+    local field status path consume_old=0
+    while IFS= read -r -d '' field; do
+      if [[ $consume_old -eq 1 ]]; then
+        consume_old=0
+        continue
+      fi
+      status="${field:0:2}"
+      path="${field:3}"
+      case "${status:0:1}" in
+        R|C) consume_old=1 ;;
+      esac
+      [[ -n "$path" ]] && printf '%s\n' "$path"
+    done < <(git status --porcelain=v1 -z --untracked-files=all 2>/dev/null) | sort -u
+  }
+  vcs_staged_paths() { git diff --cached --name-only --no-renames 2>/dev/null || true; }
+  vcs_diff_paths() {
+    local base_ref="${1:-HEAD~1}"
+    local head_ref="${2:-HEAD}"
+    git diff --name-only "$base_ref...$head_ref" 2>/dev/null \
+      || git diff --name-only "$base_ref" "$head_ref" 2>/dev/null \
+      || true
+  }
+  vcs_ref_exists() { git rev-parse --verify "$1" >/dev/null 2>&1; }
+  vcs_path_ts() { git log -1 --format=%ct -- "$1" 2>/dev/null | head -n1; }
+  vcs_paths_latest_ts() { git log -1 --format=%ct -- "$@" 2>/dev/null | head -n1; }
+fi
+
 # Lit un enum depuis le schema JSON via jq. Fallback hardcodé si schema/jq absent.
 # Usage : read_schema_enum <jq-path> <fallback>
 # Ex.   : read_schema_enum '.properties.status.enum' "draft active done deprecated archived"
@@ -136,26 +175,12 @@ is_structural_feature_edit() {
 }
 
 # collect_uncommitted_paths
-#   — liste les paths uncommitted (tracked modifié + staged + untracked + deletions/renames).
-#   Source canonique : `git status --porcelain=v1 -z --untracked-files=all`.
-#   Format -z : records NUL-terminés, path non quoté ("a -> b.txt", espaces, etc. OK).
-#   Pour les renames/copies (R/C en X), Git émet `XY new\0old\0` : on retourne new
-#   et on consomme old en lookahead.
-#   Sortie : un path par ligne, déduplication via sort -u.
+#   — liste les paths locaux modifies selon le provider VCS courant.
+#   Git : tracked modifie + staged + untracked + deletions/renames.
+#   TFVC : pending changes via `tf status` (best-effort).
+#   Sortie : un path par ligne, deduplication via le provider.
 collect_uncommitted_paths() {
-  local field status path consume_old=0
-  while IFS= read -r -d '' field; do
-    if [[ $consume_old -eq 1 ]]; then
-      consume_old=0
-      continue
-    fi
-    status="${field:0:2}"
-    path="${field:3}"
-    case "${status:0:1}" in
-      R|C) consume_old=1 ;;
-    esac
-    [[ -n "$path" ]] && printf '%s\n' "$path"
-  done < <(git status --porcelain=v1 -z --untracked-files=all 2>/dev/null) | sort -u
+  vcs_pending_paths
 }
 
 # ─── Périmètre "substantiel" (réutilise la config coverage) ───

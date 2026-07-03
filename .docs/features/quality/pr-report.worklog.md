@@ -122,3 +122,7 @@
 ## 2026-06-25 12:34 — auto
 - Fichiers modifiés :
   - template/.ai/scripts/aic.sh.jinja
+
+## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
+- Surface partagée touchée : `pr-report.sh` reste ref-based en Git et bascule sur pending/local changes hors Git. Le rapport expose `vcs_provider`.
+- Validation portée par `core/vcs-provider-abstraction`.

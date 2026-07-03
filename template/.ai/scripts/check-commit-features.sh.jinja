@@ -17,7 +17,8 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 
 # jq n'est requis qu'en mode stdin JSON ; vérif différée plus bas.
 
-cd "$(git rev-parse --show-toplevel)"
+repo_root="$(vcs_root)"
+cd "$repo_root"
 
 FEATURES_DIR="$AI_CONTEXT_FEATURES_DIR"
 FEATURE_TEMPLATE="$AI_CONTEXT_DOCS_ROOT/FEATURE_TEMPLATE.md"
@@ -72,10 +73,10 @@ fi
 # ─── feat: → fiche feature obligatoire ET pertinente ───
 type=$(echo "$msg" | sed -E 's/^([a-z]+).*/\1/')
 if [[ "$type" == "feat" ]]; then
-  staged=$(git diff --cached --name-only 2>/dev/null || git diff --name-only)
+  staged=$(vcs_staged_paths)
   staged_feature_docs=$(printf '%s\n' "$staged" | grep -E "^$FEATURES_DIR/.+\\.md$" || true)
   if [[ -z "$staged_feature_docs" ]]; then
-    echo "❌ Commit 'feat:' sans fichier touché dans $FEATURES_DIR/" >&2
+    echo "❌ Commit 'feat:' sans fichier feature dans le delta $(vcs_staged_label) ($FEATURES_DIR/)" >&2
     echo "   Toute nouvelle feature DOIT avoir son fichier dans $FEATURES_DIR/<scope>/<id>.md" >&2
     echo "   Utiliser $FEATURE_TEMPLATE comme squelette." >&2
     echo "   Si ce n'est pas une feature, utiliser un autre type : fix/refactor/chore/..." >&2
@@ -107,7 +108,7 @@ if [[ "$type" == "feat" ]]; then
     done <<< "$staged_non_feature"
 
     if [[ "$relevant_doc" -ne 1 ]]; then
-      echo "❌ Commit 'feat:' avec fiche feature staged, mais aucune ne couvre les fichiers non-doc du commit." >&2
+      echo "❌ Commit 'feat:' avec fiche feature $(vcs_staged_label), mais aucune ne couvre les fichiers non-doc du commit." >&2
       echo "   Mets à jour la fiche dont touches: couvre le fichier modifié, ou corrige touches:." >&2
       echo "   Si le changement est purement documentaire, utiliser docs: plutôt que feat:." >&2
       exit 1

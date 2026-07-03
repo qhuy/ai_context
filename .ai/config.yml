@@ -1,6 +1,10 @@
 docs_root: ".docs"
 project_id: "ai_context"
 
+vcs:
+  # auto | git | tfvc | none
+  provider: "git"
+
 coverage:
   roots:
     - src

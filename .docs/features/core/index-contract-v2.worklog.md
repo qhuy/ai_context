@@ -66,3 +66,7 @@
 - Verifs : JSON valide, read_schema_enum ok, check-features PASS, drift aligne.
 - Clot les 3 "contrats qui mentent" de l'audit (C2a-doc + C2b + C2c).
 - Fichiers : .ai/schema/feature.schema.json, template/.ai/schema/feature.schema.json
+
+## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
+- Surface partagée touchée : `_lib.sh` source le provider VCS avec fallback Git. Aucun changement du contrat JSON `.ai/.feature-index.json`.
+- Validation portée par `core/vcs-provider-abstraction` : tests provider et build/check feature index.

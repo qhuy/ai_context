@@ -52,8 +52,8 @@ _exclude:
   - "{% if 'product' not in scopes %}{{ docs_root }}/features/product{% endif %}"
   # CI opt-in
   - "{% if adoption_mode == 'lite' or (not enable_ci_guard and adoption_mode != 'strict') %}.github/workflows{% endif %}"
-  # Mode d'adoption
-  - "{% if adoption_mode == 'lite' %}.githooks{% endif %}"
+  # Mode d'adoption / provider VCS
+  - "{% if adoption_mode == 'lite' or vcs_provider != 'git' %}.githooks{% endif %}"
 
 _message_after_copy: |
   ✅ AI context scaffoldé.
@@ -63,6 +63,7 @@ _message_after_copy: |
       Linux : apt install jq + yq depuis https://github.com/mikefarah/yq
 
   Mode d'adoption choisi : {{ adoption_mode }}.
+  Provider VCS choisi : {{ vcs_provider }}.
     • lite     → pas de .githooks ni .github/workflows. Les hooks Claude
                  (.claude/settings.json) restent générés si Claude est sélectionné,
                  mais ils sont optionnels — tu actives ce que tu veux dans /hooks.
@@ -78,8 +79,8 @@ _message_after_copy: |
 
   Prochaines étapes :
     1. Lire README_AI_CONTEXT.md à la racine du projet.
-    2. {{ "Activer les git hooks   : git config core.hooksPath .githooks && chmod +x .githooks/*" if adoption_mode != 'lite' else "Mode `lite` actif       : git hooks non scaffoldés (.githooks absent)." }}
-       {{ "(inclut le pre-commit d'auto-progression universelle — tous agents)" if adoption_mode != 'lite' else "Pour activer l'enforcement git plus tard, repasser en mode `standard`/`strict` ou copier `.githooks` à la main." }}
+    2. {{ "Activer les git hooks   : git config core.hooksPath .githooks && chmod +x .githooks/*" if adoption_mode != 'lite' and vcs_provider == 'git' else ("TFVC actif            : utiliser les checks .ai/scripts/* en pre-checkin/CI ; .githooks non scaffoldé." if vcs_provider == 'tfvc' else "Mode sans hooks Git     : .githooks non scaffoldé.") }}
+       {{ "(inclut le pre-commit d'auto-progression universelle — tous agents)" if adoption_mode != 'lite' and vcs_provider == 'git' else "Le provider VCS est configurable dans .ai/config.yml (`vcs.provider`)." }}
     3. Règles locales durables : créer .ai/project/index.md si nécessaire ; garder .ai/rules/<scope>.md générique.
     4. {% if 'claude' in agents %}(Claude, recommandé) /aic-frame → cadrer le projet/la première feature ; /aic-pilot → piloter un audit ou suivi transverse.{% else %}(recommandé) Cadrer la première feature en langage naturel ; pour un audit large, tenir un registre de pilotage item par item.{% endif %}
     5. Vérifier les shims      : bash .ai/scripts/check-shims.sh
@@ -158,6 +159,16 @@ adoption_mode:
     standard (expérience complète actuelle): standard
     strict (standard + CI forcée + doctor.sh --strict + check-feature-coverage.sh --strict ; CI rouge si orphelins): strict
   help: Niveau d'adoption du framework ai-context (lire README §Modes d'adoption avant strict — projet jeune = CI rouge garantie)
+
+vcs_provider:
+  type: str
+  default: git
+  choices:
+    git (repo Git local ou Git hébergé par TFS/Azure DevOps): git
+    tfvc (TFS/TFVC avec pending changes): tfvc
+    auto (détection locale best-effort): auto
+    none (checks manuels sans VCS): none
+  help: Provider source-control utilisé par les checks de delta/freshness
 
 tech_profile:
   type: str

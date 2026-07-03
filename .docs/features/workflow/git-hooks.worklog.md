@@ -16,3 +16,8 @@
 - Décision tracée : `doctor` warn (pas hard-fail) car les clones CI n'ont pas `core.hooksPath` → faux positif ; garantie CI portée par `ci-guard`.
 - Evidence : `doctor` « git hooks path configured (.githooks) » + commit-msg rejette un `feat:` sans fiche.
 - Fichiers : .docs/features/workflow/git-hooks.md (+ worklog)
+
+## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
+- Surface partagée touchée : `template/.ai/scripts/check-commit-features.sh.jinja` lit le delta via provider VCS. En Git, le hook commit-msg garde la même sémantique staged.
+- En TFVC, `.githooks` n'est pas scaffoldé ; les checks sont exposés en commandes manuelles/CI.
+- Validation portée par `core/vcs-provider-abstraction`.

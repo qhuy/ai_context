@@ -108,3 +108,7 @@ feat(quality): corriger le contrat de lock index
 ## 2026-06-28 20:34 — auto
 - Fichiers modifiés :
   - tests/smoke-test.sh
+
+## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
+- Surface partagée touchée : `_lib.sh` source `_vcs.sh` avec fallback Git si absent. Aucun changement du contrat de lock.
+- Validation portée par `core/vcs-provider-abstraction`.

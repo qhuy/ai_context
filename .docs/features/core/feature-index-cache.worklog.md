@@ -127,3 +127,7 @@
 - Test : `tests/unit/test-build-feature-index-fallback-frontmatter.sh` étendu — fiche-piège `objleak` (frontmatter sans product/external_refs/progress, corps les imitant) → index doit donner `product=={}`, `external_refs=={}`, `progress.phase==""`, `progress.blockers==[]`. Assertion non-tautologique : échoue sur HEAD pré-fix.
 - contract/fallback/robust/drift-extra toujours ✅. Le résiduel documenté dans la fiche est désormais clos (plus aucun champ fallback non borné).
 - Fichiers : .ai/scripts/build-feature-index.sh, template/.ai/scripts/build-feature-index.sh.jinja, tests/unit/test-build-feature-index-fallback-frontmatter.sh
+
+## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
+- Surface partagée touchée : `_lib.sh` et `pr-report.sh` consomment le nouveau provider VCS. Aucun changement du contrat d'index feature ; le fallback `_lib.sh` préserve les fixtures historiques.
+- Validation portée par `core/vcs-provider-abstraction` : tests provider, review-delta, pr-report et freshness ciblés.

@@ -2,9 +2,9 @@
 # check-feature-freshness.sh — Verifie que la doc feature suit les edits code.
 #
 # Trois controles complementaires :
-#   - --staged : compare les fichiers stages avec les features dont `touches:`
-#     les couvre. Si du code couvert change, la fiche feature ou son worklog
-#     doit etre stage dans le meme commit.
+#   - --staged : compare les fichiers stages (Git) ou pending (TFVC) avec les
+#     features dont `touches:` les couvre. Si du code couvert change, la fiche
+#     feature ou son worklog doit etre present dans le meme delta.
 #   - --worktree : meme logique de presence que --staged, mais sur tout le
 #     working tree (staged + non-stage + untracked), restreinte aux chemins
 #     "substantiels" (perimetre coverage). Sert au gate Stop de fin de tour :
@@ -12,7 +12,7 @@
 #     Presence-based, jamais base sur des timestamps de commit (cf. --worktree
 #     vs historique : l'historique ne voit pas les edits non commites).
 #   - historique : compare le dernier commit des fichiers couverts par `touches:`
-#     avec le dernier commit de la fiche/worklog.
+#     avec le dernier commit de la fiche/worklog. Git-only ; ignore sous TFVC.
 #
 # Usage :
 #   bash .ai/scripts/check-feature-freshness.sh --staged --strict
@@ -26,10 +26,10 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=_lib.sh
 . "$script_dir/_lib.sh"
 
-require_cmd git jq
+require_cmd jq
 enable_globstar
 
-repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+repo_root="$(vcs_root)"
 cd "$repo_root"
 
 index_file=".ai/.feature-index.json"
@@ -126,10 +126,10 @@ blocking_coverers() {
 
 run_staged_check() {
   local staged
-  staged=$(git diff --cached --name-only --no-renames 2>/dev/null || true)
+  staged=$(vcs_staged_paths)
   if [[ -z "$staged" ]]; then
     echo "═══ check-feature-freshness (staged) ═══"
-    echo "  aucun fichier stage"
+    echo "  aucun fichier $(vcs_staged_label)"
     echo
     echo "✅ OK"
     return 0
@@ -163,13 +163,13 @@ run_staged_check() {
   echo "═══ check-feature-freshness (staged) ═══"
 
   if [[ ! -s "$failures" ]]; then
-    echo "  fichiers stages couverts : OK"
+    echo "  fichiers $(vcs_staged_label) couverts : OK"
     echo
     echo "✅ OK"
     return 0
   fi
 
-  echo "  Features couvertes par du code stage sans fiche/worklog stage :"
+  echo "  Features couvertes par du code $(vcs_staged_label) sans fiche/worklog $(vcs_staged_label) :"
   sort -u "$failures" | while IFS=$'\t' read -r file feature feature_path; do
     echo "    - $feature ($feature_path) ← $file"
   done
@@ -192,7 +192,7 @@ run_worktree_check() {
   echo "═══ check-feature-freshness (worktree) ═══"
 
   if [[ -z "$changed" ]]; then
-    echo "  aucun fichier modifie dans le working tree"
+    echo "  aucun fichier modifie dans $(vcs_changes_label)"
     echo
     echo "✅ OK"
     return 0
@@ -233,7 +233,7 @@ run_worktree_check() {
     return 0
   fi
 
-  echo "  Features couvertes par du code modifie (working tree) sans fiche/worklog modifie :"
+  echo "  Features couvertes par du code modifie ($(vcs_changes_label)) sans fiche/worklog modifie :"
   sort -u "$failures" | while IFS=$'\t' read -r file feature feature_path; do
     echo "    - $feature ($feature_path) ← $file"
   done
@@ -251,7 +251,7 @@ run_worktree_check() {
 
 git_path_ts() {
   local path="$1"
-  git log -1 --format=%ct -- "$path" 2>/dev/null | head -n1
+  vcs_path_ts "$path"
 }
 
 git_path_ts_cached() {
@@ -308,12 +308,21 @@ latest_code_ts_for_feature() {
     return 0
   fi
 
-  ts=$(git log -1 --format=%ct -- "${touches[@]}" 2>/dev/null | head -n1)
+  ts=$(vcs_paths_latest_ts "${touches[@]}")
   [[ -z "$ts" ]] && ts=0
   echo "$ts"
 }
 
 run_history_check() {
+  if [[ "$(vcs_provider)" != "git" ]]; then
+    echo "═══ check-feature-freshness ═══"
+    echo "  mode historique indisponible pour provider VCS '$(vcs_provider)'"
+    echo "  utiliser : bash .ai/scripts/check-feature-freshness.sh --worktree --strict"
+    echo
+    echo "✅ OK (--warn)"
+    return 0
+  fi
+
   local stale
   stale=$(mktemp "${TMPDIR:-/tmp}/ai-context-stale.XXXXXX")
   ts_cache_file=$(mktemp "${TMPDIR:-/tmp}/ai-context-ts-cache.XXXXXX")

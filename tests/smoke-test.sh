@@ -123,6 +123,10 @@ echo "[0s/28] tests unitaires (lint Jinja raw pour \${#...})"
 bash tests/unit/test-template-jinja-raw-braces.sh
 echo
 
+echo "[0s2/28] tests unitaires (provider VCS Git/TFVC)"
+bash tests/unit/test-vcs-provider.sh
+echo
+
 echo "[0t/28] self-check benchmark agent (plumbing, sans agent)"
 bash tests/bench/run-bench.sh --self-check
 echo

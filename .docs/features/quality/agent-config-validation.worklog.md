@@ -64,3 +64,7 @@ Source session : automation veille-techno
 ## 2026-07-03 — couverture incidente (A6 ci-guard)
 - `.github/workflows/ai-context-check.yml` (+ template jinja) touché pour élargir `shellcheck -S error` aux hooks exécutables et aux tests shell. Aucun changement du contrat `check-agent-config` propre ; l'étape CI qui lance `check-agent-config.sh` reste inchangée.
 - Validation portée par `quality/ci-guard` : shellcheck élargi PASS, YAML OK, `check-dogfood-drift` PASS, `tests/smoke-test.sh` PASS.
+
+## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
+- Surface partagée touchée : `doctor.sh` diagnostique désormais le provider VCS. Aucun changement du contrat `check-agent-config`.
+- Validation portée par `core/vcs-provider-abstraction`.

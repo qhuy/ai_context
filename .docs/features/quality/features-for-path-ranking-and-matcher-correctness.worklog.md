@@ -179,3 +179,7 @@
 - Validation ciblée : `bash -n` scripts, `test-features-for-path-relevance-ranking`, `test-matcher-multi-level`, `test-context-relevance`, `check-dogfood-drift` PASS.
 - Validation gate : `tests/smoke-test.sh` PASS ; `check-shims`, `check-agent-config`, `check-ai-references`, `check-features --no-write`, `check-feature-docs --strict quality/features-for-path-ranking-and-matcher-correctness`, `check-feature-freshness --worktree --strict`, `check-feature-coverage`, `check-touches-breadth`, `measure-context-size`, `git diff --check` OK/PASS.
 - Next : prêt à commit.
+
+## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
+- Surface partagée touchée : `_lib.sh` source le provider VCS, sans modifier le matcher ni le ranking `features-for-path`.
+- Validation portée par `core/vcs-provider-abstraction` et tests `features-for-path` conservés.

@@ -1,5 +1,5 @@
 #!/bin/bash
-# pr-report.sh — Génère un rapport d'impact feature depuis un diff git.
+# pr-report.sh — Génère un rapport d'impact feature depuis un diff VCS.
 #
 # Usage :
 #   bash .ai/scripts/pr-report.sh [--base=<ref>] [--head=<ref>]
@@ -10,6 +10,7 @@
 #   --base / --head acceptent n'importe quel ref git (sha, branch, tag).
 #   En CI sur un shallow clone, si le ref n'est pas atteignable on retombe
 #   sur un fallback explicite et on l'affiche dans le rapport.
+#   Hors Git, le rapport se base sur les pending/local changes.
 #
 # Ex:
 #   bash .ai/scripts/pr-report.sh --base=origin/main --head=HEAD
@@ -27,10 +28,10 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=_lib.sh
 . "$script_dir/_lib.sh"
 
-require_cmd jq git
+require_cmd jq
 enable_globstar
 
-repo_root="$(cd "$script_dir/../.." && pwd)"
+repo_root="$(vcs_root)"
 cd "$repo_root"
 
 base_ref="HEAD~1"
@@ -57,7 +58,7 @@ Options :
 
 Exit codes :
   0   rapport généré (avec ou sans warnings)
-  1   erreur d'invocation ou repo absent
+  1   erreur d'invocation
 USAGE
       exit 0
       ;;
@@ -73,11 +74,6 @@ case "$format" in
   markdown|json) ;;
   *) echo "Format inconnu: $format (markdown|json)" >&2; exit 1 ;;
 esac
-
-if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  echo "❌ ce script doit être lancé dans un repo git" >&2
-  exit 1
-fi
 
 index_file=".ai/.feature-index.json"
 index_tmp="$(mktemp "${TMPDIR:-/tmp}/ai-context-feature-index.XXXXXX")"
@@ -142,18 +138,22 @@ json_array_unique() {
 
 # ─── Résolution de refs (shallow clone friendly) ──────────────────────────
 fallback_note=""
-if ! git rev-parse --verify "$base_ref" >/dev/null 2>&1; then
-  if git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
-    fallback_note="base '$base_ref' introuvable (shallow clone ?), fallback HEAD~1"
-    base_ref="HEAD~1"
-  else
-    fallback_note="base '$base_ref' introuvable et HEAD~1 absent, fallback HEAD"
-    base_ref="HEAD"
+if [[ "$(vcs_provider)" == "git" ]]; then
+  if ! vcs_ref_exists "$base_ref"; then
+    if vcs_ref_exists HEAD~1; then
+      fallback_note="base '$base_ref' introuvable (shallow clone ?), fallback HEAD~1"
+      base_ref="HEAD~1"
+    else
+      fallback_note="base '$base_ref' introuvable et HEAD~1 absent, fallback HEAD"
+      base_ref="HEAD"
+    fi
   fi
-fi
-if ! git rev-parse --verify "$head_ref" >/dev/null 2>&1; then
-  fallback_note="${fallback_note}${fallback_note:+ ; }head '$head_ref' introuvable, fallback HEAD"
-  head_ref="HEAD"
+  if ! vcs_ref_exists "$head_ref"; then
+    fallback_note="${fallback_note}${fallback_note:+ ; }head '$head_ref' introuvable, fallback HEAD"
+    head_ref="HEAD"
+  fi
+else
+  fallback_note="provider VCS '$(vcs_provider)' sans refs Git : rapport basé sur les pending/local changes"
 fi
 
 # ─── Exclusions par défaut ────────────────────────────────────────────────
@@ -173,7 +173,13 @@ is_doc_path() {
 changed_files=()
 while IFS= read -r f; do
   [[ -n "$f" ]] && changed_files+=("$f")
-done < <(git diff --name-only "$base_ref...$head_ref" 2>/dev/null || git diff --name-only "$base_ref" "$head_ref" 2>/dev/null || true)
+done < <(
+  if [[ "$(vcs_provider)" == "git" ]]; then
+    vcs_diff_paths "$base_ref" "$head_ref"
+  else
+    vcs_pending_paths
+  fi
+)
 
 filtered=()
 docs_excluded=0
@@ -287,6 +293,7 @@ fi
 emit_markdown() {
   echo "## AI Context Report"
   echo
+  echo "- VCS: \`$(vcs_provider)\`"
   echo "- Base: \`$base_ref\`"
   echo "- Head: \`$head_ref\`"
   echo "- Fichiers modifiés (bruts): ${#changed_files[@]}"
@@ -340,6 +347,7 @@ emit_json() {
   jq -n \
     --arg base "$base_ref" \
     --arg head "$head_ref" \
+    --arg vcs "$(vcs_provider)" \
     --arg fallback "$fallback_note" \
     --argjson changed "$(json_array ${changed_files[@]+"${changed_files[@]}"})" \
     --argjson filtered "$(json_array ${filtered[@]+"${filtered[@]}"})" \
@@ -355,6 +363,7 @@ emit_json() {
     '{
       base: $base,
       head: $head,
+      vcs_provider: $vcs,
       fallback_note: $fallback,
       changed_files: $changed,
       filtered_files: $filtered,

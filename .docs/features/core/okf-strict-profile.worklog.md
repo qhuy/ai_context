@@ -95,3 +95,7 @@
 ## 2026-06-29 — HANDOFF quality/touches-breadth-guard
 - `check-features.sh` runtime + jinja passent de `touches:` direct à `touches_shared:` pour cette fiche : OKF reste lié en review, mais ne porte plus l'obligation de fraîcheur documentaire sur chaque évolution du checker.
 - Aucun changement de contrat OKF propre ; propriétaire direct du checker : `core/feature-mesh`.
+
+## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
+- Surface partagée touchée : `_lib.sh` ajoute l'abstraction VCS et conserve un fallback Git. Aucun changement du profil OKF.
+- Validation portée par `core/vcs-provider-abstraction`.

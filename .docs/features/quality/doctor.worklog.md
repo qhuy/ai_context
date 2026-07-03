@@ -40,3 +40,7 @@
 - `doctor.sh` utilise désormais `check-features.sh --no-write` pour respecter son contrat non destructif.
 - Le comportement strict/default reste inchangé côté verdict ; seul le rebuild implicite de `.ai/.feature-index.json` est supprimé.
 - Validation portée par `quality/read-only-checks-contract`.
+
+## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
+- Surface partagée touchée : `doctor.sh` ajoute le diagnostic `vcs provider` et ne signale plus l'absence de Git comme anomalie quand `vcs.provider=tfvc`.
+- Validation portée par `core/vcs-provider-abstraction`.

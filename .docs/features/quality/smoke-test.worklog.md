@@ -266,3 +266,7 @@
 - HANDOFF reçu de `core/agents-md-native-collapse-path` : couvrir le registre de kill criterion et le cas négatif `--require-confirmed claude` tant que le statut reste `pending`.
 - Denominator `/28` préservé (pré-étape lettrée).
 - Validation : test ciblé PASS et `bash tests/smoke-test.sh` PASS complet.
+
+## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
+- Surface partagée touchée : `tests/smoke-test.sh` lance le nouveau test unitaire provider VCS en pré-étape `[0s2/28]`. Denominator `/28` conservé.
+- Validation portée par `core/vcs-provider-abstraction`.

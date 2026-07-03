@@ -17,7 +17,9 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-repo_root="$(cd "$script_dir/../.." && pwd)"
+# shellcheck source=_vcs.sh
+. "$script_dir/_vcs.sh"
+repo_root="$(vcs_root)"
 
 print_help() {
   cat <<'HELP'
@@ -156,11 +158,12 @@ write_repaired_answers() {
   local target="$1"
   local src_path="$2"
   local commit_ref="$3"
-  local project_name docs_root scope_profile adoption_mode
+  local project_name docs_root scope_profile adoption_mode vcs_provider_value
   project_name="$(infer_project_name)"
   docs_root="$(infer_docs_root)"
   scope_profile="$(infer_scope_profile)"
   adoption_mode="$(infer_adoption_mode)"
+  vcs_provider_value="$(vcs_provider)"
   cat >"$target" <<EOF
 # Changes here will be overwritten by Copier
 _src_path: $src_path
@@ -169,6 +172,7 @@ project_name: $project_name
 project_description: ""
 scope_profile: $scope_profile
 adoption_mode: $adoption_mode
+vcs_provider: $vcs_provider_value
 tech_profile: generic
 commit_language: fr
 docs_root: $docs_root
@@ -179,25 +183,22 @@ EOF
 }
 
 inside_git_repo() {
-  git rev-parse --is-inside-work-tree >/dev/null 2>&1
+  [[ "$(vcs_provider)" == "git" ]] && git rev-parse --is-inside-work-tree >/dev/null 2>&1
 }
 
 staged_count() {
-  if inside_git_repo; then
-    git diff --cached --name-only 2>/dev/null | wc -l | tr -d ' '
-  else
-    echo 0
-  fi
+  vcs_staged_paths | wc -l | tr -d ' '
+}
+
+modified_count() {
+  vcs_pending_paths | wc -l | tr -d ' '
 }
 
 changed_files_for_report() {
-  if ! inside_git_repo; then
-    return 0
-  fi
   if [[ "$(staged_count)" -gt 0 ]]; then
-    git diff --cached --name-only --no-renames 2>/dev/null || true
+    vcs_staged_paths
   else
-    git status --porcelain 2>/dev/null | sed 's/^...//' | sort -u
+    vcs_pending_paths
   fi
 }
 
@@ -347,7 +348,7 @@ EOF
 run_status() {
   cd "$repo_root"
 
-  local index_file total draft active blocked done staged modified hooks_path git_hooks claude_hooks
+  local index_file total draft active blocked done staged modified hooks_path git_hooks claude_hooks staged_label
 
   index_file="$(build_feature_index_tmp 2>/dev/null || true)"
 
@@ -367,14 +368,15 @@ run_status() {
   staged=0
   modified=0
   hooks_path=""
-  if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    staged=$(git diff --cached --name-only 2>/dev/null | wc -l | tr -d ' ')
-    modified=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+  staged=$(staged_count)
+  modified=$(modified_count)
+  staged_label="$(vcs_staged_label)"
+  if inside_git_repo; then
     hooks_path=$(git config --get core.hooksPath 2>/dev/null || true)
   fi
 
-  git_hooks="absents"
-  if [[ -d ".githooks" ]]; then
+  git_hooks="n/a ($(vcs_provider))"
+  if [[ "$(vcs_provider)" == "git" && -d ".githooks" ]]; then
     if [[ "$hooks_path" == ".githooks" && -x ".githooks/pre-commit" && -x ".githooks/commit-msg" ]]; then
       git_hooks="OK"
     else
@@ -412,13 +414,13 @@ run_status() {
   elif [[ "$check_product" != "OK" ]]; then
     next_action="Relire les liens produit: bash .ai/scripts/aic.sh product-status"
   elif [[ "$freshness" != "OK" ]]; then
-    next_action="Mettre à jour/stager les fiches feature: bash .ai/scripts/check-feature-freshness.sh --staged --strict"
+    next_action="Mettre à jour les fiches feature dans le delta $(vcs_staged_label): bash .ai/scripts/check-feature-freshness.sh --staged --strict"
   elif [[ "$coverage" != "OK" ]]; then
     next_action="Relier les fichiers orphelins à des touches: bash .ai/scripts/check-feature-coverage.sh"
   elif [[ "$staged" -gt 0 ]]; then
-    next_action="Relire le delta staged: bash .ai/scripts/aic.sh review --staged"
+    next_action="Relire le delta $(vcs_staged_label): bash .ai/scripts/aic.sh review --staged"
   elif [[ "$modified" -gt 0 ]]; then
-    next_action="Stager les docs avec le code, puis lancer: bash .ai/scripts/aic.sh review"
+    next_action="Associer les docs au code dans le delta, puis lancer: bash .ai/scripts/aic.sh review"
   elif [[ "$active" -eq 0 && "$draft" -eq 0 ]]; then
     next_action="Créer ou cadrer la première feature: /aic-frame ou .ai/workflows/feature-new.md"
   fi
@@ -435,7 +437,7 @@ Features
 
 Delta
 - fichiers modifiés : $modified
-- fichiers staged   : $staged
+- fichiers $staged_label : $staged
 
 Runtime
 - git hooks    : $git_hooks
@@ -446,7 +448,7 @@ Checks
 - features          : $check_features
 - shims             : $check_shims
 - product links     : $check_product
-- freshness staged  : $freshness
+- freshness $staged_label : $freshness
 - coverage          : $coverage
 
 Prochaine action minimale
@@ -533,9 +535,9 @@ Objectif :
 
 Delta courant :
 EOF
-  if inside_git_repo; then
+  if [[ "$(vcs_provider)" != "none" ]]; then
     if [[ "$(staged_count)" -gt 0 ]]; then
-      echo "- mode: staged"
+      echo "- mode: $(vcs_staged_label)"
     else
       echo "- mode: worktree"
     fi
@@ -546,12 +548,12 @@ EOF
       echo "- _(aucun fichier modifié)_"
     fi
   else
-    echo "- _(git indisponible dans ce dossier)_"
+    echo "- _(aucun provider VCS disponible dans ce dossier)_"
   fi
 
   echo
   echo "Analyse feature :"
-  if inside_git_repo; then
+  if [[ "$(vcs_provider)" != "none" ]]; then
     args="$(review_args_for_current_delta)"
     if [[ -n "$args" ]]; then
       bash "$script_dir/review-delta.sh" "$args" | sed 's/^/> /' || true
@@ -559,7 +561,7 @@ EOF
       bash "$script_dir/review-delta.sh" | sed 's/^/> /' || true
     fi
   else
-    echo "- Git indisponible ; utiliser \`bash .ai/scripts/aic.sh document-feature <path>\` fichier par fichier."
+    echo "- Provider VCS indisponible ; utiliser \`bash .ai/scripts/aic.sh document-feature <path>\` fichier par fichier."
   fi
 
   cat <<'EOF'
@@ -590,12 +592,13 @@ run_repair() {
     bash "$script_dir/build-feature-index.sh" --write >/dev/null
   fi
 
-  local check_features check_shims check_product coverage freshness staged
+  local check_features check_shims check_product coverage freshness staged staged_label
   check_features=$(status_label bash "$script_dir/check-features.sh" --no-write)
   check_shims=$(status_label bash "$script_dir/check-shims.sh")
   check_product=$(status_label bash "$script_dir/check-product-links.sh")
   coverage=$(status_label bash "$script_dir/check-feature-coverage.sh")
   staged="$(staged_count)"
+  staged_label="$(vcs_staged_label)"
   freshness="OK"
   if [[ "$staged" -gt 0 ]]; then
     freshness=$(status_label bash "$script_dir/check-feature-freshness.sh" --staged --strict)
@@ -606,14 +609,14 @@ run_repair() {
 
 Mode :
 - apply: $apply
-- fichiers staged: $staged
+- fichiers $staged_label: $staged
 
 Checks :
 - features: $check_features
 - shims: $check_shims
 - product links: $check_product
 - coverage: $coverage
-- freshness staged: $freshness
+- freshness $staged_label: $freshness
 
 Actions recommandées :
 EOF
@@ -621,7 +624,7 @@ EOF
   [[ "$check_shims" != "OK" ]] && echo "- Réparer les shims racine depuis \`.ai/index.md\`: \`bash .ai/scripts/check-shims.sh\`"
   [[ "$check_product" != "OK" ]] && echo "- Corriger les liens produit: \`bash .ai/scripts/check-product-links.sh --strict\`"
   [[ "$coverage" != "OK" ]] && echo "- Ajouter/ajuster les \`touches:\` ou créer une fiche feature pour les orphelins."
-  [[ "$freshness" != "OK" ]] && echo "- Stager la fiche/worklog de chaque feature impactée: \`bash .ai/scripts/check-feature-freshness.sh --staged --strict\`"
+  [[ "$freshness" != "OK" ]] && echo "- Ajouter la fiche/worklog de chaque feature impactée au delta $(vcs_staged_label): \`bash .ai/scripts/check-feature-freshness.sh --staged --strict\`"
   if [[ "$check_features$check_shims$check_product$coverage$freshness" == "OKOKOKOKOK" ]]; then
     echo "- Aucun correctif structurel détecté."
   fi
@@ -635,12 +638,10 @@ EOF
 
 run_ship() {
   cd "$repo_root"
-  local check_features check_shims check_product coverage freshness measure_total staged modified commit_hint staged_paths
+  local check_features check_shims check_product coverage freshness measure_total staged modified commit_hint staged_paths staged_label
   staged="$(staged_count)"
-  modified=0
-  if inside_git_repo; then
-    modified=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
-  fi
+  staged_label="$(vcs_staged_label)"
+  modified=$(modified_count)
   check_features=$(status_label bash "$script_dir/check-features.sh" --no-write)
   check_shims=$(status_label bash "$script_dir/check-shims.sh")
   check_product=$(status_label bash "$script_dir/check-product-links.sh")
@@ -653,11 +654,7 @@ run_ship() {
   [[ -n "$measure_total" ]] || measure_total="n/a"
 
   commit_hint="chore: mettre à jour ai context"
-  if inside_git_repo; then
-    staged_paths="$(git diff --cached --name-only --no-renames 2>/dev/null || true)"
-  else
-    staged_paths=""
-  fi
+  staged_paths="$(vcs_staged_paths)"
   if [[ -n "$staged_paths" ]] && ! printf '%s\n' "$staged_paths" | grep -Evq '^(README\.md|README_AI_CONTEXT\.md|CHANGELOG\.md|MIGRATION\.md|CONTRIBUTING\.md|PROJECT_STATE\.md|AUDIT_[^/]+\.md|docs/|\.docs/features/|template/README\.md\.jinja|template/README_AI_CONTEXT\.md\.jinja|template/\{\{docs_root\}\}/)'; then
     commit_hint="docs: mettre à jour la documentation ai context"
   fi
@@ -667,7 +664,7 @@ run_ship() {
 
 Delta :
 - fichiers modifiés: $modified
-- fichiers staged: $staged
+- fichiers $staged_label: $staged
 - reminder: $measure_total
 
 Checks :
@@ -675,7 +672,7 @@ Checks :
 - shims: $check_shims
 - product links: $check_product
 - coverage: $coverage
-- freshness staged: $freshness
+- freshness $staged_label: $freshness
 
 Fichiers :
 EOF
@@ -688,7 +685,7 @@ EOF
 
   echo
   echo "Review delta :"
-  if inside_git_repo; then
+  if [[ "$(vcs_provider)" != "none" ]]; then
     args="$(review_args_for_current_delta)"
     if [[ -n "$args" ]]; then
       bash "$script_dir/review-delta.sh" "$args" | sed 's/^/> /' || true
@@ -696,7 +693,7 @@ EOF
       bash "$script_dir/review-delta.sh" | sed 's/^/> /' || true
     fi
   else
-    echo "- Git indisponible ; rapport limité aux checks locaux."
+    echo "- Provider VCS indisponible ; rapport limité aux checks locaux."
   fi
 
   cat <<EOF

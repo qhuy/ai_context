@@ -1,6 +1,10 @@
 docs_root: "{{ docs_root }}"
 project_id: "{{ project_name }}"
 
+vcs:
+  # auto | git | tfvc | none
+  provider: "{{ vcs_provider }}"
+
 coverage:
   roots:
     - src

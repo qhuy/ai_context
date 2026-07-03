@@ -200,3 +200,7 @@
 ## 2026-07-03 — couverture incidente (A6 ci-guard)
 - `.github/workflows/ai-context-check.yml` (+ template jinja) touché pour élargir `shellcheck -S error` aux hooks exécutables et aux tests shell. Aucun changement du contrat read-only propre : les commandes de diagnostic/check restent non mutantes, et `check-features.sh --no-write` reste inchangé.
 - Validation portée par `quality/ci-guard` : shellcheck élargi PASS, YAML OK, `check-dogfood-drift` PASS, `tests/smoke-test.sh` PASS.
+
+## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
+- Surface partagée touchée : freshness, review delta, pr-report et doctor utilisent le provider VCS sans écrire de cache supplémentaire.
+- Validation portée par `core/vcs-provider-abstraction` : checks read-only ciblés et index temporaire conservés.

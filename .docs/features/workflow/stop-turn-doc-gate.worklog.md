@@ -21,3 +21,7 @@
 ## 2026-06-26 17:25 — auto
 - Fichiers modifiés :
   - .claude/settings.json
+
+## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
+- Surface partagée touchée : `stop-doc-gate.sh` utilise le provider VCS pour lister les changements locaux. Comportement bloquant inchangé.
+- Validation portée par `core/vcs-provider-abstraction`.

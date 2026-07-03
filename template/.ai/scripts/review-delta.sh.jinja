@@ -6,9 +6,8 @@
 #   bash .ai/scripts/review-delta.sh [--base=<ref>] [--head=<ref>]
 #   bash .ai/scripts/review-delta.sh [--committed-only]
 #
-# Par défaut : Delta committed reference (--staged si index non vide,
-# sinon HEAD~1...HEAD) + Delta uncommitted (git status --porcelain=v1
-# -z --untracked-files=all).
+# Par défaut : Delta committed reference (--staged si index Git ou pending TFVC
+# non vide, sinon HEAD~1...HEAD) + Delta local changes.
 # Avec --committed-only : seule la section committed est produite
 # (compat ascendante stricte).
 
@@ -18,9 +17,9 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=_lib.sh
 . "$script_dir/_lib.sh"
 
-require_cmd git jq
+require_cmd jq
 
-repo_root="$(cd "$script_dir/../.." && pwd)"
+repo_root="$(vcs_root)"
 cd "$repo_root"
 
 mode="auto"
@@ -44,11 +43,10 @@ Review Delta:
 Produit un rapport Markdown court :
   - Delta committed reference : fichiers + features (touches/shared) +
     risques + checks
-  - Delta uncommitted (working tree + index + untracked) : ajouté par
+  - Delta local changes (Git working tree ou TFVC pending changes) : ajouté par
     défaut, omis avec --committed-only
 
-Source de vérité uncommitted : git status --porcelain=v1 -z --untracked-files=all
-(couvre tracked modifié + staged + untracked + deletions/renames).
+Source de vérité local changes : provider VCS (`git status` ou `tf status`).
 USAGE
       exit 0
       ;;
@@ -59,7 +57,7 @@ USAGE
   esac
 done
 
-# Source canonique uncommitted : `_lib.sh::collect_uncommitted_paths` (git status).
+# Source canonique local changes : `_lib.sh::collect_uncommitted_paths`.
 
 index_file=".ai/.feature-index.json"
 index_tmp="$(mktemp "${TMPDIR:-/tmp}/ai-context-feature-index.XXXXXX")"
@@ -75,7 +73,7 @@ else
 fi
 
 if [[ "$mode" == "auto" ]]; then
-  if [[ -n "$(git diff --cached --name-only 2>/dev/null || true)" ]]; then
+  if [[ -n "$(vcs_staged_paths)" ]]; then
     mode="staged"
   else
     mode="refs"
@@ -86,11 +84,11 @@ changed_files=()
 if [[ "$mode" == "staged" ]]; then
   while IFS= read -r f; do
     [[ -n "$f" ]] && changed_files+=("$f")
-  done < <(git diff --cached --name-only --no-renames 2>/dev/null || true)
+  done < <(vcs_staged_paths)
 else
   while IFS= read -r f; do
     [[ -n "$f" ]] && changed_files+=("$f")
-  done < <(git diff --name-only "$base_ref...$head_ref" 2>/dev/null || git diff --name-only "$base_ref" "$head_ref" 2>/dev/null || true)
+  done < <(vcs_diff_paths "$base_ref" "$head_ref")
 fi
 
 is_feature_doc_path() {
@@ -205,14 +203,15 @@ fi
 echo "## Review Delta"
 echo
 if [[ "$mode" == "staged" ]]; then
-  echo "- Mode: staged"
+  echo "- Mode: $(vcs_staged_label)"
 else
   echo "- Base: \`$base_ref\`"
   echo "- Head: \`$head_ref\`"
 fi
+echo "- VCS: \`$(vcs_provider)\`"
 echo "- Fichiers modifiés: {% raw %}${#changed_files[@]}{% endraw %}"
 if $include_uncommitted; then
-  echo "- Section _Delta uncommitted_ ajoutée en suffixe (utiliser \`--committed-only\` pour l'omettre)."
+  echo "- Section _Delta local changes_ ajoutée en suffixe (utiliser \`--committed-only\` pour l'omettre)."
 fi
 echo
 
@@ -233,7 +232,7 @@ risks=()
 for x in ${uncovered[@]+"${uncovered[@]}"}; do risks+=("non couvert par touches: $x"); done
 for x in ${shared_only[@]+"${shared_only[@]}"}; do risks+=("couvert seulement via touches_shared: $x"); done
 for x in ${multi_covered[@]+"${multi_covered[@]}"}; do risks+=("multi-couvert: $x"); done
-for x in ${missing_docs[@]+"${missing_docs[@]}"}; do risks+=("doc/worklog manquant en staged: $x"); done
+for x in ${missing_docs[@]+"${missing_docs[@]}"}; do risks+=("doc/worklog manquant en $(vcs_staged_label): $x"); done
 print_unique_list "${risks[@]+"${risks[@]}"}"
 echo
 
@@ -247,17 +246,17 @@ echo "- \`bash .ai/scripts/measure-context-size.sh\`"
 
 if $include_uncommitted; then
   echo
-  echo "### Delta uncommitted (working tree + index + untracked)"
+  echo "### Delta local changes ($(vcs_changes_label))"
   echo
-  echo "- Source: \`git status --porcelain=v1 -z --untracked-files=all\`"
-  echo "- Fichiers uncommitted: {% raw %}${#uncommitted_files[@]}{% endraw %}"
+  echo "- Source: provider VCS \`$(vcs_provider)\`"
+  echo "- Fichiers locaux: {% raw %}${#uncommitted_files[@]}{% endraw %}"
   echo
-  echo "#### Fichiers (uncommitted)"
+  echo "#### Fichiers (local changes)"
   print_unique_list "${uncommitted_files[@]+"${uncommitted_files[@]}"}"
   echo
-  echo "#### Features directes (uncommitted, best-effort)"
+  echo "#### Features directes (local changes, best-effort)"
   print_unique_list "${uncommitted_direct_keys[@]+"${uncommitted_direct_keys[@]}"}"
   echo
-  echo "#### Features liées (uncommitted, shared, best-effort)"
+  echo "#### Features liées (local changes, shared, best-effort)"
   print_unique_list "${uncommitted_related_keys[@]+"${uncommitted_related_keys[@]}"}"
 fi

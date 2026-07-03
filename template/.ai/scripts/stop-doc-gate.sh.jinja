@@ -19,9 +19,9 @@
 # stdout, exit 0. Anti-boucle : si stop_hook_active=true (Claude relance deja
 # suite a un block), on relache (exit 0).
 #
-# GARANTIE STABLE = git hooks (commit-msg --staged --strict) + CI. Ce hook est
-# une couche de forcing CLAUDE-ONLY, read-only, jamais la garantie unique. Les
-# agents non-Claude sont couverts au commit (cf. .githooks/commit-msg) et en CI.
+# GARANTIE STABLE = hooks/checks VCS (Git commit-msg ou pre-checkin/CI TFVC) + CI.
+# Ce hook est une couche de forcing CLAUDE-ONLY, read-only, jamais la garantie
+# unique. Les agents non-Claude sont couverts au commit/checkin et en CI.
 #
 # ORDRE STOP (IMPORTANT) : ce hook DOIT etre cable AVANT auto-worklog-flush.sh.
 # Sinon le flush auto-touche le worklog de la feature, et le gate passe a vide.
@@ -32,7 +32,7 @@
 # Read-only : index temporaire via mktemp, jamais d'ecriture de
 # .ai/.feature-index.json (cf. quality/read-only-checks-contract).
 #
-# Best-effort : git/jq absents => exit 0 (on ne bloque jamais faute d'outil).
+# Best-effort : provider VCS/jq absents => exit 0 (on ne bloque jamais faute d'outil).
 
 set -uo pipefail
 
@@ -56,9 +56,9 @@ if [[ -n "$stdin_json" ]] && command -v jq >/dev/null 2>&1; then
 fi
 
 # ─── Dependances best-effort ───
-command -v git >/dev/null 2>&1 || exit 0
 command -v jq  >/dev/null 2>&1 || exit 0
-repo_root="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+[[ "$(vcs_provider)" != "none" ]] || exit 0
+repo_root="$(vcs_root)"
 [[ -z "$repo_root" ]] && exit 0
 cd "$repo_root"
 

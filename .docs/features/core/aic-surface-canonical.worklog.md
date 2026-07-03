@@ -157,3 +157,7 @@
 - `aic.sh` documente `pilot` comme bootstrap skill-only et garde la surface CLI scriptable sans transformer le pilotage en commande déterministe.
 - `README_AI_CONTEXT.md` et son template exposent `aic-pilot` dans la surface utilisateur commune Claude/Codex.
 - Reclassification freshness `(a')` : `aic.sh`, `template/.ai/scripts/aic.sh.jinja`, `README_AI_CONTEXT.md` et `template/README_AI_CONTEXT.md.jinja` restent propriétaires exacts de `core/aic-surface-canonical`; les features consommatrices passent en `touches_shared`.
+
+## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
+- Surface partagée touchée : `aic.sh` consomme le provider VCS pour les compteurs de delta, review et ship. La surface commande reste inchangée.
+- Validation portée par `core/vcs-provider-abstraction`.

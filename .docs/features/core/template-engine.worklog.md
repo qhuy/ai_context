@@ -78,6 +78,11 @@
 - Fichiers modifiés :
   - README.md
   - copier.yml
+
+## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
+- Surface partagée touchée : `copier.yml` ajoute l'option `vcs_provider`, exclut `.githooks` hors Git et adapte le message post-copy.
+- Contrat template inchangé : rendu Copier validé par `check-dogfood-drift` et `tests/smoke-test.sh`.
+- Validation portée par `core/vcs-provider-abstraction`.
   - template/.ai/scripts/doctor.sh.jinja
 
 ## 2026-05-03 — docs
@@ -405,3 +410,4 @@
 ## 2026-06-30 — message Copier aic-pilot + ownership copier.yml
 - `_message_after_copy` mentionne `/aic-pilot` pour les audits et suivis transverses.
 - Reclassification freshness `(a')` : `copier.yml` garde `core/template-engine` comme propriétaire exact unique ; les features qui ne font qu'exposer une ligne de message passent en `touches_shared`.
+# Worklog — core/template-engine

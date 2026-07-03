@@ -1,0 +1,31 @@
+# Worklog — core/vcs-provider-abstraction
+
+## 2026-07-03 — création
+- Feature créée via `.ai/workflows/feature-new.md`
+- Scope : core
+- Intent initial : abstraction VCS Git / TFVC pour rendre ai_context compatible avec les projets TFS non-Git.
+
+## 2026-07-03 — implementation provider
+- Ajout de `.ai/scripts/_vcs.sh` et du miroir template pour abstraire `git`, `tfvc` et `none`.
+- Branchement des scripts freshness, commit guard, review delta, pr-report, doctor, stop gate et surface `aic`.
+- Ajout de `vcs.provider` dans la config source/template et dans Copier.
+- Test unitaire `tests/unit/test-vcs-provider.sh` ajouté et branché dans le smoke.
+
+## 2026-07-03 — HANDOFF cross-scope
+- HANDOFF explicites ajoutés dans les worklogs des surfaces co-propriétaires touchées par freshness : `core/feature-index-cache`, `core/index-contract-v2`, `core/okf-strict-profile`, `core/aic-surface-canonical`, `quality/doc-freshness`, `quality/read-only-checks-contract`, `quality/pr-report`, `quality/doctor`, `quality/agent-config-validation`, `quality/review-delta-uncommitted-coverage`, `quality/features-for-path-ranking-and-matcher-correctness`, `quality/index-lock-contract`, `quality/targeted-regression-coverage`, `quality/smoke-test`, `workflow/auto-progress-file-filter`, `workflow/stop-turn-doc-gate`.
+- Ces HANDOFFs documentent un impact partagé sans changer le statut ni le contrat propre de ces features.
+
+## 2026-07-03 — préparation validation
+- Intent : rendre le delta VCS cohérent avec le feature mesh avant gate.
+- Fichiers/surfaces : runtime `.ai/scripts/*`, miroirs `template/.ai/scripts/*.jinja`, config Copier/runtime, README, tests unitaires et smoke.
+- Décision : `README_AI_CONTEXT.md` et les tests touchés sont couverts directement par la fiche, car ils valident ou documentent le nouveau contrat VCS.
+- Doc Impact Decision : C — nouveau contrat runtime, option Copier `vcs_provider`, comportement TFVC/pending changes documenté.
+- Validation prévue : test provider VCS, tests build-index touchés, tests freshness/review/commit guard, drift dogfood, checks feature/freshness.
+- Next : exécuter la gate et clôturer si tous les checks passent.
+
+## 2026-07-03 — done
+- Intent : clôture de `core/vcs-provider-abstraction`.
+- Evidence : `bash tests/unit/test-vcs-provider.sh`, tests build-index ciblés, `test-check-commit-features-relevance`, `test-check-feature-freshness`, `test-review-delta-uncommitted`, `test-features-for-path-relevance-ranking`, `test-stop-hook-idempotence`, `test-auto-progress-filter`, `check-feature-docs --strict core/vcs-provider-abstraction`, `check-dogfood-drift`, `check-shims`, `check-agent-config`, `check-ai-references`, `check-features --no-write`, `check-feature-coverage`, `check-touches-breadth`, `measure-context-size`, `tests/smoke-test.sh` : PASS/OK.
+- Risk ledger : pas de breaking change Git attendu ; pas de migration de données ; pas d'auth/data/UX ; nouveau contrat runtime `vcs.provider` documenté ; TFVC reste best-effort sur le parsing de `tf status`.
+- Doc Impact Decision : C — fiche, worklog, README, config Copier et handoffs worklogs mis à jour.
+- Next : commit `feat(core): abstraire le provider VCS`.

@@ -93,6 +93,10 @@
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
 
+## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
+- Surface partagée touchée : `review-delta.sh` et `_lib.sh` remplacent la source Git directe par le provider VCS. La section historique `uncommitted` devient `local changes` et reste couverte par les tests existants.
+- Validation portée par `core/vcs-provider-abstraction` : `test-review-delta-uncommitted.sh` PASS.
+
 ## 2026-05-07 01:10 — auto
 - Fichiers modifiés :
   - .ai/scripts/_lib.sh
