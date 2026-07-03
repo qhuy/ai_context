@@ -2,7 +2,7 @@
 id: okf-strict-profile
 scope: core
 title: Profil strict OKF (Open Knowledge Format) des fiches feature
-status: draft
+status: done
 depends_on:
   - core/feature-mesh
   - core/index-contract-v2
@@ -46,11 +46,11 @@ doc:
     observability: false
 type: feature
 progress:
-  phase: review
-  step: "Phase 0 implémentée et validée (smoke-test + 19 tests unitaires dont test-okf-type + dogfood-drift) en régime warn-only"
+  phase: done
+  step: "Phase 0 warn-only validée ; enforce vN+1 routé hors scope core"
   blockers: []
-  resume_hint: "Phase 0 livrée. Reste : confirmer HANDOFF quality/product/workflow, puis planifier le release d'enforce vN+1 (type dans required[] + check exit 1 ; si bump schema_version un jour, mettre à jour l'assertion == \"1\" du smoke-test)"
-  updated: 2026-06-26
+  resume_hint: "aucune action core immédiate ; rouvrir une fiche dédiée pour l'enforce vN+1 ou un consommateur OKF réel"
+  updated: 2026-07-03
 ---
 
 # Profil strict OKF des fiches feature
@@ -200,3 +200,4 @@ Les copies de ces trois points sont des livrables (claires, en français, action
 ## Historique / décisions
 
 - 2026-06-25 — Cadrage validé (`aic-frame`, niveau high). Décision de routage : feature. Thèse « profil strict d'OKF » retenue ; options C (export) déférée et D (migration native) rejetée. Arbitrages confirmés par l'utilisateur : enum `type` = `feature|contract|workflow|reference` ; cadence 2 releases ; backfill `type` seul. Compatibilité Claude **et** Codex posée en exigence de premier ordre.
+- 2026-07-03 — Clôture DONE de la Phase 0 core : `type` reste optionnel en warn-only, `migrate okf-type` est validé, le drift dogfood est propre et l'enforce vN+1 reste une suite dédiée.

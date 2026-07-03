@@ -99,3 +99,11 @@
 ## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
 - Surface partagée touchée : `_lib.sh` ajoute l'abstraction VCS et conserve un fallback Git. Aucun changement du profil OKF.
 - Validation portée par `core/vcs-provider-abstraction`.
+
+## 2026-07-03 — done
+- Intent : clôturer la Phase 0 core du profil strict OKF.
+- Fichiers/surfaces : `.docs/features/core/okf-strict-profile.md`, `.docs/features/core/okf-strict-profile.worklog.md`.
+- Décision : statut `done`; le régime vN reste warn-only, l'enforce vN+1 (`type` dans `required[]` + exit 1) doit être une suite dédiée et non un reliquat de cette fiche.
+- Validation : `bash tests/unit/test-okf-type.sh` ; `bash .ai/scripts/aic.sh migrate okf-type` ; `bash .ai/scripts/check-dogfood-drift.sh` ; `bash .ai/scripts/check-feature-docs.sh --strict core/okf-strict-profile` ; `bash tests/smoke-test.sh` PASS dans le tour courant.
+- Note : `aic migrate okf-type` signale encore `.docs/features/workflow/project-overlay-onboarding.md` sans `type`; c'est accepté par Phase 0 (warn-only) et routé comme nettoyage metadata workflow, pas comme blocage core.
+- Next : aucune action core immédiate ; rouvrir une fiche dédiée pour l'enforce vN+1, un export OKF ou un consommateur réel.
