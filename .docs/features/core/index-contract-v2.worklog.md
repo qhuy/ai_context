@@ -70,3 +70,11 @@
 ## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
 - Surface partagée touchée : `_lib.sh` source le provider VCS avec fallback Git. Aucun changement du contrat JSON `.ai/.feature-index.json`.
 - Validation portée par `core/vcs-provider-abstraction` : tests provider et build/check feature index.
+
+## 2026-07-03 — done
+- Intent : clôture documentaire de `core/index-contract-v2`.
+- Fichiers/surfaces : `.docs/features/core/index-contract-v2.md`, `.docs/features/core/index-contract-v2.worklog.md`.
+- Décision : statut `done` ; le contrat v2 de l'index est livré avec stdout non-mutant, cache `--write` idempotent, format snapshoté par `schema_version`, et résiduels C2 clarifiés/routés.
+- Doc Impact Decision : C — fiche feature et worklog mis à jour.
+- Validation prévue : `check-feature-docs --strict core/index-contract-v2`, `test-build-feature-index-contract`, build index JSON, checks feature/freshness et gate ship avant commit.
+- Next : aucune action immédiate ; rouvrir seulement si le format `.ai/.feature-index.json` ou `schema_version` change.
