@@ -2,7 +2,7 @@
 id: context-relevance-tracker
 scope: quality
 title: Tracker minimal de pertinence du contexte injecté (sans MCP)
-status: draft
+status: done
 depends_on: []
 touches:
   - .ai/.gitignore
@@ -33,11 +33,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "implémentation livrée, 8/8 cas test PASS, prêt à commit"
+  phase: done
+  step: "tracker livré : logger/report, hooks et 13 cas tests validés"
   blockers: []
-  resume_hint: "commit feat(quality) puis valider en utilisation réelle (run report --last 50 après quelques tours pour voir précision/rappel)"
-  updated: 2026-06-26
+  resume_hint: "aucune action immédiate ; calibrer via context-relevance-report --last 50 après usage réel"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -181,6 +181,7 @@ Avec en bas : top features `injected_not_touched` (candidats à ranker plus bas)
 - Test de reporter : générer 10 tours synthétiques, vérifier que les ratios précision/rappel sont calculés correctement.
 - Test best-effort : simuler une erreur d'écriture (permissions, disque plein), vérifier que le hook continue sans bloquer.
 - `bash tests/smoke-test.sh` PASS après intégration.
+- Clôture 2026-07-03 : `bash tests/unit/test-context-relevance.sh` PASS (13/13).
 
 ## Risques
 
@@ -199,3 +200,4 @@ Avec en bas : top features `injected_not_touched` (candidats à ranker plus bas)
 ## Historique / décisions
 
 - 2026-05-06 : création en draft suite au cross-check Claude/Codex (4 rounds). Format à 3 événements et ensembles complets (pas seulement intersection) précisé par Codex round 2-3 : sans `injected_not_touched` et `touched_not_injected`, on ne mesure pas les faux positifs/faux négatifs. Précision et rappel sont des proxies, pas des métriques sémantiques.
+- 2026-07-03 : DONE documentaire. Le tracker est livré et couvert par 13 cas tests ; la calibration via `context-relevance-report --last 50` reste une observation d'usage, pas un blocker.

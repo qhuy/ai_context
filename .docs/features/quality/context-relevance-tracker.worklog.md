@@ -115,3 +115,10 @@
 - Surface partagée : `features-for-path.sh` lit désormais les derniers `summary` du tracker pour calculer une pénalité de ranking best-effort.
 - Contrat tracker inchangé : le logger/reporter restent best-effort et le fichier JSONL reste local/ignoré.
 - Validation : `test-context-relevance` PASS et nouveau test R2 de ranking par pertinence PASS.
+
+## 2026-07-03 — done
+- Intent : clôturer `quality/context-relevance-tracker` après livraison et consommation par le ranking R2.
+- Fichiers/surfaces : `.docs/features/quality/context-relevance-tracker.md`, `.docs/features/quality/context-relevance-tracker.worklog.md`.
+- Décision : statut `done` ; la calibration réelle via `context-relevance-report --last 50` reste une observation d'usage ultérieure, pas un blocker de livraison.
+- Validation : `bash tests/unit/test-context-relevance.sh` PASS (13/13), gate feature/docs/freshness à relancer avant commit.
+- Next : aucune action immédiate.
