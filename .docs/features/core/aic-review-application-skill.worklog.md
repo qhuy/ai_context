@@ -47,3 +47,10 @@
 - Décision : statut `done` pour la surface core ; l'intégration stricte dans `aic-ship` et `feature-done` reste le HANDOFF workflow déjà consigné, pas un changement à mélanger ici.
 - Validation : `bash .ai/scripts/aic.sh review --help` ; `bash .ai/scripts/check-dogfood-drift.sh` ; `bash .ai/scripts/check-feature-docs.sh --strict core/aic-review-application-skill` ; `bash tests/unit/test-review-delta-shared.sh` ; `bash tests/unit/test-review-delta-uncommitted.sh` ; parité `cmp` runtime/template pour les wrappers `aic-review` et `.ai/review/application-review.md`.
 - Next : aucune action core immédiate ; reprendre côté `workflow/intentional-skills` si l'evidence de revue doit devenir bloquante dans ship/done.
+
+## 2026-07-03 — reprise HANDOFF feature-audit
+- Intent : traiter le HANDOFF `workflow/feature-audit` sans rouvrir de skill procédural public.
+- Fichiers/surfaces : `.agents/skills/aic-review/workflow.md`, `.claude/skills/aic-review/workflow.md`, templates associés, fiche core.
+- Décision : `aic-review` charge `.ai/workflows/feature-audit.md` seulement pour router les cas rétro-doc/orphelins/resync ; le skill reste lecture seule et n'exécute pas `--apply`.
+- Validation : `bash .ai/scripts/check-feature-docs.sh --strict core/aic-review-application-skill`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-features.sh --no-write`; `bash .ai/scripts/check-feature-freshness.sh --worktree --strict`.
+- Next : revenir au scope `workflow/feature-audit` dans un tour séparé pour lever le blocker et clôturer la fiche.

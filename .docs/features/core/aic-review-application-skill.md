@@ -29,7 +29,7 @@ doc:
     observability: false
 progress:
   phase: done
-  step: "contrat review applicative, modules et wrappers alignés validés"
+  step: "contrat review applicative, modules, wrappers et routage feature-audit alignés"
   blockers: []
   resume_hint: "aucune action core immédiate ; l'intégration stricte dans aic-ship/feature-done reste portée par le HANDOFF workflow/intentional-skills"
   updated: 2026-07-03
@@ -167,6 +167,9 @@ Déclenchement recommandé :
 - Contrat de compatibilité agent :
   - `.agents/skills/aic-review/**` et `.claude/skills/aic-review/**` délèguent
     au même contrat `.ai/review/application-review.md` ;
+  - si la review révèle rétro-doc, code orphelin ou resync de fiche, les
+    wrappers lisent `.ai/workflows/feature-audit.md` pour router la suite sans
+    écrire depuis `aic-review` ;
   - les templates rendent les mêmes fichiers sous `template/.ai/review/**`,
     `template/.agents/**` et `template/.claude/**`.
 
@@ -221,3 +224,6 @@ Déclenchement recommandé :
   `aic.sh review`, de la parité runtime/template, du dogfood drift et des tests
   `review-delta` ciblés. L'intégration bloquante dans `aic-ship` /
   `feature-done` reste un HANDOFF workflow séparé.
+- 2026-07-03 : reprise du HANDOFF `workflow/feature-audit`. Les wrappers
+  `aic-review` chargent désormais `.ai/workflows/feature-audit.md` en lecture
+  seule quand la review détecte rétro-doc, code orphelin ou resync de fiche.

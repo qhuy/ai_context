@@ -170,3 +170,8 @@
 - Décision : statut `done`; surface publique intentionnelle stable, primitives Codex internes/fallback, trigger `aic-frame` inchangé.
 - Validation : `bash .ai/scripts/check-feature-docs.sh --strict workflow/intentional-skills`; `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
 - Next : aucune action immédiate.
+
+## 2026-07-03 — freshness core/aic-review-application-skill
+- Impact : les wrappers `aic-review` runtime/template chargent désormais `.ai/workflows/feature-audit.md` en lecture seule pour router rétro-doc/orphelins/resync.
+- Décision : aucun changement de surface publique ; `aic-review` reste l'intention publique, `feature-audit` reste procédure interne.
+- Validation portée par `core/aic-review-application-skill`.
