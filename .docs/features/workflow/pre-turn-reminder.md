@@ -2,7 +2,7 @@
 id: pre-turn-reminder
 scope: workflow
 title: Injection contextuelle au début de chaque tour Claude
-status: active
+status: done
 depends_on:
   - core/feature-index-cache
   - core/graph-aware-injection
@@ -14,8 +14,8 @@ progress:
   phase: done
   step: "R1 livré : reverse_deps=0 et JIT depends_on couvert"
   blockers: []
-  resume_hint: "R1 clos ; prochaine action recommandée : R2 ranking tracker des features jamais touchées"
-  updated: 2026-07-02
+  resume_hint: "aucune action immédiate ; prochaine route validée hors scope : R2 ranking tracker des features jamais touchées"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -94,3 +94,4 @@ Première brique du flux invisible. Complétée par `features-for-path` en `PreT
 - 2026-05-03 : freshness documentaire rafraîchie après dogfood ; aucun changement de format ou de budget d'injection.
 - 2026-05-03 : `features-for-path.sh` passe de rappel de liste à injection juste-à-temps bornée des fiches concernées et de leurs dépendances. Le reminder reste inchangé pour préserver le coût tokens par prompt.
 - 2026-07-02 : R1 tokens — sortie des dépendances inverses du hook `UserPromptSubmit`. Le reminder global reste limité à règles + inventaire ; `features-for-path.sh --with-docs` conserve l'injection JIT des fiches directes et de leurs `depends_on`.
+- 2026-07-03 : clôture DONE R1 ; `measure-context-size.sh` confirme `reverse_deps chars=0` et un budget estimé sous la cible.

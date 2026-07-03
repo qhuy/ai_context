@@ -47,3 +47,10 @@
 - Surface partagée : `template/.ai/scripts/features-for-path.sh.jinja`, utilisée par le hook PreToolUse complémentaire du reminder.
 - Changement porté par `quality/features-for-path-ranking-and-matcher-correctness` : pénalité de ranking issue du tracker local.
 - Impact contrat pre-turn : aucun changement du hook `UserPromptSubmit`; le JIT conserve l'injection fiches directes + `depends_on`.
+
+## 2026-07-03 — done
+- Intent : clôturer R1 `workflow/pre-turn-reminder`.
+- Fichiers/surfaces : `.docs/features/workflow/pre-turn-reminder.md`, `.docs/features/workflow/pre-turn-reminder.worklog.md`.
+- Décision : statut `done`; l'implémentation `db79921` a déjà retiré les dépendances inverses du hook par tour et le JIT `features-for-path.sh --with-docs` reste le report du graphe quand un path est connu.
+- Validation : `bash .ai/scripts/measure-context-size.sh` → `reverse_deps chars=0`, total courant `1516 chars`, tokens estimés `(379..505)` ; `bash tests/smoke-test.sh` PASS dans le tour courant, incluant l'étape `[10/28]` reminder sans reverse deps + JIT `depends_on`.
+- Next : aucune action immédiate ; passer à R2 côté `quality/features-for-path-ranking-and-matcher-correctness`.
