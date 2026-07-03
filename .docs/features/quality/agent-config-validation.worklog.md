@@ -68,3 +68,10 @@ Source session : automation veille-techno
 ## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
 - Surface partagée touchée : `doctor.sh` diagnostique désormais le provider VCS. Aucun changement du contrat `check-agent-config`.
 - Validation portée par `core/vcs-provider-abstraction`.
+
+## 2026-07-03 — done
+- Intent : clôturer `quality/agent-config-validation` et lever l'ancien gap shellcheck local.
+- Fichiers/surfaces : `.docs/features/quality/agent-config-validation.md`, `.docs/features/quality/agent-config-validation.worklog.md`.
+- Décision : statut `done` ; le check non destructif reste limité aux configs présentes et n'installe aucun hook.
+- Validation : `bash .ai/scripts/check-agent-config.sh` PASS ; `bash tests/unit/test-check-agent-config.sh` PASS ; `bash .ai/scripts/doctor.sh` PASS ; `shellcheck -S error .ai/scripts/check-agent-config.sh tests/unit/test-check-agent-config.sh` PASS.
+- Next : aucune action immédiate.

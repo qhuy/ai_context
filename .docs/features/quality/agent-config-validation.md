@@ -2,7 +2,7 @@
 id: agent-config-validation
 scope: quality
 title: Validation non destructive des configs agents
-status: active
+status: done
 depends_on:
   - workflow/codex-hooks-parity
 touches:
@@ -31,11 +31,11 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: review
-  step: "check-agent-config livré et smoke-test PASS"
+  phase: done
+  step: "check-agent-config livré : script, test, doctor, smoke et shellcheck validés"
   blockers: []
-  resume_hint: "prêt à review ; shellcheck non lancé car absent localement"
-  updated: 2026-06-26
+  resume_hint: "aucune action immédiate ; rouvrir seulement si une nouvelle config agent devient supportée"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -99,6 +99,7 @@ Cette fiche couvre uniquement la validation des configs agent. Les règles de fo
 - `bash .ai/scripts/check-agent-config.sh`
 - `bash .ai/scripts/check-feature-docs.sh --strict quality/agent-config-validation`
 - `bash .ai/scripts/check-features.sh`
+- Clôture 2026-07-03 : `bash .ai/scripts/check-agent-config.sh`, `bash tests/unit/test-check-agent-config.sh`, `bash .ai/scripts/doctor.sh` et `shellcheck -S error .ai/scripts/check-agent-config.sh tests/unit/test-check-agent-config.sh` PASS.
 
 ## Risques
 
@@ -113,3 +114,4 @@ Cette fiche couvre uniquement la validation des configs agent. Les règles de fo
 ## Historique / décisions
 
 - 2026-05-12 : création après HANDOFF `workflow -> quality` inclus dans le plan validé.
+- 2026-07-03 : DONE documentaire. Le check non destructif est livré, branché dans doctor/smoke/CI, et le gap local shellcheck est résolu avec ShellCheck 0.11.0.
