@@ -28,3 +28,7 @@
 - Décision : lire `agents` depuis `.copier-answers.yml` quand il existe ; fallback dogfood/anciens scaffolds sur les shims présents ; `codex` et `cursor` n'ajoutent pas de root shim dédié.
 - Validation : `bash -n` runtime/template, `shellcheck -S error`, `bash tests/unit/test-check-shims-dynamic-agents.sh`, `bash .ai/scripts/check-shims.sh`, rendu Copier ciblé `claude+gemini+copilot`, `bash .ai/scripts/check-dogfood-drift.sh`, `bash .ai/scripts/check-features.sh --no-write`, freshness worktree strict et `bash tests/smoke-test.sh` PASS.
 - Next : confirmer séparément la lecture native d'`AGENTS.md` par Claude (#34235) pour décider si `CLAUDE.md` devient optionnel.
+
+## 2026-07-03 — follow-up #34235 transféré au registre natif
+- `core/agents-md-native-collapse-path` porte désormais `.ai/native-context-support.tsv` et `check-agent-native-context.sh --require-confirmed <agent>`.
+- Impact ici : `check-shims` reste propriétaire des shims activés ; la décision de rendre `CLAUDE.md` optionnel ne vit plus dans cette fiche mais dans le registre natif.

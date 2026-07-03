@@ -75,6 +75,10 @@ echo "[0h2/28] tests unitaires (check-shims agents dynamiques)"
 bash tests/unit/test-check-shims-dynamic-agents.sh
 echo
 
+echo "[0h3/28] tests unitaires (support AGENTS.md natif par agent)"
+bash tests/unit/test-agent-native-context.sh
+echo
+
 echo "[0i/28] tests unitaires (gate Stop fin de tour)"
 bash tests/unit/test-stop-turn-doc-gate.sh
 echo

@@ -28,3 +28,11 @@
 - HANDOFF `quality/smoke-test` exécuté : `test-agents-md-self-sufficient.sh` devient l'étape `[0h1/28]`.
 - Validation : test ciblé PASS, `bash tests/smoke-test.sh` PASS complet, freshness worktree stricte PASS.
 - Next : opérationnaliser le kill_criterion #34235 (signal/veille par agent) avant toute optionnalité réelle de `CLAUDE.md`.
+
+## 2026-07-03 — DONE : kill criterion opérationnalisé
+- Intent : matérialiser le signal #34235 pour empêcher un collapse implicite de `CLAUDE.md`.
+- Fichiers/surfaces : `.ai/native-context-support.tsv`, `template/.ai/native-context-support.tsv`, `.ai/scripts/check-agent-native-context.sh`, `template/.ai/scripts/check-agent-native-context.sh.jinja`, `tests/unit/test-agent-native-context.sh`, `tests/smoke-test.sh`, `docs/upgrading.md`, `CHANGELOG.md`.
+- Décision : le statut externe du 2026-07-03 reste `claude=pending` (issues #34235/#6235 ouvertes) ; le collapse devient possible seulement si le registre passe `confirmed` et si `check-agent-native-context.sh --require-confirmed claude` passe.
+- HANDOFF `quality/smoke-test` exécuté : `test-agent-native-context.sh` devient l'étape `[0h3/28]`.
+- Validation : test ciblé PASS, dogfood drift PASS, `bash tests/smoke-test.sh` PASS complet ; freshness stricte à relancer avant commit.
+- Next : aucune action core immédiate ; veille future = mettre à jour le registre si Anthropic confirme le support natif.

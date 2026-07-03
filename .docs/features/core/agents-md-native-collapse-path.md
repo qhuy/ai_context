@@ -2,7 +2,7 @@
 id: agents-md-native-collapse-path
 scope: core
 title: Chemin de collapse — AGENTS.md auto-suffisant, indirection .ai/index.md optionnelle
-status: active
+status: done
 type: feature
 description: "Préparer la dégradation où AGENTS.md (lu nativement par 30+ agents) porte assez pour que l'indirection .ai/index.md devienne OPTIONNELLE — sans la retirer ni violer l'invariant '.ai/ source unique'. Hedge contre la convergence écosystème (#34235)."
 depends_on:
@@ -11,7 +11,12 @@ depends_on:
 touches:
   - .docs/features/core/agents-md-native-collapse-path.md
   - .docs/features/core/agents-md-native-collapse-path.worklog.md
+  - .ai/native-context-support.tsv
+  - template/.ai/native-context-support.tsv
+  - .ai/scripts/check-agent-native-context.sh
+  - template/.ai/scripts/check-agent-native-context.sh.jinja
   - tests/unit/test-agents-md-self-sufficient.sh
+  - tests/unit/test-agent-native-context.sh
 touches_shared:
   - AGENTS.md
   - CLAUDE.md
@@ -37,10 +42,10 @@ doc:
     rollout: true
     observability: false
 progress:
-  phase: review
-  step: "self-suffisance AGENTS.md verrouillée, test branché dans le smoke et migration downstream documentée"
+  phase: done
+  step: "kill_criterion #34235 matérialisé par registre + check require-confirmed ; statut Claude pending, CLAUDE.md conservé"
   blockers: []
-  resume_hint: "reste : opérationnaliser le kill_criterion #34235 (signal/veille par agent) avant de décider si CLAUDE.md devient optionnel."
+  resume_hint: "surveiller .ai/native-context-support.tsv ; ne rendre CLAUDE.md optionnel que si check-agent-native-context.sh --require-confirmed claude passe."
   updated: 2026-07-03
 ---
 
@@ -98,24 +103,29 @@ shim (`agents-md-shim-canonical`) et de la surface (`aic-surface-canonical`).
 - **Hedge, pas pivot** (tranché 2026-06-30, pilot P2) : préparer l'optionnalité, ne pas retirer l'indirection.
 - AGENTS.md auto-suffisant = **entrée + protocole lean minimal inline**, pas duplication de `.ai/index.md` (sinon on regrossit Pack A et on viole l'invariant source).
 - Le collapse est **gouverné par le kill_criterion #34235**, par agent, pas global.
+- Le signal externe est matérialisé dans `.ai/native-context-support.tsv` ; un statut `pending` bloque tout retrait du shim dédié via `check-agent-native-context.sh --require-confirmed <agent>`.
 
 ## Comportement attendu
 
 - Aujourd'hui : inchangé — shims + `.ai/index.md` actifs.
 - Après confirmation native (par agent) : `AGENTS.md` suffit à cadrer le travail de base ; `.ai/index.md` reste disponible pour le chargement lean avancé mais n'est plus un point de passage obligé pour cet agent.
 - `check-shims` continue de valider la base AGENTS.md et les contraintes lean.
+- Tant que `claude` reste `pending`, `CLAUDE.md` est conservé ; la tentative de collapse doit échouer explicitement.
 
 ## Contrats
 
 - **Entrée auto-suffisante** : `AGENTS.md` porte hard rules + pointeur de chargement minimal.
 - **Mode indirection** : `.ai/index.md` actif par défaut ; optionnel seulement quand le kill_criterion est satisfait pour l'agent.
 - **check-shims** : la base AGENTS.md reste valide dans les deux modes (lean conservé).
+- **Registre natif** : `.ai/native-context-support.tsv` trace `agent`, `shared_entrypoint`, `status`, `checked_at`, `evidence` et `note`.
+- **check-agent-native-context** : `--require-confirmed <agent>` sort non-zéro tant que le statut n'est pas `confirmed`.
 
 ## Validation
 
 - `AGENTS.md` seul permet à un agent de respecter les hard rules sans charger `.ai/index.md` (test : lecture AGENTS.md → règles connues).
 - `.ai/index.md` reste fonctionnel et défaut (non-régression).
 - `check-shims` + `check-dogfood-drift` verts ; migration downstream documentée.
+- `check-agent-native-context.sh` valide le registre ; `--require-confirmed claude` échoue tant que la lecture native reste non confirmée.
 - DONE : AGENTS.md auto-suffisant livré + kill_criterion opérationnalisé (veille/check) + doc migration warn, sans violer l'invariant source.
 
 ## Droits / accès
@@ -132,21 +142,21 @@ Non requis (`doc.requires.ux: false`). UX = expérience agent/mainteneur : une e
 
 ## Observabilité
 
-Non requis (`doc.requires.observability: false`). Preuves = sorties `check-shims`, `check-dogfood-drift`, et la veille kill_criterion.
+Non requis (`doc.requires.observability: false`). Preuves = sorties `check-shims`, `check-dogfood-drift`, `check-agent-native-context.sh`, et la veille kill_criterion.
 
 ## Déploiement / rollback
 
 - Release N : AGENTS.md auto-suffisant + kill_criterion opérationnalisé ; `.ai/index.md` actif par défaut ; doc migration **warn**.
 - Release N+1 : activer l'optionnalité par agent dont la lecture native est confirmée.
 - Rollback : repasser en indirection obligatoire (les deux modes restent valides).
-- Vérifs : `check-shims`, `check-dogfood-drift`, smoke multi-agents verts.
+- Vérifs : `check-shims`, `check-agent-native-context.sh --require-confirmed <agent>`, `check-dogfood-drift`, smoke multi-agents verts.
 
 ## Risques
 
 - **Confirmation native incertaine** hors Claude → optionnalité par agent, jamais globale ; défaut prudent.
 - **Régression Pack A** si AGENTS.md duplique trop de contenu → garder inline minimal (entrée + pointeur).
 - **Violation invariant** si AGENTS.md devient source de contenu → interdit : AGENTS.md = entrée, `.ai/` = source.
-- Décision ouverte : quel signal/check opérationnalise concrètement le kill_criterion.
+- **Signal externe obsolète** → `checked_at` et `evidence` du registre doivent être mis à jour avant toute bascule.
 
 ## Cross-refs
 
@@ -169,3 +179,4 @@ Non requis (`doc.requires.observability: false`). Preuves = sorties `check-shims
   (worklog mis à jour). Invariant `.ai/ source` préservé. Reste : opérationnaliser le kill_criterion
   + migration downstream + HANDOFF smoke.
 - 2026-07-03 : **incrément 2 livré** — migration downstream documentée (`docs/upgrading.md` + `CHANGELOG.md`) et HANDOFF smoke exécuté (`tests/unit/test-agents-md-self-sufficient.sh` branché en `[0h1/28]`). Il ne reste pas de pivot runtime : le kill_criterion #34235 reste le seul déclencheur futur pour rendre `CLAUDE.md` optionnel.
+- 2026-07-03 : **DONE** — kill_criterion opérationnalisé par `.ai/native-context-support.tsv` et `check-agent-native-context.sh`. Le registre note `claude=pending` (issues #34235/#6235 ouvertes), donc `--require-confirmed claude` échoue et `CLAUDE.md` reste requis.

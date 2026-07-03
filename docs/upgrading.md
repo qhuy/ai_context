@@ -197,12 +197,18 @@ Après `copier update`, accepte en priorité les changements sur `AGENTS.md`,
 
 ```bash
 bash .ai/scripts/check-shims.sh
+bash .ai/scripts/check-agent-native-context.sh
 ```
 
 Si tu as un `CLAUDE.md` custom, garde tes instructions spécifiques mais conserve
 le pointeur vers `.ai/index.md` ou l'import `@AGENTS.md`. La lecture native
 d'`AGENTS.md` par Claude Code reste traitée prudemment : `CLAUDE.md` n'est pas
-supprimé par cette migration.
+supprimé par cette migration. Avant de le rendre optionnel, le registre doit
+passer le kill criterion :
+
+```bash
+bash .ai/scripts/check-agent-native-context.sh --require-confirmed claude
+```
 
 ## Rebase "clean" (repartir d'un scaffold frais)
 

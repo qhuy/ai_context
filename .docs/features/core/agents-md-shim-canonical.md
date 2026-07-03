@@ -38,9 +38,9 @@ doc:
     observability: false
 progress:
   phase: review
-  step: "check-shims lit les agents activés depuis .copier-answers.yml, avec fallback dogfood sur les shims présents"
+  step: "check-shims lit les agents activés depuis .copier-answers.yml ; le collapse Claude est gardé par core/agents-md-native-collapse-path"
   blockers: []
-  resume_hint: "Reste : confirmer la lecture native d'AGENTS.md par Claude (#34235) → si vrai, CLAUDE.md devient optionnel ; pitch README déjà routé vers product/readme-positioning."
+  resume_hint: "Follow-up #34235 transféré au registre .ai/native-context-support.tsv ; pitch README déjà routé vers product/readme-positioning."
   updated: 2026-07-03
 ---
 

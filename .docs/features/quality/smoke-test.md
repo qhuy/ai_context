@@ -13,7 +13,7 @@ touches_shared:
   - tests/**
 progress:
   phase: review
-  step: "smoke branche les tests check-shims AGENTS self-sufficient ([0h1/28]) et agents dynamiques ([0h2/28])"
+  step: "smoke branche les tests AGENTS self-sufficient ([0h1/28]), shims dynamiques ([0h2/28]) et support natif par agent ([0h3/28])"
   blockers: []
   resume_hint: "relancer tests/smoke-test.sh après toute évolution du Pack A, des templates Jinja, de check-shims ou du runner benchmark"
   updated: 2026-07-03
@@ -38,6 +38,7 @@ Vérifier en un script que la chaîne complète tient : `copier copy` → check-
 - Le lint Jinja raw (`tests/unit/test-template-jinja-raw-braces.sh`, étape `[0s/28]`) : empêche les expansions Bash `${#...}` non protégées dans les templates.
 - Le test AGENTS.md auto-suffisant (`tests/unit/test-agents-md-self-sufficient.sh`, étape `[0h1/28]`) : bloque la régression où `AGENTS.md` redeviendrait un simple pointeur sans hard rules inline.
 - Le test check-shims agents dynamiques (`tests/unit/test-check-shims-dynamic-agents.sh`, étape `[0h2/28]`) : vérifie que `.copier-answers.yml` pilote les shims requis et qu'un shim activé manquant fait échouer le guard.
+- Le test support AGENTS.md natif par agent (`tests/unit/test-agent-native-context.sh`, étape `[0h3/28]`) : vérifie le registre de kill criterion et le blocage `--require-confirmed claude` tant que le statut est `pending`.
 - Le self-check du harnais benchmark (`tests/bench/run-bench.sh --self-check`, étape `[0t/28]`) : plumbing seulement, aucun agent invoqué ; la logique du runner reste portée par `product/agent-efficacy-benchmark`.
 - L'enchaînement réel des scripts générés sur un scaffold jetable dans `/tmp` : shims, mesh, reminder text+json, commit-msg, features-for-path, cycles, coverage, focus graph, i18n, auto-worklog.
 - La couverture des variantes de rendu Copier : profils `tech_profile` (`dotnet-clean-cqrs`, `react-next`, `fullstack-dotnet-react`), `adoption_mode` (`lite`/`strict`), squelettes DS et budget Pack A lean.
@@ -123,4 +124,5 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-07-03 : ajout [0s/28] — `tests/unit/test-template-jinja-raw-braces.sh` branché dans le smoke pour bloquer les expansions Bash `${#...}` hors `{% raw %}` dans `template/**/*.jinja`. Le self-check benchmark est décalé en `[0t/28]`.
 - 2026-07-03 : ajout [0h1/28] — `tests/unit/test-agents-md-self-sufficient.sh` branché dans le smoke. HANDOFF reçu de `core/agents-md-native-collapse-path` : verrouiller que `AGENTS.md` garde ses hard rules inline.
 - 2026-07-03 : ajout [0h2/28] — `tests/unit/test-check-shims-dynamic-agents.sh` branché dans le smoke. HANDOFF reçu de `core/agents-md-shim-canonical` : verrouiller que `check-shims` lit les agents activés depuis `.copier-answers.yml` et échoue si un shim dérivé activé manque.
+- 2026-07-03 : ajout [0h3/28] — `tests/unit/test-agent-native-context.sh` branché dans le smoke. HANDOFF reçu de `core/agents-md-native-collapse-path` : verrouiller que le kill criterion AGENTS.md natif reste explicite avant de rendre un shim optionnel.
 - 2026-06-19 : étape [28c/28] rendue tolérante au crash de *cleanup* post-update de Copier (rmtree du clone temporaire `.git/objects` → `OSError: Directory not empty`, observé sur Copier 9.14.3 + Python 3.14 macOS). L'update lui-même réussit ; seul le teardown de Copier plante. La tolérance ne se déclenche que sur cette signature précise (log contenant « Updating to template version » + `_cleanup`/`Directory not empty`/`copier._vcs.clone`) ; tout autre échec d'`copier update` reste bloquant — la décision 2026-05-03 (pas de masquage par `|| true`) est préservée. Les assertions d'outcome (fichier custom préservé, check-shims, propagation `aic-undo.sh`) restent le verdict réel. Signature vérifiée contre un log de crash réel. La CI n'est pas concernée (elle n'installe pas Copier et ne lance pas le smoke).

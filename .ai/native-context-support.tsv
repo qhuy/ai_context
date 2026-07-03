@@ -1,0 +1,2 @@
+# agent	shared_entrypoint	status	checked_at	evidence	note
+claude	AGENTS.md	pending	2026-07-03	https://github.com/anthropics/claude-code/issues/6235	#34235 reste ouvert/duplicate ; conserver CLAUDE.md tant que la lecture native n'est pas confirmee.

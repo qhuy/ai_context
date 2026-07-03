@@ -259,3 +259,10 @@
 - HANDOFF reçu de `core/agents-md-native-collapse-path` : empêcher que `AGENTS.md` redevienne un simple pointeur sans hard rules inline.
 - Denominator `/28` préservé (pré-étape lettrée).
 - Validation : test ciblé PASS et `bash tests/smoke-test.sh` PASS complet.
+
+## 2026-07-03 — étape [0h3/28] : support AGENTS.md natif par agent
+
+- Nouvelle étape smoke `[0h3/28]` : `bash tests/unit/test-agent-native-context.sh`, juste après le test agents dynamiques.
+- HANDOFF reçu de `core/agents-md-native-collapse-path` : couvrir le registre de kill criterion et le cas négatif `--require-confirmed claude` tant que le statut reste `pending`.
+- Denominator `/28` préservé (pré-étape lettrée).
+- Validation : test ciblé PASS et `bash tests/smoke-test.sh` PASS complet.

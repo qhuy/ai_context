@@ -50,3 +50,8 @@
 - `docs/upgrading.md` documente le passage aux shims agents moins dupliqués : `AGENTS.md` auto-suffisant, shims dérivés selon `agents` dans `.copier-answers.yml`, fallback anciens scaffolds, et conservation prudente de `CLAUDE.md`.
 - `CHANGELOG.md` ajoute la note migration Unreleased correspondante.
 - Rattachement produit : la page d'upgrade reste l'owner direct via cette initiative ; les features techniques concernées sont visibles en `touches_shared`.
+
+## 2026-07-03 — migration kill criterion AGENTS.md natif
+- `docs/upgrading.md` ajoute `check-agent-native-context.sh` au parcours post-update et documente le guard `--require-confirmed claude` avant toute optionnalité de `CLAUDE.md`.
+- `CHANGELOG.md` ajoute la note Unreleased sur `.ai/native-context-support.tsv` comme matérialisation du kill criterion.
+- Décision produit : statut prudent maintenu (`claude=pending`) tant que les issues Anthropic #34235/#6235 restent ouvertes.
