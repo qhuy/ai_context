@@ -2,7 +2,7 @@
 id: intentional-skills
 scope: workflow
 title: Skills intentionnels pour cadrage, documentation, status, review et ship
-status: active
+status: done
 depends_on:
   - workflow/claude-skills
   - workflow/agent-behavior
@@ -44,11 +44,11 @@ touches_shared:
   - CHANGELOG.md
   - tests/smoke-test.sh
 progress:
-  phase: review
-  step: "round 4 appliqué, validation PASS, prêt à commit"
+  phase: done
+  step: "surface intentionnelle et primitives internes/fallback livrées, validées et dépendances clôturées"
   blockers: []
-  resume_hint: "commit FR conventional puis attendre evidence DONE pour bumper phase=done"
-  updated: 2026-06-26
+  resume_hint: "aucune action immédiate ; rouvrir seulement si la surface publique, les primitives fallback ou le trigger aic-frame changent"
+  updated: 2026-07-03
 type: feature
 ---
 
@@ -131,6 +131,15 @@ Les primitives procédurales vivent sous `.ai/workflows/`. Elles restent disponi
 - `bash .ai/scripts/check-feature-docs.sh --strict workflow/intentional-skills`
 - `bash tests/smoke-test.sh`
 
+Preuve de clôture 2026-07-03 :
+
+- Dépendances `workflow/claude-skills` et `workflow/agent-behavior` clôturées.
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/intentional-skills` PASS.
+- `bash .ai/scripts/check-shims.sh` PASS.
+- `bash .ai/scripts/check-dogfood-drift.sh` PASS.
+- `bash .ai/scripts/check-features.sh --no-write` PASS.
+- `bash tests/smoke-test.sh` PASS.
+
 ## Cross-refs
 
 - `workflow/claude-skills` : catalogue public vs interne.
@@ -151,3 +160,4 @@ Les primitives procédurales vivent sous `.ai/workflows/`. Elles restent disponi
 - 2026-05-06 : resserrage post-audit skills. `/aic done` délègue désormais à `feature-done`, `aic-frame` charge `.ai/agent/*` et `QUALITY_GATE` seulement on-demand, et les primitives Codex `aic-feature-*` / `aic-quality-gate` sont explicitement marquées internes/fallback.
 - 2026-05-06 (round 4) : cross-check Claude/Codex sur 4 rounds, application du plan consolidé. Garde-fous comportementaux ajoutés dans les 6 wrappers Codex (runtime + template) avec règle STOP+redirect sur matching lexical implicite. Trigger `aic-frame` rendu déterministe (phase + intention + type-change). Descriptions `aic-ship` (couvre done/clôture/livraison) et `aic-status` (couvre status/reprise/phase/état) enrichies sans rompre la chaîne intention publique → workflow canonique.
 - 2026-06-02 : correction du wording `aic-ship` — la description référence désormais `.ai/workflows/quality-gate.md` (backend réel, gate avant `feature-done`) au lieu de `feature-done.md`. Appliqué aux 4 surfaces (runtime + template, Claude + Codex) ; `touches` étendu à `.agents/skills/aic-ship/**` (+ template). Cross-scope `core` (dogfood-runtime-sync, codex-skills-install, aic-surface-canonical, template-engine) → freshness propagée.
+- 2026-07-03 : DONE. Surface intentionnelle livrée ; les primitives restent internes/fallback et Pack A reste lean.

@@ -163,3 +163,10 @@
 ## 2026-06-28 20:34 — auto
 - Fichiers modifiés :
   - .ai/workflows/quality-gate.md
+
+## 2026-07-03 — done
+- Intent : clôturer `intentional-skills` après clôture de `claude-skills` et `agent-behavior`.
+- Fichiers/surfaces : `.docs/features/workflow/intentional-skills.md`, `.docs/features/workflow/intentional-skills.worklog.md`.
+- Décision : statut `done`; surface publique intentionnelle stable, primitives Codex internes/fallback, trigger `aic-frame` inchangé.
+- Validation : `bash .ai/scripts/check-feature-docs.sh --strict workflow/intentional-skills`; `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
+- Next : aucune action immédiate.
