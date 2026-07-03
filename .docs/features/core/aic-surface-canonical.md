@@ -10,7 +10,6 @@ touches:
   - MIGRATION.md
   - CONTRIBUTING.md
   - AUDIT_2026-05-06.md
-  - docs/upgrading.md
   - template/README_AI_CONTEXT.md.jinja
   - template/.ai/scripts/aic.sh.jinja
   - .ai/scripts/aic.sh
@@ -22,6 +21,7 @@ touches:
   - template/.agents/skills/aic-*/**
 touches_shared:
   - CHANGELOG.md
+  - docs/upgrading.md
   - README.md
   - copier.yml
   - tests/smoke-test.sh

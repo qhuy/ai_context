@@ -45,3 +45,8 @@
 ## 2026-06-28 21:09 — auto
 - Fichiers modifiés :
   - CHANGELOG.md
+
+## 2026-07-03 — migration shims AGENTS.md
+- `docs/upgrading.md` documente le passage aux shims agents moins dupliqués : `AGENTS.md` auto-suffisant, shims dérivés selon `agents` dans `.copier-answers.yml`, fallback anciens scaffolds, et conservation prudente de `CLAUDE.md`.
+- `CHANGELOG.md` ajoute la note migration Unreleased correspondante.
+- Rattachement produit : la page d'upgrade reste l'owner direct via cette initiative ; les features techniques concernées sont visibles en `touches_shared`.

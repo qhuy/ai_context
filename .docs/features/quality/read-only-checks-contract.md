@@ -23,13 +23,13 @@ touches:
   - template/.github/workflows/ai-context-check.yml.jinja
   - .ai/workflows/quality-gate.md
   - template/.ai/workflows/quality-gate.md.jinja
-  - docs/upgrading.md
   - MIGRATION.md
   - tests/unit/test-read-only-checks-contract.sh
   - .docs/features/quality/read-only-checks-contract.md
   - .docs/features/quality/read-only-checks-contract.worklog.md
 touches_shared:
   - CHANGELOG.md
+  - docs/upgrading.md
   - .ai/scripts/aic.sh
   - template/.ai/scripts/aic.sh.jinja
   - .ai/scripts/check-features.sh

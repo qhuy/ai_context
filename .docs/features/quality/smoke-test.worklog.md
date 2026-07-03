@@ -252,3 +252,10 @@
 - HANDOFF reçu de `core/agents-md-shim-canonical` : couvrir le contrat `.copier-answers.yml` → shims requis (`CLAUDE.md`, `GEMINI.md`, Copilot) et le cas négatif shim activé manquant.
 - Denominator `/28` préservé (pré-étape lettrée).
 - Validation : test ciblé PASS et `bash tests/smoke-test.sh` PASS complet.
+
+## 2026-07-03 — étape [0h1/28] : AGENTS.md auto-suffisant
+
+- Nouvelle étape smoke `[0h1/28]` : `bash tests/unit/test-agents-md-self-sufficient.sh`, juste avant le test agents dynamiques.
+- HANDOFF reçu de `core/agents-md-native-collapse-path` : empêcher que `AGENTS.md` redevienne un simple pointeur sans hard rules inline.
+- Denominator `/28` préservé (pré-étape lettrée).
+- Validation : test ciblé PASS et `bash tests/smoke-test.sh` PASS complet.

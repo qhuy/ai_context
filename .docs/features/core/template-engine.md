@@ -6,9 +6,9 @@ status: active
 depends_on: []
 touches:
   - copier.yml
-  - docs/upgrading.md
   - docs/variables.md
 touches_shared:
+  - docs/upgrading.md
   - README.md
   - README_AI_CONTEXT.md
   - .ai/scripts/aic.sh

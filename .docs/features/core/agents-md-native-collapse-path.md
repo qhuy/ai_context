@@ -2,7 +2,7 @@
 id: agents-md-native-collapse-path
 scope: core
 title: Chemin de collapse — AGENTS.md auto-suffisant, indirection .ai/index.md optionnelle
-status: draft
+status: active
 type: feature
 description: "Préparer la dégradation où AGENTS.md (lu nativement par 30+ agents) porte assez pour que l'indirection .ai/index.md devienne OPTIONNELLE — sans la retirer ni violer l'invariant '.ai/ source unique'. Hedge contre la convergence écosystème (#34235)."
 depends_on:
@@ -37,11 +37,11 @@ doc:
     rollout: true
     observability: false
 progress:
-  phase: implement
-  step: "incrément 1 livré : self-suffisance d'AGENTS.md verrouillée par check-shims (hard rules inline exigés) + test ; runtime + .jinja ; parité OK"
+  phase: review
+  step: "self-suffisance AGENTS.md verrouillée, test branché dans le smoke et migration downstream documentée"
   blockers: []
-  resume_hint: "suite : (1) opérationnaliser le kill_criterion #34235 (veille/signal par agent) ; (2) doc migration warn downstream ; (3) HANDOFF quality/smoke-test = brancher test-agents-md-self-sufficient dans smoke. Invariant .ai/ source unique préservé (AGENTS.md = entrée, pas contenu)"
-  updated: 2026-06-30
+  resume_hint: "reste : opérationnaliser le kill_criterion #34235 (signal/veille par agent) avant de décider si CLAUDE.md devient optionnel."
+  updated: 2026-07-03
 ---
 
 # Chemin de collapse — AGENTS.md auto-suffisant, indirection .ai/index.md optionnelle
@@ -168,3 +168,4 @@ Non requis (`doc.requires.observability: false`). Preuves = sorties `check-shims
   (cas pointeur nu → échec). Surface `check-shims.sh` possédée par `core/agents-md-shim-canonical`
   (worklog mis à jour). Invariant `.ai/ source` préservé. Reste : opérationnaliser le kill_criterion
   + migration downstream + HANDOFF smoke.
+- 2026-07-03 : **incrément 2 livré** — migration downstream documentée (`docs/upgrading.md` + `CHANGELOG.md`) et HANDOFF smoke exécuté (`tests/unit/test-agents-md-self-sufficient.sh` branché en `[0h1/28]`). Il ne reste pas de pivot runtime : le kill_criterion #34235 reste le seul déclencheur futur pour rendre `CLAUDE.md` optionnel.

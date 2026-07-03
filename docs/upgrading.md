@@ -182,6 +182,28 @@ bash .ai/scripts/measure-context-size.sh
 bash .ai/scripts/check-feature-docs.sh
 ```
 
+### Shims agents et AGENTS.md auto-suffisant
+
+Les shims deviennent plus stricts et moins dupliqués :
+
+- `AGENTS.md` reste toujours présent et porte les hard rules minimales inline.
+- `CLAUDE.md` et `GEMINI.md` peuvent importer `@AGENTS.md` ; Copilot garde un shim tailored minimal.
+- `check-shims.sh` lit maintenant `agents` dans `.copier-answers.yml` quand ce fichier existe. Si `gemini` ou `copilot` est activé, le shim correspondant doit exister et rester lean.
+- Sans `.copier-answers.yml`, le check garde un fallback compatible avec les anciens scaffolds et valide les shims présents.
+
+Après `copier update`, accepte en priorité les changements sur `AGENTS.md`,
+`CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md` et
+`.ai/scripts/check-shims.sh`, puis lance :
+
+```bash
+bash .ai/scripts/check-shims.sh
+```
+
+Si tu as un `CLAUDE.md` custom, garde tes instructions spécifiques mais conserve
+le pointeur vers `.ai/index.md` ou l'import `@AGENTS.md`. La lecture native
+d'`AGENTS.md` par Claude Code reste traitée prudemment : `CLAUDE.md` n'est pas
+supprimé par cette migration.
+
 ## Rebase "clean" (repartir d'un scaffold frais)
 
 Si la dérive est trop grosse :

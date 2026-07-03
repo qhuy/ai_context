@@ -34,3 +34,8 @@
 - Reclassé en `touches_shared:` dans les 6 fiches (déplacement mécanique, ±1 ligne/fiche). CHANGELOG reste visible en review mais ne bloque plus `check-feature-freshness --staged`.
 - Vérifs : `check-features` PASS (6 fiches valides), `check-touches-breadth` ne liste PLUS `CHANGELOG.md` dans les surfaces >4. Personne n'« implémente » une feature DANS le changelog → aucun propriétaire exact légitime perdu.
 - Reste (breadth-guard, vagues futures) : `_lib.sh`/`build-feature-index.sh`/`.ai/index.md`/`docs/upgrading.md` restent >4 mais sont des surfaces de code réelles (couverture plus légitime) — à trancher au cas par cas, pas mécaniquement.
+
+## 2026-07-03 — 3ᵉ vague : docs/upgrading.md → owner migration unique
+- Déclencheur : ajout prévu d'une note migration C1 (shims/AGENTS.md) dans `docs/upgrading.md` ; le fichier était en `touches:` exact de 6 features et aurait forcé 5 worklogs sans rapport.
+- Décision : conserver l'ownership direct sur `product/ai-context-stability-migration` (page de migration globale), reclasser en `touches_shared:` les consommateurs `core/aic-surface-canonical`, `core/okf-strict-profile`, `core/project-overlay-stable`, `core/template-engine`, `quality/read-only-checks-contract`.
+- Effet attendu : `docs/upgrading.md` reste visible en review/report pour ces features, mais ne bloque plus la fraîcheur staged quand une note d'upgrade appartient à une autre feature.

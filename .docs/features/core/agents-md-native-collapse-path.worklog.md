@@ -20,3 +20,11 @@
 - Invariant `aic-surface-canonical` (`.ai/` source unique) préservé : AGENTS.md reste l'ENTRÉE, pas le contenu.
 - **HANDOFF `quality/smoke-test`** : brancher `test-agents-md-self-sufficient.sh` dans le smoke — non fait ici (mono-scope core), même pattern que P3.
 - Reste : opérationnaliser le kill_criterion #34235 (veille/signal par agent) ; doc migration warn downstream.
+
+## 2026-07-03 — incrément 2 : migration warn + smoke handoff
+- Intent : fermer les follow-ups livrables hors kill criterion : doc migration downstream et branchement du test self-sufficiency dans le smoke.
+- Fichiers/surfaces : `docs/upgrading.md`, `CHANGELOG.md`, `tests/smoke-test.sh`, fiche/worklog core.
+- Décision : documenter un mode prudent — `AGENTS.md` auto-suffisant, shims dérivés vérifiés par agents activés, mais `CLAUDE.md` conservé tant que #34235 n'est pas opérationnalisé.
+- HANDOFF `quality/smoke-test` exécuté : `test-agents-md-self-sufficient.sh` devient l'étape `[0h1/28]`.
+- Validation : test ciblé PASS, `bash tests/smoke-test.sh` PASS complet, freshness worktree stricte PASS.
+- Next : opérationnaliser le kill_criterion #34235 (signal/veille par agent) avant toute optionnalité réelle de `CLAUDE.md`.

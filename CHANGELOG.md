@@ -21,6 +21,7 @@
 ### Migration
 - Migration de l'overlay vers le registre de scopes : deux temps (`copier update` apporte le skill + le contrat ; `aic-onboard` migre l'overlay project-owned). Opt-in, non bloquant, non destructif, idempotent. Voir `docs/upgrading.md` → « Overlay projet : registre de scopes ».
 - Profil strict OKF : après `copier update`, si `check-features` signale des `type` manquants → `bash .ai/scripts/aic.sh migrate okf-type --apply`, puis commit. Rollback = `git revert` (fiches project-owned).
+- Shims agents : `AGENTS.md` devient auto-suffisant sur les hard rules minimales, les shims dérivés sont vérifiés selon `agents` dans `.copier-answers.yml`, et `docs/upgrading.md` documente la marche à suivre pour les `CLAUDE.md` custom et les agents `gemini`/`copilot`.
 
 ## [0.13.0] — 2026-06-01
 

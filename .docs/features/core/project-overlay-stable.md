@@ -11,9 +11,9 @@ touches:
   - ".ai/index.md"
   - ".ai/OWNERSHIP.md"
   - ".ai/templates/project-overlay/README.md"
-  - "docs/upgrading.md"
   - "tests/unit/test-project-overlay.sh"
 touches_shared:
+  - "docs/upgrading.md"
   - "copier.yml"
   - "template/README_AI_CONTEXT.md.jinja"
   - ".ai/scripts/check-dogfood-drift.sh"

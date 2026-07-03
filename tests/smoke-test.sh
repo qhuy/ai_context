@@ -67,6 +67,10 @@ echo "[0h/28] tests unitaires (agent config)"
 bash tests/unit/test-check-agent-config.sh
 echo
 
+echo "[0h1/28] tests unitaires (AGENTS.md auto-suffisant)"
+bash tests/unit/test-agents-md-self-sufficient.sh
+echo
+
 echo "[0h2/28] tests unitaires (check-shims agents dynamiques)"
 bash tests/unit/test-check-shims-dynamic-agents.sh
 echo
