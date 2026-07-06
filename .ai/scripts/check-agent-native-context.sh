@@ -60,11 +60,17 @@ records=0
 require_seen=0
 require_status=""
 
+seen_agents=""
 while IFS=$'\t' read -r agent entrypoint status checked_at evidence note extra; do
   line_no=$((line_no + 1))
 
   [[ -z "${agent//[[:space:]]/}" ]] && continue
   [[ "${agent:0:1}" == "#" ]] && continue
+
+  case " $seen_agents " in
+    *" $agent "*) fail "ligne $line_no: agent en doublon '$agent' (editer la ligne existante, pas en ajouter une)" ;;
+  esac
+  seen_agents="$seen_agents $agent"
 
   [[ -z "${extra:-}" ]] || fail "ligne $line_no: trop de colonnes"
   [[ -n "${note:-}" ]] || fail "ligne $line_no: note manquante"

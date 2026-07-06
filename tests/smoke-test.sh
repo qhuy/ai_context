@@ -2001,7 +2001,7 @@ fi
 # Validation officielle du contrat sur le scaffold généré
 if ! ( cd "$combo_codexhooks" && bash .ai/scripts/check-agent-config.sh ) >/dev/null 2>&1; then
   echo "  ✗ check-agent-config fail sur le scaffold avec hooks Codex"
-  ( cd "$combo_codexhooks" && bash .ai/scripts/check-agent-config.sh )
+  ( cd "$combo_codexhooks" && bash .ai/scripts/check-agent-config.sh ) || true
   rm -rf "$combo_codexhooks"
   exit 1
 fi
@@ -2034,9 +2034,22 @@ if [[ -f "$combo_copilot/.github/copilot-instructions.md" ]]; then
   rm -rf "$combo_copilot"
   exit 1
 fi
-if ! ( cd "$combo_copilot" && bash .ai/scripts/check-shims.sh ) >/dev/null 2>&1; then
+# Le scaffold doit porter ses réponses : c'est ce qui rend copilot détectable
+# par check-shims (sinon fallback par présence de fichiers = chemin registre mort).
+if [[ ! -f "$combo_copilot/.copier-answers.yml" ]]; then
+  echo "  ✗ .copier-answers.yml absent du scaffold (le chemin registre de check-shims ne peut pas s'exercer)"
+  rm -rf "$combo_copilot"
+  exit 1
+fi
+shims_out="$(cd "$combo_copilot" && bash .ai/scripts/check-shims.sh 2>&1)" || {
   echo "  ✗ check-shims fail sur scaffold copilot sans shim dédié (natif confirmé au registre)"
-  ( cd "$combo_copilot" && bash .ai/scripts/check-shims.sh )
+  echo "$shims_out"
+  rm -rf "$combo_copilot"
+  exit 1
+}
+if ! echo "$shims_out" | grep -q "copilot : shim dédié absent"; then
+  echo "  ✗ check-shims n'a pas exercé le chemin registre (message de skip copilot absent)"
+  echo "$shims_out"
   rm -rf "$combo_copilot"
   exit 1
 fi
@@ -2055,7 +2068,7 @@ if [[ ! -f "$combo_copilot_shim/.github/copilot-instructions.md" ]]; then
 fi
 if ! ( cd "$combo_copilot_shim" && bash .ai/scripts/check-shims.sh ) >/dev/null 2>&1; then
   echo "  ✗ check-shims fail avec le shim compat Copilot présent"
-  ( cd "$combo_copilot_shim" && bash .ai/scripts/check-shims.sh )
+  ( cd "$combo_copilot_shim" && bash .ai/scripts/check-shims.sh ) || true
   rm -rf "$combo_copilot_shim"
   exit 1
 fi

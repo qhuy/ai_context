@@ -298,3 +298,6 @@
 
 ## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, fix post-review)
 - `tests/smoke-test.sh` : étape [28f/28] anti dé-templatisation — le check-shims rendu doit porter le project_name du consommateur et suivre les scopes du profil (backend sans back.md → FAIL). Validation portée par `core/agents-md-shim-canonical`.
+
+## 2026-07-06 — couverture incidente (fix post-review, core/agents-md-shim-canonical)
+- `[28e/28]` durci : `.copier-answers.yml` exigé dans le scaffold + preuve que le chemin registre s'exerce (message de skip copilot exigé) ; fuites temp corrigées ([28d]/[28e]). Validation portée par `core/agents-md-shim-canonical`.

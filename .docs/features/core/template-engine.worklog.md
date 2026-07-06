@@ -439,3 +439,6 @@
 ## 2026-07-06 15:08 — auto
 - Fichiers modifiés :
   - copier.yml
+
+## 2026-07-06 — couverture incidente (fix post-review, core/agents-md-shim-canonical)
+- Nouveau `template/{{ _copier_conf.answers_file }}.jinja` : les scaffolds portent enfin leurs réponses copier (`.copier-answers.yml`), prérequis de la détection dynamique d'agents par check-shims et du cycle `copier update` sans réparation manuelle.

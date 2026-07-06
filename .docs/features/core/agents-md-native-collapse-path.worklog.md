@@ -43,3 +43,6 @@
 - Evidence : docs.github.com/copilot (« the nearest AGENTS.md file in the directory tree will take precedence » — coding agent ; Chat/review IDE restent sur copilot-instructions.md) ; cursor.com/docs/context/rules (« AGENTS.md […] Place it in your project root as an alternative to .cursor/rules ») ; agents.md liste les deux. Vérifié le 2026-07-06.
 - Validation : `check-agent-native-context.sh` PASS ; `--require-confirmed copilot` PASS ; `--require-confirmed cursor` PASS ; `--require-confirmed claude` échoue toujours (attendu) ; `tests/unit/test-agent-native-context.sh` PASS.
 - Next : commit ② — shim Copilot opt-out (`core/agents-md-shim-canonical`).
+
+## 2026-07-06 — couverture incidente (fix post-review, core/agents-md-shim-canonical)
+- `check-agent-native-context.sh` (+ miroir) : doublons d'agent rejetés (protège native_confirmed, any-match) ; `tests/unit/test-agent-native-context.sh` : cas doublon. Validation portée par `core/agents-md-shim-canonical`.

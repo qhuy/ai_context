@@ -48,4 +48,19 @@ set -e
 echo "$out" | grep -q "status invalide" \
   || { echo "$out"; fail "message status invalide attendu"; }
 
+dup="$tmp/dup.tsv"
+cat > "$dup" <<'TSV'
+# agent	shared_entrypoint	status	checked_at	evidence	note
+copilot	AGENTS.md	confirmed	2026-07-06	https://example.invalid/a	Confirme.
+copilot	AGENTS.md	pending	2026-07-07	https://example.invalid/b	Downgrade en doublon au lieu d'editer.
+TSV
+
+set +e
+out="$(cd "$repo_root" && bash "$script" --file "$dup" 2>&1)"
+rc=$?
+set -e
+[[ "$rc" -ne 0 ]] || { echo "$out"; fail "agent en doublon doit echouer (sinon native_confirmed prend la ligne confirmed perimee)"; }
+echo "$out" | grep -q "doublon" \
+  || { echo "$out"; fail "message de doublon attendu"; }
+
 echo "✅ test-agent-native-context PASS"

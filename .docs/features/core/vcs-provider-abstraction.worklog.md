@@ -63,3 +63,6 @@
 
 ## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, fix post-review)
 - `tests/smoke-test.sh` : étape [28f/28] anti dé-templatisation ajoutée. Aucun changement du contrat provider VCS. Validation portée par `core/agents-md-shim-canonical`.
+
+## 2026-07-06 — couverture incidente (fix post-review ②, core/agents-md-shim-canonical)
+- `tests/smoke-test.sh` : [28e] durci (answers file + chemin registre prouvé) et fuites temp corrigées. Aucun changement du contrat provider VCS.
