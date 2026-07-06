@@ -417,3 +417,7 @@
 - Décision : statut `done`; les commandes `repair-copier-metadata` et `template-diff` sont validées en mode non destructif, le smoke complet couvre `copier copy`, `copier update v0.11.0 → HEAD`, `docs_root`, focus et self-check benchmark.
 - Validation : `bash .ai/scripts/aic.sh repair-copier-metadata --src-path . --commit HEAD` ; `bash .ai/scripts/aic.sh template-diff --src-path . --vcs-ref HEAD` ; `bash tests/smoke-test.sh`.
 - Next : aucune action immédiate ; rouvrir si une variable Copier, un rendu conditionnel ou un contrat install/update change.
+
+## 2026-07-06 — couverture incidente (workflow/codex-hooks-parity)
+- `copier.yml` touché : nouvelle question `enable_codex_hooks` (bool, défaut false, `when: codex in agents`) + ligne `_exclude` conditionnelle pour `.codex`. Aucun changement des contrats template-engine propres.
+- Validation portée par `workflow/codex-hooks-parity` (smoke [28d/28] : opt-in, exclusion sans codex, rendu conforme).

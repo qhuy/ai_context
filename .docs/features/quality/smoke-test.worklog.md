@@ -277,3 +277,7 @@
 - Décision : statut `done` ; la fiche reste le filet end-to-end, à rouvrir seulement quand le script ou ses contrats changent.
 - Validation : `bash tests/smoke-test.sh` PASS ; second `bash tests/smoke-test.sh` PASS (sortie réduite, verdict final PASS).
 - Next : aucune action immédiate.
+
+## 2026-07-06 — couverture incidente (workflow/codex-hooks-parity)
+- `tests/smoke-test.sh` : ajout de l'étape [28d/28] hooks Codex natifs — .codex/ absent par défaut, hooks.json conforme (événements UserPromptSubmit/Stop, timeouts explicites, check-agent-config PASS sur scaffold), .codex/ exclu si codex hors agents.
+- Validation portée par `workflow/codex-hooks-parity` ; smoke complet relancé au commit.

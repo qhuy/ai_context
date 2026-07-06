@@ -20,8 +20,11 @@
 # suite a un block), on relache (exit 0).
 #
 # GARANTIE STABLE = hooks/checks VCS (Git commit-msg ou pre-checkin/CI TFVC) + CI.
-# Ce hook est une couche de forcing CLAUDE-ONLY, read-only, jamais la garantie
-# unique. Les agents non-Claude sont couverts au commit/checkin et en CI.
+# Ce hook est une couche de forcing read-only, jamais la garantie unique. Son
+# protocole (stop_hook_active en entree, decision:block en sortie) est partage
+# par Claude Code (cable via stop-sequence.sh) et Codex (cable opt-in via
+# .codex/hooks.json, evenement Stop — doc officielle verifiee 2026-07-06).
+# Les agents sans hooks sont couverts au commit/checkin et en CI.
 #
 # ORDRE STOP (IMPORTANT) : ce hook DOIT etre cable AVANT auto-worklog-flush.sh.
 # Sinon le flush auto-touche le worklog de la feature, et le gate passe a vide.

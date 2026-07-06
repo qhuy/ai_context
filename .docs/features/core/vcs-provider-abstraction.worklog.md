@@ -36,3 +36,7 @@
 - Décision : aucun comportement VCS modifié ; le wrapper route `knowledge` vers un script dédié, comme les autres sous-commandes.
 - Validation : le test workflow passe via `aic.sh knowledge`; freshness stricte doit constater ce worklog core dans le delta.
 - Next : aucune action VCS ; rouvrir seulement si les commandes knowledge doivent lire le provider VCS courant.
+
+## 2026-07-06 — couverture incidente (workflow/codex-hooks-parity)
+- Surfaces partagées touchées : header de `stop-doc-gate.sh` (+ miroir jinja) requalifié « protocole decision:block partagé Claude/Codex » (aucun changement de logique VCS) ; `copier.yml` (question enable_codex_hooks) ; `tests/smoke-test.sh` (étape [28d/28]). Aucun changement du contrat provider VCS.
+- Validation portée par `workflow/codex-hooks-parity`.

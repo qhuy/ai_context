@@ -32,3 +32,7 @@
 - Décision : statut `done`; aucune action immédiate, réouverture seulement si le contrat Stop, la fraîcheur `--worktree` ou l'ordre gate -> archivage change.
 - Validation : `bash tests/unit/test-stop-turn-doc-gate.sh`; `bash tests/unit/test-read-only-checks-contract.sh`; `bash -n .ai/scripts/stop-doc-gate.sh .ai/scripts/stop-sequence.sh .ai/scripts/check-feature-freshness.sh template/.ai/scripts/stop-doc-gate.sh.jinja template/.ai/scripts/stop-sequence.sh.jinja template/.ai/scripts/check-feature-freshness.sh.jinja`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash tests/smoke-test.sh`.
 - Next : aucune action immédiate.
+
+## 2026-07-06 — HANDOFF depuis workflow/codex-hooks-parity
+- `stop-doc-gate.sh` (+ miroir jinja) : header seul requalifié — le protocole `stop_hook_active` + `decision:block` est partagé par Claude et Codex (doc officielle vérifiée 2026-07-06) ; le gate est désormais branché opt-in côté Codex via `.codex/hooks.json` généré. Aucun changement de logique.
+- Validation portée par `workflow/codex-hooks-parity` (tests stop-hook inchangés dans la boucle unitaire).

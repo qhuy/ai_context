@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .ai/scripts/pre-turn-reminder.sh --format=text",
+            "statusMessage": "ai_context : reminder par tour",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .ai/scripts/stop-doc-gate.sh",
+            "statusMessage": "ai_context : gate fraicheur doc",
+            "timeout": 20
+          }
+        ]
+      }
+    ]
+  }
+}
