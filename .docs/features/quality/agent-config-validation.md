@@ -32,10 +32,10 @@ doc:
     observability: false
 progress:
   phase: done
-  step: "check-agent-config livré : script, test, doctor, smoke et shellcheck validés"
+  step: "hooks.json Codex validé strictement : timeout obligatoire, refs scripts, parité avec le bloc Claude"
   blockers: []
   resume_hint: "aucune action immédiate ; rouvrir seulement si une nouvelle config agent devient supportée"
-  updated: 2026-07-03
+  updated: 2026-07-06
 type: feature
 ---
 
@@ -81,10 +81,11 @@ Cette fiche couvre uniquement la validation des configs agent. Les règles de fo
 - `jq` est requis pour valider JSON Claude, comme les autres scripts du mesh.
 - Les configs Codex futures sont validées de façon prudente : scripts référencés, signaux de risque, absence de mutation.
 - Les warnings ne remplacent pas les fails structuraux.
+- Un fichier `.codex/*.json` portant un objet `hooks` (config hooks Codex native, contrat `workflow/codex-hooks-parity`) est validé avec la même rigueur que le bloc Claude : command non vide, timeout entier positif obligatoire (le défaut Codex de 600 s est jugé trop laxiste), scripts référencés existants, objet hooks non vide. Les autres fichiers `.codex/*` gardent la validation prudente historique.
 
 ## Comportement attendu
 
-`bash .ai/scripts/check-agent-config.sh` passe si aucune config agent n'existe, ou si les configs présentes sont lisibles et référencent des scripts existants. Il échoue sur JSON Claude invalide, hook Claude manquant, timeout invalide ou script référencé absent.
+`bash .ai/scripts/check-agent-config.sh` passe si aucune config agent n'existe, ou si les configs présentes sont lisibles et référencent des scripts existants. Il échoue sur JSON Claude invalide, hook Claude manquant, timeout invalide ou script référencé absent. Pour un `.codex/*.json` avec objet `hooks`, il échoue aussi sur hook sans timeout positif, command vide ou objet hooks vide.
 
 ## Contrats
 
@@ -115,3 +116,4 @@ Cette fiche couvre uniquement la validation des configs agent. Les règles de fo
 
 - 2026-05-12 : création après HANDOFF `workflow -> quality` inclus dans le plan validé.
 - 2026-07-03 : DONE documentaire. Le check non destructif est livré, branché dans doctor/smoke/CI, et le gap local shellcheck est résolu avec ShellCheck 0.11.0.
+- 2026-07-06 : durcissement du bloc `.codex` (chantier P1 hooks Codex natifs). Les `.codex/*.json` à objet `hooks` sont désormais validés en parité avec le bloc Claude (timeout obligatoire, refs scripts, hooks non vide) — préalable à la génération opt-in de `.codex/hooks.json` par le template (`workflow/codex-hooks-parity`). API hooks Codex vérifiée le 2026-07-06 sur la doc officielle : format hooks.json/config.toml repo-level `<repo>/.codex/`, timeout par hook en secondes (défaut 600 s si omis).

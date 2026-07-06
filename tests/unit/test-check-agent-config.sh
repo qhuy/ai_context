@@ -87,4 +87,58 @@ if ( cd "$repo_codex" && bash .ai/scripts/check-agent-config.sh ) >/dev/null 2>&
   exit 1
 fi
 
+# hooks.json Codex (objet hooks) : validation stricte, parité avec le bloc Claude
+repo_codex_json="$tmp/codex-json"
+make_repo "$repo_codex_json"
+mkdir -p "$repo_codex_json/.codex"
+touch "$repo_codex_json/.ai/scripts/pre-turn-reminder.sh"
+touch "$repo_codex_json/.ai/scripts/stop-doc-gate.sh"
+cat > "$repo_codex_json/.codex/hooks.json" <<'JSON'
+{
+  "hooks": {
+    "UserPromptSubmit": [{"hooks": [{"type": "command", "command": "bash .ai/scripts/pre-turn-reminder.sh --format=text", "timeout": 5}]}],
+    "Stop": [{"hooks": [{"type": "command", "command": "bash .ai/scripts/stop-doc-gate.sh", "timeout": 20}]}]
+  }
+}
+JSON
+if ! ( cd "$repo_codex_json" && bash .ai/scripts/check-agent-config.sh ) >/dev/null; then
+  echo "✗ check-agent-config doit accepter un hooks.json Codex valide (commands + timeouts + scripts existants)"
+  ( cd "$repo_codex_json" && bash .ai/scripts/check-agent-config.sh )
+  exit 1
+fi
+
+cat > "$repo_codex_json/.codex/hooks.json" <<'JSON'
+{
+  "hooks": {
+    "Stop": [{"hooks": [{"type": "command", "command": "bash .ai/scripts/stop-doc-gate.sh"}]}]
+  }
+}
+JSON
+if ( cd "$repo_codex_json" && bash .ai/scripts/check-agent-config.sh ) >/dev/null 2>&1; then
+  echo "✗ check-agent-config doit refuser un hook Codex sans timeout explicite"
+  exit 1
+fi
+
+cat > "$repo_codex_json/.codex/hooks.json" <<'JSON'
+{
+  "hooks": {
+    "Stop": [{"hooks": [{"type": "command", "command": "bash .ai/scripts/missing-gate.sh", "timeout": 20}]}]
+  }
+}
+JSON
+if ( cd "$repo_codex_json" && bash .ai/scripts/check-agent-config.sh ) >/dev/null 2>&1; then
+  echo "✗ check-agent-config doit refuser un hooks.json Codex référençant un script absent"
+  exit 1
+fi
+
+cat > "$repo_codex_json/.codex/hooks.json" <<'JSON'
+{
+  "hooks": {}
+}
+JSON
+if ( cd "$repo_codex_json" && bash .ai/scripts/check-agent-config.sh ) >/dev/null 2>&1; then
+  echo "✗ check-agent-config doit refuser un hooks.json Codex avec objet hooks vide"
+  exit 1
+fi
+
 echo "✅ test-check-agent-config PASS"

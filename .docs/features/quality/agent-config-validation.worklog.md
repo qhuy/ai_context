@@ -75,3 +75,10 @@ Source session : automation veille-techno
 - Décision : statut `done` ; le check non destructif reste limité aux configs présentes et n'installe aucun hook.
 - Validation : `bash .ai/scripts/check-agent-config.sh` PASS ; `bash tests/unit/test-check-agent-config.sh` PASS ; `bash .ai/scripts/doctor.sh` PASS ; `shellcheck -S error .ai/scripts/check-agent-config.sh tests/unit/test-check-agent-config.sh` PASS.
 - Next : aucune action immédiate.
+
+## 2026-07-06 — durcissement bloc .codex (P1 hooks Codex natifs, commit ①)
+- Intent : valider strictement les configs hooks Codex natives avant leur génération opt-in par le template (chantier P1 issu d'ANALYSE.md).
+- Fichiers/surfaces : `.ai/scripts/check-agent-config.sh` (+ miroir `template/.ai/scripts/check-agent-config.sh.jinja`, byte-identique), `tests/unit/test-check-agent-config.sh`.
+- Décision : un `.codex/*.json` portant un objet `hooks` est validé en parité avec le bloc Claude (command non vide, timeout entier positif OBLIGATOIRE — le défaut Codex 600 s est trop laxiste —, refs scripts existantes, hooks non vide) ; les autres `.codex/*` gardent la validation lenient historique (fichiers user-authored). Doc officielle Codex hooks vérifiée le 2026-07-06 (repo-level `<repo>/.codex/hooks.json` supporté, trust model).
+- Validation : `bash tests/unit/test-check-agent-config.sh` PASS (4 nouveaux cas : hooks.json valide accepté, timeout manquant refusé, script absent refusé, hooks vide refusé) ; `shellcheck -S error` PASS sur les deux fichiers modifiés.
+- Next : commit ② — génération opt-in `.codex/hooks.json` via copier.yml (`workflow/codex-hooks-parity`).

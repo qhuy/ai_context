@@ -4,7 +4,10 @@
 # Vérifie :
 #   - .claude/settings.json si présent : JSON valide, hooks attendus, commandes
 #     avec timeout et scripts référencés existants.
-#   - .codex/* si présent : références vers .ai/scripts/*.sh existantes et
+#   - .codex/*.json avec objet hooks (ex .codex/hooks.json) : même rigueur que
+#     le bloc Claude — command non vide, timeout entier positif obligatoire
+#     (défaut Codex 600s jugé trop laxiste), scripts référencés existants.
+#   - autres fichiers .codex/* : références vers .ai/scripts/*.sh existantes et
 #     signaux de risque documentés en warning.
 #
 # Usage : bash .ai/scripts/check-agent-config.sh
@@ -108,9 +111,27 @@ else
         ko "$file n'est pas un JSON valide"
         continue
       fi
-      while IFS= read -r command_text; do
-        [[ -n "$command_text" ]] && check_command_refs "$file" "$command_text"
-      done < <(jq -r '.. | objects | (.command? // .cmd? // empty)' "$file")
+      if jq -e '.hooks? | type == "object"' "$file" >/dev/null 2>&1; then
+        # Config hooks Codex (contrat codex-hooks-parity) : validation stricte.
+        if jq -e '.hooks | length > 0' "$file" >/dev/null 2>&1; then
+          ok "$file contient un objet hooks non vide"
+        else
+          ko "$file : objet hooks vide"
+        fi
+        while IFS=$'\t' read -r command_text timeout_value; do
+          [[ -z "$command_text" ]] && { ko "hook Codex command vide ($file)"; continue; }
+          if [[ -z "$timeout_value" || ! "$timeout_value" =~ ^[0-9]+$ || "$timeout_value" -le 0 ]]; then
+            ko "hook Codex sans timeout positif : $command_text"
+          else
+            ok "timeout hook Codex OK (${timeout_value}s)"
+          fi
+          check_command_refs "hook Codex" "$command_text"
+        done < <(jq -r '.. | objects | select(.type? == "command") | [.command // "", (.timeout // "")] | @tsv' "$file")
+      else
+        while IFS= read -r command_text; do
+          [[ -n "$command_text" ]] && check_command_refs "$file" "$command_text"
+        done < <(jq -r '.. | objects | (.command? // .cmd? // empty)' "$file")
+      fi
     else
       while IFS= read -r command_text; do
         [[ -n "$command_text" ]] && check_command_refs "$file" "$command_text"
