@@ -288,3 +288,6 @@
 
 ## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2)
 - `tests/smoke-test.sh` : étape [28e/28] shim Copilot opt-out — absent par défaut avec check-shims PASS (registre natif), présent et validé avec enable_copilot_shim=true. Validation portée par `core/agents-md-shim-canonical`.
+
+## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2 commit ③)
+- `tests/smoke-test.sh` bloc [28b] cursor : protocol-reminder.mdc asserté ABSENT (retiré), cursor+minimal → `.cursor/` absent. Validation portée par `core/agents-md-shim-canonical`.

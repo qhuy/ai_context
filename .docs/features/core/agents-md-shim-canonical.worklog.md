@@ -47,3 +47,9 @@
 - Décision : le mécanisme est générique par agent (piloté par le registre), pas un cas spécial copilot — si claude passe un jour `confirmed`, le même chemin s'ouvre pour CLAUDE.md sans retoucher check-shims.
 - Validation : test dynamique PASS, shellcheck PASS, check-shims auto PASS ; smoke complet au commit.
 - Next : commit ③ — retrait du shim Cursor redondant (protocol-reminder.mdc).
+
+## 2026-07-06 — retrait du shim Cursor redondant (P2, commit ③)
+- Intent : supprimer `protocol-reminder.mdc` (alwaysApply dupliquant les hard rules d'AGENTS.md, que Cursor lit nativement — registre confirmed) ; ne garder que les `.mdc` scopés par globs, seule valeur ajoutée Cursor.
+- Fichiers/surfaces : `template/.cursor/rules/protocol-reminder.mdc.jinja` supprimé ; `copier.yml` (`_exclude` : `.cursor` non généré si aucun scope back/front) ; `tests/smoke-test.sh` (bloc [28b] : protocol-reminder absent asserté, cursor+minimal → pas de `.cursor`) ; `check-dogfood-drift.sh` (sanity du profil fullstack-cursor) ; `docs/variables.md` ; `template/README_AI_CONTEXT.md.jinja` (ligne Cursor).
+- Validation : smoke complet + drift au commit.
+- Next : commit ④ — docs (README table Honnêteté runtime, MIGRATION.md, CHANGELOG).

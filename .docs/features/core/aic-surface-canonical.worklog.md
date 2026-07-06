@@ -180,3 +180,6 @@
 ## 2026-07-06 — couverture incidente (workflow/codex-hooks-parity)
 - `README_AI_CONTEXT.md` (+ miroir jinja) : section Runtime — ajout de la ligne Codex (hooks natifs `.codex/hooks.json` si `enable_codex_hooks=true`, trust de la couche projet) ; section Contrats avancés alignée. Aucun changement de la surface `aic`.
 - Validation portée par `workflow/codex-hooks-parity`.
+
+## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2 commit ③)
+- `template/README_AI_CONTEXT.md.jinja` : ligne Cursor (conditionnelle) réécrite — AGENTS.md natif + `.mdc` scopés par globs, protocol-reminder retiré. Aucun changement de la surface `aic`. Validation portée par `core/agents-md-shim-canonical`.

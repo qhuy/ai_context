@@ -92,7 +92,7 @@ bash .ai/scripts/aic.sh template-diff
 {% if vcs_provider == 'git' and adoption_mode != 'lite' %}- Git : hook `commit-msg` sous `.githooks/` (active via `git config core.hooksPath .githooks`). Bloque les `feat:` sans feature doc, même hors Claude.
 {% elif vcs_provider == 'tfvc' %}- TFVC : lancer `bash .ai/scripts/check-feature-freshness.sh --staged --strict` et `bash .ai/scripts/check-features.sh --no-write` avant check-in. `tf status` fournit les pending changes.
 {% endif %}
-{% if 'cursor' in agents %}- Cursor : rule auto-appliquée via `.cursor/rules/protocol-reminder.mdc`.
+{% if 'cursor' in agents %}- Cursor : lit `AGENTS.md` nativement ; règles scopées `.cursor/rules/*.mdc` (back/front) auto-attachées par globs si les scopes existent.
 {% endif %}- Contenu du reminder : `.ai/reminder.md` (éditable librement).
 
 ## Workflow quotidien

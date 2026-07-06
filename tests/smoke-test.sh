@@ -1818,13 +1818,19 @@ copier copy --defaults --trust \
   --data scope_profile=fullstack \
   --data agents='["claude","cursor"]' \
   "$SRC" "$combo_cursor" >/dev/null
-for mdc in protocol-reminder.mdc back.mdc front.mdc; do
+for mdc in back.mdc front.mdc; do
   if [[ ! -f "$combo_cursor/.cursor/rules/$mdc" ]]; then
     echo "  ✗ .cursor/rules/$mdc absent (cursor + fullstack)"
     rm -rf "$combo_cursor"
     exit 1
   fi
 done
+# protocol-reminder.mdc retiré : Cursor lit AGENTS.md nativement (registre confirmed)
+if [[ -f "$combo_cursor/.cursor/rules/protocol-reminder.mdc" ]]; then
+  echo "  ✗ protocol-reminder.mdc encore généré (shim retiré — AGENTS.md natif)"
+  rm -rf "$combo_cursor"
+  exit 1
+fi
 # back.mdc et front.mdc doivent avoir un frontmatter globs:
 for mdc in back.mdc front.mdc; do
   if ! grep -q "^globs:" "$combo_cursor/.cursor/rules/$mdc"; then
@@ -1848,27 +1854,20 @@ if [[ -d "$combo_nocursor/.cursor" ]]; then
 fi
 rm -rf "$combo_nocursor"
 
-# cursor + minimal (sans back/front) : protocol-reminder oui, back/front MDC non
+# cursor + minimal (sans back/front) : aucun .mdc applicable => pas de .cursor du tout
 combo_minimal="/tmp/ai-context-smoke-cursor-minimal-$$"
 copier copy --defaults --trust \
   --data project_name=smoke-cursor-minimal \
   --data scope_profile=minimal \
   --data agents='["claude","cursor"]' \
   "$SRC" "$combo_minimal" >/dev/null
-if [[ ! -f "$combo_minimal/.cursor/rules/protocol-reminder.mdc" ]]; then
-  echo "  ✗ protocol-reminder.mdc absent (cursor + minimal)"
+if [[ -d "$combo_minimal/.cursor" ]]; then
+  echo "  ✗ .cursor/ généré en minimal alors qu'aucun .mdc scopé ne s'applique (AGENTS.md natif suffit)"
   rm -rf "$combo_minimal"
   exit 1
 fi
-for mdc in back.mdc front.mdc; do
-  if [[ -f "$combo_minimal/.cursor/rules/$mdc" ]]; then
-    echo "  ✗ .cursor/rules/$mdc rendu alors que scope absent (minimal)"
-    rm -rf "$combo_minimal"
-    exit 1
-  fi
-done
 rm -rf "$combo_minimal"
-echo "  ✓ Cursor MDC scopés : protocol-reminder + back/front conditionnels au scope"
+echo "  ✓ Cursor : back/front.mdc scopés par globs uniquement ; .cursor absent sans scope applicable"
 
 echo
 echo "[28c/28] copier update : propagation v0.11.0 → HEAD préserve fichiers custom"

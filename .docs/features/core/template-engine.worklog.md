@@ -432,3 +432,6 @@
 
 ## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2)
 - `copier.yml` : nouvelle question `enable_copilot_shim` (bool, défaut false, `when: copilot in agents`) + `_exclude` de `.github/copilot-instructions.md` conditionné au flag. Validation portée par `core/agents-md-shim-canonical` (smoke [28e/28]).
+
+## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2 commit ③)
+- `copier.yml` (`_exclude` .cursor conditionné aux scopes back/front) et `docs/variables.md` (table des artefacts cursor/copilot). Validation portée par `core/agents-md-shim-canonical`.

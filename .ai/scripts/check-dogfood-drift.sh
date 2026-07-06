@@ -134,7 +134,6 @@ out_conditional="$out_root/fullstack-cursor"
 render_profile "dogfood-minimal" "$out" "minimal" "standard" "generic" '["claude","codex"]' "true"
 render_profile "fullstack-cursor" "$out_conditional" "fullstack" "strict" "fullstack-dotnet-react" '["claude","codex","cursor","gemini","copilot"]' "false" "enable_copilot_shim=true"
 check_profile_sanity "fullstack-cursor" "$out_conditional" \
-  ".cursor/rules/protocol-reminder.mdc" \
   ".cursor/rules/back.mdc" \
   ".cursor/rules/front.mdc" \
   "GEMINI.md" \

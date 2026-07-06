@@ -471,3 +471,6 @@
 
 ## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2)
 - `check-dogfood-drift.sh` (source-only) : `render_profile` accepte des `--data` supplémentaires ; le profil `fullstack-cursor` rend désormais avec `enable_copilot_shim=true` pour continuer d'exercer le rendu conditionnel du shim compat Copilot (opt-out par défaut). Validation portée par `core/agents-md-shim-canonical`.
+
+## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2 commit ③)
+- `check-dogfood-drift.sh` : le profil fullstack-cursor n'attend plus `.cursor/rules/protocol-reminder.mdc` (shim retiré). Validation portée par `core/agents-md-shim-canonical`.
