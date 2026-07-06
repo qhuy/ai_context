@@ -51,3 +51,6 @@ docs(product): clôturer le repositionnement README
 ## 2026-07-06 12:03 — auto
 - Fichiers modifiés :
   - README.md
+
+## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2)
+- `README.md` : table Honnêteté runtime — la ligne « Shim racine » devient « Entrée racine (AGENTS.md ou shim dédié) » avec le statut réel par agent ; conclusion mise à jour (Cursor/Copilot natifs, shims retirés/opt-in). Invariant respecté : les limites restent visibles (auto-worklog Non, claude pending). Validation portée par `core/agents-md-shim-canonical`.

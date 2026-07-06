@@ -212,3 +212,6 @@
 - Correction : la fixture du test copie désormais `.ai/scripts/_vcs.sh` requis par `doctor.sh` depuis `core/vcs-provider-abstraction`, et ajoute `type: feature` à la fiche temporaire pour rester conforme au profil OKF.
 - Validation : `bash tests/unit/test-read-only-checks-contract.sh` PASS ; `bash tests/unit/test-product-reports-read-only.sh` PASS ; `bash .ai/scripts/check-features.sh --no-write` PASS.
 - Next : aucune action immédiate.
+
+## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2)
+- `MIGRATION.md` : § « Shims Copilot / Cursor » ajouté — aucun changement du contrat read-only des checks. Validation portée par `core/agents-md-shim-canonical`.

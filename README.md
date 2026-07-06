@@ -181,11 +181,11 @@ Tous les agents ne reçoivent pas le même niveau d'automatisation.
 
 | Capacité | Claude Code | Codex | Cursor | Gemini | Copilot |
 |---|---|---|---|---|---|
-| Shim racine vers `.ai/index.md` | Oui | Oui | Oui | Oui | Oui |
+| Entrée racine (AGENTS.md ou shim dédié) | `CLAUDE.md` (@AGENTS.md) | `AGENTS.md` natif | `AGENTS.md` natif | `GEMINI.md` (@AGENTS.md) | `AGENTS.md` natif (coding agent) ; shim opt-in pour Chat/review |
 | Git hooks et checks au commit | Oui | Oui | Oui | Oui | Oui |
 | Skills `aic-*` locaux | Oui | Oui, si `codex` sélectionné | Non | Non | Non |
 | Injection automatique au début du tour | Oui | Opt-in (`enable_codex_hooks`) | Non | Non | Non |
-| Injection feature avant édition | Oui | Manuel via `aic.sh document-feature` | Partiel via MDC scopé | Non | Non |
+| Injection feature avant édition | Oui | Manuel via `aic.sh document-feature` | Partiel via `.mdc` scopés (back/front) | Non | Non |
 | Gate de fraîcheur doc en fin de tour | Oui | Opt-in (`enable_codex_hooks`) | Non | Non | Non |
 | Auto-worklog en fin de tour | Oui | Non | Non | Non | Non |
 | Auto-progression `spec -> implement` au commit | Oui | Oui | Oui | Oui | Oui |
@@ -197,7 +197,11 @@ Conclusion pragmatique :
   tour et gate de fraîcheur en fin de turn via `.codex/hooks.json` (hooks natifs,
   trust de la couche projet demandé au premier lancement). L'auto-worklog reste
   Claude-only. Sans hooks : skills locaux, `.ai/index.md` et `aic.sh`.
-- Les autres agents bénéficient surtout des shims, règles, hooks git et checks.
+- Cursor et Copilot lisent `AGENTS.md` nativement : leurs shims dédiés ne sont
+  plus générés par défaut (registre `.ai/native-context-support.tsv`) ; Cursor
+  garde les `.mdc` scopés par globs, Copilot un shim compat opt-in
+  (`enable_copilot_shim`) pour Chat/review IDE.
+- Tous les agents bénéficient des règles, hooks git et checks.
 
 ## Contrats multi-agent
 

@@ -107,3 +107,6 @@
 - Validation : `bash tests/unit/test-okf-type.sh` ; `bash .ai/scripts/aic.sh migrate okf-type` ; `bash .ai/scripts/check-dogfood-drift.sh` ; `bash .ai/scripts/check-feature-docs.sh --strict core/okf-strict-profile` ; `bash tests/smoke-test.sh` PASS dans le tour courant.
 - Note : `aic migrate okf-type` signale encore `.docs/features/workflow/project-overlay-onboarding.md` sans `type`; c'est accepté par Phase 0 (warn-only) et routé comme nettoyage metadata workflow, pas comme blocage core.
 - Next : aucune action core immédiate ; rouvrir une fiche dédiée pour l'enforce vN+1, un export OKF ou un consommateur réel.
+
+## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2)
+- `MIGRATION.md` : ajout d'un § « Shims Copilot / Cursor » avant le § OKF — aucun changement du contrat OKF. Validation portée par `core/agents-md-shim-canonical`.

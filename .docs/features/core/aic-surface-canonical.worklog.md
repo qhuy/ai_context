@@ -183,3 +183,6 @@
 
 ## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2 commit ③)
 - `template/README_AI_CONTEXT.md.jinja` : ligne Cursor (conditionnelle) réécrite — AGENTS.md natif + `.mdc` scopés par globs, protocol-reminder retiré. Aucun changement de la surface `aic`. Validation portée par `core/agents-md-shim-canonical`.
+
+## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2 commit ④)
+- `MIGRATION.md` : nouveau § « Shims Copilot / Cursor — élagage AGENTS.md natif » (conséquences copier update, enable_copilot_shim, rollback). Aucun changement de la surface `aic`. Validation portée par `core/agents-md-shim-canonical`.

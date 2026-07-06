@@ -14,6 +14,29 @@ Guide pour adopter le template sur un projet déjà mature (code, docs, éventue
 
 ---
 
+## Shims Copilot / Cursor — élagage AGENTS.md natif
+
+Copilot (coding agent) et Cursor lisent `AGENTS.md` nativement (registre
+`.ai/native-context-support.tsv`, statut `confirmed` avec evidence officielle).
+Conséquences au prochain `copier update` :
+
+- `.github/copilot-instructions.md` **n'est plus généré par défaut** et sera
+  supprimé par l'update. Pour le conserver (Copilot Chat/review IDE lisent
+  encore ce fichier) : réponds `true` à `enable_copilot_shim` pendant l'update,
+  ou `copier update --data enable_copilot_shim=true`.
+- `.cursor/rules/protocol-reminder.mdc` est **retiré** (il dupliquait les hard
+  rules d'`AGENTS.md`). Les `.mdc` scopés par globs (`back.mdc`, `front.mdc`)
+  restent générés si les scopes existent. Si tu avais personnalisé
+  protocol-reminder.mdc, déplace tes règles vers `.cursor/rules/` project-owned
+  ou `.ai/project/`.
+- `CLAUDE.md` et `GEMINI.md` sont **inchangés** : la lecture native n'est pas
+  confirmée pour ces agents (`claude` reste `pending` au registre).
+
+Rollback : `git revert` du commit d'update, ou regénérer avec
+`enable_copilot_shim=true`.
+
+---
+
 ## Profil strict OKF — champ `type`
 
 Les fiches feature deviennent des concepts Open Knowledge Format valides : un champ `type` (`feature | contract | workflow | reference`) est ajouté au frontmatter.

@@ -53,3 +53,9 @@
 - Fichiers/surfaces : `template/.cursor/rules/protocol-reminder.mdc.jinja` supprimé ; `copier.yml` (`_exclude` : `.cursor` non généré si aucun scope back/front) ; `tests/smoke-test.sh` (bloc [28b] : protocol-reminder absent asserté, cursor+minimal → pas de `.cursor`) ; `check-dogfood-drift.sh` (sanity du profil fullstack-cursor) ; `docs/variables.md` ; `template/README_AI_CONTEXT.md.jinja` (ligne Cursor).
 - Validation : smoke complet + drift au commit.
 - Next : commit ④ — docs (README table Honnêteté runtime, MIGRATION.md, CHANGELOG).
+
+## 2026-07-06 — docs alignées, chantier P2 shims clos (commit ④)
+- Intent : refléter l'élagage dans la doc utilisateur et donner le chemin de migration.
+- Fichiers/surfaces : `README.md` (table Honnêteté runtime — ligne « Entrée racine » par agent, conclusion), `MIGRATION.md` (§ « Shims Copilot / Cursor — élagage AGENTS.md natif » : conséquences du copier update, flag compat, rollback), `CHANGELOG.md`.
+- Honnêteté préservée : CLAUDE.md/GEMINI.md explicitement inchangés (claude pending au registre) ; la nuance Copilot Chat/review est documentée partout où le flag apparaît.
+- Validation : smoke complet + check-shims + check-features + drift au commit.
