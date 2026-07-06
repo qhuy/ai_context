@@ -141,4 +141,40 @@ if ( cd "$repo_codex_json" && bash .ai/scripts/check-agent-config.sh ) >/dev/nul
   exit 1
 fi
 
+cat > "$repo_codex_json/.codex/hooks.json" <<'JSON'
+{
+  "hooks": {
+    "Stop": [{"hooks": [{"command": "bash .ai/scripts/stop-doc-gate.sh", "timeout": 20}]}]
+  }
+}
+JSON
+if ( cd "$repo_codex_json" && bash .ai/scripts/check-agent-config.sh ) >/dev/null 2>&1; then
+  echo "✗ check-agent-config doit refuser une entrée de hook sans type \"command\" (Codex ne l'exécutera pas)"
+  exit 1
+fi
+
+cat > "$repo_codex_json/.codex/hooks.json" <<'JSON'
+{
+  "hooks": {
+    "Stop": []
+  }
+}
+JSON
+if ( cd "$repo_codex_json" && bash .ai/scripts/check-agent-config.sh ) >/dev/null 2>&1; then
+  echo "✗ check-agent-config doit refuser un événement mappé sur un tableau vide"
+  exit 1
+fi
+
+cat > "$repo_codex_json/.codex/hooks.json" <<'JSON'
+{
+  "hooks": {
+    "UserPromptSubmitted": [{"hooks": [{"type": "command", "command": "bash .ai/scripts/pre-turn-reminder.sh --format=text", "timeout": 5}]}]
+  }
+}
+JSON
+if ! ( cd "$repo_codex_json" && bash .ai/scripts/check-agent-config.sh ) >/dev/null 2>&1; then
+  echo "✗ check-agent-config doit accepter (warn seulement) un événement hors surface documentée"
+  exit 1
+fi
+
 echo "✅ test-check-agent-config PASS"

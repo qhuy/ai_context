@@ -118,6 +118,28 @@ else
         else
           ko "$file : objet hooks vide"
         fi
+        # Un événement vide ou une entrée sans type "command" = hook
+        # silencieusement mort côté Codex : fail plutôt que garantie fantôme.
+        while IFS= read -r ev; do
+          [[ -z "$ev" ]] && continue
+          ko "$file : événement $ev mappé sur un tableau vide"
+        done < <(jq -r '.hooks | to_entries[] | select((.value | type == "array") and (.value | length == 0)) | .key' "$file")
+        dead_groups="$(jq -r '[.hooks[]?[]? | select(((.hooks // []) | length) == 0 and ((.type? // "") != "command"))] | length' "$file")"
+        if [[ "$dead_groups" =~ ^[0-9]+$ && "$dead_groups" -gt 0 ]]; then
+          ko "$file : $dead_groups groupe(s) de hooks sans entrée exécutable"
+        fi
+        bad_entries="$(jq -r '[.hooks[]?[]? | (.hooks // [])[] | select((.type? // "") != "command")] | length' "$file")"
+        if [[ "$bad_entries" =~ ^[0-9]+$ && "$bad_entries" -gt 0 ]]; then
+          ko "$file : $bad_entries entrée(s) de hook sans type \"command\""
+        fi
+        known_events="SessionStart SubagentStart PreToolUse PermissionRequest PostToolUse PreCompact PostCompact UserPromptSubmit SubagentStop Stop"
+        while IFS= read -r ev; do
+          [[ -z "$ev" ]] && continue
+          case " $known_events " in
+            *" $ev "*) : ;;
+            *) warn "$file : événement hors surface Codex documentée (2026-07) : $ev" ;;
+          esac
+        done < <(jq -r '.hooks | keys[]' "$file")
         while IFS=$'\t' read -r command_text timeout_value; do
           [[ -z "$command_text" ]] && { ko "hook Codex command vide ($file)"; continue; }
           if [[ -z "$timeout_value" || ! "$timeout_value" =~ ^[0-9]+$ || "$timeout_value" -le 0 ]]; then

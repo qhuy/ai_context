@@ -82,3 +82,9 @@ Source session : automation veille-techno
 - Décision : un `.codex/*.json` portant un objet `hooks` est validé en parité avec le bloc Claude (command non vide, timeout entier positif OBLIGATOIRE — le défaut Codex 600 s est trop laxiste —, refs scripts existantes, hooks non vide) ; les autres `.codex/*` gardent la validation lenient historique (fichiers user-authored). Doc officielle Codex hooks vérifiée le 2026-07-06 (repo-level `<repo>/.codex/hooks.json` supporté, trust model).
 - Validation : `bash tests/unit/test-check-agent-config.sh` PASS (4 nouveaux cas : hooks.json valide accepté, timeout manquant refusé, script absent refusé, hooks vide refusé) ; `shellcheck -S error` PASS sur les deux fichiers modifiés.
 - Next : commit ② — génération opt-in `.codex/hooks.json` via copier.yml (`workflow/codex-hooks-parity`).
+
+## 2026-07-06 — durcissement post-review (P1, finding mineur confirmé)
+- Intent : fermer les faux négatifs du bloc strict hooks.json détectés en review adversariale — une config morte côté Codex passait le check (garantie fantôme).
+- Fichiers/surfaces : `.ai/scripts/check-agent-config.sh` (+ miroir jinja), `tests/unit/test-check-agent-config.sh`.
+- Nouvelles règles : ko si un événement mappe sur un tableau vide, si un groupe n'a aucune entrée exécutable, ou si une entrée de hook n'a pas `type:"command"` ; warn (non bloquant, API mouvante) si un nom d'événement sort de la surface Codex documentée 2026-07.
+- Validation : `bash tests/unit/test-check-agent-config.sh` PASS (3 nouveaux cas ko + 1 cas warn-only) ; `shellcheck -S error` PASS ; auto-exécution sur le repo PASS.
