@@ -21,3 +21,9 @@
 - Preuves : parité Claude/Codex vérifiée par diff sur les 4 skills ; `check-dogfood-drift` PASS (rendu template == racine).
 - Validation : smoke complet au commit.
 - Next : commit ④ — CHANGELOG + clôture avec preuve.
+
+## 2026-07-06 — done (commit ④)
+- Intent : clôturer avec preuve et tracer au CHANGELOG.
+- Validation (exécutée ce jour) : `check-shims` PASS (AGENTS.md 15 lignes, auto-suffisant, Pack A 87 mots) ; `test-agents-md-self-sufficient` PASS ; `check-feature-docs --strict workflow/evidence-discipline` PASS ; `check-features` PASS ; `check-dogfood-drift` PASS ; smoke complet PASS ×3 (un par commit) ; `measure-context-size` : reminder statique 560 chars.
+- Limite assumée (documentée au contrat) : discipline outillée, pas garantie machine — aucun gate de véracité possible.
+- Next : phase 2 éventuelle — exiger l'evidence des analyses dans QUALITY_GATE.md avant review.

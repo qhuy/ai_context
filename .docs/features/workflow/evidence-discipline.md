@@ -2,7 +2,7 @@
 id: evidence-discipline
 scope: workflow
 title: Discipline de preuve — aucune affirmation sans source ni étiquette
-status: active
+status: done
 type: contract
 description: "Éliminer les suppositions des sorties d'agent : toute affirmation de fonctionnement est prouvée (code lu, commande exécutée, doc citée) ou explicitement étiquetée Hypothèse / À vérifier."
 depends_on:
@@ -47,10 +47,10 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: implement
-  step: "contrat evidence-discipline créé ; reste hard rule (reminder + AGENTS.md) et wiring des 4 skills d'analyse"
+  phase: done
+  step: "discipline de preuve livrée : contrat + hard rule Pack A (FR/EN) + wiring des 4 skills d'analyse"
   blockers: []
-  resume_hint: "livrer la hard rule FR/EN dans reminder + AGENTS.md (15 lignes max), puis les NON-NEGOTIABLE des skills aic-review/diagnose/pilot/frame, puis clôturer avec preuve"
+  resume_hint: "aucune action immédiate ; phase 2 éventuelle = evidence des analyses dans QUALITY_GATE.md"
   updated: 2026-07-06
 ---
 
@@ -145,5 +145,7 @@ explicites. Un agent sans injection par tour (Gemini) reçoit la règle via
 - `workflow/intentional-skills` : possède les skills d'analyse dont les règles non négociables sont étendues.
 
 ## Historique / décisions
+
+- 2026-07-06 (clôture) : livré en 4 commits — contrat, hard rule Pack A (AGENTS.md maintenu à 15 lignes par condensation, reminder 560 chars mesurés), wiring des 4 skills (16 fichiers, parité Claude/Codex vérifiée par diff), docs. Preuves : check-shims PASS, test-agents-md-self-sufficient PASS, check-feature-docs --strict PASS, check-dogfood-drift PASS, smoke complet PASS (étapes [3/28] et i18n [23/28] incluses), measure-context-size exécuté.
 
 - 2026-07-06 : création après cadrage `aic-frame` (niveau high, demande utilisateur « primordiale » : éliminer les suppositions). Décisions clés : hard rule dans le Pack A plutôt que posture on-demand ; AGENTS.md condensé plutôt que limite montée ; trois étiquettes orientées action ; enforcement honnêtement décrit comme comportemental + structurel, jamais mécanique.
