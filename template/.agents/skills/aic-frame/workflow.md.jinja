@@ -206,6 +206,7 @@ Prochaine action minimale :
 
 ## NON-NEGOTIABLE RULES
 
+- Discipline de preuve (`.ai/workflows/evidence-discipline.md`) : toute affirmation de fonctionnement est prouvée (source citée) ou étiquetée Hypothèse / À vérifier ; jamais d'affirmation nue.
 - Pas de code dans ce skill.
 - Pas de liste neutre : prendre position.
 - Pas de création de fiche sans confirmation humaine explicite.

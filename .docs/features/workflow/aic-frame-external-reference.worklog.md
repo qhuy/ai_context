@@ -75,3 +75,6 @@
 - `aic-frame` ajoute `route=pilot` pour les audits, suivis transverses et demandes trop larges pour une intention unique.
 - Les templates de frames acceptent désormais `pilot` comme décision de routage.
 - Reclassification freshness `(a')` : `aic-frame` et les templates `.docs/frames` restent propriétaires exacts de `workflow/aic-frame-external-reference`; `workflow/aic-pilot` référence ces surfaces en `touches_shared`.
+
+## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
+- workflow.md des skills d'analyse (aic-review/diagnose/pilot/frame, Claude+Codex+templates) : une règle non négociable « discipline de preuve » ajoutée — toute affirmation prouvée (source citée) ou étiquetée Hypothèse / À vérifier. Aucun changement du contrat propre de cette fiche. Validation portée par `workflow/evidence-discipline`.

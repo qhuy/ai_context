@@ -14,3 +14,10 @@
 - Mesures (preuves) : reminder statique = 560 chars (~140-186 tokens) après ajout ; AGENTS.md = 15 lignes ; Pack A index = 87 mots (inchangé) — `measure-context-size.sh` et `check-shims` exécutés ce jour.
 - Validation : `check-shims` PASS ; `test-agents-md-self-sufficient` PASS ; `check-dogfood-drift` PASS ; smoke complet au commit.
 - Next : commit ③ — wiring NON-NEGOTIABLE des 4 skills d'analyse.
+
+## 2026-07-06 — wiring des skills d'analyse (commit ③)
+- Intent : enforcement structurel — les quatre skills qui produisent des analyses portent la règle dans leurs règles non négociables.
+- Fichiers/surfaces : `workflow.md` de `aic-review`, `aic-diagnose`, `aic-pilot`, `aic-frame` — 16 fichiers (Claude + Codex, racine + template), ligne identique insérée (aucune variable jinja dedans ; les variantes docs_root des templates sont intactes).
+- Preuves : parité Claude/Codex vérifiée par diff sur les 4 skills ; `check-dogfood-drift` PASS (rendu template == racine).
+- Validation : smoke complet au commit.
+- Next : commit ④ — CHANGELOG + clôture avec preuve.

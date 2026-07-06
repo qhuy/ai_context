@@ -190,3 +190,6 @@ feat(core): installer les skills Codex par défaut
 
 ## 2026-06-29 — couverture incidente (fix .session-docs.log dans exclusions drift)
 - Surface partagee touchee (check-dogfood-drift.sh). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)
+
+## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
+- workflow.md des skills d'analyse (aic-review/diagnose/pilot/frame, Claude+Codex+templates) : une règle non négociable « discipline de preuve » ajoutée — toute affirmation prouvée (source citée) ou étiquetée Hypothèse / À vérifier. Aucun changement du contrat propre de cette fiche. Validation portée par `workflow/evidence-discipline`.

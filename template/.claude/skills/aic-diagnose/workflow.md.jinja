@@ -81,6 +81,7 @@ Prochaine action minimale :
 
 ## NON-NEGOTIABLE RULES
 
+- Discipline de preuve (`.ai/workflows/evidence-discipline.md`) : toute affirmation de fonctionnement est prouvée (source citée) ou étiquetée Hypothèse / À vérifier ; jamais d'affirmation nue.
 - Un seul bottleneck principal.
 - Pas de liste neutre sans recommandation.
 - Pas de diagnostic sans prochaine action minimale.

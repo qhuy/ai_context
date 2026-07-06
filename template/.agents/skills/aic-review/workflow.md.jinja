@@ -35,3 +35,5 @@ une revue applicative métier quand le delta touche du code produit.
 Utiliser le format défini dans `.ai/review/application-review.md`.
 
 Lecture seule. Ne pas corriger dans ce skill.
+
+Discipline de preuve (`.ai/workflows/evidence-discipline.md`) : chaque risque, constat ou fonctionnement affirmé est prouvé (source citée) ou étiqueté Hypothèse / À vérifier ; jamais d'affirmation nue.

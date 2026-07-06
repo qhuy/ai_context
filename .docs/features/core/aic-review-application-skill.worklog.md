@@ -54,3 +54,6 @@
 - Décision : `aic-review` charge `.ai/workflows/feature-audit.md` seulement pour router les cas rétro-doc/orphelins/resync ; le skill reste lecture seule et n'exécute pas `--apply`.
 - Validation : `bash .ai/scripts/check-feature-docs.sh --strict core/aic-review-application-skill`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-features.sh --no-write`; `bash .ai/scripts/check-feature-freshness.sh --worktree --strict`.
 - Next : revenir au scope `workflow/feature-audit` dans un tour séparé pour lever le blocker et clôturer la fiche.
+
+## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
+- workflow.md des skills d'analyse (aic-review/diagnose/pilot/frame, Claude+Codex+templates) : une règle non négociable « discipline de preuve » ajoutée — toute affirmation prouvée (source citée) ou étiquetée Hypothèse / À vérifier. Aucun changement du contrat propre de cette fiche. Validation portée par `workflow/evidence-discipline`.

@@ -180,3 +180,6 @@
 ## 2026-07-06 — couverture incidente (workflow/codex-hooks-parity)
 - `README_AI_CONTEXT.md` (+ miroir jinja) : section Runtime — ajout de la ligne Codex (hooks natifs `.codex/hooks.json` si `enable_codex_hooks=true`, trust de la couche projet) ; section Contrats avancés alignée. Aucun changement de la surface `aic`.
 - Validation portée par `workflow/codex-hooks-parity`.
+
+## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
+- workflow.md des skills d'analyse (aic-review/diagnose/pilot/frame, Claude+Codex+templates) : une règle non négociable « discipline de preuve » ajoutée — toute affirmation prouvée (source citée) ou étiquetée Hypothèse / À vérifier. Aucun changement du contrat propre de cette fiche. Validation portée par `workflow/evidence-discipline`.
