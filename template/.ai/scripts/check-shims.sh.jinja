@@ -1,5 +1,5 @@
 #!/bin/bash
-# check-shims.sh — Guard anti-dérive AI context (ai_context).
+# check-shims.sh — Guard anti-dérive AI context ({{ project_name }}).
 #
 # Vérifie :
 # 1. L'index .ai/index.md existe.
@@ -163,10 +163,9 @@ CANONICAL=(
   ".ai/reminder.md"
   ".ai/context-ignore.md"
   ".ai/quality/QUALITY_GATE.md"
-  ".ai/rules/core.md"
-  ".ai/rules/quality.md"
-  ".ai/rules/workflow.md"
-  ".ai/rules/product.md"
+{%- for scope in scopes %}
+  ".ai/rules/{{ scope }}.md"
+{%- endfor %}
 )
 
 build_shims

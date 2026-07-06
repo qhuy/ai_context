@@ -60,3 +60,6 @@
 - Fichiers modifiés :
   - copier.yml
   - tests/smoke-test.sh
+
+## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, fix post-review)
+- `tests/smoke-test.sh` : étape [28f/28] anti dé-templatisation ajoutée. Aucun changement du contrat provider VCS. Validation portée par `core/agents-md-shim-canonical`.

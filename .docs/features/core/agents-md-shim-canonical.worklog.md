@@ -64,3 +64,8 @@
 - Fichiers modifiés :
   - .ai/scripts/check-shims.sh
   - tests/unit/test-check-shims-dynamic-agents.sh
+
+## 2026-07-06 — fix post-review BLOQUANT : miroir check-shims dé-templatisé
+- Constat (review adversariale, reproduit empiriquement par le reviewer) : le commit du shim Copilot opt-out avait recopié le runtime PAR-DESSUS le miroir jinja — perte de `{{ project_name }}` et de la boucle `{%- for scope in scopes %}` du CANONICAL. Conséquence : un consommateur backend/fullstack perdait la vérification de ses règles de scope (backend + `rm .ai/rules/back.md` → check-shims PASS à tort). Aucun test ne l'attrapait (le drift ne rend que le profil minimal, dont les scopes coïncidaient avec les valeurs codées en dur).
+- Fix : miroir restauré depuis main puis ajouts `native_confirmed` portés manuellement (aucun jinja dans les ajouts) ; parité vérifiée par `check-dogfood-drift` (rendu minimal == runtime). Régression smoke [28f/28] ajoutée : rendu backend → project_name attendu dans le script + suppression de back.md → FAIL exigé.
+- Leçon de discipline (miroirs) : ne JAMAIS cp runtime → template sans avoir prouvé l'identité préalable ; le garde « diff avant copie » avait échoué silencieusement dans une chaîne `;`.

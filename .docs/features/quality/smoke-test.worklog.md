@@ -295,3 +295,6 @@
 ## 2026-07-06 15:08 — auto
 - Fichiers modifiés :
   - tests/smoke-test.sh
+
+## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, fix post-review)
+- `tests/smoke-test.sh` : étape [28f/28] anti dé-templatisation — le check-shims rendu doit porter le project_name du consommateur et suivre les scopes du profil (backend sans back.md → FAIL). Validation portée par `core/agents-md-shim-canonical`.

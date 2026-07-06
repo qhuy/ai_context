@@ -2063,6 +2063,29 @@ rm -rf "$combo_copilot_shim"
 echo "  ✓ shim Copilot : absent par défaut (AGENTS.md natif), généré et validé avec enable_copilot_shim=true"
 
 echo
+echo "[28f/28] check-shims templatisé : les scopes du profil sont bien vérifiés (anti dé-templatisation)"
+# Régression : le miroir jinja de check-shims doit garder la boucle scopes —
+# un rendu backend dont on supprime une règle de scope doit FAIL.
+combo_scopes="/tmp/ai-context-smoke-scopes-$$"
+copier copy --defaults --trust \
+  --data project_name=smoke-scopes \
+  --data scope_profile=backend \
+  "$SRC" "$combo_scopes" >/dev/null
+if ! grep -q "smoke-scopes" "$combo_scopes/.ai/scripts/check-shims.sh"; then
+  echo "  ✗ check-shims rendu sans le project_name du consommateur (miroir dé-templatisé ?)"
+  rm -rf "$combo_scopes"
+  exit 1
+fi
+rm "$combo_scopes/.ai/rules/back.md"
+if ( cd "$combo_scopes" && bash .ai/scripts/check-shims.sh ) >/dev/null 2>&1; then
+  echo "  ✗ check-shims PASS alors que .ai/rules/back.md est supprimé (CANONICAL ne suit pas les scopes du profil)"
+  rm -rf "$combo_scopes"
+  exit 1
+fi
+rm -rf "$combo_scopes"
+echo "  ✓ check-shims suit les scopes du profil rendu (backend sans back.md → FAIL)"
+
+echo
 echo "[bonus] big-mesh : budget tokens + focus graph-aware"
 # Génère 30 features back + 30 features front + dépendances pour stresser
 # l'inventaire. Borne haute pragmatique : 30k chars
