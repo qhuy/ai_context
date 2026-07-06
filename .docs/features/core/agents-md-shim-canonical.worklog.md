@@ -40,3 +40,6 @@
 - Décision : Doc Impact Decision C — fiche feature mise à jour, aucun changement runtime dans ce commit de clôture.
 - Risques : pas de breaking change, pas de migration de données, pas d'impact sécurité/auth/tenancy ; compatibilité arrière inchangée.
 - Next : aucune action immédiate ; rouvrir seulement si le modèle de shims ou le contrat `.copier-answers.yml` change.
+
+## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
+- `AGENTS.md` (+ `template/AGENTS.md.jinja`) : hard rule « Aucune supposition : prouver (code lu, commande, doc) ou marquer Hypothèse » ; « Shim lean » condensé en 1 ligne — AGENTS.md reste à 15 lignes (limite MAX_LINES), auto-suffisance préservée (test PASS). Validation portée par `workflow/evidence-discipline`.

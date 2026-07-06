@@ -468,3 +468,6 @@
 - Fichiers modifiés :
   - .ai/scripts/check-agent-config.sh
   - .ai/workflows/codex-hooks-parity.md
+
+## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
+- `.ai/reminder.md`, `AGENTS.md` (+ miroirs jinja) : hard rule « aucune supposition » ajoutée, paragraphe Shim lean condensé. Parité runtime/template vérifiée (check-dogfood-drift PASS). Validation portée par `workflow/evidence-discipline`.

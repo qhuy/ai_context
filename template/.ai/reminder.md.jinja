@@ -6,6 +6,7 @@
 - Every feature MUST exist under `{{ docs_root }}/features/<scope>/<id>.md` before `feat:`.
 - Before DONE: evidence (build/tests) + feature up-to-date + Conventional Commits (en) — BLOCKING.
 - No full diffs. No `grep -r`.
+- No assumptions: any claimed behavior is proven (code read, command run, doc cited) or flagged "Hypothesis — to verify".
 {%- else -%}
 🚨 {{ project_name }} — hard rules
 
@@ -14,4 +15,5 @@
 - Toute feature DOIT exister sous `{{ docs_root }}/features/<scope>/<id>.md` avant `feat:`.
 - Avant DONE : evidence (build/tests) + feature à jour + Conventional Commits (fr) — BLOQUANT.
 - Pas de full diffs. Pas de `grep -r`.
+- Aucune supposition : tout fonctionnement affirmé est prouvé (code lu, commande exécutée, doc citée) ou marqué « Hypothèse — à vérifier ».
 {%- endif %}

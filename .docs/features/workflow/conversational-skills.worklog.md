@@ -96,3 +96,6 @@
 - Décision : statut `done`; l'override `/aic` reste explicite, l'auto-progression normale reste invisible puis rapportée.
 - Validation : relecture des 4 surfaces `/aic`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/conversational-skills`; `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
 - Next : aucune action immédiate.
+
+## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
+- `template/AGENTS.md.jinja` : hard rule anti-supposition + condensation « Shim lean » (15 lignes préservées). Aucun changement des skills conversationnels. Validation portée par `workflow/evidence-discipline`.
