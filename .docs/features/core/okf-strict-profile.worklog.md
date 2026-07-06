@@ -110,3 +110,7 @@
 
 ## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2)
 - `MIGRATION.md` : ajout d'un § « Shims Copilot / Cursor » avant le § OKF — aucun changement du contrat OKF. Validation portée par `core/agents-md-shim-canonical`.
+
+## 2026-07-06 15:08 — auto
+- Fichiers modifiés :
+  - MIGRATION.md

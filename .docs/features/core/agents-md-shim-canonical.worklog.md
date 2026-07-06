@@ -59,3 +59,8 @@
 - Fichiers/surfaces : `README.md` (table Honnêteté runtime — ligne « Entrée racine » par agent, conclusion), `MIGRATION.md` (§ « Shims Copilot / Cursor — élagage AGENTS.md natif » : conséquences du copier update, flag compat, rollback), `CHANGELOG.md`.
 - Honnêteté préservée : CLAUDE.md/GEMINI.md explicitement inchangés (claude pending au registre) ; la nuance Copilot Chat/review est documentée partout où le flag apparaît.
 - Validation : smoke complet + check-shims + check-features + drift au commit.
+
+## 2026-07-06 15:08 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-shims.sh
+  - tests/unit/test-check-shims-dynamic-agents.sh

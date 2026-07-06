@@ -215,3 +215,7 @@
 
 ## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2)
 - `MIGRATION.md` : § « Shims Copilot / Cursor » ajouté — aucun changement du contrat read-only des checks. Validation portée par `core/agents-md-shim-canonical`.
+
+## 2026-07-06 15:08 — auto
+- Fichiers modifiés :
+  - MIGRATION.md

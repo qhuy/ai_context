@@ -55,3 +55,8 @@
 
 ## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2 commit ③)
 - `copier.yml`, `tests/smoke-test.sh` (bloc [28b] cursor), `template/README_AI_CONTEXT.md.jinja` (ligne Cursor conditionnelle — le rendu minimal, sans cursor, est inchangé). Aucun changement du contrat provider VCS.
+
+## 2026-07-06 15:08 — auto
+- Fichiers modifiés :
+  - copier.yml
+  - tests/smoke-test.sh

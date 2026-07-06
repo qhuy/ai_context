@@ -474,3 +474,8 @@
 
 ## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2 commit ③)
 - `check-dogfood-drift.sh` : le profil fullstack-cursor n'attend plus `.cursor/rules/protocol-reminder.mdc` (shim retiré). Validation portée par `core/agents-md-shim-canonical`.
+
+## 2026-07-06 15:08 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-dogfood-drift.sh
+  - .ai/scripts/check-shims.sh

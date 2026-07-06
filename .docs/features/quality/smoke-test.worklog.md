@@ -291,3 +291,7 @@
 
 ## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2 commit ③)
 - `tests/smoke-test.sh` bloc [28b] cursor : protocol-reminder.mdc asserté ABSENT (retiré), cursor+minimal → `.cursor/` absent. Validation portée par `core/agents-md-shim-canonical`.
+
+## 2026-07-06 15:08 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh

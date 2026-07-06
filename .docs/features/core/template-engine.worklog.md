@@ -435,3 +435,7 @@
 
 ## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2 commit ③)
 - `copier.yml` (`_exclude` .cursor conditionné aux scopes back/front) et `docs/variables.md` (table des artefacts cursor/copilot). Validation portée par `core/agents-md-shim-canonical`.
+
+## 2026-07-06 15:08 — auto
+- Fichiers modifiés :
+  - copier.yml
