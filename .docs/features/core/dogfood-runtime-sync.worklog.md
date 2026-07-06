@@ -468,3 +468,6 @@
 - Fichiers modifiés :
   - .ai/scripts/check-agent-config.sh
   - .ai/workflows/codex-hooks-parity.md
+
+## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2)
+- `check-dogfood-drift.sh` (source-only) : `render_profile` accepte des `--data` supplémentaires ; le profil `fullstack-cursor` rend désormais avec `enable_copilot_shim=true` pour continuer d'exercer le rendu conditionnel du shim compat Copilot (opt-out par défaut). Validation portée par `core/agents-md-shim-canonical`.

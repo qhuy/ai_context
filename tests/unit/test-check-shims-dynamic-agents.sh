@@ -132,4 +132,54 @@ YAML
     || { echo "$out"; fail "liste inline doit verifier les trois shims derives"; }
 )
 
+# Registre natif confirmed : shim copilot absent devient optionnel (opt-out)
+repo_native="$tmp/native"
+make_repo "$repo_native"
+write_claude "$repo_native"
+cat > "$repo_native/.copier-answers.yml" <<'YAML'
+agents: ["claude", "copilot"]
+YAML
+cat > "$repo_native/.ai/native-context-support.tsv" <<'TSV'
+# agent	shared_entrypoint	status	checked_at	evidence	note
+copilot	AGENTS.md	confirmed	2026-07-06	https://example.invalid/copilot-agents-md	Coding agent lit AGENTS.md nativement.
+TSV
+(
+  cd "$repo_native"
+  out="$(bash .ai/scripts/check-shims.sh 2>&1)" \
+    || { echo "$out"; fail "copilot confirmed + shim absent devrait passer (AGENTS.md natif)"; }
+  echo "$out" | grep -q "copilot : shim dédié absent" \
+    || { echo "$out"; fail "message de skip natif attendu pour copilot"; }
+)
+
+# Registre pending (ou absent) : le shim copilot reste requis
+cat > "$repo_native/.ai/native-context-support.tsv" <<'TSV'
+# agent	shared_entrypoint	status	checked_at	evidence	note
+copilot	AGENTS.md	pending	2026-07-06	https://example.invalid/copilot-agents-md	Non confirme.
+TSV
+(
+  cd "$repo_native"
+  set +e
+  out="$(bash .ai/scripts/check-shims.sh 2>&1)"
+  rc=$?
+  set -e
+  [[ "$rc" -ne 0 ]] \
+    || { echo "$out"; fail "copilot pending + shim absent devrait echouer"; }
+  echo "$out" | grep -q "copilot-instructions.md manquant" \
+    || { echo "$out"; fail "message de shim copilot manquant attendu (pending)"; }
+)
+
+# Shim compat present : valide normalement meme si confirmed
+write_copilot "$repo_native"
+cat > "$repo_native/.ai/native-context-support.tsv" <<'TSV'
+# agent	shared_entrypoint	status	checked_at	evidence	note
+copilot	AGENTS.md	confirmed	2026-07-06	https://example.invalid/copilot-agents-md	Coding agent lit AGENTS.md nativement.
+TSV
+(
+  cd "$repo_native"
+  out="$(bash .ai/scripts/check-shims.sh 2>&1)" \
+    || { echo "$out"; fail "shim compat present + confirmed devrait passer"; }
+  echo "$out" | grep -q "copilot-instructions.md OK" \
+    || { echo "$out"; fail "le shim compat present doit etre valide normalement"; }
+)
+
 echo "PASS test-check-shims-dynamic-agents"

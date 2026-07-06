@@ -429,3 +429,6 @@
 ## 2026-07-06 12:03 — auto
 - Fichiers modifiés :
   - copier.yml
+
+## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2)
+- `copier.yml` : nouvelle question `enable_copilot_shim` (bool, défaut false, `when: copilot in agents`) + `_exclude` de `.github/copilot-instructions.md` conditionné au flag. Validation portée par `core/agents-md-shim-canonical` (smoke [28e/28]).

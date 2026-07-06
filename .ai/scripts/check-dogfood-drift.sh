@@ -37,6 +37,12 @@ render_profile() {
   local agents_json="$6"
   local enable_ci_guard="$7"
   local copy_log="$out_root/$profile.copy.log"
+  shift 7
+  local extra_data=()
+  local kv
+  for kv in "$@"; do
+    extra_data+=(--data "$kv")
+  done
 
   if ! copier copy --defaults --trust \
     --data project_name=ai_context \
@@ -48,6 +54,7 @@ render_profile() {
     --data docs_root=.docs \
     --data agents="$agents_json" \
     --data enable_ci_guard="$enable_ci_guard" \
+    ${extra_data[@]+"${extra_data[@]}"} \
     "$src_copy" "$out_dir" >"$copy_log" 2>&1; then
     echo "❌ rendu Copier échoué ($profile)" >&2
     sed -n '1,160p' "$copy_log" >&2
@@ -125,7 +132,7 @@ out="$out_root/dogfood-minimal"
 out_conditional="$out_root/fullstack-cursor"
 
 render_profile "dogfood-minimal" "$out" "minimal" "standard" "generic" '["claude","codex"]' "true"
-render_profile "fullstack-cursor" "$out_conditional" "fullstack" "strict" "fullstack-dotnet-react" '["claude","codex","cursor","gemini","copilot"]' "false"
+render_profile "fullstack-cursor" "$out_conditional" "fullstack" "strict" "fullstack-dotnet-react" '["claude","codex","cursor","gemini","copilot"]' "false" "enable_copilot_shim=true"
 check_profile_sanity "fullstack-cursor" "$out_conditional" \
   ".cursor/rules/protocol-reminder.mdc" \
   ".cursor/rules/back.mdc" \

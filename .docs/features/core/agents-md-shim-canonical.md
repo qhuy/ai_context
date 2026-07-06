@@ -40,10 +40,10 @@ doc:
     observability: false
 progress:
   phase: done
-  step: "modèle AGENTS.md + shims dérivés livré, check-shims dynamique validé, #34235 transféré au registre natif"
+  step: "shim Copilot opt-out livré (enable_copilot_shim, défaut false) ; check-shims consulte le registre natif avant d'exiger un shim dédié"
   blockers: []
-  resume_hint: "aucune action core immédiate ; rouvrir seulement si le modèle de shims ou .copier-answers.yml évolue."
-  updated: 2026-07-03
+  resume_hint: "aucune action core immédiate ; rouvrir seulement si le modèle de shims, .copier-answers.yml ou le registre natif évolue."
+  updated: 2026-07-06
 ---
 
 # Shims dérivés d'AGENTS.md (base canonique + imports)
@@ -154,6 +154,8 @@ Non requis (`doc.requires.observability: false`). Preuves attendues : sorties de
 - `external_refs.github` : issue #34235 (support natif AGENTS.md dans Claude Code) = déclencheur du kill_criterion.
 
 ## Historique / décisions
+
+- 2026-07-06 : **shim Copilot opt-out** (chantier P2 d'ANALYSE.md). Le registre natif ayant confirmé la lecture d'AGENTS.md par le coding agent Copilot (`core/agents-md-native-collapse-path`), `.github/copilot-instructions.md` n'est plus généré par défaut — nouvelle question `enable_copilot_shim` (défaut `false`, compat pour Copilot Chat/review IDE qui lisent encore ce fichier). `check-shims.sh` consulte désormais `.ai/native-context-support.tsv` : un shim dédié absent est accepté seulement si l'agent est `confirmed` au registre (pending = requis, comportement historique) ; un shim présent reste validé normalement. CLAUDE.md/GEMINI.md inchangés (claude pending).
 
 - 2026-06-28 : création via `aic-frame` (item C1 du frame de remédiation `2026-06-28-audit-strategique-remediation`). Arbitrages tranchés : (a) nouvelle fiche dédiée ; (b) import `@AGENTS.md` + fallback tailored (symlink rejeté : aplatit le sur-mesure + fragile Windows). Gate d'implémentation : vérifier le support `@import` par agent AVANT tout code.
 - 2026-06-29 : **import model livré** (dogfood + template). `AGENTS.md` neutralisé (« Shim lean Codex » → « Shim lean » = base agent-neutre) ; `CLAUDE.md` = ligne `> Tu DOIS lire .ai/index.md` (dégradation gracieuse + check-shims) + `@AGENTS.md` + pointeur `.claude/settings.json` (hard rules dé-dupliquées dans AGENTS.md) ; `GEMINI.md.jinja` = `@AGENTS.md` + ligne Gemini. **Cursor/Copilot laissés tailored** (fallback assumé : lisent AGENTS.md nativement, import non fiable). Vérifs : `check-shims` ✅ (AGENTS 15 l., CLAUDE 7 l.), `check-dogfood-drift` ✅ (parité), `tests/smoke-test.sh` ✅. Follow-up : check-shims dynamique par agents activés ; confirmation #34235.

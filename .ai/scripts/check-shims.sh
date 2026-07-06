@@ -60,6 +60,18 @@ add_shim() {
   SHIMS+=("$candidate")
 }
 
+NATIVE_SUPPORT_FILE=".ai/native-context-support.tsv"
+NATIVE_SKIPPED=()
+
+# Lecture native d'AGENTS.md confirmée au registre pour cet agent ?
+# (core/agents-md-native-collapse-path : un shim dédié ne devient optionnel
+# que si le statut est "confirmed" — pending = shim toujours requis.)
+native_confirmed() {
+  local agent="$1"
+  [[ -f "$NATIVE_SUPPORT_FILE" ]] || return 1
+  awk -F'\t' -v a="$agent" '$1 == a && $3 == "confirmed" { found=1 } END { exit found ? 0 : 1 }' "$NATIVE_SUPPORT_FILE"
+}
+
 answers_agents() {
   local file="$1"
   local yq_out
@@ -135,6 +147,12 @@ build_shims() {
   load_agents
   for agent in ${AGENTS_SELECTED[@]+"${AGENTS_SELECTED[@]}"}; do
     if shim="$(shim_for_agent "$agent")"; then
+      # Shim dédié absent + lecture native confirmée => optionnel (opt-out).
+      # S'il existe (compat, ex enable_copilot_shim), on le valide normalement.
+      if [[ ! -f "$shim" ]] && native_confirmed "$agent"; then
+        NATIVE_SKIPPED+=("$agent")
+        continue
+      fi
       add_shim "$shim"
     fi
   done
@@ -176,6 +194,9 @@ for shim in ${SHIMS[@]+"${SHIMS[@]}"}; do
   else
     ok "$shim OK ($lines lignes)"
   fi
+done
+for agent in ${NATIVE_SKIPPED[@]+"${NATIVE_SKIPPED[@]}"}; do
+  ok "$agent : shim dédié absent — AGENTS.md natif confirmé (registre)"
 done
 
 # AGENTS.md doit rester AUTO-SUFFISANT : porter les hard rules inline (pas un

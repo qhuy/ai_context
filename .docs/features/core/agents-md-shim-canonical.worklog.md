@@ -40,3 +40,10 @@
 - Décision : Doc Impact Decision C — fiche feature mise à jour, aucun changement runtime dans ce commit de clôture.
 - Risques : pas de breaking change, pas de migration de données, pas d'impact sécurité/auth/tenancy ; compatibilité arrière inchangée.
 - Next : aucune action immédiate ; rouvrir seulement si le modèle de shims ou le contrat `.copier-answers.yml` change.
+
+## 2026-07-06 — shim Copilot opt-out (P2, commit ②)
+- Intent : cesser de générer par défaut un shim commoditisé par le standard AGENTS.md (Copilot coding agent le lit nativement — registre `confirmed`), sans casser Copilot Chat/review (flag compat).
+- Fichiers/surfaces : `copier.yml` (question `enable_copilot_shim` défaut false + `_exclude` conditionnel), `.ai/scripts/check-shims.sh` (+ miroir jinja, identique) — helper `native_confirmed()` sur le registre TSV, skip du shim absent seulement si confirmed ; `tests/unit/test-check-shims-dynamic-agents.sh` (3 nouveaux cas : confirmed+absent=PASS, pending+absent=FAIL, compat présent=validé), `tests/smoke-test.sh` (étape [28e/28]).
+- Décision : le mécanisme est générique par agent (piloté par le registre), pas un cas spécial copilot — si claude passe un jour `confirmed`, le même chemin s'ouvre pour CLAUDE.md sans retoucher check-shims.
+- Validation : test dynamique PASS, shellcheck PASS, check-shims auto PASS ; smoke complet au commit.
+- Next : commit ③ — retrait du shim Cursor redondant (protocol-reminder.mdc).

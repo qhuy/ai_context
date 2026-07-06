@@ -2024,6 +2024,46 @@ rm -rf "$combo_nocodex"
 echo "  ✓ hooks Codex : opt-in respecté, hooks.json conforme (événements, timeouts, check-agent-config)"
 
 echo
+echo "[28e/28] shim Copilot opt-out : AGENTS.md natif par défaut, compat via enable_copilot_shim"
+combo_copilot="/tmp/ai-context-smoke-copilot-$$"
+copier copy --defaults --trust \
+  --data project_name=smoke-copilot \
+  --data agents='["claude","copilot"]' \
+  "$SRC" "$combo_copilot" >/dev/null
+if [[ -f "$combo_copilot/.github/copilot-instructions.md" ]]; then
+  echo "  ✗ copilot-instructions.md généré par défaut alors que enable_copilot_shim=false"
+  rm -rf "$combo_copilot"
+  exit 1
+fi
+if ! ( cd "$combo_copilot" && bash .ai/scripts/check-shims.sh ) >/dev/null 2>&1; then
+  echo "  ✗ check-shims fail sur scaffold copilot sans shim dédié (natif confirmé au registre)"
+  ( cd "$combo_copilot" && bash .ai/scripts/check-shims.sh )
+  rm -rf "$combo_copilot"
+  exit 1
+fi
+rm -rf "$combo_copilot"
+
+combo_copilot_shim="/tmp/ai-context-smoke-copilotshim-$$"
+copier copy --defaults --trust \
+  --data project_name=smoke-copilotshim \
+  --data agents='["claude","copilot"]' \
+  --data enable_copilot_shim=true \
+  "$SRC" "$combo_copilot_shim" >/dev/null
+if [[ ! -f "$combo_copilot_shim/.github/copilot-instructions.md" ]]; then
+  echo "  ✗ copilot-instructions.md absent malgré enable_copilot_shim=true"
+  rm -rf "$combo_copilot_shim"
+  exit 1
+fi
+if ! ( cd "$combo_copilot_shim" && bash .ai/scripts/check-shims.sh ) >/dev/null 2>&1; then
+  echo "  ✗ check-shims fail avec le shim compat Copilot présent"
+  ( cd "$combo_copilot_shim" && bash .ai/scripts/check-shims.sh )
+  rm -rf "$combo_copilot_shim"
+  exit 1
+fi
+rm -rf "$combo_copilot_shim"
+echo "  ✓ shim Copilot : absent par défaut (AGENTS.md natif), généré et validé avec enable_copilot_shim=true"
+
+echo
 echo "[bonus] big-mesh : budget tokens + focus graph-aware"
 # Génère 30 features back + 30 features front + dépendances pour stresser
 # l'inventaire. Borne haute pragmatique : 30k chars

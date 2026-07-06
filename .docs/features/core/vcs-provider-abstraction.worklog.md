@@ -49,3 +49,6 @@
 - Fichiers modifiés :
   - copier.yml
   - tests/smoke-test.sh
+
+## 2026-07-06 — couverture incidente (core/agents-md-shim-canonical, P2)
+- Surfaces partagées touchées : `copier.yml` (question enable_copilot_shim) et `tests/smoke-test.sh` (étape [28e/28]). Aucun changement du contrat provider VCS. Validation portée par `core/agents-md-shim-canonical`.
