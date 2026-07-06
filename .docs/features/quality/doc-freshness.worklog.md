@@ -108,3 +108,7 @@
 - Décision : statut `done` ; le warning historique `workflow/claude-skills` observé en `--warn` reste non bloquant, à traiter seulement si la fiche concernée est rouverte.
 - Validation : `bash tests/unit/test-check-feature-freshness.sh` PASS ; `bash tests/unit/test-freshness-primary-coverer.sh` PASS ; `bash tests/unit/test-review-delta-shared.sh` PASS ; `bash tests/unit/test-stop-turn-doc-gate.sh` PASS ; `bash tests/unit/test-check-commit-features-relevance.sh` PASS ; `bash .ai/scripts/check-feature-freshness.sh --warn` OK.
 - Next : aucune action immédiate.
+
+## 2026-07-06 — couverture incidente (workflow/codex-hooks-parity)
+- `QUALITY_GATE.md` (+ jinja) : la phrase « gate Stop Claude-only » est requalifiée — protocole `decision:block` partagé, branché par défaut côté Claude et opt-in côté Codex via `.codex/hooks.json`. Aucun changement du moteur de fraîcheur.
+- Validation portée par `workflow/codex-hooks-parity`.

@@ -175,3 +175,7 @@
 - Impact : les wrappers `aic-review` runtime/template chargent désormais `.ai/workflows/feature-audit.md` en lecture seule pour router rétro-doc/orphelins/resync.
 - Décision : aucun changement de surface publique ; `aic-review` reste l'intention publique, `feature-audit` reste procédure interne.
 - Validation portée par `core/aic-review-application-skill`.
+
+## 2026-07-06 12:03 — auto
+- Fichiers modifiés :
+  - .ai/workflows/codex-hooks-parity.md

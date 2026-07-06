@@ -281,3 +281,7 @@
 ## 2026-07-06 — couverture incidente (workflow/codex-hooks-parity)
 - `tests/smoke-test.sh` : ajout de l'étape [28d/28] hooks Codex natifs — .codex/ absent par défaut, hooks.json conforme (événements UserPromptSubmit/Stop, timeouts explicites, check-agent-config PASS sur scaffold), .codex/ exclu si codex hors agents.
 - Validation portée par `workflow/codex-hooks-parity` ; smoke complet relancé au commit.
+
+## 2026-07-06 12:03 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh

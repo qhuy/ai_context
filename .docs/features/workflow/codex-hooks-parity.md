@@ -129,7 +129,7 @@ Preuve de clôture 2026-07-06 (génération opt-in livrée) :
 
 `workflow/git-hooks` reste le point de convergence universel. `workflow/subagent-contract` fixe les règles quand un hook ou une tâche déclenche du travail délégué.
 
-`workflow/stop-turn-doc-gate` : le gate Stop de fraîcheur est Claude-only ; sa parité Codex est documentée ici (recette opt-in « Parité fraîcheur fin de turn » dans `.ai/workflows/codex-hooks-parity.md`). Garantie universelle = `commit-msg --staged --strict` ; signal working-tree plus précoce = primitive agnostique `check-feature-freshness.sh --worktree --strict`, branché opt-in dans un hook Codex de fin de turn. Pas de `.codex/` livré par défaut (décision inchangée).
+`workflow/stop-turn-doc-gate` : le gate Stop de fraîcheur (`stop-doc-gate.sh`) parle le protocole `decision:block` partagé Claude/Codex ; il est câblé par défaut côté Claude (`stop-sequence.sh`) et opt-in côté Codex via `.codex/hooks.json` généré (`enable_codex_hooks=true`). Le warn orphelins reste un canal Claude (ignoré par Codex). Garantie universelle = `commit-msg --staged --strict` ; le primitive agnostique `check-feature-freshness.sh --worktree --strict` sert à la CI et aux agents sans protocole de hook — jamais branché brut sur `Stop` (non bloquant). Pas de `.codex/` livré par défaut (opt-in).
 
 ## Historique / décisions
 

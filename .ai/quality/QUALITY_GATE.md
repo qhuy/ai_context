@@ -58,7 +58,7 @@ Ferme la fenêtre « édité → vérifié → *done* annoncé, mais ni commité
 - Signal **présence-based**, jamais basé sur des timestamps de commit : il vise l'édit non encore commité, pas la « staleness » d'historique (qui reste en `--warn`, cf. ci-dessus).
 - **Sévérité différenciée** : fraîcheur = **bloquant** ; orphelin (chemin substantiel couvert par **aucune** feature) = **avertissement** non bloquant (créer/rattacher une fiche est un jugement scope/id non automatisable).
 - Anti-boucle : `stop_hook_active` relâche le gate ; échappatoire tracée : `AIC_DOC_GATE=off` (WIP multi-tour, refactor pur).
-- **Garantie stable = git + CI**, pas le hook agent. Le gate Stop est une couche de forcing **Claude-only** ; les agents non-Claude restent couverts par `.githooks/commit-msg` (`--staged --strict`) et la CI. Comme les hooks Stop tournent **en parallèle** (ordre non garanti), l'ordre gate → archivage est assuré en les **sérialisant** dans `stop-sequence.sh` (sinon `auto-worklog-flush` auto-toucherait le worklog et neutraliserait le gate).
+- **Garantie stable = git + CI**, pas le hook agent. Le gate Stop est une couche de forcing branchée par défaut côté Claude et opt-in côté Codex (`.codex/hooks.json`, protocole `decision:block` partagé) ; les agents sans hooks restent couverts par `.githooks/commit-msg` (`--staged --strict`) et la CI. Comme les hooks Stop tournent **en parallèle** (ordre non garanti), l'ordre gate → archivage est assuré en les **sérialisant** dans `stop-sequence.sh` (sinon `auto-worklog-flush` auto-toucherait le worklog et neutraliserait le gate).
 - Read-only : index temporaire (`mktemp`), aucune écriture de `.ai/.feature-index.json`.
 
 ## Commits — Conventional Commits (BLOQUANT)

@@ -50,26 +50,25 @@ Le gate Stop `stop-doc-gate.sh` parle le protocole `decision:block` + `stop_hook
 
 **1. Toujours actif, universel (aucune config Codex).** Le hook git `commit-msg` (`.githooks/commit-msg` → `check-feature-freshness.sh --staged --strict`) bloque tout commit de code couvert sans sa fiche/worklog, quel que soit l'agent. C'est la garantie stable. Activation par clone : `git config core.hooksPath .githooks`.
 
-**2. Opt-in, plus tôt (signal working-tree avant le commit).** Un projet PEUT brancher un hook Codex de fin de turn sur le **primitive agnostique** :
+**2. Opt-in, plus tôt (signal working-tree avant le commit).** La config générée `.codex/hooks.json` branche `stop-doc-gate.sh` sur l'événement `Stop`. Vérifié le 2026-07-06 (doc officielle `https://developers.openai.com/codex/hooks`) : l'événement `Stop` de Codex reproduit le contrat de Claude — `stop_hook_active` dans le JSON d'entrée, `{"decision":"block","reason":...}` sur stdout pour bloquer — donc le gate est réutilisé tel quel, sans wrapper. Limite connue : le chemin **warn orphelins** du gate émet un `hookSpecificOutput`/`additionalContext` propre à Claude ; côté Codex ce warn est ignoré (champ inconnu) — seul le blocage `decision:block` est en parité.
+
+Le **primitive agnostique** sous-jacent reste l'outil pour la CI, les scripts et les agents sans protocole de hook :
 
 ```bash
-bash .ai/scripts/check-feature-freshness.sh --worktree --strict   # code retour 1 = bloquer
+bash .ai/scripts/check-feature-freshness.sh --worktree --strict   # exit 1 = échec détecté, à interpréter par l'appelant
 ```
 
-C'est le même moteur présence-based que le gate Claude, sans dépendre du protocole JSON Claude. `stop-doc-gate.sh` reste réservé au runtime Claude (il émet `decision:block` et lit `stop_hook_active`).
+⚠️ Ne PAS brancher ce primitive brut sur l'événement `Stop` — son code retour ne bloque rien là-bas :
 
-Vérifié le 2026-07-06 (doc officielle `https://developers.openai.com/codex/hooks`) : l'événement `Stop` de Codex reproduit le contrat de Claude — `stop_hook_active` dans le JSON d'entrée, `{"decision":"block","reason":...}` sur stdout pour bloquer. `stop-doc-gate.sh` est donc réutilisé tel quel : c'est lui que `.codex/hooks.json` branche sur `Stop`.
-
-⚠️ Ne PAS brancher le primitive brut sur l'événement `Stop` :
-
-```toml
-# ANTI-EXEMPLE — non bloquant sur Stop
-[hooks.Stop]
-command = "bash .ai/scripts/check-feature-freshness.sh --worktree --strict"
-timeout = 20
+```json
+{ "hooks": { "Stop": [ { "hooks": [ {
+  "type": "command",
+  "command": "bash .ai/scripts/check-feature-freshness.sh --worktree --strict",
+  "timeout": 20
+} ] } ] } }
 ```
 
-Sur `Stop`, un code retour non nul est traité comme une erreur de hook signalée puis ignorée (Codex continue) ; le blocage passe par le JSON `decision:block`. Le primitive `--worktree --strict` reste l'outil agnostique pour la CI, les scripts et les agents sans protocole de hook.
+ANTI-EXEMPLE (même sémantique en TOML `[hooks]`) : sur `Stop`, un code retour non nul est traité comme une erreur de hook signalée puis ignorée (Codex continue) ; le blocage passe par le JSON `decision:block`, que seul `stop-doc-gate.sh` émet.
 
 Contraintes : opt-in ; hooks projet chargés seulement si la couche `.codex/` est trustée ; `AIC_DOC_GATE=off` reste l'échappatoire ; fallback documenté (commit-msg + CI) si Codex n'exécute pas le hook ; la config doit passer `check-agent-config.sh`.
 

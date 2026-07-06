@@ -57,3 +57,8 @@ Source session : automation veille-techno
 - Honnêteté préservée : auto-worklog Codex reste « Non » ; le pilote est marqué non validé live (pas de CLI Codex en CI).
 - Validation : smoke complet PASS (étape [28d/28] incluse), test-check-agent-config PASS, check-agent-config/check-features/check-feature-docs --strict/check-shims/check-dogfood-drift PASS.
 - Next : follow-ups possibles — validation live CLI Codex, auto-worklog Codex (payload apply_patch), dogfood root .codex/hooks.json.
+
+## 2026-07-06 — fix post-review (contradictions résiduelles)
+- Intent : résorber les contradictions détectées par la review adversariale du chantier P1.
+- Corrections : § « 2. Opt-in » du contrat réécrit — c'est `stop-doc-gate.sh` (via `.codex/hooks.json`) qui porte le signal fin de turn, le primitive brut n'est plus présenté comme branchable sur un hook Codex (« code retour 1 = bloquer » était faux sur Stop) ; suppression de la phrase résiduelle « stop-doc-gate.sh reste réservé au runtime Claude » ; anti-exemple converti au format hooks.json (sémantique TOML notée) ; limite documentée — le warn orphelins du gate (`hookSpecificOutput`) est un canal Claude, ignoré par Codex ; Cross-refs de la fiche réalignés ; fiche `workflow/stop-turn-doc-gate` et `QUALITY_GATE.md` (+ jinja) requalifiés « Claude par défaut + Codex opt-in ».
+- Validation : check-features/check-feature-docs/check-shims/check-dogfood-drift + smoke au commit.

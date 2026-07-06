@@ -425,3 +425,7 @@
 ## 2026-07-06 — couverture incidente (workflow/codex-hooks-parity, commit docs)
 - `copier.yml` : `_message_after_copy` mentionne la génération de `.codex/hooks.json` et le trust de la couche projet quand `enable_codex_hooks=true`. Aucun changement de question ni d'exclusion dans ce commit.
 - Validation portée par `workflow/codex-hooks-parity`.
+
+## 2026-07-06 12:03 — auto
+- Fichiers modifiés :
+  - copier.yml

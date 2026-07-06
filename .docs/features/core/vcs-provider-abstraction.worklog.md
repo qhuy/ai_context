@@ -44,3 +44,8 @@
 ## 2026-07-06 — couverture incidente (workflow/codex-hooks-parity, commit docs)
 - `README_AI_CONTEXT.md` (+ miroir jinja) et `copier.yml` (`_message_after_copy`) : documentation des hooks Codex natifs opt-in. Aucun changement du contrat provider VCS.
 - Validation portée par `workflow/codex-hooks-parity`.
+
+## 2026-07-06 12:03 — auto
+- Fichiers modifiés :
+  - copier.yml
+  - tests/smoke-test.sh

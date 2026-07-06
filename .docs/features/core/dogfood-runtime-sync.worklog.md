@@ -458,3 +458,8 @@
 - Doc Impact Decision : C — fiche feature et worklog mis à jour.
 - Validation prévue : `check-feature-docs --strict core/dogfood-runtime-sync`, checks dogfood/shims/features/références/contexte et freshness avant commit.
 - Next : aucune action immédiate ; rouvrir si le contrat dogfood-update/check-dogfood-drift ou le miroir template change.
+
+## 2026-07-06 12:03 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-agent-config.sh
+  - .ai/workflows/codex-hooks-parity.md

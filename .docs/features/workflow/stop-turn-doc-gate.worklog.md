@@ -36,3 +36,7 @@
 ## 2026-07-06 — HANDOFF depuis workflow/codex-hooks-parity
 - `stop-doc-gate.sh` (+ miroir jinja) : header seul requalifié — le protocole `stop_hook_active` + `decision:block` est partagé par Claude et Codex (doc officielle vérifiée 2026-07-06) ; le gate est désormais branché opt-in côté Codex via `.codex/hooks.json` généré. Aucun changement de logique.
 - Validation portée par `workflow/codex-hooks-parity` (tests stop-hook inchangés dans la boucle unitaire).
+
+## 2026-07-06 — requalification Claude-only → protocole partagé (suite HANDOFF)
+- Corps de fiche + `QUALITY_GATE.md` (+ jinja) : le gate Stop n'est plus décrit « Claude-only » — protocole `decision:block` partagé, branché par défaut côté Claude et opt-in côté Codex via `.codex/hooks.json`. Warn orphelins : canal Claude, ignoré par Codex. Aucun changement de logique.
+- Validation portée par `workflow/codex-hooks-parity`.

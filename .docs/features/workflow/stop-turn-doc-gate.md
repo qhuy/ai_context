@@ -75,7 +75,7 @@ Rendre déterministe la promesse « avant DONE, la doc de la feature impactée e
 
 ### Hors périmètre
 
-- La garantie **bloquante stable** reste `commit-msg` (`--staged --strict`) + CI, agent-agnostique. Ce gate Stop est une couche de forcing **Claude-only**.
+- La garantie **bloquante stable** reste `commit-msg` (`--staged --strict`) + CI, agent-agnostique. Ce gate Stop est une couche de forcing branchée par défaut côté Claude (`stop-sequence.sh`) et opt-in côté Codex (`.codex/hooks.json` généré, protocole `decision:block` partagé — voir `workflow/codex-hooks-parity`) ; le warn orphelins reste un canal Claude.
 - La refonte du modèle `touches:`/`touches_shared:` (ex. reclasser `_lib.sh` en partagé pour alléger l'obligation multi-features). Noté en Risques.
 - La factorisation du parseur de config `coverage` (dupliqué entre `check-feature-coverage.sh` et `_lib.sh`). Noté en Risques.
 - L'idempotence du Stop sur tour non structurel (`workflow/stop-hook-idempotence`, livrée).
@@ -160,6 +160,8 @@ Preuve de clôture 2026-07-03 :
 - `workflow/codex-hooks-parity` : la garantie agent-agnostique reste `commit-msg`/CI.
 
 ## Historique / décisions
+
+- 2026-07-06 : requalification — le protocole du gate (`stop_hook_active` + `decision:block`) est partagé Claude/Codex (doc officielle vérifiée) ; `.codex/hooks.json` généré opt-in le branche sur `Stop` côté Codex. Le warn orphelins (`hookSpecificOutput`) reste Claude-only. Livré par `workflow/codex-hooks-parity`.
 
 - 2026-06-26 : création. Cause racine corrigée (working-tree vs historique). Découverte du parallélisme des hooks Stop → design sequencer (confirmé avec l'utilisateur). 3 décisions de cadrage tranchées : cross-scope workflow+quality, blocage jusqu'à résolution, anti-bruit via `coverage`.
 - 2026-07-03 : DONE. Gate Stop livré et validé par tests ciblés, contrat read-only, dogfood drift et smoke complet.
