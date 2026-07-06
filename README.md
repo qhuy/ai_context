@@ -141,6 +141,7 @@ mon-projet/
 ├── .agents/skills/aic-*          # skills Codex locaux si codex est sélectionné
 ├── .claude/skills/aic-*          # skills Claude si claude est sélectionné
 ├── .claude/settings.json         # hooks Claude Code
+├── .codex/hooks.json             # hooks Codex natifs si enable_codex_hooks=true
 ├── .githooks/                    # commit-msg, pre-commit, post-checkout
 ├── .github/workflows/            # CI optionnelle
 └── .docs/
@@ -183,16 +184,19 @@ Tous les agents ne reçoivent pas le même niveau d'automatisation.
 | Shim racine vers `.ai/index.md` | Oui | Oui | Oui | Oui | Oui |
 | Git hooks et checks au commit | Oui | Oui | Oui | Oui | Oui |
 | Skills `aic-*` locaux | Oui | Oui, si `codex` sélectionné | Non | Non | Non |
-| Injection automatique au début du tour | Oui | Non | Non | Non | Non |
+| Injection automatique au début du tour | Oui | Opt-in (`enable_codex_hooks`) | Non | Non | Non |
 | Injection feature avant édition | Oui | Manuel via `aic.sh document-feature` | Partiel via MDC scopé | Non | Non |
+| Gate de fraîcheur doc en fin de tour | Oui | Opt-in (`enable_codex_hooks`) | Non | Non | Non |
 | Auto-worklog en fin de tour | Oui | Non | Non | Non | Non |
 | Auto-progression `spec -> implement` au commit | Oui | Oui | Oui | Oui | Oui |
 
 Conclusion pragmatique :
 
 - Claude Code a l'expérience la plus automatisée.
-- Codex est le pilote multi-agent le plus outillé après Claude via skills locaux,
-  `.ai/index.md` et `aic.sh`.
+- Codex s'en rapproche avec `enable_codex_hooks=true` : reminder injecté à chaque
+  tour et gate de fraîcheur en fin de turn via `.codex/hooks.json` (hooks natifs,
+  trust de la couche projet demandé au premier lancement). L'auto-worklog reste
+  Claude-only. Sans hooks : skills locaux, `.ai/index.md` et `aic.sh`.
 - Les autres agents bénéficient surtout des shims, règles, hooks git et checks.
 
 ## Contrats multi-agent
@@ -200,7 +204,7 @@ Conclusion pragmatique :
 Les capacités avancées restent opt-in et gouvernées par `.ai/rules/workflow.md` :
 
 - Subagents : déléguer seulement avec rôle clair (`explorer` lecture seule, `worker` avec write-set explicite), sortie structurée et aucun cross-scope sans HANDOFF.
-- Hooks Codex : pilote déterministe uniquement ; les hooks Git et checks `.ai/scripts/*` restent la garantie stable.
+- Hooks Codex : pilote déterministe opt-in — `.codex/hooks.json` généré si `enable_codex_hooks=true` (reminder par tour + gate de fraîcheur, contrat `.ai/workflows/codex-hooks-parity.md`) ; les hooks Git et checks `.ai/scripts/*` restent la garantie stable.
 - MCP : aucun serveur par défaut ; allowlist explicite, pas de secrets, source des données annoncée et fallback sans MCP.
 
 ## Feature mesh
@@ -338,9 +342,11 @@ projet.
 
 **Est-ce que ça marche sans Claude ?**
 
-Oui, mais avec moins d'automatisation par tour. Codex et les autres agents ont
-les shims, règles, git hooks, checks et scripts `aic.sh`. Claude ajoute les hooks
-runtime automatiques.
+Oui. Codex peut recevoir le reminder par tour et le gate de fraîcheur en fin de
+turn via `enable_codex_hooks=true` (hooks natifs `.codex/hooks.json`, trust de la
+couche projet au premier lancement). Les autres agents ont les shims, règles,
+git hooks, checks et scripts `aic.sh`. Claude ajoute l'injection feature avant
+édition et l'auto-worklog.
 
 **Pourquoi ne pas tout mettre dans `AGENTS.md` ou `CLAUDE.md` ?**
 

@@ -421,3 +421,7 @@
 ## 2026-07-06 — couverture incidente (workflow/codex-hooks-parity)
 - `copier.yml` touché : nouvelle question `enable_codex_hooks` (bool, défaut false, `when: codex in agents`) + ligne `_exclude` conditionnelle pour `.codex`. Aucun changement des contrats template-engine propres.
 - Validation portée par `workflow/codex-hooks-parity` (smoke [28d/28] : opt-in, exclusion sans codex, rendu conforme).
+
+## 2026-07-06 — couverture incidente (workflow/codex-hooks-parity, commit docs)
+- `copier.yml` : `_message_after_copy` mentionne la génération de `.codex/hooks.json` et le trust de la couche projet quand `enable_codex_hooks=true`. Aucun changement de question ni d'exclusion dans ce commit.
+- Validation portée par `workflow/codex-hooks-parity`.

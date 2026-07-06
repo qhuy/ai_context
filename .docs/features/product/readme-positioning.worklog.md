@@ -43,3 +43,7 @@
 
 ### Commit suggéré
 docs(product): clôturer le repositionnement README
+
+## 2026-07-06 — couverture incidente (workflow/codex-hooks-parity)
+- `README.md` : table « Honnêteté runtime » mise à jour — « Injection automatique au début du tour » et nouvelle ligne « Gate de fraîcheur doc en fin de tour » passent à « Opt-in (enable_codex_hooks) » côté Codex ; auto-worklog reste « Non » (honnêteté préservée, invariant respecté : pas de fausse parité). Conclusion, contrats multi-agent, arbre généré et FAQ alignés.
+- Validation portée par `workflow/codex-hooks-parity`.

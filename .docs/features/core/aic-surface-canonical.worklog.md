@@ -176,3 +176,7 @@
 - Décision : `aic.sh` ajoute seulement l'aide et le dispatch `knowledge` vers `knowledge.sh`; la logique publish/search/link/import reste en scope workflow.
 - Validation : couverte par `bash tests/unit/test-knowledge-workflow.sh`, `bash tests/unit/test-template-jinja-raw-braces.sh`, `bash .ai/scripts/check-dogfood-drift.sh`, puis freshness stricte à relancer.
 - Next : aucune action core ; rouvrir seulement si la taxonomie publique `aic` change au-delà du routage knowledge.
+
+## 2026-07-06 — couverture incidente (workflow/codex-hooks-parity)
+- `README_AI_CONTEXT.md` (+ miroir jinja) : section Runtime — ajout de la ligne Codex (hooks natifs `.codex/hooks.json` si `enable_codex_hooks=true`, trust de la couche projet) ; section Contrats avancés alignée. Aucun changement de la surface `aic`.
+- Validation portée par `workflow/codex-hooks-parity`.

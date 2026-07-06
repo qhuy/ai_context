@@ -118,6 +118,11 @@ _message_after_copy: |
   aussi des skills minces aic-feature-* / aic-quality-gate, marqués internes/fallback,
   qui pointent vers ces workflows. Claude garde une surface plus intentionnelle :
   frame, pilot, status, diagnose, document-feature, review, ship.
+  {% if 'codex' in agents and enable_codex_hooks %}
+  Hooks Codex natifs : .codex/hooks.json est généré (reminder par tour + gate de
+  fraîcheur fin de turn). Au premier lancement, Codex demande de truster la couche
+  projet .codex/ ; tant qu'elle ne l'est pas, la garantie reste les git hooks + CI.
+  {% endif %}
 
   Env vars utiles :
     AI_CONTEXT_DEBUG=1            → logs debug des hooks

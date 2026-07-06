@@ -50,3 +50,10 @@ Source session : automation veille-techno
 - Trust model : hooks projet chargés seulement si la couche `.codex/` est trustée ; fallback = commit-msg + CI (inchangés).
 - Validation : smoke [28d/28] (opt-in respecté, hooks.json conforme, check-agent-config PASS sur scaffold) ; suite complète au commit.
 - Next : commit ③ — README table Honnêteté runtime + `_message_after_copy`, puis clôture.
+
+## 2026-07-06 — done (P1, commit ③ docs + clôture)
+- Intent : aligner la documentation utilisateur sur la capacité livrée et clôturer.
+- Fichiers/surfaces : `README.md` (table Honnêteté runtime : injection par tour et gate fin de turn → « Opt-in (enable_codex_hooks) » côté Codex ; nouvelle ligne gate ; conclusion, contrats, arbre, FAQ), `README_AI_CONTEXT.md` (+ miroir jinja), `copier.yml` (`_message_after_copy` : trust + fallback), `CHANGELOG.md`.
+- Honnêteté préservée : auto-worklog Codex reste « Non » ; le pilote est marqué non validé live (pas de CLI Codex en CI).
+- Validation : smoke complet PASS (étape [28d/28] incluse), test-check-agent-config PASS, check-agent-config/check-features/check-feature-docs --strict/check-shims/check-dogfood-drift PASS.
+- Next : follow-ups possibles — validation live CLI Codex, auto-worklog Codex (payload apply_patch), dogfood root .codex/hooks.json.

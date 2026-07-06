@@ -2,7 +2,7 @@
 id: codex-hooks-parity
 scope: workflow
 title: Pilote hooks Codex déterministes
-status: active
+status: done
 depends_on:
   - workflow/git-hooks
   - workflow/subagent-contract
@@ -33,10 +33,10 @@ doc:
     rollout: false
     observability: false
 progress:
-  phase: implement
-  step: "config .codex/hooks.json générée opt-in (enable_codex_hooks) + contrat mis à jour sur la doc officielle ; reste README (Honnêteté runtime) et _message_after_copy"
+  phase: done
+  step: "hooks Codex natifs livrés opt-in : .codex/hooks.json généré, contrat vérifié sur la doc officielle, README/message aligné"
   blockers: []
-  resume_hint: "livrer le commit docs (README table Honnêteté runtime, conclusion, FAQ, _message_after_copy) puis clôturer avec preuve"
+  resume_hint: "aucune action immédiate ; rouvrir si l'API hooks Codex change, pour une validation live CLI, ou pour l'auto-worklog Codex (payload apply_patch à valider)"
   updated: 2026-07-06
 type: feature
 ---
@@ -110,6 +110,14 @@ Preuve de clôture 2026-07-03 :
 - `bash .ai/scripts/check-agent-config.sh` PASS.
 - `bash .ai/scripts/check-features.sh --no-write` PASS.
 - `bash tests/smoke-test.sh` PASS.
+
+Preuve de clôture 2026-07-06 (génération opt-in livrée) :
+
+- `bash tests/smoke-test.sh` PASS (dont étape [28d/28] : opt-in respecté, hooks.json conforme, check-agent-config PASS sur scaffold).
+- `bash tests/unit/test-check-agent-config.sh` PASS (validation stricte hooks.json Codex).
+- `bash .ai/scripts/check-agent-config.sh`, `check-features.sh --no-write`, `check-feature-docs.sh --strict workflow/codex-hooks-parity`, `check-shims.sh`, `check-dogfood-drift.sh` PASS.
+- `shellcheck -S error` PASS sur les scripts modifiés.
+- Limite assumée : aucune exécution live par le CLI Codex en CI — le résultat reste un pilote, la garantie de non-régression reste hooks Git + CI.
 
 ## Risques
 

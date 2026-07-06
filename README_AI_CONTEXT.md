@@ -81,6 +81,7 @@ bash .ai/scripts/aic.sh template-diff
 
 - Provider VCS : `git` (configurable dans `.ai/config.yml`, clé `vcs.provider`). En TFVC, les modes `--staged` utilisent les pending changes.
 - Claude Code : hooks `UserPromptSubmit` (reminder) + `PreToolUse` sur `git commit` (feature mesh guard) configurés dans `.claude/settings.json` — activer avec `/hooks` au premier démarrage.
+- Codex : hooks natifs `.codex/hooks.json` (reminder par tour + gate de fraîcheur fin de turn) si le projet a été généré avec `enable_codex_hooks=true` — Codex demande de truster la couche projet `.codex/` au premier lancement ; fallback = git hooks + CI.
 - Git : hook `commit-msg` sous `.githooks/` (active via `git config core.hooksPath .githooks`). Bloque les `feat:` sans feature doc, même hors Claude.
 
 - Contenu du reminder : `.ai/reminder.md` (éditable librement).
@@ -110,7 +111,7 @@ Claude reçoit le contexte feature automatiquement via hooks. Codex et les autre
 ## Contrats avancés
 
 - Subagents : utiliser `.ai/workflows/subagent-contract.md` avant toute délégation parallèle. Un `explorer` reste lecture seule ; un `worker` reçoit un write-set explicite et disjoint.
-- Hooks Codex : `.ai/workflows/codex-hooks-parity.md` décrit un pilote opt-in, déterministe et non LLM. Les checks VCS restent la garantie stable.
+- Hooks Codex : pilote opt-in, déterministe et non LLM — `.codex/hooks.json` généré si `enable_codex_hooks=true`, contrat dans `.ai/workflows/codex-hooks-parity.md`. Les checks VCS restent la garantie stable.
 - MCP : `.ai/workflows/mcp-policy.md` garde MCP opt-in, avec allowlist explicite, pas de secrets et fallback sans MCP.
 
 ## Checks
