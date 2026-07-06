@@ -1,2 +1,4 @@
 # agent	shared_entrypoint	status	checked_at	evidence	note
 claude	AGENTS.md	pending	2026-07-03	https://github.com/anthropics/claude-code/issues/6235	#34235 reste ouvert/duplicate ; conserver CLAUDE.md tant que la lecture native n'est pas confirmee.
+copilot	AGENTS.md	confirmed	2026-07-06	https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions	Coding agent lit AGENTS.md nativement (nearest file). Nuance : Copilot Chat/review IDE lisent copilot-instructions.md -> shim compat opt-in.
+cursor	AGENTS.md	confirmed	2026-07-06	https://cursor.com/docs/context/rules	AGENTS.md natif, alternative officielle a .cursor/rules (nested supporte). Seuls les .mdc scopes par globs gardent une valeur ajoutee.

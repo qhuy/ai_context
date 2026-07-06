@@ -43,10 +43,10 @@ doc:
     observability: false
 progress:
   phase: done
-  step: "kill_criterion #34235 matérialisé par registre + check require-confirmed ; statut Claude pending, CLAUDE.md conservé"
+  step: "registre : copilot + cursor confirmés (docs officielles 2026-07-06) ; claude reste pending, CLAUDE.md conservé"
   blockers: []
   resume_hint: "surveiller .ai/native-context-support.tsv ; ne rendre CLAUDE.md optionnel que si check-agent-native-context.sh --require-confirmed claude passe."
-  updated: 2026-07-03
+  updated: 2026-07-06
 ---
 
 # Chemin de collapse — AGENTS.md auto-suffisant, indirection .ai/index.md optionnelle
@@ -180,3 +180,4 @@ Non requis (`doc.requires.observability: false`). Preuves = sorties `check-shims
   + migration downstream + HANDOFF smoke.
 - 2026-07-03 : **incrément 2 livré** — migration downstream documentée (`docs/upgrading.md` + `CHANGELOG.md`) et HANDOFF smoke exécuté (`tests/unit/test-agents-md-self-sufficient.sh` branché en `[0h1/28]`). Il ne reste pas de pivot runtime : le kill_criterion #34235 reste le seul déclencheur futur pour rendre `CLAUDE.md` optionnel.
 - 2026-07-03 : **DONE** — kill_criterion opérationnalisé par `.ai/native-context-support.tsv` et `check-agent-native-context.sh`. Le registre note `claude=pending` (issues #34235/#6235 ouvertes), donc `--require-confirmed claude` échoue et `CLAUDE.md` reste requis.
+- 2026-07-06 : **copilot et cursor passent `confirmed`** (chantier P2 d'ANALYSE.md). Evidence officielle vérifiée : docs.github.com (le coding agent Copilot lit `AGENTS.md`, nearest-file ; nuance — Copilot Chat/review IDE lisent encore `copilot-instructions.md`, d'où un shim compat opt-in) et cursor.com/docs (« AGENTS.md […] alternative to `.cursor/rules` », nested supporté) ; les deux listés sur agents.md. Déclenche l'élagage des shims dédiés Copilot/Cursor porté par `core/agents-md-shim-canonical`. `claude` reste `pending` : `CLAUDE.md` et `GEMINI.md` intouchés.

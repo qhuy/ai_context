@@ -36,3 +36,10 @@
 - HANDOFF `quality/smoke-test` exécuté : `test-agent-native-context.sh` devient l'étape `[0h3/28]`.
 - Validation : test ciblé PASS, dogfood drift PASS, `bash tests/smoke-test.sh` PASS complet ; freshness stricte à relancer avant commit.
 - Next : aucune action core immédiate ; veille future = mettre à jour le registre si Anthropic confirme le support natif.
+
+## 2026-07-06 — copilot + cursor confirmés au registre (P2, commit ①)
+- Intent : matérialiser le kill criterion pour copilot et cursor avant l'élagage de leurs shims dédiés (chantier P2 d'ANALYSE.md).
+- Fichiers/surfaces : `.ai/native-context-support.tsv` (+ miroir template, identique).
+- Evidence : docs.github.com/copilot (« the nearest AGENTS.md file in the directory tree will take precedence » — coding agent ; Chat/review IDE restent sur copilot-instructions.md) ; cursor.com/docs/context/rules (« AGENTS.md […] Place it in your project root as an alternative to .cursor/rules ») ; agents.md liste les deux. Vérifié le 2026-07-06.
+- Validation : `check-agent-native-context.sh` PASS ; `--require-confirmed copilot` PASS ; `--require-confirmed cursor` PASS ; `--require-confirmed claude` échoue toujours (attendu) ; `tests/unit/test-agent-native-context.sh` PASS.
+- Next : commit ② — shim Copilot opt-out (`core/agents-md-shim-canonical`).
