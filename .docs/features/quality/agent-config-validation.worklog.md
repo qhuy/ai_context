@@ -88,3 +88,8 @@ Source session : automation veille-techno
 - Fichiers/surfaces : `.ai/scripts/check-agent-config.sh` (+ miroir jinja), `tests/unit/test-check-agent-config.sh`.
 - Nouvelles règles : ko si un événement mappe sur un tableau vide, si un groupe n'a aucune entrée exécutable, ou si une entrée de hook n'a pas `type:"command"` ; warn (non bloquant, API mouvante) si un nom d'événement sort de la surface Codex documentée 2026-07.
 - Validation : `bash tests/unit/test-check-agent-config.sh` PASS (3 nouveaux cas ko + 1 cas warn-only) ; `shellcheck -S error` PASS ; auto-exécution sur le repo PASS.
+
+## 2026-07-06 14:33 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-agent-config.sh
+  - tests/unit/test-check-agent-config.sh

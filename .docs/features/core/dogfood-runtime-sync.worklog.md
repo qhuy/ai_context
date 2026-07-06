@@ -463,3 +463,8 @@
 - Fichiers modifiés :
   - .ai/scripts/check-agent-config.sh
   - .ai/workflows/codex-hooks-parity.md
+
+## 2026-07-06 14:33 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-agent-config.sh
+  - .ai/workflows/codex-hooks-parity.md
