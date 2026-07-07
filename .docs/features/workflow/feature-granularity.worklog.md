@@ -43,3 +43,6 @@ docs(workflow): formaliser la granularité des fiches feature
 ## 2026-05-06 22:46 — auto
 - Fichiers modifiés :
   - .agents/skills/aic-feature-new/workflow.md
+
+## 2026-07-07 — couverture incidente (workflow/intentional-skills, P3)
+- Retrait du wrapper `.agents/skills/aic-feature-new/workflow.md` de `touches` : fichier supprimé (chantier P3), jamais propriétaire de la règle anti fourre-tout — `.ai/workflows/feature-new.md` la porte seule. Aucun changement de comportement.

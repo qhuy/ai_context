@@ -33,3 +33,6 @@
 - Décision : statut `done`; le contrat reste : proposition courte, validation explicite, aucune écriture avant feu vert.
 - Validation : relecture `.ai/workflows/feature-new.md`, `template/.ai/workflows/feature-new.md.jinja`, `.agents/skills/aic-feature-new/workflow.md`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/feature-new-approval-step`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
 - Next : aucune action immédiate.
+
+## 2026-07-07 — couverture incidente (workflow/intentional-skills, P3)
+- Retrait du wrapper `.agents/skills/aic-feature-new/workflow.md` de `touches` : fichier supprimé (chantier P3), jamais propriétaire du contrat de validation avant écriture — `.ai/workflows/feature-new.md` le porte seul. Prose alignée (skill → procédure). Aucun changement de comportement.

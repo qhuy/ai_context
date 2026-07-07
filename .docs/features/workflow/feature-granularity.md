@@ -6,7 +6,6 @@ status: done
 depends_on: []
 touches:
   - .ai/workflows/feature-new.md
-  - .agents/skills/aic-feature-new/workflow.md
   - .docs/FEATURE_TEMPLATE.md
 touches_shared: []
 product: {}
@@ -43,8 +42,7 @@ Une fiche feature doit représenter une intention livrable cohérente. La procé
 
 ### Inclus
 
-- Procédure `feature-new`.
-- Workflow du skill `/aic-feature-new`.
+- Procédure `feature-new`, consommée en interne par les skills qui créent une fiche.
 - Template feature, avec une note compacte de granularité.
 - Exemples OK / à éviter autour du domaine `passage`.
 
@@ -117,3 +115,4 @@ Aucune dépendance déclarée.
 2026-05-04 : règle ajoutée aux procédures de création et au template, sans quality gate automatisée.
 2026-05-04 : feature clôturée après quality gate complète.
 2026-05-04 : impact documentaire revu pour `workflow/feature-new-approval-step` ; la règle anti fourre-tout reste inchangée.
+2026-07-07 : le wrapper Codex `aic-feature-new` (couverture incidente) est retiré par `workflow/intentional-skills` (P3) — la procédure canonique `feature-new` reste inchangée et seule propriétaire du contrat.

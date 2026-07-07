@@ -1263,31 +1263,18 @@ for s in feature-new feature-resume feature-update feature-handoff feature-audit
   fi
 done
 for s in aic-feature-new aic-feature-resume aic-feature-update aic-feature-handoff aic-feature-done aic-quality-gate; do
-  if [[ ! -f "$OUT/.agents/skills/$s/SKILL.md" ]]; then
-    echo "  ✗ .agents/skills/$s/SKILL.md absent"
-    exit 1
-  fi
-  if [[ ! -f "$OUT/.agents/skills/$s/workflow.md" ]]; then
-    echo "  ✗ .agents/skills/$s/workflow.md absent"
-    exit 1
-  fi
-  if ! grep -q "^name: $s$" "$OUT/.agents/skills/$s/SKILL.md"; then
-    echo "  ✗ .agents/skills/$s frontmatter 'name' incorrect"
+  if find "$OUT/.claude/skills" "$OUT/.agents/skills" -maxdepth 1 -type d -name "$s" | grep -q .; then
+    echo "  ✗ wrapper interne $s encore exposé comme skill (Claude ou Codex) — doit rediriger vers aic.sh / .ai/workflows/"
     exit 1
   fi
 done
-if find "$OUT/.claude/skills" -maxdepth 1 -type d -name 'aic-feature-*' | grep -q .; then
-  echo "  ✗ skills procéduraux aic-feature-* encore exposés"
-  find "$OUT/.claude/skills" -maxdepth 1 -type d -name 'aic-feature-*'
-  exit 1
-fi
 for s in aic-quality-gate aic-project-guardrails; do
   if [[ -d "$OUT/.claude/skills/$s" ]]; then
     echo "  ✗ $s encore exposé comme skill Claude"
     exit 1
   fi
 done
-echo "  ✓ skills Claude publics + skills Codex + 10 workflows internes présents"
+echo "  ✓ skills Claude publics + skills Codex intentionnels (wrappers internes retirés) + 10 workflows internes présents"
 
 if [[ ! -f "$OUT/.docs/frames/0000-template.md" ]]; then
   echo "  ✗ template de cadrage durable absent"

@@ -113,11 +113,12 @@ _message_after_copy: |
     /aic-review             → quels risques dans le delta courant ? doc, features, checks
     /aic-ship               → est-ce prêt à commit/PR ? gate + freshness + commit proposé
 
-  Si Codex est sélectionné, les wrappers locaux sont générés sous .agents/skills/.
-  Les primitives procédurales restent canoniques sous .ai/workflows/ ; Codex reçoit
-  aussi des skills minces aic-feature-* / aic-quality-gate, marqués internes/fallback,
-  qui pointent vers ces workflows. Claude garde une surface plus intentionnelle :
-  frame, pilot, status, diagnose, document-feature, review, ship.
+  Si Codex est sélectionné, les skills intentionnels sont générés sous .agents/skills/ :
+  frame, pilot, status, diagnose, document-feature, review, ship, onboard, dev-plan —
+  identiques à la surface Claude. Les primitives procédurales (création, reprise,
+  update, handoff, quality gate, done) restent canoniques sous .ai/workflows/ ; ces
+  skills intentionnels les suivent déjà en interne. Elles ne sont plus exposées
+  comme skills séparés à invoquer.
   {% if 'codex' in agents and enable_codex_hooks %}
   Hooks Codex natifs : .codex/hooks.json est généré (reminder par tour + gate de
   fraîcheur fin de turn). Au premier lancement, Codex demande de truster la couche

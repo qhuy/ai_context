@@ -190,3 +190,10 @@
 ## 2026-07-07 09:15 — auto
 - Fichiers modifiés :
   - .ai/workflows/evidence-discipline.md
+
+## 2026-07-07 — retrait des 6 wrappers Codex procéduraux (P3, commit ①)
+- Intent : réduire la surface skills (chantier P3 d'ANALYSE.md) — les 6 wrappers `aic-feature-*`/`aic-quality-gate` ne faisaient que rediriger vers leur workflow canonique, sans aucune référence externe (vérifié : rg sur tout le repo hors smoke-test/CHANGELOG/docs historiques → zéro hit).
+- Fichiers/surfaces : `.agents/skills/aic-feature-{new,done,handoff,resume,update}/**` et `aic-quality-gate/**` supprimés (+ miroirs `template/.agents/skills/...jinja`) ; `tests/smoke-test.sh` (étape [19/28] : assertion de présence → assertion d'absence, sur Claude ET Codex) ; `copier.yml` (`_message_after_copy` corrigé — j'avais d'abord écrit "bash .ai/scripts/aic.sh <verbe>" par supposition, vérifié que ces verbes n'existent PAS dans aic.sh (grep sur les case), corrigé pour dire que les skills intentionnels consomment déjà les workflows en interne, sans wrapper CLI dédié).
+- Discipline de preuve appliquée concrètement : la 1re rédaction du message Copier affirmait un fonctionnement non vérifié (verbes aic.sh inexistants) — corrigé avant commit grâce à la règle evidence-discipline.
+- Validation : smoke complet + check-shims + check-features + dogfood-drift au commit.
+- Next : commit ② — cross-refs et docs si nécessaire.

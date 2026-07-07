@@ -7,7 +7,6 @@ depends_on:
   - workflow/feature-granularity
 touches:
   - .ai/workflows/feature-new.md
-  - .agents/skills/aic-feature-new/workflow.md
   - template/.ai/workflows/feature-new.md.jinja
 touches_shared: []
 product: {}
@@ -38,14 +37,13 @@ Modifier le workflow de création de feature pour qu'il propose d'abord une synt
 
 ## Objectif
 
-Éviter que `/aic-feature-new` donne l'impression de partir directement en développement. Le skill doit cadrer l'intention, exposer les tâches logiques, impacts, risques et conseils éventuels, puis demander une validation explicite.
+Éviter que la création de feature donne l'impression de partir directement en développement. La procédure doit cadrer l'intention, exposer les tâches logiques, impacts, risques et conseils éventuels, puis demander une validation explicite.
 
 ## Périmètre
 
 ### Inclus
 
-- Procédure canonique `.ai/workflows/feature-new.md`.
-- Workflow du skill `.agents/skills/aic-feature-new/workflow.md`.
+- Procédure canonique `.ai/workflows/feature-new.md`, consommée en interne par les skills qui créent une fiche (`aic-frame` après confirmation, `aic-document-feature`).
 - Format de synthèse avant écriture.
 - Règle de STOP tant que l'utilisateur n'a pas validé.
 
@@ -64,7 +62,7 @@ Modifier le workflow de création de feature pour qu'il propose d'abord une synt
 
 - Lean context conservé : la proposition s'appuie sur les lectures déjà obligatoires et des recherches ciblées si nécessaire.
 - Pas d'écriture de fiche sans validation explicite.
-- Pas de développement applicatif dans `aic-feature-new`.
+- Pas de développement applicatif dans la procédure `feature-new`.
 - Les règles anti fourre-tout restent appliquées avant la proposition.
 
 ## Décisions
@@ -91,7 +89,7 @@ Quand l'utilisateur demande une nouvelle feature, l'agent propose d'abord ce qu'
 
 Preuve de clôture 2026-07-03 :
 
-- Relecture `.ai/workflows/feature-new.md`, `template/.ai/workflows/feature-new.md.jinja` et `.agents/skills/aic-feature-new/workflow.md`.
+- Relecture `.ai/workflows/feature-new.md` et `template/.ai/workflows/feature-new.md.jinja`.
 - `bash .ai/scripts/check-feature-docs.sh --strict workflow/feature-new-approval-step` PASS.
 - `bash .ai/scripts/check-dogfood-drift.sh` PASS.
 - `bash .ai/scripts/check-features.sh --no-write` PASS.
@@ -132,3 +130,4 @@ Rollback par revert documentaire des deux workflows modifiés.
 2026-05-04 : phase de proposition avant écriture ajoutée au workflow canonique et au skill.
 2026-05-04 : phase propagée au template Copier et dogfood runtime aligné.
 2026-07-03 : DONE. Contrat relu côté runtime/template/wrapper Codex ; validation explicite conservée avant toute écriture.
+2026-07-07 : le wrapper Codex `aic-feature-new` (couverture incidente, jamais propriétaire du contrat) est retiré par `workflow/intentional-skills` (P3) — la procédure canonique `.ai/workflows/feature-new.md` reste inchangée et porte seule le contrat, consommée en interne par les skills.

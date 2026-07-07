@@ -21,13 +21,9 @@ touches:
   - template/.claude/skills/aic-ship/**
   - .agents/skills/aic/**
   - .agents/skills/aic-document-feature/**
-  - .agents/skills/aic-feature-*/**
-  - .agents/skills/aic-quality-gate/**
   - .agents/skills/aic-ship/**
   - template/.agents/skills/aic/**
   - template/.agents/skills/aic-document-feature/**
-  - template/.agents/skills/aic-feature-*/**
-  - template/.agents/skills/aic-quality-gate/**
   - template/.agents/skills/aic-ship/**
   - .ai/index.md
   - template/.ai/index.md.jinja
@@ -45,10 +41,10 @@ touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: done
-  step: "surface intentionnelle et primitives internes/fallback livrées, validées et dépendances clôturées"
+  step: "surface intentionnelle réduite : 6 wrappers Codex procéduraux retirés (P3), parité stricte Claude/Codex, workflows canoniques inchangés"
   blockers: []
-  resume_hint: "aucune action immédiate ; rouvrir seulement si la surface publique, les primitives fallback ou le trigger aic-frame changent"
-  updated: 2026-07-03
+  resume_hint: "aucune action immédiate ; rouvrir seulement si la surface publique ou le trigger aic-frame changent"
+  updated: 2026-07-07
 type: feature
 ---
 
@@ -77,9 +73,8 @@ Les primitives procédurales vivent sous `.ai/workflows/`. Elles restent disponi
 
 ### Inclus
 
-- Skills publics intentionnels Claude/Codex.
-- Wrappers Codex minces vers les workflows canoniques.
-- Procédures internes `.ai/workflows/*` consommées juste-à-temps.
+- Skills publics intentionnels Claude/Codex, surface identique entre les deux agents.
+- Procédures internes `.ai/workflows/*` consommées juste-à-temps par ces skills (pas de wrapper séparé à invoquer).
 - Surface CLI `aic.sh` pour les agents non hookés.
 
 ### Hors périmètre
@@ -100,10 +95,9 @@ Les primitives procédurales vivent sous `.ai/workflows/`. Elles restent disponi
 ## Invariants
 
 - Pack A reste lean : aucun skill, workflow ou fichier `.ai/agent/*` n'est chargé par défaut.
-- Les workflows canoniques restent sous `.ai/workflows/`.
-- Les primitives `aic-feature-*` et `aic-quality-gate` sont internes/fallback, pas l'UX recommandée.
+- Les workflows canoniques restent sous `.ai/workflows/`, consommés en interne par les skills — jamais exposés comme skills séparés.
 - `/aic done` ne peut pas contourner la quality gate ni l'evidence build/tests/docs.
-- Claude et Codex doivent rester alignés avec le rendu Copier minimal.
+- Claude et Codex exposent exactement la même surface de skills (parité stricte, plus de wrapper Codex-only).
 
 ## Contrats
 
@@ -115,13 +109,12 @@ Les primitives procédurales vivent sous `.ai/workflows/`. Elles restent disponi
 
 ## Décisions
 
-- Conserver les wrappers Codex procéduraux pour les cas explicites, mais les étiqueter `Primitive interne/fallback`.
+- **2026-07-07 (P3)** : retirer les 6 wrappers Codex procéduraux (`aic-feature-new`, `aic-feature-done`, `aic-feature-handoff`, `aic-feature-resume`, `aic-feature-update`, `aic-quality-gate`). Ils ne faisaient que citer leur workflow canonique et rediriger (garde-fou STOP+redirect) — aucun canal ne les invoquait en dehors d'eux-mêmes, et les 14 workflows de `.ai/workflows/` restent la source de vérité, déjà consommés en interne par les skills intentionnels. Zéro perte de capacité : les procédures restent disponibles pour Claude et Codex via lecture directe des workflows.
 - Aligner `/aic done` sur `.ai/workflows/feature-done.md` au lieu de patcher `status: done` directement.
 - Rendre les lectures de `aic-frame` juste-à-temps : `.ai/agent/*` et `QUALITY_GATE` ne sont chargés que si le risque ou l'intention le justifie.
 - Utiliser `aic-document-feature` comme point d'entrée documentaire générique, sans logique projet spécifique.
-- Garde-fous comportementaux dans le body de chaque primitive Codex `aic-feature-*` / `aic-quality-gate` : STOP+redirect si la primitive n'est pas nommée explicitement. Le matching lexical implicite ne doit pas déclencher la primitive ; chemin propre = intention publique → workflow canonique, jamais intention publique → primitive.
 - Trigger déterministe pour `aic-frame` : `QUALITY_GATE.md` chargé seulement si `progress.phase` ∈ {review, done}, ou intention nommée (ship / done / review / quality-gate), ou change touchant contrat (API, schema), sécurité, CI, doc canonique.
-- Descriptions publiques (`aic-ship`, `aic-status`) enrichies avec les mots-clés captés implicitement par les primitives. Pour `aic-ship` : la description référence `.ai/workflows/quality-gate.md` (backend réel, gate avant `feature-done`) — pas de mention d'invocation primitive.
+- Descriptions publiques (`aic-ship`, `aic-status`) enrichies avec les mots-clés d'intention associés. Pour `aic-ship` : la description référence `.ai/workflows/quality-gate.md` (backend réel, gate avant `feature-done`).
 
 ## Validation
 
@@ -161,3 +154,4 @@ Preuve de clôture 2026-07-03 :
 - 2026-05-06 (round 4) : cross-check Claude/Codex sur 4 rounds, application du plan consolidé. Garde-fous comportementaux ajoutés dans les 6 wrappers Codex (runtime + template) avec règle STOP+redirect sur matching lexical implicite. Trigger `aic-frame` rendu déterministe (phase + intention + type-change). Descriptions `aic-ship` (couvre done/clôture/livraison) et `aic-status` (couvre status/reprise/phase/état) enrichies sans rompre la chaîne intention publique → workflow canonique.
 - 2026-06-02 : correction du wording `aic-ship` — la description référence désormais `.ai/workflows/quality-gate.md` (backend réel, gate avant `feature-done`) au lieu de `feature-done.md`. Appliqué aux 4 surfaces (runtime + template, Claude + Codex) ; `touches` étendu à `.agents/skills/aic-ship/**` (+ template). Cross-scope `core` (dogfood-runtime-sync, codex-skills-install, aic-surface-canonical, template-engine) → freshness propagée.
 - 2026-07-03 : DONE. Surface intentionnelle livrée ; les primitives restent internes/fallback et Pack A reste lean.
+- 2026-07-07 (P3, réouverture) : les 6 wrappers Codex `aic-feature-*`/`aic-quality-gate` sont retirés (racine + template). Ils étaient déjà catalogués « internes/fallback » sans aucune référence externe hors smoke-test et docs historiques — surface pure, zéro capacité perdue. `.ai/workflows/*` (14 procédures) reste la source canonique, consommée en interne par les skills intentionnels ; `copier.yml` (`_message_after_copy`) et `tests/smoke-test.sh` alignés. Parité Claude/Codex désormais stricte (même liste de skills).
