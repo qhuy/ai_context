@@ -79,3 +79,5 @@
 - MIGRATION.md : sémantique `copier update` corrigée sur preuve empirique (review) — l'update ne supprime JAMAIS un chemin `_exclude` ; copilot-instructions.md reste en place non géré (suppression manuelle documentée) ; protocol-reminder.mdc n'est supprimé que si `.cursor` reste géré (profils back/front), nettoyage manuel documenté sinon.
 - docs/upgrading.md : « Copilot garde un shim » / « le shim doit exister » remplacés par le contrat registre (confirmed → skip explicite, pending → requis).
 - Fiche : section Contrats + description frontmatter alignées sur le comportement livré.
+## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
+- `AGENTS.md` (+ `template/AGENTS.md.jinja`) : hard rule « Aucune supposition : prouver (code lu, commande, doc) ou marquer Hypothèse » ; « Shim lean » condensé en 1 ligne — AGENTS.md reste à 15 lignes (limite MAX_LINES), auto-suffisance préservée (test PASS). Validation portée par `workflow/evidence-discipline`.

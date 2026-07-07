@@ -479,3 +479,8 @@
 - Fichiers modifiés :
   - .ai/scripts/check-dogfood-drift.sh
   - .ai/scripts/check-shims.sh
+## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
+- `.ai/reminder.md`, `AGENTS.md` (+ miroirs jinja) : hard rule « aucune supposition » ajoutée, paragraphe Shim lean condensé. Parité runtime/template vérifiée (check-dogfood-drift PASS). Validation portée par `workflow/evidence-discipline`.
+
+## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
+- workflow.md des skills d'analyse (aic-review/diagnose/pilot/frame, Claude+Codex+templates) : une règle non négociable « discipline de preuve » ajoutée — toute affirmation prouvée (source citée) ou étiquetée Hypothèse / À vérifier. Aucun changement du contrat propre de cette fiche. Validation portée par `workflow/evidence-discipline`.

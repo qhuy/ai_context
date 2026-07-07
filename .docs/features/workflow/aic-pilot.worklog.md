@@ -48,3 +48,6 @@
 - Décision : statut `done`; les follow-ups restent portés par leurs fiches propriétaires, pas par le pilot.
 - Validation : `bash .ai/scripts/check-feature-docs.sh --strict workflow/aic-pilot`; `bash tests/unit/test-dogfood-update-preserves-frames.sh`; `bash tests/unit/test-dogfood-drift-extra.sh`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
 - Next : aucune action immédiate.
+
+## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
+- workflow.md des skills d'analyse (aic-review/diagnose/pilot/frame, Claude+Codex+templates) : une règle non négociable « discipline de preuve » ajoutée — toute affirmation prouvée (source citée) ou étiquetée Hypothèse / À vérifier. Aucun changement du contrat propre de cette fiche. Validation portée par `workflow/evidence-discipline`.

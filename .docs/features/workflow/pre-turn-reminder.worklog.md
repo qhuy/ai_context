@@ -54,3 +54,6 @@
 - Décision : statut `done`; l'implémentation `db79921` a déjà retiré les dépendances inverses du hook par tour et le JIT `features-for-path.sh --with-docs` reste le report du graphe quand un path est connu.
 - Validation : `bash .ai/scripts/measure-context-size.sh` → `reverse_deps chars=0`, total courant `1516 chars`, tokens estimés `(379..505)` ; `bash tests/smoke-test.sh` PASS dans le tour courant, incluant l'étape `[10/28]` reminder sans reverse deps + JIT `depends_on`.
 - Next : aucune action immédiate ; passer à R2 côté `quality/features-for-path-ranking-and-matcher-correctness`.
+
+## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
+- `template/.ai/reminder.md.jinja` (+ rendu racine) : hard rule « aucune supposition » ajoutée aux variantes FR et EN. Aucun changement du mécanisme d'injection. Reminder statique mesuré à 560 chars. Validation portée par `workflow/evidence-discipline`.

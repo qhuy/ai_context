@@ -144,6 +144,7 @@ Prochaine action minimale :
 
 ## NON-NEGOTIABLE RULES
 
+- Discipline de preuve (`.ai/workflows/evidence-discipline.md`) : toute affirmation de fonctionnement est prouvée (source citée) ou étiquetée Hypothèse / À vérifier ; jamais d'affirmation nue.
 - Ne pas créer une fiche feature globale pour un audit transverse.
 - Un seul item actif à la fois.
 - Une seule question décisionnelle à la fois.

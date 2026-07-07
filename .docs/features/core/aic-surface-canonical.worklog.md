@@ -193,3 +193,5 @@
 
 ## 2026-07-07 — couverture incidente (fix post-review, core/agents-md-shim-canonical)
 - MIGRATION.md / docs/upgrading.md : sémantique `copier update` des shims élagués corrigée sur preuve empirique (copier update ne supprime jamais un chemin `_exclude`). Aucun changement du contrat propre de cette fiche. Validation portée par `core/agents-md-shim-canonical`.
+## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
+- workflow.md des skills d'analyse (aic-review/diagnose/pilot/frame, Claude+Codex+templates) : une règle non négociable « discipline de preuve » ajoutée — toute affirmation prouvée (source citée) ou étiquetée Hypothèse / À vérifier. Aucun changement du contrat propre de cette fiche. Validation portée par `workflow/evidence-discipline`.

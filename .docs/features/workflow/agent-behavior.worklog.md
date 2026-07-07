@@ -50,3 +50,6 @@
 - Décision : statut `done`; `.ai/agent/*` et `aic-diagnose` restent on-demand.
 - Validation : `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/measure-context-size.sh`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/agent-behavior`; `bash tests/smoke-test.sh`.
 - Next : aucune action immédiate.
+
+## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
+- workflow.md des skills d'analyse (aic-review/diagnose/pilot/frame, Claude+Codex+templates) : une règle non négociable « discipline de preuve » ajoutée — toute affirmation prouvée (source citée) ou étiquetée Hypothèse / À vérifier. Aucun changement du contrat propre de cette fiche. Validation portée par `workflow/evidence-discipline`.
