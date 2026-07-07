@@ -186,3 +186,7 @@
 
 ## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
 - `aic-review` (+ `aic-pilot`, `aic-diagnose`, `aic-frame` en touches_shared) : une règle non négociable « discipline de preuve » ajoutée aux workflow.md (Claude/Codex + templates). Aucun changement des contrats de sortie. Validation portée par `workflow/evidence-discipline`.
+
+## 2026-07-07 09:15 — auto
+- Fichiers modifiés :
+  - .ai/workflows/evidence-discipline.md
