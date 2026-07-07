@@ -205,3 +205,10 @@
 
 ## 2026-07-07 — couverture incidente (P5 assainissement matrice)
 - `README_AI_CONTEXT.md` (+ miroir jinja) : mention TFVC requalifiée « best-effort, non testé end-to-end ». Aucun changement de la surface `aic`.
+
+## 2026-07-07 — hygiène repo : archivage des audits historiques (P6)
+- Intent : chantier P6 d'ANALYSE.md — AUDIT.md et AUDIT_2026-05-06.md sont des rapports figés (aucune modification depuis mai 2026) qui alourdissent la racine du repo.
+- Vérification avant déplacement : `rg` sur tout le mesh — AUDIT.md = 0 référence, AUDIT_2026-05-06.md = 1 référence (`touches:` de cette fiche). Aucune autre fiche ni script ne les référence (les mentions dans docs/audit/reports/ et docs/benchmarks/ sont de la prose historique/logs figés, non éditée).
+- Fichiers/surfaces : `docs/archive/AUDIT.md`, `docs/archive/AUDIT_2026-05-06.md` (git mv) ; `PROJECT_STATE.md` (lien ajouté) ; cette fiche (`touches:` corrigé vers le nouveau chemin).
+- Décision explicitement bornée : les 60 fiches `status: done` restent en place — `build-feature-index.sh` scanne `-mindepth 2 -maxdepth 2`, non récursif ; les archiver hors de `.docs/features/` casserait `depends_on`/`touches` sans bénéfice (déjà masquées du reminder par défaut). Confirmé avec l'utilisateur avant d'agir plutôt que suivi à la lettre depuis ANALYSE.md.
+- Validation : check-features/check-shims/check-dogfood-drift + smoke complet au commit.

@@ -9,7 +9,7 @@ touches:
   - PROJECT_STATE.md
   - MIGRATION.md
   - CONTRIBUTING.md
-  - AUDIT_2026-05-06.md
+  - docs/archive/AUDIT_2026-05-06.md
   - template/README_AI_CONTEXT.md.jinja
   - template/.ai/scripts/aic.sh.jinja
   - .ai/scripts/aic.sh
@@ -150,3 +150,4 @@ Aucune dependance frontmatter.
 - 2026-06-19 : ajout de `aic-onboard` a la taxonomie canonique (init/sync/migrate
   de l'overlay projet). Voir `workflow/project-overlay-onboarding`.
 - 2026-07-03 : fiche clôturée en `done`. La surface publique canonique reste `aic`/`aic-*`, `aic-pilot` et `aic-onboard` sont intégrés, et les adaptations VCS n'ont pas changé l'UX commande. Doc Impact Decision : C — fiche feature et worklog mis à jour.
+- 2026-07-07 (P6, hygiène repo) : `AUDIT.md` et `AUDIT_2026-05-06.md` déplacés vers `docs/archive/` (0 et 1 référence mesh respectivement, vérifié par `rg` avant déplacement). `PROJECT_STATE.md` lie désormais vers `docs/archive/`. Les 60 fiches `status: done` restent en place : `build-feature-index.sh` scanne `-mindepth 2 -maxdepth 2` sous `.docs/features/` (non récursif) — les archiver casserait silencieusement `depends_on`/`touches` sans bénéfice fonctionnel (déjà masquées du reminder par défaut). Décision confirmée avec l'utilisateur plutôt que suivie à la lettre depuis ANALYSE.md.

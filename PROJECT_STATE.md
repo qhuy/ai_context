@@ -5,7 +5,7 @@
 **Local** : chemin de développement local, non versionné.
 **Dernière version publiée** : v0.13.0 — « Contrat read-only des checks, index contract v2 & surface CLI `aic` » (voir [CHANGELOG.md](CHANGELOG.md))
 
-> Ce fichier est un **point d'entrée rapide**. Pour l'historique détaillé des versions, consulter [CHANGELOG.md](CHANGELOG.md). Pour adopter le template sur un projet existant, [MIGRATION.md](MIGRATION.md). Pour l'architecture visuelle, diagramme mermaid dans [README.md](README.md).
+> Ce fichier est un **point d'entrée rapide**. Pour l'historique détaillé des versions, consulter [CHANGELOG.md](CHANGELOG.md). Pour adopter le template sur un projet existant, [MIGRATION.md](MIGRATION.md). Pour l'architecture visuelle, diagramme mermaid dans [README.md](README.md). Pour les audits historiques clos, [docs/archive/](docs/archive/) ([AUDIT.md](docs/archive/AUDIT.md) — 2026-05-01/03, [AUDIT_2026-05-06.md](docs/archive/AUDIT_2026-05-06.md)).
 
 ## Notes mainteneur
 
