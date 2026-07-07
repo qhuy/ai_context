@@ -55,3 +55,6 @@
 - `docs/upgrading.md` ajoute `check-agent-native-context.sh` au parcours post-update et documente le guard `--require-confirmed claude` avant toute optionnalité de `CLAUDE.md`.
 - `CHANGELOG.md` ajoute la note Unreleased sur `.ai/native-context-support.tsv` comme matérialisation du kill criterion.
 - Décision produit : statut prudent maintenu (`claude=pending`) tant que les issues Anthropic #34235/#6235 restent ouvertes.
+
+## 2026-07-07 — couverture incidente (fix post-review, core/agents-md-shim-canonical)
+- MIGRATION.md / docs/upgrading.md : sémantique `copier update` des shims élagués corrigée sur preuve empirique (copier update ne supprime jamais un chemin `_exclude`). Aucun changement du contrat propre de cette fiche. Validation portée par `core/agents-md-shim-canonical`.

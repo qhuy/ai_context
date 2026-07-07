@@ -18,17 +18,23 @@ Guide pour adopter le template sur un projet déjà mature (code, docs, éventue
 
 Copilot (coding agent) et Cursor lisent `AGENTS.md` nativement (registre
 `.ai/native-context-support.tsv`, statut `confirmed` avec evidence officielle).
-Conséquences au prochain `copier update` :
+Conséquences au prochain `copier update` (comportement vérifié — `copier update`
+ne supprime JAMAIS un chemin passé en `_exclude`, seules les suppressions de
+fichiers du template se propagent) :
 
-- `.github/copilot-instructions.md` **n'est plus généré par défaut** et sera
-  supprimé par l'update. Pour le conserver (Copilot Chat/review IDE lisent
-  encore ce fichier) : réponds `true` à `enable_copilot_shim` pendant l'update,
-  ou `copier update --data enable_copilot_shim=true`.
-- `.cursor/rules/protocol-reminder.mdc` est **retiré** (il dupliquait les hard
-  rules d'`AGENTS.md`). Les `.mdc` scopés par globs (`back.mdc`, `front.mdc`)
-  restent générés si les scopes existent. Si tu avais personnalisé
-  protocol-reminder.mdc, déplace tes règles vers `.cursor/rules/` project-owned
-  ou `.ai/project/`.
+- `.github/copilot-instructions.md` **n'est plus géré par le template** (défaut
+  `enable_copilot_shim=false`) mais l'update **ne le supprime pas** : le fichier
+  existant reste en place, non géré, et divergera d'`AGENTS.md`. Deux options :
+  le supprimer toi-même (`git rm .github/copilot-instructions.md` — le coding
+  agent lit AGENTS.md), ou le garder géré avec `enable_copilot_shim=true`
+  (Copilot Chat/review IDE lisent encore ce fichier).
+- `.cursor/rules/protocol-reminder.mdc` : supprimé par l'update **seulement si
+  ton profil a un scope back/front** (`.cursor` reste géré). En profil sans
+  back/front, `.cursor` entier sort de la gestion du template : supprime
+  manuellement `rm -r .cursor` (ou au minimum protocol-reminder.mdc, règle
+  `alwaysApply` périmée qui dupliquait les hard rules). Si tu avais personnalisé
+  ce fichier, déplace tes règles vers `.cursor/rules/` project-owned ou
+  `.ai/project/`.
 - `CLAUDE.md` et `GEMINI.md` sont **inchangés** : la lecture native n'est pas
   confirmée pour ces agents (`claude` reste `pending` au registre).
 

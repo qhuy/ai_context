@@ -4,7 +4,7 @@ scope: core
 title: Shims dérivés d'AGENTS.md (base canonique + imports)
 status: done
 type: feature
-description: "AGENTS.md devient la base de shim unique ; les shims spécifiques d'agent (CLAUDE.md, GEMINI.md, copilot) deviennent des imports @AGENTS.md + lignes agent, avec fallback tailored si l'import n'est pas supporté."
+description: "AGENTS.md est la base de shim unique. CLAUDE.md/GEMINI.md restent des imports @AGENTS.md (lecture native non confirmée) ; les shims Copilot/Cursor sont élagués — opt-out gouverné par le registre natif, compat via enable_copilot_shim."
 depends_on:
   - core/aic-surface-canonical
   - core/template-engine
@@ -103,8 +103,8 @@ Une fiche pour le **modèle de shim multi-agent**, distincte de `aic-surface-can
 ## Contrats
 
 - **Entrée de shim canonique** : `AGENTS.md` (toujours rendue).
-- **Shims dérivés** : `CLAUDE.md`/`GEMINI.md`/`copilot-instructions.md` = `@AGENTS.md` + lignes agent, OU tailored minimal en fallback.
-- **`check-shims`** : valide base + dérivés pour tous les agents de `.copier-answers.yml` ; échoue si un shim activé est absent ou non lean.
+- **Shims dérivés** : `CLAUDE.md`/`GEMINI.md` = `@AGENTS.md` + lignes agent, OU tailored minimal en fallback ; `copilot-instructions.md` = shim compat opt-in (`enable_copilot_shim`, défaut false).
+- **`check-shims`** : valide base + dérivés pour tous les agents de `.copier-answers.yml` ; un shim absent échoue SAUF si l'agent est `confirmed` au registre natif (skip explicite) ; un shim présent est validé normalement (lean, impératif, référence l'index).
 - **Downstream** : transition par phase — warning/migration documentée avant changement de défaut.
 
 ## Validation

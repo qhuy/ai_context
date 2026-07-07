@@ -187,8 +187,8 @@ bash .ai/scripts/check-feature-docs.sh
 Les shims deviennent plus stricts et moins dupliqués :
 
 - `AGENTS.md` reste toujours présent et porte les hard rules minimales inline.
-- `CLAUDE.md` et `GEMINI.md` peuvent importer `@AGENTS.md` ; Copilot garde un shim tailored minimal.
-- `check-shims.sh` lit maintenant `agents` dans `.copier-answers.yml` quand ce fichier existe. Si `gemini` ou `copilot` est activé, le shim correspondant doit exister et rester lean.
+- `CLAUDE.md` et `GEMINI.md` peuvent importer `@AGENTS.md` ; le shim Copilot est devenu opt-in (`enable_copilot_shim`, défaut false — le coding agent lit `AGENTS.md` nativement).
+- `check-shims.sh` lit `agents` dans `.copier-answers.yml` quand ce fichier existe, et consulte le registre `.ai/native-context-support.tsv` : un shim dédié absent est accepté si l'agent y est `confirmed` (copilot, cursor) ; sinon (`pending` — claude, gemini) il doit exister et rester lean. Un shim présent est toujours validé.
 - Sans `.copier-answers.yml`, le check garde un fallback compatible avec les anciens scaffolds et valide les shims présents.
 
 Après `copier update`, accepte en priorité les changements sur `AGENTS.md`,
