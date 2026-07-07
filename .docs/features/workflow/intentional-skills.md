@@ -41,7 +41,7 @@ touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: done
-  step: "surface intentionnelle réduite : 6 wrappers Codex procéduraux retirés (P3), parité stricte Claude/Codex, workflows canoniques inchangés"
+  step: "surface intentionnelle réduite et clôturée avec preuve : 6 wrappers retirés (P3), parité stricte Claude/Codex, CHANGELOG tracé"
   blockers: []
   resume_hint: "aucune action immédiate ; rouvrir seulement si la surface publique ou le trigger aic-frame changent"
   updated: 2026-07-07
@@ -132,6 +132,16 @@ Preuve de clôture 2026-07-03 :
 - `bash .ai/scripts/check-dogfood-drift.sh` PASS.
 - `bash .ai/scripts/check-features.sh --no-write` PASS.
 - `bash tests/smoke-test.sh` PASS.
+
+Preuve de clôture 2026-07-07 (P3, retrait des 6 wrappers) :
+
+- Recherche de complétude (`rg` ciblé, hors smoke-test/CHANGELOG/docs historiques datées) : zéro référence résiduelle aux 6 wrappers retirés.
+- `bash .ai/scripts/check-shims.sh` PASS.
+- `bash .ai/scripts/check-features.sh --no-write` PASS (2 fiches voisines corrigées : `feature-new-approval-step`, `feature-granularity`).
+- `bash .ai/scripts/check-feature-docs.sh --strict workflow/intentional-skills` PASS.
+- `bash .ai/scripts/check-dogfood-drift.sh` PASS.
+- `shellcheck -S error tests/smoke-test.sh` silencieux (0 erreur).
+- `bash tests/smoke-test.sh` PASS ×2 (un par commit).
 
 ## Cross-refs
 

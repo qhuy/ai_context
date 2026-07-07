@@ -197,3 +197,8 @@
 - Discipline de preuve appliquée concrètement : la 1re rédaction du message Copier affirmait un fonctionnement non vérifié (verbes aic.sh inexistants) — corrigé avant commit grâce à la règle evidence-discipline.
 - Validation : smoke complet + check-shims + check-features + dogfood-drift au commit.
 - Next : commit ② — cross-refs et docs si nécessaire.
+
+## 2026-07-07 — clôture avec preuve (commit ②)
+- Intent : tracer au CHANGELOG et clôturer avec la batterie complète.
+- Validation (exécutée ce jour) : `check-shims` PASS ; `check-features --no-write` PASS (deux fiches voisines corrigées, `feature-new-approval-step` et `feature-granularity`, dont les touches référençaient un wrapper supprimé sans en être propriétaires) ; `check-feature-docs --strict workflow/intentional-skills` PASS ; `check-dogfood-drift` PASS ; `shellcheck -S error tests/smoke-test.sh` silencieux (0 erreur) ; smoke complet PASS ×2 (un par commit), étape [19/28] avec assertion d'absence Claude+Codex.
+- Recherche de complétude : `rg` ciblé sur tout le repo (hors smoke-test/CHANGELOG/docs historiques datées) confirme zéro référence résiduelle aux 6 wrappers retirés.
