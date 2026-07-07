@@ -202,3 +202,6 @@
 
 ## 2026-07-07 — couverture incidente (P4 gouvernance bash, chantier ANALYSE.md)
 - `CONTRIBUTING.md` : ajout d'un § « Moratoire sur la croissance du moteur bash » sous « Ajouter un script runtime » — pas de yq obligatoire (décision existante `core/feature-mesh-contract-alignment` maintenue après clarification utilisateur), gel de toute nouvelle logique bash non triviale sans justification écrite. Aucun changement de la surface `aic` ni du runtime.
+
+## 2026-07-07 — couverture incidente (P5 assainissement matrice)
+- `README_AI_CONTEXT.md` (+ miroir jinja) : mention TFVC requalifiée « best-effort, non testé end-to-end ». Aucun changement de la surface `aic`.

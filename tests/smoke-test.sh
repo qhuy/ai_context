@@ -2086,6 +2086,64 @@ rm -rf "$combo_scopes"
 echo "  ✓ check-shims suit les scopes du profil rendu (backend sans back.md → FAIL)"
 
 echo
+echo "[28g/28] matrice agents : cursor seul et gemini seul (jamais scaffoldés sans claude)"
+# cursor seul, sans claude/codex — AGENTS.md natif + .mdc scopés, aucun autre shim.
+combo_cursor_only="/tmp/ai-context-smoke-cursoronly-$$"
+copier copy --defaults --trust \
+  --data project_name=smoke-cursor-only \
+  --data scope_profile=fullstack \
+  --data agents='["cursor"]' \
+  "$SRC" "$combo_cursor_only" >/dev/null
+for absent in CLAUDE.md GEMINI.md .claude .agents .github/copilot-instructions.md; do
+  if [[ -e "$combo_cursor_only/$absent" ]]; then
+    echo "  ✗ $absent généré alors que agents=[cursor] seul"
+    rm -rf "$combo_cursor_only"
+    exit 1
+  fi
+done
+for present in AGENTS.md .cursor/rules/back.mdc .cursor/rules/front.mdc; do
+  if [[ ! -e "$combo_cursor_only/$present" ]]; then
+    echo "  ✗ $present absent alors que agents=[cursor] seul + scope fullstack"
+    rm -rf "$combo_cursor_only"
+    exit 1
+  fi
+done
+if ! ( cd "$combo_cursor_only" && bash .ai/scripts/check-shims.sh ) >/dev/null 2>&1; then
+  echo "  ✗ check-shims fail sur scaffold cursor seul"
+  ( cd "$combo_cursor_only" && bash .ai/scripts/check-shims.sh ) || true
+  rm -rf "$combo_cursor_only"
+  exit 1
+fi
+rm -rf "$combo_cursor_only"
+
+# gemini seul, sans claude/codex — AGENTS.md + GEMINI.md, aucun autre shim.
+combo_gemini_only="/tmp/ai-context-smoke-geminionly-$$"
+copier copy --defaults --trust \
+  --data project_name=smoke-gemini-only \
+  --data agents='["gemini"]' \
+  "$SRC" "$combo_gemini_only" >/dev/null
+for absent in CLAUDE.md .claude .agents .cursor .github/copilot-instructions.md; do
+  if [[ -e "$combo_gemini_only/$absent" ]]; then
+    echo "  ✗ $absent généré alors que agents=[gemini] seul"
+    rm -rf "$combo_gemini_only"
+    exit 1
+  fi
+done
+if [[ ! -f "$combo_gemini_only/GEMINI.md" ]]; then
+  echo "  ✗ GEMINI.md absent alors que agents=[gemini] seul"
+  rm -rf "$combo_gemini_only"
+  exit 1
+fi
+if ! ( cd "$combo_gemini_only" && bash .ai/scripts/check-shims.sh ) >/dev/null 2>&1; then
+  echo "  ✗ check-shims fail sur scaffold gemini seul"
+  ( cd "$combo_gemini_only" && bash .ai/scripts/check-shims.sh ) || true
+  rm -rf "$combo_gemini_only"
+  exit 1
+fi
+rm -rf "$combo_gemini_only"
+echo "  ✓ cursor seul et gemini seul : shims corrects, aucun artefact d'agent non sélectionné"
+
+echo
 echo "[bonus] big-mesh : budget tokens + focus graph-aware"
 # Génère 30 features back + 30 features front + dépendances pour stresser
 # l'inventaire. Borne haute pragmatique : 30k chars

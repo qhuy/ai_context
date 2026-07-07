@@ -86,7 +86,7 @@ bash .ai/scripts/aic.sh template-diff
 
 ## Runtime
 
-- Provider VCS : `{{ vcs_provider }}` (configurable dans `.ai/config.yml`, clé `vcs.provider`). En TFVC, les modes `--staged` utilisent les pending changes.
+- Provider VCS : `{{ vcs_provider }}` (configurable dans `.ai/config.yml`, clé `vcs.provider`). En TFVC, les modes `--staged` utilisent les pending changes — best-effort, non testé end-to-end (voir `core/vcs-provider-abstraction`).
 - Claude Code : hooks `UserPromptSubmit` (reminder) + `PreToolUse` sur `git commit` (feature mesh guard) configurés dans `.claude/settings.json` — activer avec `/hooks` au premier démarrage.
 - Codex : hooks natifs `.codex/hooks.json` (reminder par tour + gate de fraîcheur fin de turn) si le projet a été généré avec `enable_codex_hooks=true` — Codex demande de truster la couche projet `.codex/` au premier lancement ; fallback = git hooks + CI.
 {% if vcs_provider == 'git' and adoption_mode != 'lite' %}- Git : hook `commit-msg` sous `.githooks/` (active via `git config core.hooksPath .githooks`). Bloque les `feat:` sans feature doc, même hors Claude.

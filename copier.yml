@@ -172,10 +172,10 @@ vcs_provider:
   default: git
   choices:
     git (repo Git local ou Git hébergé par TFS/Azure DevOps): git
-    tfvc (TFS/TFVC avec pending changes): tfvc
+    tfvc (TFS/TFVC avec pending changes — best-effort, non testé end-to-end): tfvc
     auto (détection locale best-effort): auto
     none (checks manuels sans VCS): none
-  help: Provider source-control utilisé par les checks de delta/freshness
+  help: "Provider source-control utilisé par les checks de delta/freshness. tfvc est best-effort : la couche _vcs.sh est testée en isolation (tf mocké), mais aucun scaffold Copier complet n'est exercé de bout en bout — remonte un bug si le comportement diverge."
 
 tech_profile:
   type: str

@@ -75,3 +75,9 @@
 - Fichiers modifiés :
   - copier.yml
   - tests/smoke-test.sh
+
+## 2026-07-07 — requalification TFVC honnête (P5, commit ①)
+- Intent : chantier P5 d'ANALYSE.md — le statut TFVC (option de premier niveau, zéro test e2e) devait être requalifié plutôt que laissé implicite ou l'option supprimée (contrainte non-négociable).
+- Fichiers/surfaces : `copier.yml` (choices `vcs_provider` + `help`), `README_AI_CONTEXT.md` (+ miroir jinja) — mention explicite « best-effort, non testé end-to-end ». Fiche : nouveau risque assumé documenté.
+- Décision : pas d'écriture de test e2e maintenant (nécessiterait un faux binaire `tf` exécutable depuis un scaffold Copier réel + reverse-engineering du contrat exact `tf status` — risque de test peu fiable plutôt qu'utile) ; honnêteté documentaire d'abord, test e2e en suivi si besoin réel confirmé.
+- Validation : check-features/check-shims/check-dogfood-drift + smoke complet au commit.

@@ -155,6 +155,7 @@ Non requis (`doc.requires.observability: false`). Les erreurs restent exposees p
 - Le format de sortie de `tf status` varie selon versions et langues.
 - TFVC ne possede pas d'equivalent exact de l'index Git ; les checks `--staged` doivent documenter cette approximation.
 - Les hooks pre-checkin TFS ne sont pas normalises comme les hooks Git locaux.
+- **Limite assumee (P5, 2026-07-07)** : `vcs_provider=tfvc` n'a jamais ete exerce de bout en bout (aucun scaffold Copier complet + workflow reel testes, contrairement au provider `git`). Seule la couche `_vcs.sh` est testee en isolation avec un faux binaire `tf`. Requalifie explicitement en best-effort dans `copier.yml` et `README_AI_CONTEXT.md` plutot que suppose fiable. Ouvrir un test e2e (scaffold + fake `tf` sur PATH + doctor/check-feature-freshness) reste possible en suivi si un besoin reel TFVC se confirme.
 
 ## Cross-refs
 
@@ -166,3 +167,4 @@ Aucune dependance feature declaree.
 - 2026-07-03 : `_vcs.sh` ajouté et branché sur les scripts de delta/freshness/review/report/doctor/aic/stop-doc-gate ; `copier.yml`, `.ai/config.yml`, README et miroirs template exposent `vcs.provider`. `_lib.sh` garde un fallback Git pour les fixtures historiques qui le copient seul.
 - 2026-07-03 : feature clôturée en `done` après tests unitaires provider/build-index/freshness/review/commit guard, `check-dogfood-drift`, `check-features --no-write`, `check-shims` et `tests/smoke-test.sh` complets. Résiduel accepté : parsing TFVC best-effort dépendant de la sortie `tf status`.
 - 2026-07-03 : provider `_vcs.sh` ajoute `git`, `tfvc` et `none`; le provider TFVC expose les pending changes comme alias du mode `--staged`.
+- 2026-07-07 (P5, assainissement matrice) : requalification honnête plutôt que suppression — `tfvc` reste une option de premier niveau (contrainte non-négociable : ne pas retirer), mais `copier.yml` et `README_AI_CONTEXT.md` (+ miroir) disent désormais explicitement « best-effort, non testé end-to-end » au lieu de laisser croire à une parité de test avec `git`. Aucun changement de comportement runtime.

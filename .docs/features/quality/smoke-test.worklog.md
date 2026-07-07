@@ -309,3 +309,8 @@
 ## 2026-07-07 09:41 — auto
 - Fichiers modifiés :
   - tests/smoke-test.sh
+
+## 2026-07-07 — scénarios agents cursor-only et gemini-only (P5, commit ①)
+- Intent : chantier P5 d'ANALYSE.md — vérifié par `rg` sur toutes les invocations `--data agents=` du smoke-test : aucun scénario `agents=["cursor"]` ni `agents=["gemini"]` sans claude n'existait, contrairement à la matrice claude+X déjà couverte.
+- Fichiers/surfaces : `tests/smoke-test.sh`, étape [28g/28] — cursor seul (scope fullstack : AGENTS.md + .mdc scopés présents, tout le reste absent, check-shims PASS) et gemini seul (AGENTS.md + GEMINI.md présents, tout le reste absent, check-shims PASS).
+- Validation : smoke complet au commit.
