@@ -49,6 +49,33 @@ Cas spéciaux :
 6. Documente dans le tableau « Scripts runtime » du `README.md`.
 7. Si le script est utile depuis la surface `aic`, ajoute une route dans `template/.ai/scripts/aic.sh.jinja`.
 
+### Moratoire sur la croissance du moteur bash
+
+Le runtime totalise ~8 700 lignes de bash (41 scripts) : c'est le principal coût
+de maintenance du projet, avec un vrai risque de fond (parsing YAML en
+grep/sed/awk, locks fragiles sur de gros repos). L'inertie a de la valeur — 43
+tests unitaires, CI 3 OS, `copier update` chez des consommateurs existants — donc
+pas de réécriture. Mais la croissance doit être **gelée** :
+
+- Toute nouvelle logique **non triviale** (parsing, résolution de graphe,
+  scoring, ranking) ne s'ajoute pas en bash par défaut. Pose la question avant
+  d'écrire : un helper `_lib.sh` existant suffit-il ? Sinon, justifie le choix
+  du bash dans la fiche feature (`Décisions`), ou propose un module unique
+  (un seul point d'entrée, pas dispersé script par script).
+- Étendre le cœur du mesh (`build-feature-index.sh`, `check-features.sh`,
+  `features-for-path.sh` et leurs parsers YAML) demande une justification
+  explicite dans la fiche — ce cœur est déjà le plus dense et le plus fragile
+  du runtime.
+- Le fallback YAML sans `yq` (awk/sed, `build-feature-index.sh` et
+  `check-features.sh`) est un choix délibéré de portabilité (Bash 3.2 macOS, CI
+  nue, conteneurs minimalistes sans `yq`) — voir `core/feature-mesh-contract-alignment`
+  (« Hors périmètre : rendre `yq` obligatoire »). Ne le retire pas pour
+  simplifier le code ; durcis-le si tu trouves un bug, comme les correctifs
+  précédents (bornage au frontmatter, flow-style `touches: [a, b]`).
+- Ce moratoire est une règle de revue, pas un gate automatisé : aucun script ne
+  peut mesurer la « trivialité » d'un ajout. Une PR qui grossit sensiblement le
+  moteur bash sans justification écrite doit être refusée en review.
+
 ## Ajouter un skill Claude
 
 1. Crée le squelette `template/.claude/skills/<verb>/SKILL.md.jinja` + `workflow.md.jinja`.

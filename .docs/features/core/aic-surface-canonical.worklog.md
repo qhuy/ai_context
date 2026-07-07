@@ -199,3 +199,6 @@
 ## 2026-07-07 — couverture incidente (workflow/intentional-skills, P3)
 - Les 6 wrappers Codex procéduraux `aic-feature-{new,done,handoff,resume,update}` et `aic-quality-gate` (racine `.agents/skills/` + miroirs `template/.agents/skills/`) sont supprimés — surface skills réduite (chantier P3). Aucun canal externe ne les référençait ; zéro perte de capacité (`.ai/workflows/*` reste la source canonique). `copier.yml` (message après copy) et `tests/smoke-test.sh` (étape [19/28], assertion d'absence) alignés. Aucun changement du contrat propre de cette fiche.
 - Validation portée par `workflow/intentional-skills`.
+
+## 2026-07-07 — couverture incidente (P4 gouvernance bash, chantier ANALYSE.md)
+- `CONTRIBUTING.md` : ajout d'un § « Moratoire sur la croissance du moteur bash » sous « Ajouter un script runtime » — pas de yq obligatoire (décision existante `core/feature-mesh-contract-alignment` maintenue après clarification utilisateur), gel de toute nouvelle logique bash non triviale sans justification écrite. Aucun changement de la surface `aic` ni du runtime.
