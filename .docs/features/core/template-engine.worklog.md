@@ -453,3 +453,7 @@
 
 ## 2026-07-07 — couverture incidente (P5 assainissement matrice)
 - `copier.yml` : choix `vcs_provider=tfvc` et son `help` requalifiés « best-effort, non testé end-to-end ». Aucun nouveau rendu conditionnel.
+
+## 2026-07-07 10:53 — auto
+- Fichiers modifiés :
+  - copier.yml
