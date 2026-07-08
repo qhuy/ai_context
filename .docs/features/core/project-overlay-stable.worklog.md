@@ -243,3 +243,8 @@
 - Doc Impact Decision : C — fiche feature et worklog mis à jour.
 - Validation prévue : `check-feature-docs --strict core/project-overlay-stable`, `test-project-overlay`, checks shims/références/dogfood/features/freshness avant commit.
 - Next : aucune action immédiate ; rouvrir si `_skip_if_exists`, l'ownership `.ai/project/**` ou le chargement Pack A changent.
+
+## 2026-07-08 — couverture audit strict
+- Surfaces couvertes touchées dans le delta d'audit strict : `.ai/OWNERSHIP.md`, `.ai/index.md` et leurs miroirs template.
+- Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
+- Validation : gate ship relancée avant commit.

@@ -13,7 +13,8 @@
 #      auto-progress.sh (seulement si le trace est vide/absent — on ne
 #      clobbe pas un trace Claude déjà consommé).
 #   3. Invoque `auto-progress.sh`.
-#   4. Re-stage les fiches/worklogs modifiés pour qu'ils soient dans le commit.
+#   4. Re-stage les fiches modifiées ; un worklog n'est re-stagé que si sa
+#      feature est couverte par un fichier stagé dans ce commit.
 #
 # Non bloquant : toute erreur → exit 0 (on ne casse jamais un commit humain).
 
@@ -44,6 +45,10 @@ mkdir -p "$(dirname "$trace_file")"
 : >> "$trace_file"
 
 # Pour chaque fichier stagé, trouve les features qui le couvrent via touches:
+# current_features mémorise les clés issues des fichiers stagés dans CE commit
+# (par opposition aux clés résiduelles déjà présentes dans le trace) pour borner
+# le re-stage des worklogs à l'intention réelle du commit.
+current_features=""
 while IFS= read -r rel; do
   [[ -z "$rel" ]] && continue
   matches=$(features_matching_path "$index_file" "$rel" | awk -F '\t' '{print $1 "/" $2}' | sort -u)
@@ -52,10 +57,12 @@ while IFS= read -r rel; do
 
   while IFS= read -r key; do
     [[ -z "$key" ]] && continue
+    current_features+="$key"$'\n'
     jq -nc --arg feature "$key" --arg file "$rel" --arg ts "$ts" \
       '{feature: $feature, file: $file, ts: $ts}' >> "$trace_file"
   done <<< "$matches"
 done <<< "$staged"
+current_features=$(printf '%s' "$current_features" | sort -u)
 
 # Pas de match → rien à faire, nettoyage trace si on vient de la créer vide
 [[ ! -s "$trace_file" ]] && { rm -f "$trace_file"; exit 0; }
@@ -66,7 +73,9 @@ features_touched=$(jq -rs 'group_by(.feature) | .[] | .[0].feature' "$trace_file
 # Invoque le script partagé (snapshot + awk patch frontmatter + append worklog + rebuild index + vide trace)
 bash "$progress_script" >/dev/null 2>&1 || true
 
-# Re-stage les fiches/worklogs modifiés (sinon la bascule arrive dans le commit suivant)
+# Re-stage les fiches modifiées. Un worklog n'est re-stagé que si sa feature
+# est couverte par un fichier stagé dans CE commit (évite d'embarquer un
+# historique hors intention issu d'un trace résiduel d'une session interrompue).
 while IFS= read -r key; do
   [[ -z "$key" ]] && continue
   scope="${key%%/*}"
@@ -74,8 +83,10 @@ while IFS= read -r key; do
   fiche_path=$(jq -r --arg k "$key" '.features[] | select(.scope + "/" + .id == $k) | .path' "$index_file" 2>/dev/null)
   [[ -z "$fiche_path" ]] && continue
   worklog_path="$(dirname "$fiche_path")/$id.worklog.md"
-  # git add silencieux, ignore les fichiers non existants / non modifiés
-  git add -- "$fiche_path" "$worklog_path" 2>/dev/null || true
+  git add -- "$fiche_path" 2>/dev/null || true
+  if printf '%s\n' "$current_features" | grep -Fx -- "$key" >/dev/null 2>&1; then
+    git add -- "$worklog_path" 2>/dev/null || true
+  fi
 done <<< "$features_touched"
 
 exit 0

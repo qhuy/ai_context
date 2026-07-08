@@ -1,5 +1,11 @@
 # Worklog — quality/ci-guard
 
+## 2026-07-07 — fix P1 : check-feature-docs --strict câblé hors du bloc adoption_mode=strict
+
+- Constat (second audit du delta CI-7/CI-8 non commité) : `template/.github/workflows/ai-context-check.yml.jinja` câblait `check-feature-docs.sh --strict` (sans cible) hors du bloc `{%- if adoption_mode == 'strict' %}`, contrairement à `check-feature-coverage.sh --strict` correctement cantonné à ce bloc dans le même diff. Repro : une fiche `status: draft` avec sections encore vides (cas nominal d'une feature en cours, cf. AGENTS.md "fiche feature avant feat:") fait échouer `check-feature-docs.sh --strict` — donc la CI casse par défaut (`adoption_mode=standard`) au premier commit touchant des fiches feature, sans aucun avertissement dans `copier.yml`/CHANGELOG contrairement à `check-feature-coverage`.
+- Fix : `template/.github/workflows/ai-context-check.yml.jinja` — `check-feature-docs.sh` (sans --strict) au step de base, `check-feature-docs.sh --strict` déplacé dans le bloc `{%- if adoption_mode == 'strict' %}`, symétrique à `check-feature-coverage`. `.ai/quality/QUALITY_GATE.md` (+ template) : ligne "Complétude fiche" alignée sur la formulation déjà utilisée pour "Couverture code→feature" (`adoption_mode=strict côté template`).
+- Runtime `.github/workflows/ai-context-check.yml` (ce repo, dogfoodé en `adoption_mode=strict` permanent) inchangé à raison : les deux `--strict` inconditionnels y sont corrects, `check-dogfood-drift.sh` exclut explicitement ce fichier de la comparaison automatique (liste "source-only ignored").
+- Validation : rendu Copier réel (rsync du working tree, comme `tests/smoke-test.sh`) en `adoption_mode=strict` → les deux `(strict)` présents et symétriques ; en `adoption_mode=standard` → aucun `--strict` sur check-feature-docs/coverage, YAML valide (`yaml.safe_load` PASS) dans les deux cas. `bash tests/smoke-test.sh` PASS.
 
 ## 2026-04-28 11:23 — auto
 - Fichiers modifiés :

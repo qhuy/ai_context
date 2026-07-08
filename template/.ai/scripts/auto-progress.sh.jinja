@@ -57,7 +57,7 @@ while IFS= read -r key; do
   [[ -z "$key" ]] && continue
 
   # Extraire phase et path actuels depuis l'index (rebuild fait par flush)
-  read -r feature_path current_phase current_status <<< "$(
+  IFS=$'\t' read -r feature_path current_phase current_status <<< "$(
     jq -r --arg k "$key" '
       .features[]
       | select(.scope + "/" + .id == $k)

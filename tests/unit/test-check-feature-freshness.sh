@@ -24,8 +24,8 @@ git config user.email "test@example.com"
 git config user.name "test"
 git config core.hooksPath /dev/null
 
-mkdir -p .docs/features/review
-printf 'seed\n' > shared.txt
+mkdir -p .docs/features/review .ai/scripts
+printf 'seed\n' > .ai/scripts/shared.sh
 
 cat > .docs/features/review/a.md <<'FEAT'
 ---
@@ -35,7 +35,7 @@ title: A
 status: active
 depends_on: []
 touches:
-  - shared.txt
+  - .ai/scripts/shared.sh
 progress:
   phase: implement
   step: test
@@ -54,7 +54,7 @@ title: B
 status: active
 depends_on: []
 touches:
-  - shared.txt
+  - .ai/scripts/shared.sh
 progress:
   phase: implement
   step: test
@@ -65,12 +65,12 @@ progress:
 # B
 FEAT
 
-git add shared.txt .docs/features/review/a.md .docs/features/review/b.md >/dev/null
+git add .ai/scripts/shared.sh .docs/features/review/a.md .docs/features/review/b.md >/dev/null
 git commit -q -m "chore: seed review fixture"
 
-printf 'changed\n' > shared.txt
+printf 'changed\n' > .ai/scripts/shared.sh
 printf '\n- documented a only\n' >> .docs/features/review/a.md
-git add shared.txt .docs/features/review/a.md >/dev/null
+git add .ai/scripts/shared.sh .docs/features/review/a.md >/dev/null
 
 out="$(bash .ai/scripts/check-feature-freshness.sh --staged --strict 2>&1 || true)"
 
@@ -91,6 +91,26 @@ git add .docs/features/review/b.md >/dev/null
 
 if ! bash .ai/scripts/check-feature-freshness.sh --staged --strict >/dev/null; then
   echo "✗ freshness check should pass once every matching feature has staged docs"
+  exit 1
+fi
+
+git commit -q -m "feat: document both review features"
+base_ref="$(git rev-parse HEAD)"
+
+printf 'changed in pr\n' > .ai/scripts/shared.sh
+printf '\n- documented a in pr only\n' >> .docs/features/review/a.md
+git add .ai/scripts/shared.sh .docs/features/review/a.md >/dev/null
+git commit -q -m "feat: partial freshness in diff"
+
+out="$(bash .ai/scripts/check-feature-freshness.sh --base="$base_ref" --head=HEAD --strict 2>&1 || true)"
+if ! echo "$out" | grep -q "review/b"; then
+  echo "✗ diff freshness check should require docs for every matching feature"
+  echo "$out"
+  exit 1
+fi
+if echo "$out" | grep -q "review/a"; then
+  echo "✗ diff freshness check should not report the feature whose doc is in the diff"
+  echo "$out"
   exit 1
 fi
 

@@ -11,6 +11,7 @@ touches:
   - template/.ai/scripts/auto-worklog-flush.sh.jinja
   - .ai/scripts/auto-worklog-log.sh
   - .ai/scripts/auto-worklog-flush.sh
+  - tests/unit/test-auto-worklog-flush.sh
 progress:
   phase: done
   step: "auto-worklog livré : capture structurelle, anti-churn doc manuelle, no-bump updated et tests ciblés validés"

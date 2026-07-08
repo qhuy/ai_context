@@ -15,8 +15,8 @@ bash .ai/scripts/check-shims.sh
 bash .ai/scripts/check-agent-config.sh
 bash .ai/scripts/check-ai-references.sh
 bash .ai/scripts/check-features.sh --no-write
-bash .ai/scripts/check-feature-docs.sh     # warnings par défaut ; --strict <scope/id> près de DONE
-bash .ai/scripts/check-feature-coverage.sh   # --warn (défaut)
+bash .ai/scripts/check-feature-docs.sh --strict
+bash .ai/scripts/check-feature-coverage.sh --strict
 bash .ai/scripts/check-feature-freshness.sh --worktree --warn   # fraîcheur fin de tour (informatif ; bloquant via hook Stop côté Claude)
 bash .ai/scripts/check-touches-breadth.sh   # advisory : sur-couverture touches: (candidats touches_shared)
 ```
@@ -45,8 +45,8 @@ Format markdown, même structure à chaque fois :
 | check-agent-config | ✅ / ⚠️ / ❌ | <configs agents et scripts référencés> |
 | check-ai-references | ✅ / ❌ | <sortie> |
 | check-features --no-write | ✅ / ❌ | <sortie> |
-| check-feature-docs | ✅ / ⚠️ / ❌ | <sections manquantes ou strict OK> |
-| check-feature-coverage | ✅ / ⚠️ | <N orphelins> |
+| check-feature-docs --strict | ✅ / ❌ | <sections manquantes ou strict OK> |
+| check-feature-coverage --strict | ✅ / ❌ | <N orphelins> |
 | check-feature-freshness --worktree | ✅ / ⚠️ | <features dont le code working-tree change sans doc> |
 | check-touches-breadth | ✅ / ℹ️ | <fichiers infra partagés en touches: direct, candidats touches_shared> |
 | measure-context-size | ℹ️ | <chars total> |

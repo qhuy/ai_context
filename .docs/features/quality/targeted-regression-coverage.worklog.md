@@ -171,3 +171,14 @@
 ## 2026-07-03 — HANDOFF depuis core/vcs-provider-abstraction
 - Surface partagée touchée : `check-commit-features.sh` lit le delta via provider VCS. Aucun changement des régressions ciblées existantes.
 - Validation portée par `core/vcs-provider-abstraction`.
+
+## 2026-07-07 — audit 2026-07-07
+- Ajouts de régressions ciblées : PreToolUse `git commit -F/--message`, fallback frontmatter avec commentaires inline, id/scope invalides ignorés, `auto-progress` avec espaces, matcher `src[/]x.ts`, scoring `Makefile`.
+- Smoke : `migrate-features` idempotent et `audit-features` scope inconnu refusé.
+- Validation ciblée : tests unitaires associés + smoke final.
+
+## 2026-07-07 18:51 — auto
+- Fichiers modifiés :
+  - .ai/scripts/build-feature-index.sh
+  - .ai/scripts/check-commit-features.sh
+  - template/.ai/scripts/check-commit-features.sh.jinja

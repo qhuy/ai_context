@@ -50,6 +50,8 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: install dependencies (jq, yq, shellcheck, copier)
         run: |

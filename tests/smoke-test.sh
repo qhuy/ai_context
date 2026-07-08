@@ -437,7 +437,45 @@ if CLAUDE_COMMIT_MSG="message invalide sans type" bash "$OUT/.ai/scripts/check-c
   echo "  ✗ un message invalide a été accepté"
   exit 1
 fi
-echo "  ✓ message invalide rejeté"
+HOOK_OUT="/tmp/ai-context-smoke-hooks-$$"
+rm -rf "$HOOK_OUT"
+mkdir -p "$HOOK_OUT"
+cp -R "$OUT"/. "$HOOK_OUT"/
+(
+  cd "$HOOK_OUT"
+  git init -q >/dev/null 2>&1 || true
+  git config user.email "smoke@test" >/dev/null
+  git config user.name "smoke" >/dev/null
+  git config core.hooksPath .githooks >/dev/null
+  chmod +x .githooks/* 2>/dev/null || true
+  git add -A >/dev/null
+  git commit -q -m "chore: seed hook fixture" >/dev/null
+
+  printf '\nsmoke invalid hook\n' >> README_AI_CONTEXT.md
+  git add README_AI_CONTEXT.md >/dev/null
+  if git commit -q -m "message invalide sans type" >/dev/null 2>&1; then
+    echo "  ✗ le vrai hook commit-msg a accepté un message invalide"
+    exit 1
+  fi
+  git reset -q --hard >/dev/null
+
+  base_branch="$(git branch --show-current)"
+  git checkout -q -b smoke-post-checkout
+  printf '\nsmoke post-checkout fixture\n' >> README_AI_CONTEXT.md
+  git add README_AI_CONTEXT.md >/dev/null
+  git commit -q -m "chore: prepare post-checkout hook fixture" >/dev/null
+  git checkout -q "$base_branch"
+
+  bash .ai/scripts/build-feature-index.sh --write >/dev/null
+  printf '{invalid json\n' > .ai/.feature-index.json
+  git checkout -q smoke-post-checkout
+  if ! jq -e . .ai/.feature-index.json >/dev/null 2>&1; then
+    echo "  ✗ post-checkout n'a pas reconstruit un index JSON valide"
+    exit 1
+  fi
+)
+rm -rf "$HOOK_OUT"
+echo "  ✓ message invalide rejeté + hooks git réels vérifiés"
 
 echo
 echo "[6/28] check-commit-features : 'fix: ...' passe sans toucher features/"
@@ -850,7 +888,13 @@ if ! grep -q "^status: active$" "$OUT/.docs/features/back/legacy-migrate.md"; th
   echo "  ✗ migrate-features --apply n'applique pas status normalisé"
   exit 1
 fi
-echo "  ✓ migrate-features dry-run/apply OK"
+idem_out=$( cd "$OUT" && bash .ai/scripts/migrate-features.sh --apply 2>&1 )
+if ! echo "$idem_out" | grep -q "Aucun changement nécessaire"; then
+  echo "  ✗ migrate-features --apply n'est pas idempotent"
+  echo "$idem_out"
+  exit 1
+fi
+echo "  ✓ migrate-features dry-run/apply/idempotence OK"
 rm "$OUT/.docs/features/back/legacy-migrate.md"
 
 # enum source-of-truth : ajouter un status au schema → check-features ne warn plus
@@ -901,6 +945,15 @@ if ! echo "$audit_out" | grep -q "src/orphan.ts"; then
   echo "  ✗ audit-features discover n'identifie pas orphan.ts"
   exit 1
 fi
+set +e
+audit_bad_scope=$( cd "$OUT" && bash .ai/scripts/audit-features.sh discover unknown-scope 2>&1 )
+audit_bad_rc=$?
+set -e
+if [[ "$audit_bad_rc" -eq 0 ]] || ! echo "$audit_bad_scope" | grep -q "scope inconnu"; then
+  echo "  ✗ audit-features discover doit refuser un scope inconnu"
+  echo "$audit_bad_scope"
+  exit 1
+fi
 # --help doit lister 'MVP discover only'
 help_out=$( cd "$OUT" && bash .ai/scripts/audit-features.sh --help 2>&1 ) || true
 if ! echo "$help_out" | grep -q "MVP discover only"; then
@@ -919,7 +972,7 @@ if ! echo "$audit_space_out" | grep -q "src/with space/file.ts"; then
   exit 1
 fi
 rm -rf "$OUT/src/with space"
-echo "  ✓ audit-features discover (dry-run + --help + paths-with-spaces) OK"
+echo "  ✓ audit-features discover (dry-run + scope invalide + --help + paths-with-spaces) OK"
 
 echo
 echo "[13/28] pre-turn-reminder : status 'done' filtré par défaut + visible via override"
@@ -1274,7 +1327,7 @@ for s in aic-quality-gate aic-project-guardrails; do
     exit 1
   fi
 done
-echo "  ✓ skills Claude publics + skills Codex intentionnels (wrappers internes retirés) + 10 workflows internes présents"
+echo "  ✓ skills Claude publics + skills Codex intentionnels (wrappers internes retirés) + 11 workflows internes présents"
 
 if [[ ! -f "$OUT/.docs/frames/0000-template.md" ]]; then
   echo "  ✗ template de cadrage durable absent"
@@ -1861,14 +1914,28 @@ echo "[28c/28] copier update : propagation v0.11.0 → HEAD préserve fichiers c
 UPD_OUT="/tmp/ai-context-smoke-update-$$"
 
 # Scaffold initial sur v0.11.0 (avant les corrections P0+P1+P2 + R1)
+if ! git -C "$REPO" show-ref --tags --verify --quiet refs/tags/v0.11.0; then
+  echo "  ✗ tag v0.11.0 absent : impossible de tester copier update"
+  echo "    En CI, actions/checkout doit utiliser fetch-depth: 0."
+  exit 1
+fi
 if ! copier copy --defaults --trust --vcs-ref=v0.11.0 \
     --data project_name=smoke-update \
+    --data scope_profile=fullstack \
+    --data agents='["claude","cursor","copilot"]' \
     "$REPO" "$UPD_OUT" >/dev/null 2>&1; then
-  echo "  ⚠ copier copy v0.11.0 indisponible (tag manquant ?), étape skippée"
-else
+  echo "  ✗ copier copy v0.11.0 a échoué"
+  rm -rf "$UPD_OUT"
+  exit 1
+fi
+
   # Sanity v0.11.0 : aic-undo.sh n'existe pas encore (introduit dans R2)
   pre_undo_exists=0
   [[ -f "$UPD_OUT/.ai/scripts/aic-undo.sh" ]] && pre_undo_exists=1
+  pre_cursor_protocol=0
+  [[ -f "$UPD_OUT/.cursor/rules/protocol-reminder.mdc" ]] && pre_cursor_protocol=1
+  pre_copilot_shim=0
+  [[ -f "$UPD_OUT/.github/copilot-instructions.md" ]] && pre_copilot_shim=1
 
   # Fichier user hors périmètre template — doit survivre au update.
   # Il est versionné car Copier refuse d'updater un sous-projet dirty.
@@ -1893,7 +1960,7 @@ EOF
 
   # Update vers HEAD (scénario Git réel, volontairement basé sur le repo tagué)
   update_log="/tmp/ai-context-copier-update-$$.log"
-  if ! ( cd "$UPD_OUT" && copier update --defaults --trust --vcs-ref=HEAD -A >"$update_log" 2>&1 ); then
+  if ! ( cd "$UPD_OUT" && copier update --defaults --trust --vcs-ref=HEAD --conflict=rej -A >"$update_log" 2>&1 ); then
     # Copier 9.x sur Python 3.14 peut crasher dans son _cleanup (rmtree du clone
     # temporaire .git/objects : OSError "Directory not empty") APRÈS avoir appliqué
     # l'update. Ce n'est pas un échec d'update — on tolère cette signature précise
@@ -1911,6 +1978,20 @@ EOF
     fi
   fi
   rm -f "$update_log"
+
+  conflict_markers="/tmp/ai-context-copier-inline-conflicts-$$.log"
+  find "$UPD_OUT" -path "$UPD_OUT/.git" -prune -o -type f ! -name "*.rej" -print |
+    while IFS= read -r conflict_file; do
+      grep -n '^<<<<<<< ' "$conflict_file" 2>/dev/null | sed "s#^#$conflict_file:#" || true
+    done > "$conflict_markers"
+  if [[ -s "$conflict_markers" ]]; then
+    echo "  ✗ copier update a laissé des marqueurs de conflit inline"
+    sed -n '1,80p' "$conflict_markers"
+    rm -f "$conflict_markers"
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+  rm -f "$conflict_markers"
 
   if [[ ! -f "$UPD_OUT/MY_CUSTOM.md" ]]; then
     echo "  ✗ MY_CUSTOM.md (fichier user) disparu après copier update"
@@ -1942,9 +2023,22 @@ EOF
     fi
   fi
 
+  # Copier update ne supprime pas les fichiers retirés du template. Le chemin de
+  # migration des shims élagués est donc documenté et testé : ils peuvent rester
+  # comme résidus utilisateur, mais ne sont plus régénérés sur un scaffold neuf.
+  if [[ "$pre_cursor_protocol" -eq 1 && ! -f "$UPD_OUT/.cursor/rules/protocol-reminder.mdc" ]]; then
+    echo "  ✗ protocol-reminder.mdc supprimé implicitement pendant copier update (comportement non documenté)"
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+  if [[ "$pre_copilot_shim" -eq 1 && ! -f "$UPD_OUT/.github/copilot-instructions.md" ]]; then
+    echo "  ✗ copilot-instructions.md supprimé implicitement pendant copier update (comportement non documenté)"
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+
   rm -rf "$UPD_OUT"
-  echo "  ✓ copier update v0.11.0 → HEAD : fichier user préservé + check-shims OK"
-fi
+  echo "  ✓ copier update v0.11.0 → HEAD : fichier user préservé + conflits externalisés + check-shims OK"
 
 echo
 echo "[28d/28] hooks Codex natifs : .codex/hooks.json opt-in via enable_codex_hooks"

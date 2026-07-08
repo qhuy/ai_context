@@ -100,3 +100,8 @@
 - Doc Impact Decision : C — fiche feature et worklog mis à jour.
 - Validation prévue : `check-feature-docs --strict core/project-overlay-scope-registry`, test overlay ciblé, checks feature/freshness et gate ship avant commit.
 - Next : aucune action immédiate ; rouvrir seulement si le contrat `.ai/project/{scope}/index.md` change.
+
+## 2026-07-08 — couverture audit strict
+- Surfaces couvertes touchées dans le delta d'audit strict : `.ai/OWNERSHIP.md`, `.ai/index.md` et leurs miroirs template.
+- Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
+- Validation : gate ship relancée avant commit.

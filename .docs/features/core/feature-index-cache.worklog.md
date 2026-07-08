@@ -1,5 +1,12 @@
 # Worklog — core/feature-index-cache
 
+## 2026-07-07 — fix P2 : couverture test insuffisante sur la troncature quote+# (N1)
+
+- HANDOFF depuis workflow (second audit du delta N1 non commité) : le fix "fallback awk conserve les commentaires inline" (extract_scalar_awk/extract_list_awk) strippe `#...` sans respecter les guillemets — une valeur comme `"src/a #1.ts"` est tronquée à `src/a` sans erreur. Aucun test existant ne l'exerçait.
+- Décision : documenter la limite plutôt que réécrire le strip en quote-aware (complexité/portabilité sed POSIX pour un cas sans occurrence réelle dans ce repo ; les champs réellement sensibles — id/scope/status/type — sont de toute façon validés par regex kebab-case/énum après extraction).
+- Fix : commentaires ajoutés dans `.ai/scripts/build-feature-index.sh` (+ template) au-dessus des deux extracteurs, documentant explicitement la limite et son périmètre accepté (touches/touches_shared sans `#` dans ce repo).
+- Test ajouté : `tests/unit/test-build-feature-index-fallback-frontmatter.sh` verrouille désormais ce comportement connu (fiche `quotehash`), pour qu'un futur changement soit délibéré et pas une régression silencieuse.
+- Validation : `bash tests/unit/test-build-feature-index-fallback-frontmatter.sh` PASS ; `bash tests/unit/test-build-feature-index-robust.sh` PASS ; `diff .ai/scripts/build-feature-index.sh template/.ai/scripts/build-feature-index.sh.jinja` → aucun écart hors variables Jinja attendues ; `bash tests/smoke-test.sh` PASS.
 
 ## 2026-04-28 11:23 — auto
 - Fichiers modifiés :
@@ -139,3 +146,8 @@
 - Doc Impact Decision : C — fiche feature et worklog mis à jour.
 - Validation prévue : `check-feature-docs --strict core/feature-index-cache`, tests unitaires build-index ciblés, build d'index JSON, checks feature/freshness et gate ship avant commit.
 - Next : aucune action immédiate ; rouvrir seulement si le contrat `.ai/.feature-index.json` ou `build-feature-index.sh` change.
+
+## 2026-07-07 — audit 2026-07-07
+- Surface directe touchée : `_lib.sh`, `build-feature-index.sh` et tests build-index via correctifs audit (matcher strict, fallback inline comment, robustesse id/scope).
+- Décision : le contrat cache/index ne change pas ; les modifications restent compatibles avec le format `.ai/.feature-index.json`.
+- Validation ciblée : `test-build-feature-index-fallback-frontmatter`, `test-build-feature-index-robust`, `check-features --no-write` à relancer dans la gate finale.

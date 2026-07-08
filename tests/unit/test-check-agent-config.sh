@@ -172,8 +172,8 @@ cat > "$repo_codex_json/.codex/hooks.json" <<'JSON'
   }
 }
 JSON
-if ! ( cd "$repo_codex_json" && bash .ai/scripts/check-agent-config.sh ) >/dev/null 2>&1; then
-  echo "✗ check-agent-config doit accepter (warn seulement) un événement hors surface documentée"
+if ( cd "$repo_codex_json" && bash .ai/scripts/check-agent-config.sh ) >/dev/null 2>&1; then
+  echo "✗ check-agent-config doit refuser un événement Codex hors allowlist"
   exit 1
 fi
 

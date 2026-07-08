@@ -58,3 +58,8 @@
 
 ## 2026-07-07 — couverture incidente (fix post-review, core/agents-md-shim-canonical)
 - MIGRATION.md / docs/upgrading.md : sémantique `copier update` des shims élagués corrigée sur preuve empirique (copier update ne supprime jamais un chemin `_exclude`). Aucun changement du contrat propre de cette fiche. Validation portée par `core/agents-md-shim-canonical`.
+
+## 2026-07-08 — couverture audit strict
+- Surface couverte touchée dans le delta d'audit strict : `docs/upgrading.md`.
+- Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
+- Validation : gate ship relancée avant commit.

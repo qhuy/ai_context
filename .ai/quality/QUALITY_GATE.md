@@ -2,6 +2,17 @@
 
 Critères **BLOQUANTS** avant de déclarer une tâche DONE. À lire avec `.ai/index.md`.
 
+## Frontière auto / humain
+
+| Critère | Gate automatisé | Décision humaine avant DONE |
+|---|---|---|
+| Structure feature mesh | `check-features.sh --no-write` en CI | Vérifier que le scope/id choisi reste cohérent |
+| Complétude fiche | `check-feature-docs.sh --strict` en CI source et avant DONE ; `adoption_mode=strict` côté template | Confirmer que la fiche raconte le vrai contrat |
+| Couverture code→feature | `check-feature-coverage.sh --strict` en CI source ; `adoption_mode=strict` côté template | Créer/rattacher une fiche si le fichier orphelin est légitime |
+| Fraîcheur doc | `check-feature-freshness.sh --staged --strict`, `--worktree --strict`, et `--base/--head --strict` sur PR | Décider si une doc absente est acceptable uniquement avec justification explicite |
+| Evidence build/tests | Commandes lancées localement et rapportées | Choisir les checks pertinents au delta |
+| Risk ledger / doc impact | Non mécanisé | Déclarer les risques et la décision doc impact |
+
 ## Evidence (obligatoire)
 
 Avant DONE, fournir :
@@ -46,9 +57,10 @@ Cette règle est **systématique** — pas de seuil de complexité, pas de "trop
 ## Fraîcheur documentaire (BLOQUANT au commit)
 
 - `bash .ai/scripts/check-feature-freshness.sh --staged --strict` vérifie qu'un changement staged sur du code couvert par `touches:` inclut aussi la fiche feature ou son worklog.
+- `bash .ai/scripts/check-feature-freshness.sh --base=<base> --head=<head> --strict` bloque un diff PR qui change du code couvert sans fiche/worklog dans le même diff.
 - `bash .ai/scripts/check-feature-freshness.sh --warn` signale les features dont le code couvert est plus récent que la documentation.
-- `bash .ai/scripts/check-feature-docs.sh` signale les sections manquantes ou trop vides ; `--strict` est à utiliser avant DONE sur les features nouvelles ou risquées.
-- En CI, le mode `--warn` reste informatif pour éviter les faux positifs sur l'historique importé ; le blocage strict se fait au commit.
+- `bash .ai/scripts/check-feature-docs.sh --strict` bloque les sections manquantes ou trop vides avant DONE et dans la CI source.
+- En CI, le mode historique `--warn` reste informatif pour éviter les faux positifs sur l'historique importé ; le diff PR est contrôlé en strict.
 
 ## Fraîcheur en fin de tour (gate Stop — Claude)
 

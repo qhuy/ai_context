@@ -22,6 +22,7 @@ Mandatory :
 On-demand seulement :
 
 - `.ai/quality/QUALITY_GATE.md` si `progress.phase` ∈ {review, done}, ou intention nommée ship/done/review/quality-gate, ou changement contrat/sécurité/CI/doc canonique.
+- `.ai/workflows/project-guardrails.md` seulement si la demande porte explicitement sur non-goals, glossaire métier ou `.ai/guardrails.md`.
 - `.ai/agent/posture.md`, `.ai/agent/initiative-contract.md`, `.ai/agent/response-style.md` seulement si la demande porte explicitement sur posture, diagnostic ou style.
 
 Ne pas précharger le reste.
@@ -121,6 +122,15 @@ Compléments obligatoires par niveau :
 - `low` : problème réel, non-objectifs, scope primaire, route unique, prochaine action minimale.
 - `standard` : impacts probables, critères d'acceptation testables, validations prévues, risques et inconnues, proposition `scope/id`, `depends_on`, `touches` si `route=feature`.
 - `high` : surfaces probables, contrats touchés, compatibilité Claude/Codex/templates/downstream, scénario nominal, au moins deux cas limites, stratégie d'artefact durable, checks ciblés, décision explicite `done` vs `blocked`.
+
+### 5b. Guardrails projet
+
+Si le vrai livrable est de formaliser des non-goals ou un glossaire métier durable, router vers `.ai/workflows/project-guardrails.md` au lieu de laisser une promesse implicite. La sortie de cadrage doit alors inclure :
+
+- décision `route=doc` ;
+- fichier cible `.ai/guardrails.md` ;
+- validation attendue : `.ai/index.md` garde le chargement on-demand, hors Pack A ;
+- confirmation utilisateur avant création ou mise à jour du fichier.
 
 ### 6. Sortie durable
 

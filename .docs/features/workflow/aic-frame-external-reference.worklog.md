@@ -78,3 +78,8 @@
 
 ## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
 - workflow.md des skills d'analyse (aic-review/diagnose/pilot/frame, Claude+Codex+templates) : une règle non négociable « discipline de preuve » ajoutée — toute affirmation prouvée (source citée) ou étiquetée Hypothèse / À vérifier. Aucun changement du contrat propre de cette fiche. Validation portée par `workflow/evidence-discipline`.
+
+## 2026-07-08 — couverture audit strict
+- Surfaces couvertes touchées dans le delta d'audit strict : `.agents/skills/aic-frame/workflow.md`, `.claude/skills/aic-frame/workflow.md` et leurs miroirs template.
+- Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
+- Validation : gate ship relancée avant commit.

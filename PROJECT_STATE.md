@@ -17,7 +17,7 @@
 1. Ouvrir Claude Code dans le dossier local du dépôt `ai_context`.
 2. Lire [CHANGELOG.md](CHANGELOG.md) — les dernières breaking/nouveautés.
 3. Lancer le smoke-test : `export PATH="$HOME/Library/Python/3.9/bin:$PATH" && bash tests/smoke-test.sh` (28 étapes, attendu `✅ PASS`).
-4. Consommer le template : `copier copy gh:qhuy/ai_context ./mon-projet`. Mettre à jour : `cd mon-projet && copier update --vcs-ref=HEAD`.
+4. Consommer le template : `copier copy gh:qhuy/ai_context ./mon-projet`. Mettre à jour : `cd mon-projet && copier update --vcs-ref=HEAD --conflict=rej`.
 5. Dogfooder le repo source après évolution du template. Le repo source n'a pas de `.copier-answers.yml` et ne doit pas être mis à jour via `copier update` :
    - preview : `bash .ai/scripts/dogfood-update.sh`
    - apply : `bash .ai/scripts/dogfood-update.sh --apply`
@@ -25,9 +25,9 @@
 
 ## Architecture (vue d'ensemble)
 
-- `copier.yml` — questions utilisateur (project_name, scope_profile, tech_profile, commit_language, docs_root, agents, enable_ci_guard) + `_exclude` conditionnel.
+- `copier.yml` — questions utilisateur (`project_name`, `project_description`, `scope_profile`, `adoption_mode`, `vcs_provider`, `tech_profile`, `commit_language`, `docs_root`, `agents`, `enable_codex_hooks`, `enable_copilot_shim`, `enable_ci_guard`) + `_exclude` conditionnel.
 - `template/` — racine du template (`_subdirectory: template`, `_templates_suffix: .jinja`).
-- `template/AGENTS.md.jinja` = entrée canonique cross-agent ; `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`, `.cursor/rules/*.mdc` = shims vers `.ai/index.md`.
+- `template/AGENTS.md.jinja` = entrée canonique cross-agent lean ; `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md` opt-in et `.cursor/rules/*.mdc` scopés = shims ou règles vers `.ai/index.md`.
 - `template/.ai/` = source unique de vérité (rules, QUALITY_GATE, scripts, reminder, skills).
 - `template/.ai/config.yml` — configuration runtime scaffoldée (coverage/progress/context), avec fallback defaults côté scripts.
 - `resume-features.sh` consomme `progress.stale_after_days` depuis cette config (si présent) ; défaut conservé à 14 jours.
@@ -46,33 +46,34 @@
 - `template/{{docs_root}}/features/<scope>/` = maillage feature par scope (back, front, architecture, security).
 - `template/.githooks/commit-msg` + `post-checkout` — enforcement Conventional Commits et rebuild index au switch de branche.
 - `template/.claude/settings.json.jinja` — hooks UserPromptSubmit / PreToolUse / PostToolUse / Stop.
-- `template/.claude/skills/aic-*/` — skills Claude publics uniquement : `aic`, `aic-frame`, `aic-status`, `aic-diagnose`, `aic-document-feature`, `aic-review`, `aic-ship`.
-- `template/.ai/workflows/` — procédures internes agent-agnostic partagées par Claude et Codex : `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `quality-gate`, `feature-done`, `project-guardrails`.
+- `template/.claude/skills/aic-*/` et `template/.agents/skills/aic-*/` — 10 skills publics alignés : `aic`, `aic-frame`, `aic-status`, `aic-diagnose`, `aic-document-feature`, `aic-review`, `aic-ship`, `aic-dev-plan`, `aic-onboard`, `aic-pilot`.
+- `template/.ai/workflows/` — procédures internes agent-agnostic partagées par Claude et Codex : `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `document-feature`, `quality-gate`, `feature-done`, `project-guardrails`, `project-overlay-sync`, `dev-plan`, `codex-hooks-parity`, `evidence-discipline`, `mcp-policy`, `subagent-contract`.
 - `tests/smoke-test.sh` — 28 assertions end-to-end.
 
 ## État actuel (v0.13.0)
 
+- **HEAD Unreleased** — shims AGENTS.md natifs/lean, hooks Codex opt-in, discipline de preuve, registre de scopes + `aic-onboard`, `aic-pilot`, gate Stop de fraîcheur, OKF Phase 0, `vcs_provider`, knowledge hub, durcissements CI/docs issus de l'audit 2026-07-07.
 - **Contrat read-only des checks** — `check-features.sh --no-write` valide le mesh sans écrire l'index ; `doctor`, `quality-gate`, la CI, `check-feature-freshness`, `check-feature-coverage`, `review-delta`, `pr-report` et les rapports product consomment un index temporaire ou le cache existant (warning si absent).
 - **Index contract v2** — `build-feature-index.sh --write` ne réécrit `.ai/.feature-index.json` que si le contrat JSON change (hors `generated_at`) ; ordre des features stable ; `schema_version` + `project_id` exposés ; fallback parser sans `yq` (extraction `product.portfolio.*`).
 - **Surface CLI `aic` (breaking)** — la surface publique devient `aic.sh frame/status/diagnose/document-feature/review/ship`, alignée avec les skills `aic-*`. Les anciens verbes publics de cadrage/brief/document-delta/ship-report sont supprimés (pas d'aliases).
-- **Installation Codex** — quand `codex` est dans `agents`, le template génère `.agents/skills/` (wrappers `aic-*`, `aic-feature-*`, `aic-quality-gate`) délégant aux workflows canoniques `.ai/workflows/*`.
+- **Installation Codex** — quand `codex` est dans `agents`, le template génère `.agents/skills/` avec les mêmes 10 intentions publiques que Claude. Les hooks Codex natifs restent opt-in via `enable_codex_hooks`.
 
 ### État v0.12.0 (rappel)
 
 - **Feature mesh** — frontmatter validé, détection cycles, warn si active dépend de deprecated, scope enum, touches morte bloquante, `touches_shared` pour surfaces de review non bloquantes.
 - **Continuité inter-session** — frontmatter `progress:` + worklog append-only par feature + `resume-features.sh` 4 buckets.
-- **Auto-worklog** — hooks `PostToolUse` + `Stop` logguent automatiquement les éditions, bumpent `progress.updated`.
+- **Auto-worklog** — hooks `PostToolUse` + `Stop` logguent automatiquement les éditions ; `progress.updated` n'est bumpé que sur transition de phase ou update manuel.
 - **Coût tokens maîtrisé** — reminder compressé, filtrage par status, `measure-context-size.sh`, **graph-aware injection** via `AI_CONTEXT_FOCUS=<scope>` (scope + voisins 1-hop).
 - **i18n** — reminder FR/EN selon `commit_language`.
 - **Presets techniques** — règles stack optionnelles via `tech_profile` (`dotnet-clean-cqrs`, `react-next`, `fullstack-dotnet-react`).
 - **Fiabilité** — `_lib.sh` helpers, matching `touches:` / `touches_shared:` centralisé, lock atomique sur index, globstar, dépendances vérifiées, JSON escaping via jq.
 - **Tags versionnés** — `v0.7.2`, `v0.8.0`, `v0.9.0`, `v0.10.0`, `v0.11.0`, `v0.12.0`, `v0.13.0` — `copier update --vcs-ref=v0.13.0` possible.
 - **Documentation** — README avec mermaid + FAQ + use cases, MIGRATION.md progressif, skills self-contained.
-- **Guardrails projet** — `.ai/guardrails.md` cadre les non-goals + glossaire métier (référencé via Pack A, coût tokens nul à chaque tour). Le point d'entrée recommandé est `/aic-frame`; la procédure interne vit dans `.ai/workflows/project-guardrails.md`.
-- **Skills intentionnels** — `/aic-frame` cadre avant implémentation (plan, métier, technique, validation), `/aic-status` reprend, `/aic-review` relit le delta, `/aic-ship` prépare la sortie. Les skills procéduraux restent en backend.
-- **Surface aic canonique** — `aic.sh frame/status/diagnose/document-feature/review/ship` couvre le cycle utilisateur pour Codex et agents non-hookés, en miroir des skills Claude/Codex `aic-*`. Les commandes techniques restent en maintenance.
+- **Guardrails projet** — `.ai/guardrails.md` cadre les non-goals + glossaire métier, chargé uniquement on-demand. Le point d'entrée recommandé est `/aic-frame`; la procédure interne vit dans `.ai/workflows/project-guardrails.md`.
+- **Skills intentionnels** — `/aic-frame`, `/aic-status`, `/aic-review`, `/aic-ship`, `/aic-diagnose`, `/aic-document-feature`, `/aic-dev-plan`, `/aic-onboard`, `/aic-pilot` couvrent les intentions publiques. Les procédures internes restent en backend `.ai/workflows/`.
+- **Surface aic canonique** — `aic.sh frame/status/diagnose/document-feature/review/ship` couvre le cycle utilisateur CLI pour Codex et agents non-hookés ; `aic.sh knowledge` expose le hub knowledge. Les commandes techniques restent en maintenance.
 - **Traceability produit** — scope `product`, champs `product.*` / `external_refs` et commandes `product-status`, `product-portfolio`, `product-review`.
-- **Upgrade robuste** — `repair-copier-metadata` recrée `.copier-answers.yml` en dry-run, `template-diff` prévisualise un rendu `/tmp` sur worktree sale, et la doc recommande `copier update --vcs-ref=HEAD`.
+- **Upgrade robuste** — `repair-copier-metadata` recrée `.copier-answers.yml` en dry-run, `template-diff` prévisualise un rendu `/tmp` sur worktree sale, et la doc recommande `copier update --vcs-ref=HEAD --conflict=rej`.
 
 ## Roadmap — pistes ouvertes
 

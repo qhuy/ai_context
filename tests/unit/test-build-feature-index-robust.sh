@@ -24,6 +24,8 @@ for id in good-a good-b; do
 done
 # 1 fiche malformée : titre non quoté finissant par deux-points → YAML invalide
 printf -- '---\nid: bad\nscope: test\ntitle: Titre casse finissant par deux points:\nstatus: active\n---\n# bad\n' > "$tmp/.docs/features/test/bad.md"
+# 1 fiche lisible mais dangereuse pour les clés/path worklog → ignorée.
+printf -- '---\nid: "../escape"\nscope: test\ntitle: Invalid id\nstatus: active\ntype: feature\ndepends_on: []\ntouches:\n  - src/escape.ts\n---\n# invalid\n' > "$tmp/.docs/features/test/invalid-id.md"
 
 cd "$tmp"
 set +e
@@ -34,6 +36,8 @@ set -e
 echo "$out" | jq -e . >/dev/null 2>&1 || fail "l'index produit doit être un JSON valide"
 echo "$out" | jq -e '.features[] | select(.id == "good-a")' >/dev/null || fail "good-a doit être présent"
 echo "$out" | jq -e '.features[] | select(.id == "good-b")' >/dev/null || fail "good-b doit être présent"
+echo "$out" | jq -e '.features[] | select(.id == "../escape")' >/dev/null 2>&1 && fail "la fiche à id invalide ne doit pas être indexée"
+grep -q "id='../escape' invalide" /tmp/bfi-robust.err || fail "un avertissement doit signaler l'id invalide ignoré"
 
 # Comportement spécifique au parseur yq v4 (sinon le fallback awk tolère et inclut).
 if command -v yq >/dev/null 2>&1 && yq --version 2>&1 | grep -qE 'v?4\.'; then

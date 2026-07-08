@@ -93,3 +93,12 @@ Source session : automation veille-techno
 - Fichiers modifiés :
   - .ai/scripts/check-agent-config.sh
   - tests/unit/test-check-agent-config.sh
+
+## 2026-07-07 — audit 2026-07-07
+- Changement : les événements Codex inconnus passent de warning non bloquant à erreur, pour éviter qu'un hook mal nommé donne une garantie fantôme.
+- Test : `test-check-agent-config` attend désormais l'échec sur `UserPromptSubmitted`.
+- Validation prévue : `bash tests/unit/test-check-agent-config.sh`, `bash .ai/scripts/check-agent-config.sh`.
+
+## 2026-07-07 18:51 — auto
+- Fichiers modifiés :
+  - template/.github/workflows/ai-context-check.yml.jinja

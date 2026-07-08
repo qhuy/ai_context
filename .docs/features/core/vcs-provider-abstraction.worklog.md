@@ -81,3 +81,18 @@
 - Fichiers/surfaces : `copier.yml` (choices `vcs_provider` + `help`), `README_AI_CONTEXT.md` (+ miroir jinja) — mention explicite « best-effort, non testé end-to-end ». Fiche : nouveau risque assumé documenté.
 - Décision : pas d'écriture de test e2e maintenant (nécessiterait un faux binaire `tf` exécutable depuis un scaffold Copier réel + reverse-engineering du contrat exact `tf status` — risque de test peu fiable plutôt qu'utile) ; honnêteté documentaire d'abord, test e2e en suivi si besoin réel confirmé.
 - Validation : check-features/check-shims/check-dogfood-drift + smoke complet au commit.
+
+## 2026-07-07 — audit 2026-07-07
+- Intent : traiter les constats N2/CI/RUN liés aux surfaces VCS partagées.
+- Changement : `_vcs.sh` mémoïse `vcs_provider`/`vcs_root` avec invalidation sur override/env ; `aic.sh` nettoie ses fichiers temporaires ; smoke-test ajoute des assertions audit/migrate négatives/idempotence et corrige le libellé de compte workflows.
+- Surfaces incidentes : `_lib.sh`, `check-commit-features.sh`, `check-feature-freshness.sh`, tests unitaires/smoke déjà couverts par cette fiche.
+- Validation ciblée : `test-vcs-provider`, `test-check-commit-features-relevance`, `test-check-feature-freshness`, `bash -n` des scripts modifiés.
+
+## 2026-07-07 18:51 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-commit-features.sh
+  - .ai/scripts/check-feature-freshness.sh
+  - template/.ai/scripts/check-commit-features.sh.jinja
+  - template/.ai/scripts/check-feature-freshness.sh.jinja
+  - tests/unit/test-build-feature-index-fallback-frontmatter.sh
+  - tests/unit/test-check-commit-features-relevance.sh

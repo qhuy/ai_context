@@ -20,7 +20,7 @@ make_repo() {
   local d="$1"
   local rule
 
-  mkdir -p "$d/.ai/scripts" "$d/.ai/rules" "$d/.ai/quality"
+  mkdir -p "$d/.ai/scripts" "$d/.ai/rules" "$d/.ai/quality" "$d/.ai/workflows"
   cp "$repo_root/.ai/scripts/check-shims.sh" "$d/.ai/scripts/check-shims.sh"
   cp "$repo_root/.ai/index.md" "$d/.ai/index.md"
   cp "$repo_root/.ai/reminder.md" "$d/.ai/reminder.md"
@@ -29,6 +29,7 @@ make_repo() {
   for rule in core quality workflow product; do
     cp "$repo_root/.ai/rules/$rule.md" "$d/.ai/rules/$rule.md"
   done
+  printf '# feature-new\n' > "$d/.ai/workflows/feature-new.md"
 
   cat > "$d/AGENTS.md" <<'MD'
 # AGENTS.md
@@ -68,6 +69,24 @@ write_copilot() {
 
 Hard rules :
 - Un scope primaire par tache ; cross-scope => HANDOFF.
+MD
+}
+
+write_skill() {
+  local d="$1"
+  local root="$2"
+  local name="${3:-aic-demo}"
+
+  mkdir -p "$d/$root/$name"
+  cat > "$d/$root/$name/SKILL.md" <<'MD'
+# Skill demo
+
+Référence interne : .ai/workflows/feature-new.md
+MD
+  cat > "$d/$root/$name/workflow.md" <<'MD'
+# Workflow demo
+
+Voir .ai/workflows/feature-new.md.
 MD
 }
 
@@ -180,6 +199,70 @@ TSV
     || { echo "$out"; fail "shim compat present + confirmed devrait passer"; }
   echo "$out" | grep -q "copilot-instructions.md OK" \
     || { echo "$out"; fail "le shim compat present doit etre valide normalement"; }
+)
+
+# Skills : une surface seule est valide ; la parité stricte ne s'applique que
+# quand Claude et Codex sont tous deux générés.
+repo_claude_skill="$tmp/claude-skill"
+make_repo "$repo_claude_skill"
+write_claude "$repo_claude_skill"
+write_skill "$repo_claude_skill" ".claude/skills"
+cat > "$repo_claude_skill/.copier-answers.yml" <<'YAML'
+agents: ["claude"]
+YAML
+(
+  cd "$repo_claude_skill"
+  out="$(bash .ai/scripts/check-shims.sh 2>&1)" \
+    || { echo "$out"; fail "skill Claude seul devrait passer sans surface Codex"; }
+  echo "$out" | grep -q ".claude/skills/aic-demo présent" \
+    || { echo "$out"; fail "skill Claude seul doit etre valide comme surface unique"; }
+)
+
+repo_pair_skill="$tmp/pair-skill"
+make_repo "$repo_pair_skill"
+write_claude "$repo_pair_skill"
+write_skill "$repo_pair_skill" ".claude/skills"
+mkdir -p "$repo_pair_skill/.agents/skills"
+cat > "$repo_pair_skill/.copier-answers.yml" <<'YAML'
+agents: ["claude", "codex"]
+YAML
+(
+  cd "$repo_pair_skill"
+  set +e
+  out="$(bash .ai/scripts/check-shims.sh 2>&1)"
+  rc=$?
+  set -e
+  [[ "$rc" -ne 0 ]] \
+    || { echo "$out"; fail "skill non paire devrait echouer quand Claude+Codex sont presents"; }
+  echo "$out" | grep -q "sans pair .agents/skills" \
+    || { echo "$out"; fail "message de skill non paire attendu"; }
+)
+
+# Résidu de désélection : codex a été retiré de .copier-answers.yml après un
+# scaffold Claude+Codex, mais .agents/skills/* reste physiquement présent
+# (copier update ne supprime pas les fichiers retirés du rendu). require_skill_pairs
+# ne doit plus se baser sur la seule présence disque : le résidu doit être signalé.
+repo_residue="$tmp/residue"
+make_repo "$repo_residue"
+write_claude "$repo_residue"
+write_skill "$repo_residue" ".claude/skills"
+write_skill "$repo_residue" ".agents/skills"
+cat > "$repo_residue/.copier-answers.yml" <<'YAML'
+agents: ["claude"]
+YAML
+(
+  cd "$repo_residue"
+  set +e
+  out="$(bash .ai/scripts/check-shims.sh 2>&1)"
+  rc=$?
+  set -e
+  [[ "$rc" -ne 0 ]] \
+    || { echo "$out"; fail "résidu .agents/skills après désélection codex devrait échouer"; }
+  echo "$out" | grep -q "résidu de désélection" \
+    || { echo "$out"; fail "message de résidu de désélection attendu pour .agents/skills"; }
+  if echo "$out" | grep -q ".claude/skills/aic-demo pairé"; then
+    fail ".claude/skills ne doit pas être validé comme pairé face à un résidu codex non sélectionné"
+  fi
 )
 
 echo "PASS test-check-shims-dynamic-agents"

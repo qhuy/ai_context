@@ -46,7 +46,7 @@ Si un projet consommateur de référence est dispo :
 
 ```bash
 cd <projet-consommateur>
-copier update --vcs-ref=HEAD <chemin-vers-ai_context>
+copier update --vcs-ref=HEAD --conflict=rej <chemin-vers-ai_context>
 ```
 
 Vérifier qu'aucune surprise sur les fichiers customisés (mesh existant, rules métier).

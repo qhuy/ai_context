@@ -122,3 +122,8 @@
 - Décision : statut `done` ; la calibration réelle via `context-relevance-report --last 50` reste une observation d'usage ultérieure, pas un blocker de livraison.
 - Validation : `bash tests/unit/test-context-relevance.sh` PASS (13/13), gate feature/docs/freshness à relancer avant commit.
 - Next : aucune action immédiate.
+
+## 2026-07-07 — audit 2026-07-07
+- Changement : `context-relevance-log.sh` verrouille rotation+append JSONL via lock `mkdir` portable avec reprise de lock orphelin.
+- `features-for-path.sh` fige un snapshot d'index unique avant lookup/log inject pour éviter une lecture incohérente pendant rebuild.
+- Validation ciblée : `test-context-relevance`, `test-features-for-path-relevance-ranking`.

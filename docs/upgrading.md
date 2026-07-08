@@ -6,7 +6,7 @@ Quand le template évolue sur GitHub (nouvelles règles, nouveaux checks, fixes)
 
 ```bash
 cd mon-projet
-copier update --vcs-ref=HEAD
+copier update --vcs-ref=HEAD --conflict=rej
 ```
 
 Copier lit `.copier-answers.yml` pour retrouver les réponses initiales. Il te montre un **diff** pour chaque fichier modifié et te demande quoi faire :
@@ -16,6 +16,8 @@ Copier lit `.copier-answers.yml` pour retrouver les réponses initiales. Il te m
 - `d` : voir le diff en détail.
 
 Pourquoi `--vcs-ref=HEAD` : Copier cible souvent le dernier tag publié par défaut. Si `main` contient une version plus récente que le dernier tag, `copier update` seul peut proposer une mise à jour vers une version plus ancienne que le HEAD GitHub.
+
+Pourquoi `--conflict=rej` : en cas de merge difficile, Copier écrit des fichiers `.rej` à arbitrer au lieu d'insérer des marqueurs `<<<<<<<` directement dans les scripts. Inspecte puis supprime les `.rej` avant commit.
 
 ## Profil OKF — backfill du champ `type`
 
@@ -190,6 +192,7 @@ Les shims deviennent plus stricts et moins dupliqués :
 - `CLAUDE.md` et `GEMINI.md` peuvent importer `@AGENTS.md` ; le shim Copilot est devenu opt-in (`enable_copilot_shim`, défaut false — le coding agent lit `AGENTS.md` nativement).
 - `check-shims.sh` lit `agents` dans `.copier-answers.yml` quand ce fichier existe, et consulte le registre `.ai/native-context-support.tsv` : un shim dédié absent est accepté si l'agent y est `confirmed` (copilot, cursor) ; sinon (`pending` — claude, gemini) il doit exister et rester lean. Un shim présent est toujours validé.
 - Sans `.copier-answers.yml`, le check garde un fallback compatible avec les anciens scaffolds et valide les shims présents.
+- `copier update` ne supprime pas automatiquement les fichiers retirés du template. Après l'élagage, `.cursor/rules/protocol-reminder.mdc` et `.github/copilot-instructions.md` peuvent donc rester dans un projet ancien comme fichiers utilisateur. Supprime-les manuellement si tu veux adopter le modèle lean, sauf si tu utilises encore Copilot Chat/review IDE et que tu as choisi `enable_copilot_shim=true`.
 
 Après `copier update`, accepte en priorité les changements sur `AGENTS.md`,
 `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md` et

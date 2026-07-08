@@ -87,6 +87,66 @@ printf '# Real worklog\n' > "$tmp/.docs/features/back/real.worklog.md"
   printf '\n- real worklog\n' >> .docs/features/back/real.worklog.md
   git add src/app.ts .docs/features/back/real.worklog.md >/dev/null
   CLAUDE_COMMIT_MSG="feat: real feature worklog" bash .ai/scripts/check-commit-features.sh >/dev/null
+
+  printf 'message invalide via fichier\n' > msg.txt
+  payload='{"tool_name":"Bash","tool_input":{"command":"git commit -F msg.txt"}}'
+  set +e
+  out="$(printf '%s\n' "$payload" | bash .ai/scripts/check-commit-features.sh 2>&1)"
+  rc=$?
+  set -e
+  [[ "$rc" -ne 0 ]] || fail "PreToolUse git commit -F aurait dû extraire et refuser le message invalide"
+
+  payload='{"tool_name":"Bash","tool_input":{"command":"git commit --message=\"message invalide via option\""}}'
+  set +e
+  out="$(printf '%s\n' "$payload" | bash .ai/scripts/check-commit-features.sh 2>&1)"
+  rc=$?
+  set -e
+  [[ "$rc" -ne 0 ]] || fail "PreToolUse git commit --message= aurait dû extraire et refuser le message invalide"
+
+  # AGT-7 : couverture élargie des formes non exercées ci-dessus, + régression
+  # P1 (ordre des elif -m avant --message=). Index propre pour ne pas dépendre
+  # du staging laissé par les blocs précédents.
+  git reset -q
+  run_check() {
+    jq -nc --arg cmd "$1" '{tool_name: "Bash", tool_input: {command: $cmd}}' \
+      | bash .ai/scripts/check-commit-features.sh >/dev/null 2>&1
+  }
+
+  set +e; run_check 'git commit -F "msg.txt"'; rc=$?; set -e
+  [[ "$rc" -ne 0 ]] || fail "-F \"msg.txt\" (quoté double) aurait dû être extrait et refusé"
+
+  set +e; run_check "git commit -F 'msg.txt'"; rc=$?; set -e
+  [[ "$rc" -ne 0 ]] || fail "-F 'msg.txt' (quoté simple) aurait dû être extrait et refusé"
+
+  set +e; run_check "git commit -F $tmp/msg.txt"; rc=$?; set -e
+  [[ "$rc" -ne 0 ]] || fail "-F <chemin absolu> aurait dû être extrait et refusé"
+
+  printf 'fix: valide via -F collé\n' > glued.txt
+  set +e; run_check "git commit -Fglued.txt"; rc=$?; set -e
+  [[ "$rc" -eq 0 ]] || fail "-Fglued.txt (forme collée sans espace) aurait dû être extrait et accepté"
+
+  set +e; run_check "git commit --file=msg.txt"; rc=$?; set -e
+  [[ "$rc" -ne 0 ]] || fail "--file=msg.txt aurait dû être extrait et refusé"
+
+  set +e; run_check "git commit --file='msg.txt'"; rc=$?; set -e
+  [[ "$rc" -ne 0 ]] || fail "--file='msg.txt' aurait dû être extrait et refusé"
+
+  set +e; run_check 'git commit --file="msg.txt"'; rc=$?; set -e
+  [[ "$rc" -ne 0 ]] || fail "--file=\"msg.txt\" aurait dû être extrait et refusé"
+
+  set +e; run_check "git commit --file msg.txt"; rc=$?; set -e
+  [[ "$rc" -ne 0 ]] || fail "--file msg.txt (espace) aurait dû être extrait et refusé"
+
+  set +e; run_check "git commit --message='message invalide via option simple'"; rc=$?; set -e
+  [[ "$rc" -ne 0 ]] || fail "--message='...' (quoté simple) aurait dû être extrait et refusé"
+
+  set +e; run_check "git commit --message=invalidemessage"; rc=$?; set -e
+  [[ "$rc" -ne 0 ]] || fail "--message=... (bare, sans espace) aurait dû être extrait et refusé"
+
+  # Régression P1 : un -m "..." valide contenant littéralement --message= ne
+  # doit pas être mal-extrait par la branche --message= (ordre des elif).
+  set +e; run_check 'git commit -m "fix: gérer --message=... et -F dans check-commit-features"'; rc=$?; set -e
+  [[ "$rc" -eq 0 ]] || fail "-m \"...--message=...\" valide aurait dû être accepté (régression P1)"
 )
 
 echo "✅ test-check-commit-features-relevance PASS"

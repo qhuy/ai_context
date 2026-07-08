@@ -1,5 +1,12 @@
 # Worklog — core/agents-md-shim-canonical
 
+## 2026-07-07 — fix P2 : pairing skills basé sur disque plutôt qu'AGENTS_SELECTED (CI-12)
+
+- Constat (second audit du delta CI-12 non commité) : `require_skill_pairs` dépendait de la seule présence disque des dossiers (`[[ -d ".agents/skills" && -d ".claude/skills" ]]`), jamais de `AGENTS_SELECTED`. Un projet qui désélectionne codex après un scaffold Claude+Codex garde un résidu `.agents/skills/*` (copier update ne supprime pas les fichiers retirés du rendu) que check-shims validait comme "pairé" au lieu de signaler un résidu de migration — trou de couverture pour la nouvelle fonctionnalité de pairing skills, dans la même classe que CI-12.
+- Fix : `.ai/scripts/check-shims.sh` (+ template) — nouveau helper `agent_selected()`, `require_skill_pairs` dérivé de `agent_selected "codex" && agent_selected "claude"`, et détection explicite du résidu (root présent mais agent non sélectionné → `ko` dédié, plutôt que validation silencieuse).
+- Test ajouté : `tests/unit/test-check-shims-dynamic-agents.sh` (cas `repo_residue` : agents=["claude"] avec résidu `.agents/skills/aic-demo` complet sur disque → doit échouer avec le message de résidu, et `.claude/skills` ne doit pas être rapporté "pairé").
+- Validation : `bash tests/unit/test-check-shims-dynamic-agents.sh` PASS ; `bash .ai/scripts/check-shims.sh` PASS (aucune régression sur ce repo) ; `diff .ai/scripts/check-shims.sh template/.ai/scripts/check-shims.sh.jinja` → aucun écart hors variables Jinja attendues ; `bash tests/smoke-test.sh` PASS.
+
 ## 2026-06-28 — création (aic-frame, item C1)
 - Fiche créée suite au cadrage `aic-frame` de l'item C1 (frame de remédiation 2026-06-28).
 - Arbitrages tranchés par l'utilisateur : (a) nouvelle fiche dédiée (vs extension de `aic-surface-canonical`) ; (b) modèle **import `@AGENTS.md` + fallback tailored** (symlink rejeté).
@@ -81,3 +88,8 @@
 - Fiche : section Contrats + description frontmatter alignées sur le comportement livré.
 ## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
 - `AGENTS.md` (+ `template/AGENTS.md.jinja`) : hard rule « Aucune supposition : prouver (code lu, commande, doc) ou marquer Hypothèse » ; « Shim lean » condensé en 1 ligne — AGENTS.md reste à 15 lignes (limite MAX_LINES), auto-suffisance préservée (test PASS). Validation portée par `workflow/evidence-discipline`.
+
+## 2026-07-07 — audit 2026-07-07
+- Changement : `check-shims.sh` ajoute une section `Skills ↔ workflows` qui vérifie la parité `.agents/skills` ↔ `.claude/skills`, la présence de `SKILL.md`/`workflow.md`, et l'existence des références `.ai/workflows/*.md`.
+- Test : `test-check-shims-dynamic-agents` reste vert sur repos partiels sans skills.
+- Validation ciblée : `check-shims`, `test-check-shims-dynamic-agents`.

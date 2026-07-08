@@ -270,6 +270,39 @@ else
 fi
 rm -rf "$tmp_d"
 
+# Cas E2E E : chemin de fiche contenant un espace → TSV parse sur tab uniquement
+tmp_e=$(setup_tmp_repo_e2e)
+cat > "$tmp_e/.docs/features/test/feat space.md" <<'EOF'
+---
+id: feat space
+scope: test
+title: Test path with space
+status: active
+touches:
+  - src/foo.sh
+progress:
+  phase: spec
+  step: ""
+  blockers: []
+  resume_hint: ""
+  updated: 2026-05-07
+---
+EOF
+cat > "$tmp_e/.ai/.feature-index.json" <<EOF
+{"features":[{"scope":"test","id":"feat space","path":".docs/features/test/feat space.md","status":"active","touches":["src/foo.sh"],"progress":{"phase":"spec"}}]}
+EOF
+printf '{"feature":"test/feat space","file":"src/foo.sh","ts":"2026-05-07T00:00:00Z"}\n' > "$tmp_e/.ai/.session-edits.flushed"
+(cd "$tmp_e" && bash .ai/scripts/auto-progress.sh >/dev/null 2>&1) || true
+phase_after=$(grep '^  phase:' "$tmp_e/.docs/features/test/feat space.md" | head -1 | sed 's/^  phase:[[:space:]]*//')
+if [[ "$phase_after" == "implement" ]]; then
+  pass=$((pass + 1))
+  echo "PASS: cas E2E E chemin fiche avec espace → phase=implement"
+else
+  fail=$((fail + 1))
+  failures+=("cas E2E E : phase attendue=implement avec chemin espace, obtenue=$phase_after")
+fi
+rm -rf "$tmp_e"
+
 # ─── Rapport ───
 total=$((pass + fail))
 echo "═══ test-auto-progress-filter ═══"

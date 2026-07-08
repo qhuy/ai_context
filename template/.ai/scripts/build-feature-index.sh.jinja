@@ -48,6 +48,11 @@ extract_list_awk() {
   # Borné au 1er bloc frontmatter (---...---) : ne lit JAMAIS le corps markdown
   # (sinon un `key:` dans le body injecte de fausses valeurs). Gère block-style
   # (- item) ET flow-style (key: [a, b]).
+  # Limite connue (fallback sans yq) : le strip de commentaire inline ne respecte
+  # pas les guillemets — une valeur comme "src/a #1.ts" serait tronquée à "src/a".
+  # Accepté : ce parseur n'est utilisé que sans yq, et les valeurs réellement
+  # consommées ici (touches/touches_shared/depends_on) ne contiennent pas de `#`
+  # dans ce repo. Cf. tests/unit/test-build-feature-index-fallback-frontmatter.sh.
   awk -v k="^${key}:" '
     /^---$/ { fence++; next }
     fence != 1 { next }
@@ -63,19 +68,22 @@ extract_list_awk() {
     flag && /^  *-/ {print; next}
     flag && /^[^[:space:]]/ {flag=0}
   ' "$file" \
-    | sed -E 's/^[[:space:]]*-[[:space:]]*//; s/["'"'"']//g; s/[[:space:]]+$//' \
+    | sed -E 's/^[[:space:]]*-[[:space:]]*//; s/[[:space:]]+#.*$//; s/["'"'"']//g; s/[[:space:]]+$//' \
     | grep -vE '^$|^\[\]$' || true
 }
 
 extract_scalar_awk() {
   local file="$1" key="$2"
   # Borné au 1er bloc frontmatter (---...---) : ne lit JAMAIS le corps markdown.
+  # Même limite connue que extract_list_awk sur le strip de commentaire inline
+  # (non quote-aware) ; sans risque ici, id/scope/status/type sont validés par
+  # regex kebab-case/énum fermée après extraction (aucun `#` légitime possible).
   awk -v k="^${key}:" '
     /^---$/ { fence++; next }
     fence == 1 && $0 ~ k { sub(k, ""); print; exit }
     fence >= 2 { exit }
   ' "$file" \
-    | sed -E 's/^[[:space:]]*//; s/["'"'"']//g; s/[[:space:]]+$//'
+    | sed -E 's/^[[:space:]]*//; s/[[:space:]]+#.*$//; s/["'"'"']//g; s/[[:space:]]+$//'
 }
 
 extract_product_portfolio_scalar_awk() {
@@ -231,6 +239,15 @@ feature_to_json() {
   [[ -z "$id" ]] && id=$(basename "$file" .md)
   [[ -z "$scope" ]] && scope="$folder_scope"
   [[ -z "$status" ]] && status="?"
+
+  if [[ ! "$id" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+    echo "⚠️  $rel : id='$id' invalide, fiche exclue de l'index" >&2
+    return 0
+  fi
+  if [[ ! "$scope" =~ ^[a-z0-9][a-z0-9_-]*$ ]]; then
+    echo "⚠️  $rel : scope='$scope' invalide, fiche exclue de l'index" >&2
+    return 0
+  fi
 
   if [[ "$status" != "?" ]] && ! is_valid_status "$status"; then
     echo "⚠️  $rel : status='$status' hors enum ($STATUS_ENUM)" >&2

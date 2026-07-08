@@ -64,3 +64,8 @@
 - Décision : statut `done`. Pas de nouveau delta runtime : le helper structurel, la revalidation `touches:` direct et le test dédié étaient déjà présents ; ce commit aligne la fiche sur l'état réel.
 - Validation : `bash tests/unit/test-auto-progress-filter.sh` PASS (26 cas) ; `bash .ai/scripts/check-feature-docs.sh --strict workflow/auto-progress-file-filter` PASS ; `bash .ai/scripts/check-feature-freshness.sh --worktree --strict` OK ; `bash .ai/scripts/check-dogfood-drift.sh` PASS.
 - Next : aucune action immédiate ; `workflow/stop-hook-idempotence` peut consommer le helper dans un tour dédié.
+
+## 2026-07-07 — audit 2026-07-07
+- Intent : fermer SCR-5 et tracer les changements partagés `_lib.sh`.
+- Changement : `auto-progress.sh` lit les champs jq TSV avec `IFS=$'\t'`, afin de préserver les chemins/ids contenant des espaces ; test E2E ajouté dans `test-auto-progress-filter`.
+- Validation ciblée : `bash tests/unit/test-auto-progress-filter.sh` PASS.

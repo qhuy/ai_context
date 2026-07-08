@@ -86,3 +86,7 @@ bash tests/smoke-test.sh                                        # étape génér
 ```
 
 Le résultat reste un pilote : la génération et sa validation statique sont testées, mais aucune exécution live par le CLI Codex n'est intégrée à la CI. Les hooks Git et la CI restent la garantie de non-régression.
+
+## Asymétrie live assumée
+
+Claude `Stop` exécute `stop-sequence.sh`, qui sérialise gate de fraîcheur, flush worklog et auto-progress. Codex `Stop` opt-in exécute seulement le gate de fraîcheur (`stop-doc-gate.sh`) : pas d'auto-worklog ni d'auto-progress live tant que le payload `apply_patch` PostToolUse n'est pas validé. La convergence multi-agent se fait au commit via `.githooks/pre-commit` et `commit-msg`.

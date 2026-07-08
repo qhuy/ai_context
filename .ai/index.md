@@ -59,9 +59,10 @@ Si `.ai/project/index.md` existe, le lire maintenant. Ne pas précharger le rest
 - Quality gate : charger `.ai/quality/QUALITY_GATE.md` ou `.ai/workflows/quality-gate.md` près de DONE, ou tôt pour tâches risquées (contrat, doc canonique, sécurité, DB).
 - Agent guidance : `.ai/agent/*` est optionnel, jamais Pack A.
 - Guardrails projet : charger `.ai/guardrails.md` seulement pour cadrage produit, non-goals ou glossaire métier.
+- Knowledge hub : utiliser `bash .ai/scripts/aic.sh knowledge <publish|search|link|import|freshness>` seulement si l'intent porte sur publication, recherche, lien ou import de connaissance durable.
 - Legacy/local rules : charger seulement le pointeur ou fichier local qui matche les paths touchés.
 - Catalogues, références, worklogs, changelogs, skills, indexes générés, caches et diffs complets : recherche ciblée uniquement.
 
 ## Exclusions
 
-Pour la récupération de contexte Codex, considérer on-demand seulement : `.claude/skills/**`, `.ai/docs/**`, `.ai/tests/**`, `docs/reference/**`, docs de migration, caches générés, logs/worklogs, diffs complets, larges listings récursifs. Détail : `.ai/context-ignore.md`.
+Pour la récupération de contexte Codex, ne pas dupliquer la liste ici : appliquer `.ai/context-ignore.md`.

@@ -84,3 +84,8 @@
 - Doc Impact Decision : C — fiche feature et worklog mis à jour.
 - Validation prévue : `check-feature-docs --strict core/feature-mesh`, tests unitaires feature-mesh ciblés, checks feature/freshness et gate ship avant commit.
 - Next : aucune action immédiate ; rouvrir si le frontmatter feature, le schéma ou `check-features.sh` change.
+
+## 2026-07-08 — couverture audit strict
+- Surface couverte touchée dans le delta d'audit strict : `.ai/schema/feature.schema.json`.
+- Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
+- Validation : gate ship relancée avant commit.

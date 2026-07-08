@@ -17,7 +17,7 @@ checkout_type="${3:-0}"
 # Pas de changement effectif → skip.
 [[ "$prev_head" == "$new_head" ]] && exit 0
 
-if [[ -x .ai/scripts/build-feature-index.sh ]]; then
+if [[ -f .ai/scripts/build-feature-index.sh ]]; then
   bash .ai/scripts/build-feature-index.sh --write >/dev/null 2>&1 || true
 fi
 exit 0

@@ -65,6 +65,7 @@ assert_match    "glob ? un caractère"                   "src/a.ts"             
 assert_no_match "glob ? exige exactement 1 char"        "src/ab.ts"              "src/?.ts"
 assert_match    "glob []"                               "lib/a.js"               "lib/[ab].js"
 assert_no_match "glob [] hors set"                      "lib/c.js"               "lib/[ab].js"
+assert_no_match "glob [] ne contient pas /"             "src/x.ts"               "src[/]x.ts"
 
 # ─── Edge cases ───
 assert_no_match "path vide"                             ""                       "src/foo.ts"

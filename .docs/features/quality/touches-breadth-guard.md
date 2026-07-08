@@ -13,6 +13,7 @@ touches:
   - .ai/scripts/check-touches-breadth.sh
   - template/.ai/scripts/check-touches-breadth.sh.jinja
   - tests/unit/test-check-touches-breadth.sh
+  - tests/unit/test-is-path-within-repo.sh
 touches_shared:
   - .ai/workflows/quality-gate.md
   - template/.ai/workflows/quality-gate.md.jinja

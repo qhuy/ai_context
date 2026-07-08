@@ -137,7 +137,7 @@ else
           [[ -z "$ev" ]] && continue
           case " $known_events " in
             *" $ev "*) : ;;
-            *) warn "$file : événement hors surface Codex documentée (2026-07) : $ev" ;;
+            *) ko "$file : événement hors surface Codex documentée (2026-07) : $ev" ;;
           esac
         done < <(jq -r '.hooks | keys[]' "$file")
         while IFS=$'\t' read -r command_text timeout_value; do

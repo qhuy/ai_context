@@ -20,16 +20,17 @@ cp "$repo_root/.ai/scripts/_lib.sh" "$tmp/.ai/scripts/_lib.sh"
 cp "$repo_root/.ai/schema/feature.schema.json" "$tmp/.ai/schema/feature.schema.json"
 printf 'docs_root: ".docs"\nproject_id: "bfi-fm-test"\n' > "$tmp/.ai/config.yml"
 
-# Fiche piège : frontmatter SANS status, depends_on vide, mais le corps imite du
-# frontmatter (status:/depends_on: en colonne 0). Ne doit JAMAIS fuiter.
+# Fiche piège : frontmatter avec commentaires inline, depends_on vide, mais le
+# corps imite du frontmatter (status:/depends_on: en colonne 0). Ne doit JAMAIS fuiter.
 cat > "$tmp/.docs/features/test/bodyleak.md" <<'MD'
 ---
 id: bodyleak
 scope: test
 title: Body leak guard
+status: active # inline comment stripped by fallback
 depends_on: []
 touches:
-  - src/real.ts
+  - src/real.ts  # inline comment stripped by fallback
 ---
 # Corps markdown
 
@@ -39,6 +40,24 @@ depends_on:
   - leaked/dep
 touches:
   - leaked/file.ts
+MD
+
+# Fiche piège quote+# : le strip de commentaire inline n'est PAS quote-aware
+# (limite connue et documentée dans build-feature-index.sh). Une valeur quotée
+# contenant un '#' légitime est tronquée. Ce test verrouille ce comportement
+# CONNU pour qu'un futur changement soit délibéré, pas une régression silencieuse.
+cat > "$tmp/.docs/features/test/quotehash.md" <<'MD'
+---
+id: quotehash
+scope: test
+title: Quoted hash limitation
+status: active
+depends_on: []
+touches:
+  - "src/real.ts"
+  - "src/a #1.ts"
+---
+# Quoted hash
 MD
 
 # Fiche flow-style : touches au format inline [a, b].
@@ -98,9 +117,18 @@ MD
       and (.touches == ["src/real.ts"])
   ' >/dev/null || fail "body-leak : le corps markdown a fuité dans l'index (status/depends_on/touches)"
 
-  # status absent du frontmatter → défaut '?', surtout pas la valeur du corps
-  printf '%s\n' "$out" | jq -e '.features[] | select(.id == "bodyleak") | .status == "?"' >/dev/null \
-    || fail "body-leak : status aurait dû retomber sur le défaut '?'"
+  # Inline comments du frontmatter doivent être stripés comme yq v4.
+  printf '%s\n' "$out" | jq -e '.features[] | select(.id == "bodyleak") | .status == "active"' >/dev/null \
+    || fail "body-leak : status inline comment aurait dû être stripé"
+
+  # — Limite connue quote+# : la valeur quotée est tronquée au premier '#'
+  # non protégé (comportement accepté, cf. commentaire dans build-feature-index.sh).
+  printf '%s\n' "$out" | jq -e '
+    .features[] | select(.id == "quotehash")
+    | (.touches | index("src/real.ts"))
+      and (.touches | any(. == "src/a"))
+      and (.touches | any(. == "src/a #1.ts") | not)
+  ' >/dev/null || fail "quotehash : la troncature attendue (limite connue) n'est plus reproduite — comportement changé, mettre à jour ce test et le commentaire dans build-feature-index.sh"
 
   # — Flow-style : touches inline correctement extraits —
   printf '%s\n' "$out" | jq -e '

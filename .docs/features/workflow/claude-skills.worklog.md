@@ -74,3 +74,9 @@
 - Décision : statut `done`; catalogue public et procédures internes restent on-demand, hors contexte Codex obligatoire.
 - Validation : `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/claude-skills`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
 - Next : aucune action immédiate.
+
+## 2026-07-07 — audit mesh
+- Intent : traiter le stale artificiel signalé par l'audit 2026-07-07.
+- Changement : `touches:` ne prend plus tout `template/.ai/workflows/**`; les workflows internes réellement consommés par le catalogue `/aic*` sont listés en `touches_shared`.
+- Décision : un changement de procédure interne ne réouvre cette fiche que s'il change le catalogue ou le routage public des skills Claude.
+- Validation prévue : `check-features --no-write`, `check-feature-docs --strict workflow/claude-skills`, `check-feature-coverage --strict`, freshness finale du delta.

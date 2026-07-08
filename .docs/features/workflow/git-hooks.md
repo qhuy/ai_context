@@ -11,6 +11,8 @@ touches:
   - template/.githooks/**
   - template/.ai/scripts/check-commit-features.sh.jinja
   - .githooks/**
+  - tests/unit/test-check-commit-features-relevance.sh
+  - tests/unit/test-pre-commit-worklog-stage.sh
 progress:
   phase: done
   step: "hooks commit-msg/post-checkout/pre-commit livrés ; assertion pre-commit spec->implement couverte par le smoke"
@@ -56,7 +58,7 @@ Faire respecter le mesh au moment du commit et tenir l'index à jour entre branc
 
 - `commit-msg` : valide Conventional Commits ; si type `feat:`, exige qu'au moins un fichier `<docs_root>/features/**` soit touché par le commit.
 - `post-checkout` : rebuild de `.feature-index.json` (le mesh peut diverger entre branches).
-- `pre-commit` : **auto-progression universelle**. Dérive les features couvertes par les fichiers stagés, matérialise `.ai/.session-edits.flushed`, invoque `auto-progress.sh`, re-stage les fiches/worklogs modifiés. Non bloquant (exit 0 garanti).
+- `pre-commit` : **auto-progression universelle**. Dérive les features couvertes par les fichiers stagés, matérialise `.ai/.session-edits.flushed`, invoque `auto-progress.sh`, re-stage les fiches modifiées et ne re-stage un worklog que si sa feature est couverte par un fichier stagé dans ce commit (évite d'embarquer un historique hors intention issu d'un trace résiduel d'une session interrompue). Non bloquant (exit 0 garanti).
 - Activation : `git config core.hooksPath .githooks && chmod +x .githooks/*` (étape 2 du `_message_after_copy`).
 
 ## Contrats
@@ -77,7 +79,7 @@ Faire respecter le mesh au moment du commit et tenir l'index à jour entre branc
 ## Validation
 
 - Smoke-test : un commit `feat:` sans fiche `features/**` stagée doit être rejeté par `commit-msg` ; avec fiche stagée, il passe.
-- Smoke-test `pre-commit` : des fichiers stagés couvrant une feature en phase `spec` déclenchent la bascule `spec→implement` au `git commit`, fiches/worklogs re-stagés (assertion ciblée par le `resume_hint`).
+- Smoke-test `pre-commit` : des fichiers stagés couvrant une feature en phase `spec` déclenchent la bascule `spec→implement` au `git commit`, fiche ET worklog re-stagés. Test unitaire : le worklog d'une feature touchée par un fichier stagé dans le commit est re-stagé ; le worklog d'une trace résiduelle (feature non touchée par ce commit) ne l'est pas.
 - Non-blocage `pre-commit` : un environnement sans `jq` ou sans `.feature-index.json` doit aboutir à exit 0 sans bloquer le commit.
 - Idempotence : un second `git commit` immédiat (phases déjà basculées) est un no-op.
 

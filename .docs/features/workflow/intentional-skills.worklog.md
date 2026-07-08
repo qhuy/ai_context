@@ -202,3 +202,8 @@
 - Intent : tracer au CHANGELOG et clôturer avec la batterie complète.
 - Validation (exécutée ce jour) : `check-shims` PASS ; `check-features --no-write` PASS (deux fiches voisines corrigées, `feature-new-approval-step` et `feature-granularity`, dont les touches référençaient un wrapper supprimé sans en être propriétaires) ; `check-feature-docs --strict workflow/intentional-skills` PASS ; `check-dogfood-drift` PASS ; `shellcheck -S error tests/smoke-test.sh` silencieux (0 erreur) ; smoke complet PASS ×2 (un par commit), étape [19/28] avec assertion d'absence Claude+Codex.
 - Recherche de complétude : `rg` ciblé sur tout le repo (hors smoke-test/CHANGELOG/docs historiques datées) confirme zéro référence résiduelle aux 6 wrappers retirés.
+
+## 2026-07-08 — couverture audit strict
+- Surfaces couvertes touchées dans le delta d'audit strict : `.ai/index.md` et `template/.ai/index.md.jinja`.
+- Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
+- Validation : gate ship relancée avant commit.

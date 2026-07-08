@@ -26,6 +26,12 @@ FEATURE_TEMPLATE="$AI_CONTEXT_DOCS_ROOT/FEATURE_TEMPLATE.md"
 # ─── Extraction du message ───
 msg=""
 
+read_commit_message_file() {
+  local message_file="$1"
+  [[ -n "$message_file" && -f "$message_file" ]] || return 1
+  msg=$(head -n1 "$message_file")
+}
+
 if [[ -n "${1:-}" && -f "$1" ]]; then
   msg=$(head -n1 "$1")
 elif [[ -n "${CLAUDE_COMMIT_MSG:-}" ]]; then
@@ -43,13 +49,44 @@ elif [[ ! -t 0 ]]; then
   # Extraction best-effort du message :
   #   -m "simple"        → capture interne
   #   -m 'simple'        → capture interne
+  #   --message=...      → capture interne
+  #   -F/-Fpath/--file <path>/--file=path → 1ère ligne du fichier message
   #   -m "$(cat <<'EOF'  → 1ère ligne entre les marqueurs EOF
+  # Ordre important : -m est testé avant --message= pour qu'un message -m "..."
+  # contenant littéralement la sous-chaîne --message= ne soit pas mal-extrait.
   if [[ "$cmd" == *"<<'EOF'"* ]]; then
     msg=$(echo "$cmd" | awk "/<<'EOF'/{f=1; next} f && /^EOF/{exit} f" | head -n1)
   elif [[ "$cmd" =~ -m[[:space:]]+\"([^\"]+)\" ]]; then
     msg="${BASH_REMATCH[1]}"
   elif [[ "$cmd" =~ -m[[:space:]]+\'([^\']+)\' ]]; then
     msg="${BASH_REMATCH[1]}"
+  elif [[ "$cmd" =~ --message=\"([^\"]+)\" ]]; then
+    msg="${BASH_REMATCH[1]}"
+  elif [[ "$cmd" =~ --message=\'([^\']+)\' ]]; then
+    msg="${BASH_REMATCH[1]}"
+  elif [[ "$cmd" =~ --message=([^[:space:]\;\&\|]+) ]]; then
+    msg="${BASH_REMATCH[1]}"
+  elif [[ "$cmd" =~ -F[[:space:]]+\"([^\"]+)\" ]]; then
+    read_commit_message_file "${BASH_REMATCH[1]}" || true
+  elif [[ "$cmd" =~ -F[[:space:]]+\'([^\']+)\' ]]; then
+    read_commit_message_file "${BASH_REMATCH[1]}" || true
+  elif [[ "$cmd" =~ -F[[:space:]]+([^[:space:]\;\&\|]+) ]]; then
+    read_commit_message_file "${BASH_REMATCH[1]}" || true
+  elif [[ "$cmd" =~ -F([^[:space:]\;\&\|]+) ]]; then
+    # Forme collée (option courte sans espace, ex: -Fmsg.txt) — valide en git.
+    read_commit_message_file "${BASH_REMATCH[1]}" || true
+  elif [[ "$cmd" =~ --file=\"([^\"]+)\" ]]; then
+    read_commit_message_file "${BASH_REMATCH[1]}" || true
+  elif [[ "$cmd" =~ --file=\'([^\']+)\' ]]; then
+    read_commit_message_file "${BASH_REMATCH[1]}" || true
+  elif [[ "$cmd" =~ --file=([^[:space:]\;\&\|]+) ]]; then
+    read_commit_message_file "${BASH_REMATCH[1]}" || true
+  elif [[ "$cmd" =~ --file[[:space:]]+\"([^\"]+)\" ]]; then
+    read_commit_message_file "${BASH_REMATCH[1]}" || true
+  elif [[ "$cmd" =~ --file[[:space:]]+\'([^\']+)\' ]]; then
+    read_commit_message_file "${BASH_REMATCH[1]}" || true
+  elif [[ "$cmd" =~ --file[[:space:]]+([^[:space:]\;\&\|]+) ]]; then
+    read_commit_message_file "${BASH_REMATCH[1]}" || true
   fi
 
   # Si on n'a rien pu extraire : laisser passer, le git commit-msg hook rattrapera.

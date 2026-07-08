@@ -66,3 +66,8 @@
 - Décision : statut `done`; réouverture seulement si guardrails.md devient contexte obligatoire ou si le contrat non-goals/glossaire change.
 - Validation : relecture `.ai/index.md`; `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/project-guardrails`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
 - Next : aucune action immédiate.
+
+## 2026-07-08 — couverture audit strict
+- Surfaces couvertes touchées dans le delta d'audit strict : `.ai/index.md` et `template/.ai/index.md.jinja`.
+- Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
+- Validation : gate ship relancée avant commit.

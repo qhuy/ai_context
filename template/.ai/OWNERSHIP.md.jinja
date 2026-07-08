@@ -25,6 +25,7 @@ Ces fichiers viennent du template et peuvent évoluer lors de `copier update` :
 Ces fichiers appartiennent au repo consommateur :
 
 - `.ai/project/**`
+- `.ai/project/config.yml` si présent : override project-owned lu par les checks pour `coverage.roots`, `coverage.extensions`, `coverage.exclude_dirs` et autres paramètres locaux.
 - `AGENTS.md` si le projet choisit volontairement de diverger du shim généré
 - Documentation métier du repo : specs, ADR, docs produit, docs architecture et guides internes hors runtime template
 - Fiches feature et worklogs sous `{{ docs_root }}/features/**`
@@ -42,6 +43,8 @@ Entrée recommandée :
 ```
 
 Les agents lisent `.ai/project/index.md` seulement s'il existe. Ils ne chargent pas récursivement `.ai/project/**` ; l'index projet liste les fichiers locaux utiles selon la tâche.
+
+Les scripts ne chargent pas tout l'overlay, mais certains lisent explicitement `.ai/project/config.yml` quand il existe. Cette configuration projet prime sur `.ai/config.yml` pour les paramètres locaux de coverage.
 
 ## Registre de scopes
 

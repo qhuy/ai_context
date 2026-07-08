@@ -1,5 +1,12 @@
 # Worklog — quality/doc-freshness
 
+## 2026-07-07 — fix P2 : warning matcher avalé dans blocking_coverers()
+
+- Constat (second audit du delta SCR-2 non commité) : `blocking_coverers()` appelait `features_matching_path_ranked ... 2>/dev/null`, avalant le warning "pattern non supporté" — seul point de matching réellement branché sur le hook `commit-msg` (via `check-commit-features.sh --staged --strict`, inconditionnel pour tout type de commit). Un `touches:` malformé perdait silencieusement sa couverture freshness.
+- Fix : `.ai/scripts/check-feature-freshness.sh` (+ template) — repris le pattern capture-puis-replay déjà utilisé dans `features-for-path.sh` (stderr vers fichier temporaire, puis `cat ... >&2` après la pipeline).
+- Test ajouté : `tests/unit/test-freshness-unsupported-pattern-warning.sh` verrouille que le warning reste visible.
+- Validation : `bash tests/unit/test-freshness-unsupported-pattern-warning.sh` PASS ; `bash tests/unit/test-check-feature-freshness.sh` PASS ; `diff .ai/scripts/check-feature-freshness.sh template/.ai/scripts/check-feature-freshness.sh.jinja` → aucun écart ; `bash tests/smoke-test.sh` PASS.
+
 ## 2026-04-29 00:00
 
 - Creation de la fiche pour le controle de fraicheur documentaire.
@@ -112,3 +119,8 @@
 ## 2026-07-06 — couverture incidente (workflow/codex-hooks-parity)
 - `QUALITY_GATE.md` (+ jinja) : la phrase « gate Stop Claude-only » est requalifiée — protocole `decision:block` partagé, branché par défaut côté Claude et opt-in côté Codex via `.codex/hooks.json`. Aucun changement du moteur de fraîcheur.
 - Validation portée par `workflow/codex-hooks-parity`.
+
+## 2026-07-07 — audit 2026-07-07
+- Changement : `check-feature-freshness.sh` gagne un mode diff `--base/--head --strict` pour PR CI ; workflow CI passe docs/coverage/freshness en garde stricte appropriée.
+- `check-commit-features.sh` parse aussi `git commit -F/--file/--message=` dans les payloads hook.
+- Validation ciblée : `test-check-feature-freshness`, `test-check-commit-features-relevance`, `check-feature-freshness --worktree --strict` final.

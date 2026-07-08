@@ -58,3 +58,13 @@
 - Doc Impact Decision : C — fiche feature et worklog mis à jour.
 - Validation prévue : `test-build-feature-index-fallback`, `test-build-feature-index-contract`, `test-product-reports-read-only`, `check-feature-docs --strict core/feature-mesh-contract-alignment`, checks feature/freshness et dogfood avant commit.
 - Next : aucune action immédiate ; rouvrir si un rapport consomme `kill_criteria` ou un nouveau champ product absent du fallback.
+
+## 2026-07-07 — couverture incidente audit
+- `build-feature-index.sh` touché pour durcir le fallback frontmatter (inline comments) et ignorer les ids/scopes invalides au lieu de les indexer.
+- Aucun nouveau champ mesh ; contrat aligné sur le schéma existant.
+- Validation ciblée : `test-build-feature-index-fallback-frontmatter`, `test-build-feature-index-robust`, `check-features --no-write`.
+
+## 2026-07-07 18:51 — auto
+- Fichiers modifiés :
+  - .ai/scripts/build-feature-index.sh
+  - template/.ai/scripts/build-feature-index.sh.jinja

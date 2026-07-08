@@ -7,6 +7,8 @@
 #    et restent minces (≤ MAX_LINES).
 # 3. Les cibles canoniques référencées existent.
 # 4. Le Pack A reste lean et ne réintroduit pas les charges coûteuses.
+# 5. Les skills publics restent complets et, si Claude+Codex sont générés,
+#    pairés entre surfaces avec leurs workflows.
 #
 # Usage : bash .ai/scripts/check-shims.sh
 
@@ -48,6 +50,14 @@ add_agent() {
     [[ "$existing" == "$candidate" ]] && return 0
   done
   AGENTS_SELECTED+=("$candidate")
+}
+
+agent_selected() {
+  local target="$1" existing
+  for existing in ${AGENTS_SELECTED[@]+"${AGENTS_SELECTED[@]}"}; do
+    [[ "$existing" == "$target" ]] && return 0
+  done
+  return 1
 }
 
 add_shim() {
@@ -177,10 +187,10 @@ ko() { printf "  \033[31m✗\033[0m %s\n" "$1"; fail=1; }
 
 echo "═══ check-shims ═══"
 
-echo "[1/4] Index $INDEX"
+echo "[1/5] Index $INDEX"
 if [[ -f "$INDEX" ]]; then ok "$INDEX présent"; else ko "$INDEX manquant"; fi
 
-echo "[2/4] Shims ($(array_count ${SHIMS[@]+"${SHIMS[@]}"}) fichiers)"
+echo "[2/5] Shims ($(array_count ${SHIMS[@]+"${SHIMS[@]}"}) fichiers)"
 for shim in ${SHIMS[@]+"${SHIMS[@]}"}; do
   if [[ ! -f "$shim" ]]; then
     ko "$shim manquant"
@@ -210,12 +220,12 @@ if [[ -f "AGENTS.md" ]]; then
   fi
 fi
 
-echo "[3/4] Cibles canoniques"
+echo "[3/5] Cibles canoniques"
 for target in "${CANONICAL[@]}"; do
   if [[ -f "$target" ]]; then ok "$target"; else ko "$target manquant"; fi
 done
 
-echo "[4/4] Pack A lean"
+echo "[4/5] Pack A lean"
 if [[ -f "$INDEX" ]]; then
   pack_a=$(awk '
     /^## Pack A/ {capture=1; next}
@@ -238,6 +248,51 @@ if [[ -f "$INDEX" ]]; then
   else
     ok ".ai/agent/* reste optionnel"
   fi
+fi
+
+echo "[5/5] Skills ↔ workflows"
+skill_roots=()
+[[ -d ".agents/skills" ]] && skill_roots+=(".agents/skills")
+[[ -d ".claude/skills" ]] && skill_roots+=(".claude/skills")
+
+if [[ "$(array_count ${skill_roots[@]+"${skill_roots[@]}"})" -eq 0 ]]; then
+  ok "skills absents"
+else
+  require_skill_pairs=0
+  if agent_selected "codex" && agent_selected "claude"; then
+    require_skill_pairs=1
+  fi
+  for skill_root in ${skill_roots[@]+"${skill_roots[@]}"}; do
+    peer_root=".claude/skills"
+    root_agent="codex"
+    if [[ "$skill_root" == ".claude/skills" ]]; then
+      peer_root=".agents/skills"
+      root_agent="claude"
+    fi
+    # Résidu de désélection (ex: codex retiré après scaffold) : le dossier existe
+    # encore sur disque (copier update ne supprime pas les fichiers retirés du
+    # rendu) mais son agent n'est plus sélectionné — ne pas le valider comme pairé.
+    if ! agent_selected "$root_agent"; then
+      ko "$skill_root présent mais agent '$root_agent' non sélectionné (résidu de désélection)"
+      continue
+    fi
+    for skill_dir in "$skill_root"/*; do
+      [[ -d "$skill_dir" ]] || continue
+      skill_name="$(basename "$skill_dir")"
+      peer_dir="$peer_root/$skill_name"
+      if [[ "$require_skill_pairs" -eq 1 ]]; then
+        [[ -d "$peer_dir" ]] && ok "$skill_root/$skill_name pairé" || ko "$skill_root/$skill_name sans pair $peer_root"
+      else
+        ok "$skill_root/$skill_name présent"
+      fi
+      [[ -f "$skill_dir/SKILL.md" ]] && ok "$skill_dir/SKILL.md" || ko "$skill_dir/SKILL.md manquant"
+      [[ -f "$skill_dir/workflow.md" ]] && ok "$skill_dir/workflow.md" || ko "$skill_dir/workflow.md manquant"
+      while IFS= read -r workflow_ref; do
+        [[ -z "$workflow_ref" ]] && continue
+        [[ -f "$workflow_ref" ]] && ok "$skill_dir référence $workflow_ref" || ko "$skill_dir référence $workflow_ref manquant"
+      done < <(grep -RohE '\.ai/workflows/[A-Za-z0-9_.-]+\.md' "$skill_dir" 2>/dev/null | sort -u || true)
+    done
+  done
 fi
 
 echo

@@ -13,7 +13,7 @@ Ce projet a été scaffoldé depuis le template [`ai_context`](https://github.co
 {% elif vcs_provider == 'tfvc' %}**Brancher les checks TFVC** : `.githooks/` n'est pas généré. Utiliser les commandes `.ai/scripts/*` en pré-checkin local, gated check-in ou CI TFS/Azure DevOps.
 {% else %}**Hooks Git non générés** : utiliser les checks `.ai/scripts/*` manuellement ou en CI.
 {% endif %}
-3. Si le projet a des règles locales durables, créer `.ai/project/index.md` puis y référencer uniquement les fichiers projet utiles. Garder `.ai/rules/<scope>.md` pour les règles génériques de scope.
+3. Si le projet a des règles locales durables, lancer `aic-onboard` ou créer `.ai/project/index.md` puis y référencer uniquement les fichiers projet utiles. Garder `.ai/rules/<scope>.md` pour les règles génériques de scope.
 4. {% if 'claude' in agents %}**Cadrer avant d'implémenter** (recommandé) : dans Claude Code, lancer `/aic-frame` pour produire objectif, plan, spécificités métier/technique, validation et non-goals éventuels. Peut créer `.ai/guardrails.md` si le cadrage projet le justifie.{% else %}**Cadrer avant d'implémenter** (recommandé) : écrire objectif, non-goals, spécificités métier/technique, plan et validation attendue avant le premier changement.{% endif %}
 5. Vérifier l'intégrité :
    ```bash
@@ -61,7 +61,7 @@ Toute feature ajoute ou met à jour un fichier `{{ docs_root }}/features/<scope>
 Quand le template évolue sur GitHub :
 
 ```bash
-copier update --vcs-ref=HEAD
+copier update --vcs-ref=HEAD --conflict=rej
 ```
 
 Les réponses déjà données sont relues depuis `.copier-answers.yml`. Tu contrôles le diff appliqué.
@@ -69,6 +69,7 @@ Les réponses déjà données sont relues depuis `.copier-answers.yml`. Tu contr
 `.ai/project/**` est réservé au projet : `copier update` ne doit ni supprimer ni écraser ce dossier. Voir `.ai/OWNERSHIP.md` et l'exemple `.ai/templates/project-overlay/README.md`.
 
 `--vcs-ref=HEAD` évite que Copier choisisse le dernier tag publié si le HEAD GitHub est plus récent.
+`--conflict=rej` évite les marqueurs de conflit inline dans les scripts ; inspecte les `.rej` avant commit.
 
 Si `.copier-answers.yml` manque ou ne contient pas `_src_path` / `_commit` :
 
@@ -100,6 +101,7 @@ bash .ai/scripts/aic.sh template-diff
 | Intention | Commande |
 |---|---|
 | Cadrer avant action | Claude : `/aic-frame` ; CLI : `bash .ai/scripts/aic.sh frame "<objectif>"` pour bootstrap de contexte |
+| Initialiser ou migrer l'overlay projet | Claude : `/aic-onboard` ; Codex : skill local `aic-onboard` |
 | Piloter un audit ou suivi transverse | Claude : `/aic-pilot` ; Codex : skill local `aic-pilot` |
 | Structurer le développement | Claude : `/aic-dev-plan` ; Codex : skill local `aic-dev-plan` (après cadrage ou feature existante) |
 | Voir où j'en suis | `bash .ai/scripts/aic.sh status` |
@@ -113,6 +115,7 @@ bash .ai/scripts/aic.sh template-diff
 | Relire mon delta | `bash .ai/scripts/aic.sh review` |
 | Préparer le ship | `bash .ai/scripts/aic.sh ship` |
 | Tracer les initiatives produit | `bash .ai/scripts/aic.sh product-status` puis `bash .ai/scripts/aic.sh product-portfolio` |
+| Publier/rechercher de la connaissance durable | `bash .ai/scripts/aic.sh knowledge <publish\|search\|link\|import\|freshness>` |
 | Vérifier avant commit | `bash .ai/scripts/aic.sh doctor` puis `bash .ai/scripts/aic.sh check --no-write` |
 
 Claude reçoit le contexte feature automatiquement via hooks. Codex et les autres agents peuvent obtenir un bootstrap avec `frame`, obtenir le même contexte juste-à-temps avec `document-feature <path>` avant d'éditer, puis vérifier la sortie avec `document-feature` et `ship`. Pour un cadrage fiable, utiliser le skill `aic-frame`. Pour un audit ou un suivi multi-items, utiliser `aic-pilot`.

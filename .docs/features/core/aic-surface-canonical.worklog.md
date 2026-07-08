@@ -212,3 +212,12 @@
 - Fichiers/surfaces : `docs/archive/AUDIT.md`, `docs/archive/AUDIT_2026-05-06.md` (git mv) ; `PROJECT_STATE.md` (lien ajouté) ; cette fiche (`touches:` corrigé vers le nouveau chemin).
 - Décision explicitement bornée : les 60 fiches `status: done` restent en place — `build-feature-index.sh` scanne `-mindepth 2 -maxdepth 2`, non récursif ; les archiver hors de `.docs/features/` casserait `depends_on`/`touches` sans bénéfice (déjà masquées du reminder par défaut). Confirmé avec l'utilisateur avant d'agir plutôt que suivi à la lettre depuis ANALYSE.md.
 - Validation : check-features/check-shims/check-dogfood-drift + smoke complet au commit.
+
+## 2026-07-07 — audit 2026-07-07
+- Surface `aic.sh` touchée pour N3 : registre de fichiers temporaires avec cleanup EXIT, sans supprimer le répertoire rendu par `template-diff` qui reste volontairement inspectable.
+- Contrat public inchangé : mêmes commandes `aic`, meilleur nettoyage des fichiers intermédiaires.
+- Validation prévue : `bash -n .ai/scripts/aic.sh template/.ai/scripts/aic.sh.jinja`, `aic status`/checks finaux.
+
+## 2026-07-07 18:51 — auto
+- Fichiers modifiés :
+  - MIGRATION.md

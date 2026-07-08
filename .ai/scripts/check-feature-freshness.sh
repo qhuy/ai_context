@@ -17,6 +17,7 @@
 # Usage :
 #   bash .ai/scripts/check-feature-freshness.sh --staged --strict
 #   bash .ai/scripts/check-feature-freshness.sh --worktree --strict
+#   bash .ai/scripts/check-feature-freshness.sh --base=origin/main --head=HEAD --strict
 #   bash .ai/scripts/check-feature-freshness.sh --warn
 #   bash .ai/scripts/check-feature-freshness.sh --strict
 
@@ -36,6 +37,9 @@ index_file=".ai/.feature-index.json"
 mode="--warn"
 staged_mode=0
 worktree_mode=0
+diff_mode=0
+base_ref="HEAD~1"
+head_ref="HEAD"
 index_tmp=""
 
 cleanup_index_tmp() {
@@ -48,8 +52,10 @@ for arg in "$@"; do
     --warn|--strict) mode="$arg" ;;
     --staged) staged_mode=1 ;;
     --worktree) worktree_mode=1 ;;
+    --base=*) diff_mode=1; base_ref="${arg#--base=}" ;;
+    --head=*) diff_mode=1; head_ref="${arg#--head=}" ;;
     *)
-      echo "Usage: bash .ai/scripts/check-feature-freshness.sh [--staged|--worktree] [--warn|--strict]" >&2
+      echo "Usage: bash .ai/scripts/check-feature-freshness.sh [--staged|--worktree|--base=<ref> --head=<ref>] [--warn|--strict]" >&2
       exit 2
       ;;
   esac
@@ -109,19 +115,41 @@ staged_has_doc_for_feature() {
 # prefix_len, wildcards). Émet scope\tid\tfeature_path du rang max.
 blocking_coverers() {
   local rel="$1"
-  features_matching_path_ranked "$index_file" "$rel" 2>/dev/null \
-  | while IFS=$'\t' read -r scope id fpath touch; do
-      [[ -z "$scope" ]] && continue
-      local tier plen wc
-      IFS=$'\t' read -r tier plen wc < <(_score_touch_pattern "$touch")
-      printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$tier" "$plen" "$wc" "$scope" "$id" "$fpath"
-    done \
-  | awk -F'\t' '
-      { rows[NR]=$0; t=$1+0; p=$2+0; w=$3+0
-        if (NR==1 || t>bt || (t==bt && p>bp) || (t==bt && p==bp && w<bw)) { bt=t; bp=p; bw=w } }
-      END { for (i=1;i<=NR;i++){ split(rows[i],f,"\t")
-              if (f[1]+0==bt && f[2]+0==bp && f[3]+0==bw) print f[4]"\t"f[5]"\t"f[6] } }
-    '
+  local stderr_tmp
+  stderr_tmp=$(mktemp 2>/dev/null || echo "")
+  if [[ -n "$stderr_tmp" ]]; then
+    features_matching_path_ranked "$index_file" "$rel" 2>"$stderr_tmp" \
+    | while IFS=$'\t' read -r scope id fpath touch; do
+        [[ -z "$scope" ]] && continue
+        local tier plen wc
+        IFS=$'\t' read -r tier plen wc < <(_score_touch_pattern "$touch")
+        printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$tier" "$plen" "$wc" "$scope" "$id" "$fpath"
+      done \
+    | awk -F'\t' '
+        { rows[NR]=$0; t=$1+0; p=$2+0; w=$3+0
+          if (NR==1 || t>bt || (t==bt && p>bp) || (t==bt && p==bp && w<bw)) { bt=t; bp=p; bw=w } }
+        END { for (i=1;i<=NR;i++){ split(rows[i],f,"\t")
+                if (f[1]+0==bt && f[2]+0==bp && f[3]+0==bw) print f[4]"\t"f[5]"\t"f[6] } }
+      '
+    # Re-print stderr (ex: "pattern non supporté") pour ne pas l'avaler
+    # silencieusement — ce gate tourne inconditionnellement au hook commit-msg.
+    cat "$stderr_tmp" >&2 2>/dev/null || true
+    rm -f "$stderr_tmp"
+  else
+    features_matching_path_ranked "$index_file" "$rel" 2>/dev/null \
+    | while IFS=$'\t' read -r scope id fpath touch; do
+        [[ -z "$scope" ]] && continue
+        local tier plen wc
+        IFS=$'\t' read -r tier plen wc < <(_score_touch_pattern "$touch")
+        printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$tier" "$plen" "$wc" "$scope" "$id" "$fpath"
+      done \
+    | awk -F'\t' '
+        { rows[NR]=$0; t=$1+0; p=$2+0; w=$3+0
+          if (NR==1 || t>bt || (t==bt && p>bp) || (t==bt && p==bp && w<bw)) { bt=t; bp=p; bw=w } }
+        END { for (i=1;i<=NR;i++){ split(rows[i],f,"\t")
+                if (f[1]+0==bt && f[2]+0==bp && f[3]+0==bw) print f[4]"\t"f[5]"\t"f[6] } }
+      '
+  fi
 }
 
 run_staged_check() {
@@ -234,6 +262,67 @@ run_worktree_check() {
   fi
 
   echo "  Features couvertes par du code modifie ($(vcs_changes_label)) sans fiche/worklog modifie :"
+  sort -u "$failures" | while IFS=$'\t' read -r file feature feature_path; do
+    echo "    - $feature ($feature_path) ← $file"
+  done
+
+  if [[ "$strict" -eq 1 ]]; then
+    echo
+    echo "❌ FAIL (--strict)"
+    return 1
+  fi
+
+  echo
+  echo "✅ OK (--warn)"
+  return 0
+}
+
+run_diff_check() {
+  local changed
+  changed=$(vcs_diff_paths "$base_ref" "$head_ref")
+
+  echo "═══ check-feature-freshness (diff $base_ref...$head_ref) ═══"
+
+  if [[ -z "$changed" ]]; then
+    echo "  aucun fichier modifie dans le diff"
+    echo
+    echo "✅ OK"
+    return 0
+  fi
+
+  local failures
+  failures=$(mktemp "${TMPDIR:-/tmp}/ai-context-freshness-diff.XXXXXX")
+  trap 'rm -f "$failures"' RETURN
+
+  local changed_docs
+  changed_docs=$(printf '%s\n' "$changed" | while IFS= read -r rel; do
+    if is_feature_doc_path "$rel"; then
+      printf '%s\n' "$rel"
+    fi
+  done)
+
+  local rel scope id feature_path
+  while IFS= read -r rel; do
+    [[ -z "$rel" ]] && continue
+    is_feature_doc_path "$rel" && continue
+    path_in_coverage_scope "$rel" || continue
+
+    while IFS=$'\t' read -r scope id feature_path; do
+      [[ -z "$scope" || -z "$id" || -z "$feature_path" ]] && continue
+      if ! staged_has_doc_for_feature "$changed_docs" "$feature_path" "$scope" "$id"; then
+        printf '%s\t%s/%s\t%s\n' "$rel" "$scope" "$id" "$feature_path" >> "$failures"
+      fi
+    done < <(blocking_coverers "$rel")
+  done <<< "$changed"
+
+  if [[ ! -s "$failures" ]]; then
+    echo "  fichiers du diff couverts : OK"
+    echo
+    echo "✅ OK"
+    return 0
+  fi
+
+  echo "  Features couvertes par du code modifie dans le diff sans fiche/worklog dans le meme diff :"
   sort -u "$failures" | while IFS=$'\t' read -r file feature feature_path; do
     echo "    - $feature ($feature_path) ← $file"
   done
@@ -368,7 +457,9 @@ run_history_check() {
   return 0
 }
 
-if [[ "$worktree_mode" -eq 1 ]]; then
+if [[ "$diff_mode" -eq 1 ]]; then
+  run_diff_check
+elif [[ "$worktree_mode" -eq 1 ]]; then
   run_worktree_check
 elif [[ "$staged_mode" -eq 1 ]]; then
   run_staged_check

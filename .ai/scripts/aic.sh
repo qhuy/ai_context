@@ -20,6 +20,24 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=_vcs.sh
 . "$script_dir/_vcs.sh"
 repo_root="$(vcs_root)"
+_aic_tmp_files=()
+
+_aic_cleanup_tmp_files() {
+  local tmp
+  for tmp in "${_aic_tmp_files[@]:-}"; do
+    [[ -n "$tmp" ]] && rm -f "$tmp" 2>/dev/null || true
+  done
+}
+
+trap _aic_cleanup_tmp_files EXIT
+
+_aic_mktemp_file() {
+  local template="$1"
+  local tmp
+  tmp="$(mktemp "$template")"
+  _aic_tmp_files+=("$tmp")
+  printf '%s\n' "$tmp"
+}
 
 print_help() {
   cat <<'HELP'
@@ -87,7 +105,7 @@ status_label() {
 
 build_feature_index_tmp() {
   local tmp
-  tmp="$(mktemp "${TMPDIR:-/tmp}/ai-context-feature-index.XXXXXX")"
+  tmp="$(_aic_mktemp_file "${TMPDIR:-/tmp}/ai-context-feature-index.XXXXXX")"
   if bash "$script_dir/build-feature-index.sh" >"$tmp" 2>/dev/null; then
     printf '%s\n' "$tmp"
     return 0
@@ -740,7 +758,7 @@ run_repair_copier_metadata() {
   fi
 
   local tmp_answers
-  tmp_answers="$(mktemp "${TMPDIR:-/tmp}/ai-context-copier-answers.XXXXXX.yml")"
+  tmp_answers="$(_aic_mktemp_file "${TMPDIR:-/tmp}/ai-context-copier-answers.XXXXXX.yml")"
   write_repaired_answers "$tmp_answers" "$src_path" "$commit_ref"
 
   cat <<EOF
@@ -806,8 +824,8 @@ run_template_diff() {
 
   local render_dir answers_tmp copy_log project_name docs_root scope_profile adoption_mode
   render_dir="$(mktemp -d "${TMPDIR:-/tmp}/ai-context-template-diff.XXXXXX")"
-  answers_tmp="$(mktemp "${TMPDIR:-/tmp}/ai-context-template-data.XXXXXX.yml")"
-  copy_log="$(mktemp "${TMPDIR:-/tmp}/ai-context-template-copy.XXXXXX.log")"
+  answers_tmp="$(_aic_mktemp_file "${TMPDIR:-/tmp}/ai-context-template-data.XXXXXX.yml")"
+  copy_log="$(_aic_mktemp_file "${TMPDIR:-/tmp}/ai-context-template-copy.XXXXXX.log")"
   project_name="$(infer_project_name)"
   docs_root="$(infer_docs_root)"
   scope_profile="$(infer_scope_profile)"

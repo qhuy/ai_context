@@ -21,6 +21,7 @@ touches:
   - .docs/FEATURE_TEMPLATE.md
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
   - MIGRATION.md
+  - tests/unit/test-okf-type.sh
 touches_shared:
   - CHANGELOG.md
   - docs/upgrading.md
@@ -30,7 +31,6 @@ touches_shared:
   - template/.ai/scripts/check-features.sh.jinja
   - copier.yml
   - tests/smoke-test.sh
-  - tests/unit/test-okf-type.sh
 product: {}
 external_refs:
   okf_spec: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md

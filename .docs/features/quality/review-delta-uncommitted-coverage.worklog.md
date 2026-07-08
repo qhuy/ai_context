@@ -154,3 +154,7 @@
 - Décision : statut `done` ; le contrat se lit maintenant comme `Delta local changes`, tout en conservant le backend Git robuste `porcelain=v1 -z`.
 - Validation : `bash tests/unit/test-review-delta-uncommitted.sh` PASS (8 cas), gate feature/docs/freshness à relancer avant commit.
 - Next : aucune action immédiate.
+
+## 2026-07-07 — couverture incidente audit
+- `_lib.sh` touché pour matcher/scoring `touches:`. Aucun changement du calcul de delta uncommitted.
+- Validation prévue : `test-review-delta-uncommitted` dans la suite unitaires/finale si relancée ; freshness trace seulement.

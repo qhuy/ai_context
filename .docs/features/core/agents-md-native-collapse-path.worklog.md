@@ -46,3 +46,8 @@
 
 ## 2026-07-06 — couverture incidente (fix post-review, core/agents-md-shim-canonical)
 - `check-agent-native-context.sh` (+ miroir) : doublons d'agent rejetés (protège native_confirmed, any-match) ; `tests/unit/test-agent-native-context.sh` : cas doublon. Validation portée par `core/agents-md-shim-canonical`.
+
+## 2026-07-08 — couverture audit strict
+- Surfaces couvertes touchées dans le delta d'audit strict : `.ai/native-context-support.tsv` et `template/.ai/native-context-support.tsv`.
+- Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
+- Validation : gate ship relancée avant commit.

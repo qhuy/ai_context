@@ -12,6 +12,7 @@ touches:
   - template/.ai/scripts/pr-report.sh.jinja
   - template/.ai/scripts/review-delta.sh.jinja
   - tests/unit/test-review-delta-shared.sh
+  - tests/unit/test-pr-report-glob-match.sh
 touches_shared:
   - .ai/scripts/aic.sh
   - template/.ai/scripts/aic.sh.jinja

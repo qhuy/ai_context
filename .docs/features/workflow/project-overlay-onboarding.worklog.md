@@ -28,3 +28,9 @@
 - Décision : ajout metadata uniquement ; aucun changement du skill `aic-onboard` ni de la procédure `project-overlay-sync`.
 - Validation : `bash .ai/scripts/aic.sh migrate okf-type` ne doit plus signaler cette fiche ; `bash .ai/scripts/check-features.sh --no-write` ne doit plus émettre de warning `type` absent.
 - Next : aucune action immédiate.
+
+## 2026-07-07 — audit statut
+- Intent : corriger l'incohérence auditée `status: active` + `progress.phase: done`.
+- Preuve locale : worklog du 2026-06-19 indique `phase → done`; la fiche décrit un skill livré et validé.
+- Décision : `status: done`, sans changement de comportement ni de surface.
+- Validation prévue : `check-features --no-write` et `check-feature-docs --strict workflow/project-overlay-onboarding`.

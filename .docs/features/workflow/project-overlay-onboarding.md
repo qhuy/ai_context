@@ -2,7 +2,7 @@
 id: project-overlay-onboarding
 scope: workflow
 title: Skill aic-onboard — init/sync/migrate de l'overlay projet
-status: active
+status: done
 depends_on:
   - core/project-overlay-scope-registry
   - workflow/intentional-skills
@@ -31,10 +31,10 @@ doc:
 type: feature
 progress:
   phase: done
-  step: "skill aic-onboard livré (Claude + Codex), procédure canonique, smoke-test étendu, drift vert"
+  step: "skill aic-onboard livré (Claude + Codex), procédure canonique, smoke-test étendu, drift vert ; statut aligné done"
   blockers: []
   resume_hint: "DONE côté implémentation. Validation end-to-end naturelle : exercer aic-onboard sur un vrai consumer multi-app. Décision migrate-legacy déjà couverte par la procédure."
-  updated: 2026-06-19
+  updated: 2026-07-07
 ---
 
 # Skill aic-onboard — init/sync/migrate de l'overlay projet

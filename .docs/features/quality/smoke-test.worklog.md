@@ -318,3 +318,7 @@
 ## 2026-07-07 10:53 — auto
 - Fichiers modifiés :
   - tests/smoke-test.sh
+
+## 2026-07-07 — audit 2026-07-07
+- Changement : smoke réel des hooks Git (`pre-commit`, `commit-msg`, `post-checkout`) ajouté, `migrate-features` vérifie l'idempotence, `audit-features` refuse un scope inconnu, le libellé [19/28] annonce 11 workflows réels, et le profil `.codex/hooks.json` reste couvert en [28d].
+- Validation prévue : `bash -n tests/smoke-test.sh` puis smoke complet si le temps d'exécution le permet.

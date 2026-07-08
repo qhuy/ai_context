@@ -188,6 +188,24 @@ else
   failures+=("warn : ne doit pas propager rc=2, obtenu rc=$rc")
 fi
 
+score_no_ext=$(_score_touch_pattern "Makefile")
+IFS=$'\t' read -r tier _plen _wildcards <<< "$score_no_ext"
+if [[ "$tier" == "3" ]]; then
+  pass=$((pass + 1))
+else
+  fail=$((fail + 1))
+  failures+=("ranking : Makefile sans extension doit être classé exact file (tier=3), obtenu '$score_no_ext'")
+fi
+
+score_dir=$(_score_touch_pattern "src/")
+IFS=$'\t' read -r tier _plen _wildcards <<< "$score_dir"
+if [[ "$tier" == "2" ]]; then
+  pass=$((pass + 1))
+else
+  fail=$((fail + 1))
+  failures+=("ranking : dossier explicite src/ doit rester tier=2, obtenu '$score_dir'")
+fi
+
 rm -rf "$tmp_dir"
 
 # ─── Wrapper features-for-path.sh : --strict accepté en argument ───

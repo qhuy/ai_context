@@ -99,6 +99,7 @@ La surface utilisateur canonique est `aic`.
 | Besoin | Claude | Codex / terminal |
 |---|---|---|
 | Cadrer avant d'écrire | `/aic-frame` | `bash .ai/scripts/aic.sh frame "<objectif>"` pour bootstrap |
+| Initialiser ou migrer l'overlay projet | `/aic-onboard` | skill local `aic-onboard` |
 | Piloter un audit ou suivi transverse | `/aic-pilot` | skill local `aic-pilot` |
 | Structurer le développement | `/aic-dev-plan` | skill local `aic-dev-plan` |
 | Savoir où reprendre | `/aic-status` | `bash .ai/scripts/aic.sh status` |
@@ -278,7 +279,7 @@ cd mon-projet
 git checkout -b codex/install-ai-context
 
 rm -rf /tmp/ai-context-preview
-copier copy --trust gh:qhuy/ai_context /tmp/ai-context-preview \
+copier copy gh:qhuy/ai_context /tmp/ai-context-preview \
   --data project_name=mon-projet \
   --data scope_profile=backend \
   --data docs_root=.docs
@@ -294,8 +295,10 @@ Guide complet : [MIGRATION.md](MIGRATION.md).
 ## Mettre à jour le template
 
 ```bash
-copier update --vcs-ref=HEAD
+copier update --vcs-ref=HEAD --conflict=rej
 ```
+
+`--conflict=rej` garde les scripts exécutables sans marqueurs `<<<<<<<` inline ; inspecte les `.rej` avant commit.
 
 Si `.copier-answers.yml` manque :
 

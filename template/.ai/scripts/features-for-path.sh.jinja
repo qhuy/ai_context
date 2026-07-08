@@ -32,6 +32,13 @@ enable_globstar
 repo_root="$(cd "$script_dir/../.." && pwd)"
 features_dir="$repo_root/$AI_CONTEXT_FEATURES_DIR"
 index_file="$repo_root/.ai/.feature-index.json"
+index_snapshot=""
+
+cleanup_index_snapshot() {
+  [[ -n "${index_snapshot:-}" && -f "$index_snapshot" ]] && rm -f "$index_snapshot" 2>/dev/null || true
+}
+
+trap cleanup_index_snapshot EXIT
 
 ensure_index() {
   if [[ ! -f "$index_file" ]]; then
@@ -44,6 +51,18 @@ ensure_index() {
       log_debug "index obsolète (feature plus récente), rebuild"
       bash "$script_dir/build-feature-index.sh" --write
     fi
+  fi
+}
+
+snapshot_index() {
+  [[ -f "$index_file" ]] || return 0
+  index_snapshot="$(mktemp "${TMPDIR:-/tmp}/ai-context-feature-index-snapshot.XXXXXX" 2>/dev/null || true)"
+  [[ -n "$index_snapshot" ]] || return 0
+  if cp "$index_file" "$index_snapshot" 2>/dev/null; then
+    index_file="$index_snapshot"
+  else
+    rm -f "$index_snapshot" 2>/dev/null || true
+    index_snapshot=""
   fi
 }
 
@@ -225,6 +244,7 @@ log_debug "mode=$mode rel_path=$rel_path"
 
 start_ts=$(date +%s 2>/dev/null || echo 0)
 ensure_index
+snapshot_index
 
 # ─── Lookup dans l'index avec ranking par spécificité ───
 matches=""

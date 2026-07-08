@@ -89,7 +89,7 @@ Les commandes de maintenance non duplicatives restent sous `aic.sh` :
 Scaffold dans un dossier temporaire pour voir ce que produit le template **sans toucher au projet**.
 
 ```bash
-copier copy --trust gh:qhuy/ai_context /tmp/ai-ctx-preview
+copier copy gh:qhuy/ai_context /tmp/ai-ctx-preview
 diff -r /tmp/ai-ctx-preview . | less
 ```
 
@@ -100,7 +100,7 @@ Identifie les fichiers qui **existent déjà** chez toi (`CLAUDE.md`, `AGENTS.md
 ## Étape 2 — Scaffold en place
 
 ```bash
-copier copy --trust gh:qhuy/ai_context .
+copier copy gh:qhuy/ai_context .
 ```
 
 Copier demande pour chaque fichier existant : **skip / overwrite / merge**.

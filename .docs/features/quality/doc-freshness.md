@@ -9,6 +9,7 @@ touches:
   - .ai/scripts/check-commit-features.sh
   - tests/unit/test-check-feature-freshness.sh
   - tests/unit/test-freshness-primary-coverer.sh
+  - tests/unit/test-freshness-unsupported-pattern-warning.sh
   - tests/unit/test-review-delta-shared.sh
   - .ai/quality/QUALITY_GATE.md
   - .github/workflows/ai-context-check.yml
@@ -86,6 +87,7 @@ Garantir qu'une evolution de comportement couverte par une feature ne puisse pas
 - `tests/unit/test-check-feature-freshness.sh` couvre le staged strict, le multi-feature et la non-régression du crash gros commit.
 - `tests/unit/test-review-delta-shared.sh` vérifie que `touches_shared:` reste non bloquant pour la fraîcheur staged.
 - `tests/unit/test-freshness-primary-coverer.sh` verrouille le contrat (a') : exact-primaire documenté passe, 0 doc bloque, tie 1/N bloque, tie N/N passe, dispatcher reclassé → owner seul, `--worktree` idem `--staged` sans écrire l'index.
+- `tests/unit/test-freshness-unsupported-pattern-warning.sh` verrouille que `blocking_coverers()` ne strippe plus le warning matcher (`2>/dev/null`) : un `touches:` avec pattern non supporté (ex. classe glob contenant `/`) reste visible sur stderr au lieu d'être avalé silencieusement.
 - Au commit local : `check-feature-freshness.sh --staged --strict` via le hook `commit-msg` (un fichier couvert sans doc/worklog stage bloque).
 - En CI : `check-feature-freshness.sh --warn` puis `--strict` selon le contexte ; `check-feature-docs.sh` en warning sur les projets legacy.
 - Clôture 2026-07-03 : `test-check-feature-freshness`, `test-freshness-primary-coverer`, `test-review-delta-shared`, `test-stop-turn-doc-gate` et `test-check-commit-features-relevance` PASS ; `check-feature-freshness.sh --warn` OK avec un warning historique non bloquant sur `workflow/claude-skills`.

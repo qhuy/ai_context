@@ -457,3 +457,8 @@
 ## 2026-07-07 10:53 — auto
 - Fichiers modifiés :
   - copier.yml
+
+## 2026-07-08 — couverture audit strict
+- Surface couverte touchée dans le delta d'audit strict : `copier.yml`.
+- Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
+- Validation : gate ship relancée avant commit.

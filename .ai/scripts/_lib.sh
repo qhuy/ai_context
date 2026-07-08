@@ -334,6 +334,24 @@ _glob_pattern_supported() {
   # Brackets vides ou contenant uniquement la négation : unsupported.
   [[ "$pattern" == *'[]'* || "$pattern" == *'[!]'* || "$pattern" == *'[^]'* ]] && return 1
 
+  # Les classes [] restent intra-segment : autoriser "/" dans une classe ferait
+  # franchir la frontière que * et ? respectent explicitement.
+  local i=0 len=${#pattern}
+  while [[ $i -lt $len ]]; do
+    if [[ "${pattern:$i:1}" == "[" ]]; then
+      local j=$((i + 1))
+      while [[ $j -lt $len && "${pattern:$j:1}" != ']' ]]; do
+        j=$((j + 1))
+      done
+      [[ $j -ge $len ]] && return 1
+      local content="${pattern:$((i + 1)):$((j - i - 1))}"
+      [[ "$content" == */* ]] && return 1
+      i=$((j + 1))
+      continue
+    fi
+    i=$((i + 1))
+  done
+
   # Backslash glob escape non supporté (sémantique ambiguë avec regex).
   # Note bash : *'\\'* matcherait DEUX backslashes (single-quote literal).
   # Pour matcher UN seul backslash, on utilise *\\* (échappement glob bash :
@@ -539,7 +557,7 @@ features_matching_path_ranked() {
 #   — score numérique pour ranking (plus haut = plus spécifique).
 #   Format sortie : "tier prefix_len wildcards" (tab-separated, à trier décroissant
 #   sur tier puis prefix_len puis ascendant sur wildcards).
-#   tier : 3=exact (avec extension), 2=dossier sans glob, 1=glob.
+#   tier : 3=exact, 2=dossier sans glob avec slash final, 1=glob.
 #   prefix_len : longueur du préfixe non-glob.
 #   wildcards : nombre de wildcards pondéré (** compte 2, * compte 1).
 _score_touch_pattern() {
@@ -547,11 +565,12 @@ _score_touch_pattern() {
   local tier prefix_len wildcards
 
   if [[ "$touch" != *[\*\?\[]* ]]; then
-    # Pas de glob → tier 3 si extension (fichier), 2 sinon (dossier).
-    if [[ "$touch" == *.* && "$touch" != */ ]]; then
-      tier=3
-    else
+    # Pas de glob : seul un slash final exprime un dossier. Un fichier comme
+    # Makefile ou README reste un exact file même sans extension.
+    if [[ "$touch" == */ ]]; then
       tier=2
+    else
+      tier=3
     fi
     prefix_len=${#touch}
     wildcards=0

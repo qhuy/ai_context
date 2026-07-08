@@ -130,9 +130,11 @@ echo "═══ check-dogfood-drift ═══"
 
 out="$out_root/dogfood-minimal"
 out_conditional="$out_root/fullstack-cursor"
+out_codex_hooks="$out_root/codex-hooks"
 
 render_profile "dogfood-minimal" "$out" "minimal" "standard" "generic" '["claude","codex"]' "true"
 render_profile "fullstack-cursor" "$out_conditional" "fullstack" "strict" "fullstack-dotnet-react" '["claude","codex","cursor","gemini","copilot"]' "false" "enable_copilot_shim=true"
+render_profile "codex-hooks" "$out_codex_hooks" "minimal" "standard" "generic" '["claude","codex"]' "true" "enable_codex_hooks=true"
 check_profile_sanity "fullstack-cursor" "$out_conditional" \
   ".cursor/rules/back.mdc" \
   ".cursor/rules/front.mdc" \
@@ -141,6 +143,8 @@ check_profile_sanity "fullstack-cursor" "$out_conditional" \
   ".ai/rules/tech-dotnet.md" \
   ".ai/rules/tech-react.md" \
   ".ai/rules/stack-fullstack-dotnet-react.md"
+check_profile_sanity "codex-hooks" "$out_codex_hooks" \
+  ".codex/hooks.json"
 
 compare_tree ".ai" "$out/.ai" ".ai"
 compare_file ".claude/settings.json" "$out/.claude/settings.json" ".claude/settings.json"
@@ -159,7 +163,7 @@ dogfood_print_source_only_ignored
 
 if [[ "$diff_found" -eq 0 ]]; then
   echo
-  echo "✅ Runtime dogfood aligné avec le rendu Copier minimal ; profil conditionnel fullstack-cursor rendu."
+  echo "✅ Runtime dogfood aligné avec le rendu Copier minimal ; profils conditionnels fullstack-cursor et codex-hooks rendus."
 else
   echo
   echo "❌ Drift détecté. Relance : bash .ai/scripts/dogfood-update.sh --apply"

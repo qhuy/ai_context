@@ -35,6 +35,8 @@ jobs:
         shell: bash
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: install dependencies (jq, yq, shellcheck)
         run: |
@@ -99,13 +101,23 @@ jobs:
       - name: check-feature-docs
         run: bash .ai/scripts/check-feature-docs.sh
 
-      - name: check-feature-freshness
+      - name: check-feature-coverage
+        run: bash .ai/scripts/check-feature-coverage.sh
+
+      - name: check-feature-freshness (historique)
         run: bash .ai/scripts/check-feature-freshness.sh --warn
+
+      - name: check-feature-freshness (diff PR strict)
+        if: github.event_name == 'pull_request'
+        run: bash .ai/scripts/check-feature-freshness.sh --base="origin/{% raw %}${{ github.base_ref }}{% endraw %}" --head=HEAD --strict
 {%- if adoption_mode == 'strict' %}
 
       # ─── Renforcements adoption_mode=strict ───
       - name: doctor (strict)
         run: bash .ai/scripts/doctor.sh --strict
+
+      - name: check-feature-docs (strict)
+        run: bash .ai/scripts/check-feature-docs.sh --strict
 
       - name: check-feature-coverage (strict)
         run: bash .ai/scripts/check-feature-coverage.sh --strict

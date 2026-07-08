@@ -7,14 +7,35 @@ depends_on:
   - core/feature-mesh
   - workflow/auto-worklog
 touches:
+  - .claude/skills/**
   - template/.claude/skills/**
-  - template/.ai/workflows/**
+touches_shared:
+  - .ai/workflows/feature-new.md
+  - .ai/workflows/feature-resume.md
+  - .ai/workflows/feature-update.md
+  - .ai/workflows/feature-handoff.md
+  - .ai/workflows/feature-audit.md
+  - .ai/workflows/document-feature.md
+  - .ai/workflows/quality-gate.md
+  - .ai/workflows/feature-done.md
+  - .ai/workflows/project-guardrails.md
+  - .ai/workflows/project-overlay-sync.md
+  - template/.ai/workflows/feature-new.md.jinja
+  - template/.ai/workflows/feature-resume.md.jinja
+  - template/.ai/workflows/feature-update.md.jinja
+  - template/.ai/workflows/feature-handoff.md.jinja
+  - template/.ai/workflows/feature-audit.md.jinja
+  - template/.ai/workflows/document-feature.md.jinja
+  - template/.ai/workflows/quality-gate.md.jinja
+  - template/.ai/workflows/feature-done.md.jinja
+  - template/.ai/workflows/project-guardrails.md.jinja
+  - template/.ai/workflows/project-overlay-sync.md.jinja
 progress:
   phase: done
-  step: "skills Claude publics et workflows internes maintenus on-demand, hors contexte Codex obligatoire"
+  step: "skills Claude publics maintenus ; workflows internes suivis en surface partagée on-demand"
   blockers: []
   resume_hint: "aucune action immédiate ; rouvrir seulement si le catalogue public /aic* ou la frontière workflows internes change"
-  updated: 2026-07-03
+  updated: 2026-07-07
 type: feature
 ---
 
@@ -130,3 +151,4 @@ Preuve de clôture 2026-07-03 :
 - **2026-05-06** — Alignement sécurité : `/aic done` et `/aic force done` délèguent à `feature-done` au lieu de patcher directement `status: done`, afin de préserver quality gate, build/tests et docs strictes.
 - **2026-06-19** — Ajout de `/aic-onboard` au catalogue public (8ᵉ skill exposé). Peuple/maintient/migre l'overlay projet `.ai/project` comme registre de scopes ; pointe vers la procédure interne `.ai/workflows/project-overlay-sync.md`. Voir `workflow/project-overlay-onboarding` et `core/project-overlay-scope-registry`.
 - **2026-07-03** — DONE. Catalogue public et workflows internes validés ; ils restent disponibles on-demand et exclus du contexte obligatoire Codex.
+- **2026-07-07** — Mesh audit : `touches:` resserré sur `.claude/skills/**`; les workflows internes listés passent en `touches_shared` pour éviter qu'un changement de procédure sans changement de catalogue réouvre artificiellement cette fiche.

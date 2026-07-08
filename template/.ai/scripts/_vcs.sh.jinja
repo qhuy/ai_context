@@ -7,6 +7,10 @@
 #   - none : fallback read-only quand aucun VCS n'est detecte.
 
 _vcs_script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+_vcs_provider_cache_key=""
+_vcs_provider_cache_value=""
+_vcs_root_cache_key=""
+_vcs_root_cache_value=""
 
 _vcs_config_file() {
   local root="${AI_CONTEXT_REPO_ROOT:-}"
@@ -107,42 +111,61 @@ _vcs_relativize_path() {
 }
 
 vcs_provider() {
+  local cache_key="${AI_CONTEXT_VCS_PROVIDER:-}|${AI_CONTEXT_REPO_ROOT:-}|$PWD"
+  if [[ "$cache_key" == "$_vcs_provider_cache_key" && -n "$_vcs_provider_cache_value" ]]; then
+    printf '%s\n' "$_vcs_provider_cache_value"
+    return 0
+  fi
+
   local configured
+  local resolved
   configured="$(_vcs_config_provider 2>/dev/null || true)"
   configured="${configured:-auto}"
 
   case "$configured" in
     auto|"")
       if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-        printf '%s\n' "git"
+        resolved="git"
       elif [[ -n "$(_vcs_tf_cmd)" ]]; then
-        printf '%s\n' "tfvc"
+        resolved="tfvc"
       else
-        printf '%s\n' "none"
+        resolved="none"
       fi
       ;;
-    git|tfvc|none) printf '%s\n' "$configured" ;;
+    git|tfvc|none) resolved="$configured" ;;
     *)
-      printf '%s\n' "none"
+      resolved="none"
       ;;
   esac
+  _vcs_provider_cache_key="$cache_key"
+  _vcs_provider_cache_value="$resolved"
+  printf '%s\n' "$resolved"
 }
 
 vcs_root() {
   local provider
   provider="$(vcs_provider)"
+  local cache_key="$provider|${AI_CONTEXT_REPO_ROOT:-}|$PWD"
+  if [[ "$cache_key" == "$_vcs_root_cache_key" && -n "$_vcs_root_cache_value" ]]; then
+    printf '%s\n' "$_vcs_root_cache_value"
+    return 0
+  fi
+  local resolved
   case "$provider" in
     git)
-      git rev-parse --show-toplevel 2>/dev/null || _vcs_find_ai_root "$PWD" || pwd
+      resolved="$(git rev-parse --show-toplevel 2>/dev/null || _vcs_find_ai_root "$PWD" || pwd)"
       ;;
     tfvc|none|*)
       if [[ -n "${AI_CONTEXT_REPO_ROOT:-}" ]]; then
-        printf '%s\n' "$AI_CONTEXT_REPO_ROOT"
+        resolved="$AI_CONTEXT_REPO_ROOT"
       else
-        _vcs_find_ai_root "$PWD" || printf '%s\n' "$(cd "$_vcs_script_dir/../.." && pwd)"
+        resolved="$(_vcs_find_ai_root "$PWD" || printf '%s\n' "$(cd "$_vcs_script_dir/../.." && pwd)")"
       fi
       ;;
   esac
+  _vcs_root_cache_key="$cache_key"
+  _vcs_root_cache_value="$resolved"
+  printf '%s\n' "$resolved"
 }
 
 vcs_has_staging_area() {

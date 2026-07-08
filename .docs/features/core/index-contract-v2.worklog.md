@@ -78,3 +78,13 @@
 - Doc Impact Decision : C — fiche feature et worklog mis à jour.
 - Validation prévue : `check-feature-docs --strict core/index-contract-v2`, `test-build-feature-index-contract`, build index JSON, checks feature/freshness et gate ship avant commit.
 - Next : aucune action immédiate ; rouvrir seulement si le format `.ai/.feature-index.json` ou `schema_version` change.
+
+## 2026-07-07 — audit 2026-07-07
+- Surface directe touchée : `_lib.sh` et `build-feature-index.sh` via correctifs matcher/fallback/robustesse.
+- Décision : aucun changement du schéma ni du format d'index ; entrée de traçabilité freshness.
+- Validation prévue : tests build-index ciblés, `check-features --no-write`, `check-feature-docs --strict core/index-contract-v2`.
+
+## 2026-07-07 18:51 — auto
+- Fichiers modifiés :
+  - .ai/scripts/build-feature-index.sh
+  - template/.ai/scripts/build-feature-index.sh.jinja

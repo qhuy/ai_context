@@ -77,5 +77,10 @@ if ! echo "$out" | grep -q "profile-render: fullstack-cursor"; then
   echo "$out"
   exit 1
 fi
+if ! echo "$out" | grep -q "profile-render: codex-hooks"; then
+  echo "✗ check-dogfood-drift should render the conditional codex-hooks profile"
+  echo "$out"
+  exit 1
+fi
 
 echo "✅ test-dogfood-drift-extra PASS"

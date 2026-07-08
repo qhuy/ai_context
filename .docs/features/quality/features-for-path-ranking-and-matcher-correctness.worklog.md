@@ -190,3 +190,8 @@
 - Décision : statut `done`; le signal tracker reste un tie-break best-effort après spécificité, avec opt-out et seuils configurables.
 - Validation : `bash tests/unit/test-features-for-path-relevance-ranking.sh` ; `bash tests/unit/test-matcher-multi-level.sh` ; `bash tests/unit/test-path-matches-touch.sh` ; `bash .ai/scripts/check-dogfood-drift.sh` ; `bash .ai/scripts/check-feature-docs.sh --strict quality/features-for-path-ranking-and-matcher-correctness` ; `bash tests/smoke-test.sh` PASS dans le tour courant.
 - Next : aucune action immédiate ; calibrer les seuils seulement après observation réelle via `context-relevance-report`.
+
+## 2026-07-07 — audit 2026-07-07
+- Intent : fermer SCR-2/SCR-6/N4.
+- Changement : les classes glob contenant `/` deviennent unsupported, `features-for-path.sh` fige un snapshot unique de l'index après rebuild, et `_score_touch_pattern` classe `Makefile`/`README` comme exact file même sans extension.
+- Tests ciblés : `test-path-matches-touch`, `test-features-for-path-relevance-ranking`, `test-matcher-multi-level` PASS.

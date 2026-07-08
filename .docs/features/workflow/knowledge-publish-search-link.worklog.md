@@ -38,3 +38,7 @@
 - Validation : `bash -n` scripts PASS ; `bash tests/unit/test-knowledge-workflow.sh` PASS ; `bash tests/unit/test-template-jinja-raw-braces.sh` PASS ; `bash .ai/scripts/check-dogfood-drift.sh` PASS ; `bash .ai/scripts/check-feature-docs.sh --strict workflow/knowledge-publish-search-link` PASS ; `bash .ai/scripts/check-feature-freshness.sh --worktree --strict` PASS.
 - Cross-scope : impact `aic.sh` documenté dans `core/aic-surface-canonical.worklog.md` et `core/vcs-provider-abstraction.worklog.md`; aucun autre changement core.
 - Next : garder `product/knowledge-federation` actif pour la preuve publish/search/link sur deux projets réels ; suite technique possible en `quality/knowledge-freshness-checks`.
+
+## 2026-07-07 — couverture incidente audit
+- `aic.sh` touché pour nettoyage de fichiers temporaires. Aucun changement du dispatch `knowledge`.
+- Validation portée par `core/aic-surface-canonical`; test knowledge à relancer dans la suite si nécessaire.

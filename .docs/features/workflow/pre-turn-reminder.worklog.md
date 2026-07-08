@@ -57,3 +57,8 @@
 
 ## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
 - `template/.ai/reminder.md.jinja` (+ rendu racine) : hard rule « aucune supposition » ajoutée aux variantes FR et EN. Aucun changement du mécanisme d'injection. Reminder statique mesuré à 560 chars. Validation portée par `workflow/evidence-discipline`.
+
+## 2026-07-08 — couverture audit strict
+- Surface couverte touchée dans le delta d'audit strict : `template/.ai/scripts/features-for-path.sh.jinja`.
+- Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
+- Validation : gate ship relancée avant commit.

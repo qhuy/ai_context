@@ -25,6 +25,7 @@
       "enum": ["draft", "active", "done", "deprecated", "archived"]
     },
     "type": {
+      "$comment": "Optionnel dans le schema vN pour migration progressive ; check-features.sh signale son absence et le rendra requis lors de la prochaine rupture de contrat documentée.",
       "type": "string",
       "enum": ["feature", "contract", "workflow", "reference"]
     },

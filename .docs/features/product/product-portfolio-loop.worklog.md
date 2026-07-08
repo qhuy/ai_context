@@ -151,3 +151,12 @@
 
 ## 2026-06-29 — couverture incidente (C2a-doc : role du schema)
 - Surface partagee touchee (feature.schema.json via .ai/** ou touches:). Aucun changement de comportement propre. (Taxe sur-couverture touches: — cf. quality/touches-breadth-guard.)
+
+## 2026-07-07 — couverture incidente audit
+- `build-feature-index.sh` touché pour fallback/frontmatter et robustesse id/scope. Les champs `product.portfolio.*` consommés par cette boucle restent inchangés.
+- Décision : aucune réouverture produit ; entrée de freshness uniquement.
+
+## 2026-07-07 18:51 — auto
+- Fichiers modifiés :
+  - .ai/scripts/build-feature-index.sh
+  - template/.ai/scripts/build-feature-index.sh.jinja

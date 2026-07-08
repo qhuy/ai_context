@@ -30,8 +30,9 @@ Si un secret se retrouve par accident dans un worklog versionné, traite-le comm
 | Hook | Écrit dans | Contenu |
 |---|---|---|
 | `PostToolUse` Write/Edit | `.ai/.session-edits.log` (volatile) | timestamp + chemin du fichier édité + features impactées (scope/id). **Pas** le contenu. |
-| `Stop` (auto-worklog-flush) | `.docs/features/<scope>/<id>.worklog.md` | bloc `Fichiers modifiés` (liste de chemins) + bump `progress.updated`. |
+| `Stop` (auto-worklog-flush) | `.docs/features/<scope>/<id>.worklog.md` | bloc `Fichiers modifiés` (liste de chemins), sans contenu de fichier et sans bump automatique de `progress.updated`. |
 | `Stop` (auto-progress) | `.docs/features/<scope>/<id>.md` + `.ai/.progress-history.jsonl` | transition `phase` (ex: `spec → implement`) + snapshot pour `/aic undo`. |
+| Codex `UserPromptSubmit` / `Stop` opt-in | aucun log propre | reminder textuel borné + gate read-only de fraîcheur documentaire via `.codex/hooks.json`. |
 | `pre-commit` (git) | idem auto-progress | même comportement, version agent-agnostique. |
 | `commit-msg` (git) | aucun fichier | rejette les commits non-Conventional ou `feat:` sans feature touchée. |
 
@@ -62,7 +63,7 @@ Le feature mesh (`{{ docs_root }}/features/<scope>/<id>.md`) est versionné dans
 
 ## Hooks tiers et trust
 
-`copier copy` rend des fichiers Jinja. **Ne charge jamais un template dont tu ne connais pas l'auteur** sans relecture, et préfère `--vcs-ref=<tag>` à `HEAD` pour figer la version. Le flag `--trust` est requis car le template scaffolde des hooks exécutables — vérifie la source avant de l'utiliser.
+`copier copy` rend des fichiers Jinja. **Ne charge jamais un template dont tu ne connais pas l'auteur** sans relecture, et préfère `--vcs-ref=<tag>` à `HEAD` pour figer la version. Le template ne déclare pas de `_tasks` ni de `_jinja_extensions`; `--trust` n'est donc pas requis pour autoriser les hooks rendus. La vraie décision de confiance reste la source du template et l'activation locale des hooks.
 
 ## Permissions des hooks
 

@@ -24,6 +24,27 @@ log_file="$repo_root/.ai/.context-relevance.jsonl"
 rotation_mb="${AI_CONTEXT_RELEVANCE_ROTATION_MB:-10}"
 [[ "$rotation_mb" =~ ^[0-9]+$ ]] || rotation_mb=10
 rotation_bytes=$((rotation_mb * 1024 * 1024))
+context_lock_dir="${AI_CONTEXT_RELEVANCE_LOCK_DIR:-${TMPDIR:-/tmp}/.ai-context-$(id -u 2>/dev/null || echo user)-context-relevance-lock}"
+
+with_context_relevance_lock() {
+  local tries=0
+  local max_tries=30
+  local stale_min="${AI_CONTEXT_RELEVANCE_LOCK_STALE_MIN:-1}"
+  while ! mkdir "$context_lock_dir" 2>/dev/null; do
+    if [[ -d "$context_lock_dir" ]] && find "$context_lock_dir" -maxdepth 0 -mmin "+$stale_min" 2>/dev/null | grep -q .; then
+      rmdir "$context_lock_dir" 2>/dev/null || true
+      continue
+    fi
+    tries=$((tries + 1))
+    [[ "$tries" -ge "$max_tries" ]] && return 0
+    sleep 0.1
+  done
+  trap 'rmdir "$context_lock_dir" 2>/dev/null || true' EXIT INT TERM
+  "$@" || true
+  rmdir "$context_lock_dir" 2>/dev/null || true
+  trap - EXIT INT TERM
+  return 0
+}
 
 rotate_if_needed() {
   [[ -f "$log_file" ]] || return 0
@@ -35,9 +56,13 @@ rotate_if_needed() {
   fi
 }
 
-append_jsonl() {
+append_jsonl_unlocked() {
   rotate_if_needed
   printf '%s\n' "$1" >> "$log_file" 2>/dev/null || true
+}
+
+append_jsonl() {
+  with_context_relevance_lock append_jsonl_unlocked "$1"
 }
 
 # jq indisponible → silently no-op (best-effort).

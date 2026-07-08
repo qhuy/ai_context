@@ -36,7 +36,7 @@ Le repo contient **deux** copies de chaque script runtime :
 **Règle** : si une correction touche un script qui existe des deux côtés, applique-la des deux côtés dans le même chantier. Une divergence accidentelle est un bug.
 
 Cas spéciaux :
-- Les scripts `audit-features`, `doctor`, `migrate-features`, `pr-report`, `aic` n'existent pour l'instant que côté template — la synchronisation dogfoodée est une piste P1 (voir `PROJECT_STATE.md`).
+- Certains scripts ont des helpers ou routes source-only côté dogfood (`dogfood-update`, `check-dogfood-drift`) ; documente explicitement toute absence volontaire de miroir template.
 - Le template peut contenir des constructs Jinja (`{{ project_name }}`, `{% raw %}${#arr[@]}{% endraw %}`) absents côté runtime. Ne supprime pas ces blocs sans comprendre ce qu'ils protègent.
 
 ## Ajouter un script runtime
