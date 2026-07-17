@@ -9,10 +9,11 @@ depends_on:
   - workflow/auto-worklog
 touches:
   - template/.githooks/**
-  - template/.ai/scripts/check-commit-features.sh.jinja
   - .githooks/**
   - tests/unit/test-check-commit-features-relevance.sh
   - tests/unit/test-pre-commit-worklog-stage.sh
+touches_shared:
+  - template/.ai/scripts/check-commit-features.sh.jinja
 progress:
   phase: done
   step: "hooks commit-msg/post-checkout/pre-commit livrés ; assertion pre-commit spec->implement couverte par le smoke"

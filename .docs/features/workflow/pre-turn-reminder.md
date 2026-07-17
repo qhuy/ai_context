@@ -7,9 +7,11 @@ depends_on:
   - core/feature-index-cache
   - core/graph-aware-injection
 touches:
+  - .ai/scripts/pre-turn-reminder.sh
   - template/.ai/scripts/pre-turn-reminder.sh.jinja
-  - template/.ai/scripts/features-for-path.sh.jinja
   - template/.ai/reminder.md.jinja
+touches_shared:
+  - template/.ai/scripts/features-for-path.sh.jinja
 progress:
   phase: done
   step: "R1 livré : reverse_deps=0 et JIT depends_on couvert"

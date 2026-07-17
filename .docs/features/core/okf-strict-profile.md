@@ -12,8 +12,6 @@ depends_on:
 touches:
   - .ai/schema/feature.schema.json
   - template/.ai/schema/feature.schema.json
-  - .ai/scripts/_lib.sh
-  - template/.ai/scripts/_lib.sh.jinja
   - .ai/scripts/build-feature-index.sh
   - template/.ai/scripts/build-feature-index.sh.jinja
   - .ai/scripts/migrate-okf-type.sh
@@ -23,6 +21,8 @@ touches:
   - MIGRATION.md
   - tests/unit/test-okf-type.sh
 touches_shared:
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja
   - CHANGELOG.md
   - docs/upgrading.md
   - .ai/scripts/aic.sh

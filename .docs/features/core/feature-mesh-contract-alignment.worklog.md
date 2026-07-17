@@ -68,3 +68,8 @@
 - Fichiers modifiés :
   - .ai/scripts/build-feature-index.sh
   - template/.ai/scripts/build-feature-index.sh.jinja
+
+## 2026-07-16 — HANDOFF classification réservée
+- Co-propriété directe de `build-feature-index.sh` conservée conformément à la décision du 2026-06-28.
+- Le parser exclut désormais centralement `index.md`, `log.md` et `*.worklog.md` sans changer le schéma du mesh.
+- Validation : index JSON limité aux fiches canoniques dans `test-feature-markdown-indexes.sh`.

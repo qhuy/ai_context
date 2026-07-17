@@ -89,3 +89,8 @@
 - Surface couverte touchée dans le delta d'audit strict : `.ai/schema/feature.schema.json`.
 - Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
 - Validation : gate ship relancée avant commit.
+
+## 2026-07-16 — HANDOFF scanners de fiches
+- Propriété directe de `check-features.sh` et `check-feature-docs.sh` conservée ; les consommateurs passent en `touches_shared:`.
+- Les deux checks utilisent le classificateur canonique et ignorent les index/logs/worklogs réservés.
+- Validation : checks stricts et tests de documents réservés PASS.

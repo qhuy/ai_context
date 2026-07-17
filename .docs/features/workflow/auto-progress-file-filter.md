@@ -6,11 +6,11 @@ status: done
 depends_on: []
 touches:
   - .ai/scripts/auto-progress.sh
-  - .ai/scripts/_lib.sh
   - template/.ai/scripts/auto-progress.sh.jinja
-  - template/.ai/scripts/_lib.sh.jinja
   - tests/unit/test-auto-progress-filter.sh
 touches_shared:
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja
   - .ai/scripts/features-for-path.sh
   - .claude/settings.json
   - tests/smoke-test.sh

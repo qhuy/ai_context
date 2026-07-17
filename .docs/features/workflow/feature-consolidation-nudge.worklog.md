@@ -18,3 +18,8 @@
 - Décision : statut `done`; le détecteur d'overlap `touches:` reste hors périmètre et devra être cadré séparément s'il devient prioritaire.
 - Validation : `bash tests/unit/test-fiche-consolidation-nudge.sh`; `bash -n .ai/scripts/fiche-consolidation-nudge.sh template/.ai/scripts/fiche-consolidation-nudge.sh.jinja`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/feature-consolidation-nudge`; `bash .ai/scripts/check-dogfood-drift.sh`; `bash tests/smoke-test.sh`.
 - Next : aucune action immédiate.
+
+## 2026-07-16 — HANDOFF index réservés
+- Propriété directe du nudge et de son test conservée ; la feature d'index progressifs devient consommatrice partagée.
+- Le nudge refuse les index/logs/worklogs et compare des chemins physiques cohérents sur macOS.
+- Validation : `test-fiche-consolidation-nudge.sh` et scénario index dédié PASS.

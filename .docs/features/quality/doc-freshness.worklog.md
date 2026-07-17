@@ -124,3 +124,8 @@
 - Changement : `check-feature-freshness.sh` gagne un mode diff `--base/--head --strict` pour PR CI ; workflow CI passe docs/coverage/freshness en garde stricte appropriée.
 - `check-commit-features.sh` parse aussi `git commit -F/--file/--message=` dans les payloads hook.
 - Validation ciblée : `test-check-feature-freshness`, `test-check-commit-features-relevance`, `check-feature-freshness --worktree --strict` final.
+
+## 2026-07-16 — HANDOFF gate feat et index réservés
+- Propriété directe de `check-commit-features.sh` conservée ; les consommateurs VCS/régression passent en `touches_shared:`.
+- Un index/log réservé ne satisfait pas l'obligation de fiche d'un commit `feat:`, mais n'est plus pris pour du code à couvrir.
+- Validation : régression dédiée dans `test-feature-markdown-indexes.sh` et tests freshness/commit PASS.

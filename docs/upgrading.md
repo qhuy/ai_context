@@ -32,6 +32,34 @@ bash .ai/scripts/aic.sh migrate okf-type --apply    # ajoute `type: feature` là
 
 `type` deviendra **requis** dans une version ultérieure (`check-features` échouera alors si absent). Rollback : `git revert` du commit de backfill (les fiches t'appartiennent). Commande identique sous Claude et Codex.
 
+## Profil OKF — index Markdown progressifs
+
+`copier update` apporte le générateur et le contrôle de fraîcheur, mais ne touche
+pas aux index project-owned. Cette séparation évite toute réécriture silencieuse
+de `<docs_root>/features/**`.
+
+```bash
+bash .ai/scripts/aic.sh migrate okf-indexes            # dry-run
+bash .ai/scripts/aic.sh migrate okf-indexes --apply    # écrit les index gérés
+```
+
+Les fichiers générés portent un marqueur, utilisent des liens relatifs et ne
+contiennent aucun timestamp : une seconde exécution sur un mesh inchangé produit
+zéro diff. Un `index.md` manuel sans marqueur provoque un conflit explicite et
+n'est jamais écrasé.
+
+La version d'introduction reste non cassante : `check-features.sh --no-write`
+signale les index absents ou périmés en warning. Pour tester dès maintenant le
+futur enforcement :
+
+```bash
+bash .ai/scripts/check-feature-indexes.sh --strict
+```
+
+Après `--apply`, relis puis committe `<docs_root>/features/index.md` et les index
+des scopes non vides. Rollback : `git revert` de ce commit ; aucun rollback Copier
+n'est requis pour retirer uniquement la projection Markdown.
+
 ## Prévisualiser sans toucher au repo
 
 Sur un worktree sale, `copier update` refuse de démarrer. C'est sain pour éviter les merges implicites, mais pénible pour estimer l'effort. Utilise plutôt :

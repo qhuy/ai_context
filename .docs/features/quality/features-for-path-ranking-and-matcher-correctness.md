@@ -6,13 +6,13 @@ status: done
 depends_on: []
 touches:
   - .ai/scripts/features-for-path.sh
-  - .ai/scripts/_lib.sh
   - template/.ai/scripts/features-for-path.sh.jinja
-  - template/.ai/scripts/_lib.sh.jinja
   - tests/unit/test-path-matches-touch.sh
   - tests/unit/test-matcher-multi-level.sh
   - tests/unit/test-features-for-path-relevance-ranking.sh
 touches_shared:
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja
   - .claude/settings.json
   - tests/smoke-test.sh
 product: {}

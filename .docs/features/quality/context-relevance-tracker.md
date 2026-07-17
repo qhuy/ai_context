@@ -9,16 +9,16 @@ touches:
   - .claude/settings.json
   - .ai/scripts/context-relevance-log.sh
   - .ai/scripts/context-relevance-report.sh
-  - .ai/scripts/features-for-path.sh
-  - .ai/scripts/auto-worklog-log.sh
   - template/.ai/.gitignore
   - template/.ai/scripts/context-relevance-log.sh.jinja
   - template/.ai/scripts/context-relevance-report.sh.jinja
-  - template/.ai/scripts/features-for-path.sh.jinja
-  - template/.ai/scripts/auto-worklog-log.sh.jinja
   - template/.claude/settings.json.jinja
   - tests/unit/test-context-relevance.sh
 touches_shared:
+  - .ai/scripts/features-for-path.sh
+  - template/.ai/scripts/features-for-path.sh.jinja
+  - .ai/scripts/auto-worklog-log.sh
+  - template/.ai/scripts/auto-worklog-log.sh.jinja
   - .ai/scripts/check-dogfood-drift.sh
   - tests/smoke-test.sh
 product: {}

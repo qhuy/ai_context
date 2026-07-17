@@ -184,7 +184,7 @@ if [[ -n "$TARGET" ]]; then
 else
   while IFS= read -r -d '' f; do
     files+=("$f")
-  done < <(find "$FEATURES_DIR" -mindepth 2 -maxdepth 2 -type f -name '*.md' ! -name '*.worklog.md' -print0 2>/dev/null)
+  done < <(find_feature_docs "$FEATURES_DIR")
 fi
 
 if [[ -z "${files[*]-}" ]]; then

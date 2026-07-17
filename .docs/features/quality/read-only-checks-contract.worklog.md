@@ -233,3 +233,7 @@
   - MIGRATION.md
   - template/.ai/scripts/check-feature-freshness.sh.jinja
   - template/.github/workflows/ai-context-check.yml.jinja
+
+## 2026-07-16 — HANDOFF documentation de migration
+- `MIGRATION.md` documente le dry-run, l'application explicite et le rollback des index progressifs sans modifier le contrat read-only des checks.
+- Validation : checks warn-only/strict, simulation staged et smoke Copier couvrent la procédure.

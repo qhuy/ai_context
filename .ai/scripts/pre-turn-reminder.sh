@@ -59,7 +59,7 @@ ensure_index() {
     return
   fi
   if [[ -d "$features_dir" ]]; then
-    if find "$features_dir" -name '*.md' -newer "$index_file" -print -quit 2>/dev/null | grep -q .; then
+    if feature_docs_newer_than "$features_dir" "$index_file"; then
       bash "$script_dir/build-feature-index.sh" --write 2>/dev/null || true
     fi
   fi

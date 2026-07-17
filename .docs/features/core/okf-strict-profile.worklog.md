@@ -123,3 +123,8 @@
   - .ai/scripts/build-feature-index.sh
   - MIGRATION.md
   - template/.ai/scripts/build-feature-index.sh.jinja
+
+## 2026-07-16 — HANDOFF phase index Markdown
+- Co-propriété directe de `build-feature-index.sh` et `migrate-okf-type.sh` conservée ; `_lib.sh` est reclassé en dépendance partagée.
+- La projection Markdown tolère toujours `type` absent en vN et reste découplée de la migration `okf-type`.
+- Validation : tests `okf-type`, index Markdown et smoke Copier PASS.

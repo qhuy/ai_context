@@ -221,3 +221,8 @@
 ## 2026-07-07 18:51 — auto
 - Fichiers modifiés :
   - MIGRATION.md
+
+## 2026-07-16 — HANDOFF commande okf-indexes
+- Propriété directe de `aic.sh` conservée ; les features consommatrices sont reclassées en `touches_shared:`.
+- La surface canonique expose `aic migrate okf-indexes` sans changer les commandes existantes.
+- Validation : routage CLI couvert par `test-feature-markdown-indexes.sh` et le smoke Copier.

@@ -2,7 +2,7 @@
 # test-fiche-consolidation-nudge.sh — workflow/feature-consolidation-nudge.
 #
 # Le hook PreToolUse réinjecte une question de consolidation + les fiches sœurs
-# UNIQUEMENT à l'édition d'une fiche existante (pas worklog, pas code, pas création).
+# UNIQUEMENT à l'édition d'une fiche existante (pas index/log/worklog, code ou création).
 
 set -euo pipefail
 
@@ -14,11 +14,14 @@ fail() { echo "✗ $*" >&2; exit 1; }
 
 mkdir -p "$tmp/.ai/scripts" "$tmp/.docs/features/sales" "$tmp/src"
 cp "$repo_root/.ai/scripts/fiche-consolidation-nudge.sh" "$tmp/.ai/scripts/"
+cp "$repo_root/.ai/scripts/_lib.sh" "$tmp/.ai/scripts/"
 
 for f in reports reports-rights imports; do
   printf -- '---\nid: %s\nscope: sales\ntitle: %s\nstatus: active\n---\n# %s\n' "$f" "$f" "$f" > "$tmp/.docs/features/sales/$f.md"
 done
 printf '# Worklog — sales/reports\n' > "$tmp/.docs/features/sales/reports.worklog.md"
+printf '# Index réservé\n' > "$tmp/.docs/features/sales/index.md"
+printf '# Log réservé\n' > "$tmp/.docs/features/sales/log.md"
 printf 'export const x = 1;\n' > "$tmp/src/app.ts"
 
 cd "$tmp"
@@ -33,6 +36,8 @@ echo "$out" | grep -q 'sales/reports-rights' || fail "devrait lister la sœur re
 echo "$out" | grep -q 'famille' || fail "reports-rights devrait être marquée famille d'id"
 echo "$out" | grep -q 'sales/imports' || fail "devrait lister la sœur imports"
 echo "$out" | grep -q 'reports.worklog' && fail "ne devrait PAS lister le worklog"
+echo "$out" | grep -q 'sales/index' && fail "ne devrait PAS lister index.md"
+echo "$out" | grep -q 'sales/log' && fail "ne devrait PAS lister log.md"
 
 # Cas 2 : édition d'un worklog → rien.
 out="$(nudge "$tmp/.docs/features/sales/reports.worklog.md")"
@@ -45,5 +50,11 @@ out="$(nudge "$tmp/src/app.ts")"
 # Cas 4 : création d'une NOUVELLE fiche (fichier absent) → rien (feature-new gère).
 out="$(nudge "$tmp/.docs/features/sales/brand-new.md")"
 [[ -z "$out" ]] || fail "création d'une nouvelle fiche ne doit pas nudger"
+
+# Cas 5 : documents réservés existants → rien.
+out="$(nudge "$tmp/.docs/features/sales/index.md")"
+[[ -z "$out" ]] || fail "édition d'index.md ne doit pas nudger"
+out="$(nudge "$tmp/.docs/features/sales/log.md")"
+[[ -z "$out" ]] || fail "édition de log.md ne doit pas nudger"
 
 echo "✅ test-fiche-consolidation-nudge PASS"

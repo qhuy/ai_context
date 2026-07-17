@@ -12,10 +12,10 @@ touches:
   - .docs/features/workflow/knowledge-publish-search-link.worklog.md
   - .ai/scripts/knowledge.sh
   - template/.ai/scripts/knowledge.sh.jinja
+  - tests/unit/test-knowledge-workflow.sh
+touches_shared:
   - .ai/scripts/aic.sh
   - template/.ai/scripts/aic.sh.jinja
-  - tests/unit/test-knowledge-workflow.sh
-touches_shared: []
 product:
   initiative: product/knowledge-federation
   contribution: "Expose le MVP Git/Markdown au flux utilisateur aic : publish explicite, search, link et import sans backend central."

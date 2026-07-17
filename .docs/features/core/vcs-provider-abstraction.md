@@ -9,10 +9,7 @@ depends_on: []
 touches:
   - .ai/config.yml
   - .ai/scripts/_vcs.sh
-  - .ai/scripts/_lib.sh
-  - .ai/scripts/aic.sh
   - .ai/scripts/check-feature-freshness.sh
-  - .ai/scripts/check-commit-features.sh
   - .ai/scripts/review-delta.sh
   - .ai/scripts/pr-report.sh
   - .ai/scripts/doctor.sh
@@ -20,10 +17,7 @@ touches:
   - copier.yml
   - template/.ai/config.yml.jinja
   - template/.ai/scripts/_vcs.sh.jinja
-  - template/.ai/scripts/_lib.sh.jinja
-  - template/.ai/scripts/aic.sh.jinja
   - template/.ai/scripts/check-feature-freshness.sh.jinja
-  - template/.ai/scripts/check-commit-features.sh.jinja
   - template/.ai/scripts/review-delta.sh.jinja
   - template/.ai/scripts/pr-report.sh.jinja
   - template/.ai/scripts/doctor.sh.jinja
@@ -39,10 +33,15 @@ touches:
   - tests/unit/test-features-for-path-relevance-ranking.sh
   - tests/unit/test-stop-hook-idempotence.sh
   - tests/unit/test-auto-progress-filter.sh
-  - tests/smoke-test.sh
   - .docs/features/core/vcs-provider-abstraction.md
   - .docs/features/core/vcs-provider-abstraction.worklog.md
 touches_shared:
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja
+  - .ai/scripts/aic.sh
+  - template/.ai/scripts/aic.sh.jinja
+  - .ai/scripts/check-commit-features.sh
+  - template/.ai/scripts/check-commit-features.sh.jinja
   - tests/**
   - README.md
   - CHANGELOG.md

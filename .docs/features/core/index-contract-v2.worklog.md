@@ -88,3 +88,8 @@
 - Fichiers modifiés :
   - .ai/scripts/build-feature-index.sh
   - template/.ai/scripts/build-feature-index.sh.jinja
+
+## 2026-07-16 — HANDOFF projection Markdown
+- Co-propriété directe de `build-feature-index.sh` conservée ; `_lib.sh` devient une dépendance partagée de cette fiche.
+- L'index JSON reste contractuellement inchangé pendant l'ajout de la projection Markdown progressive.
+- Validation : tests de contrat existants et suite unitaire complète PASS.

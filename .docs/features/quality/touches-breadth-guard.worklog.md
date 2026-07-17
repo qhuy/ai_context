@@ -46,3 +46,45 @@
 - Décision : statut `done`. Les signaux restants restent volontairement non bloquants et doivent être traités au fil de l'eau quand les features propriétaires sont rouvertes.
 - Validation : `bash .ai/scripts/check-touches-breadth.sh` PASS advisory ; `bash tests/unit/test-check-touches-breadth.sh` PASS.
 - Next : aucune action immédiate.
+
+## 2026-07-16 15:37 — implement / HANDOFF Signal A confirmé
+- Feature source : `core/feature-mesh-progressive-indexes` ; l'utilisateur confirme le HANDOFF transverse vers `quality/touches-breadth-guard`.
+- Contexte : la revue Claude/Codex a révélé que les exact-multi historiques forçaient un gate freshness cross-scope sur les scripts partagés modifiés par les index progressifs.
+- Décision : conserver un propriétaire structurel direct pour `_lib.sh`, `aic.sh`, les hooks/checks et les tests ; reclasser les consommateurs en `touches_shared:`. Conserver les quatre co-propriétaires légitimes de `build-feature-index.sh` documentés depuis la 2ᵉ vague.
+- Surfaces reclassées : `_lib.sh`, `aic.sh`, `auto-worklog-log.sh`, `features-for-path.sh`, `check-commit-features.sh`, `check-feature-docs.sh`, `build-feature-index.sh` pour ses consommateurs, et leurs miroirs Jinja.
+- Signal intermédiaire : `_lib.sh`, `build-feature-index.sh` et `check-commit-features.sh.jinja` sortent du Signal A ; restent seulement `.ai/index.md`, son miroir et `FEATURE_TEMPLATE.md`, hors delta courant.
+- blockers : aucun.
+- next : tracer l'impact chez les propriétaires directs, relancer les gates stricts puis refermer cette fiche.
+
+## 2026-07-16 — review / propriétaires alignés
+- Les propriétaires directs impactés ont reçu une trace de compatibilité dans leurs worklogs ; les consommateurs conservent la visibilité via `touches_shared:`.
+- `check-features.sh --no-write` ✅ ; `check-feature-docs.sh --strict quality/touches-breadth-guard` ✅ ; `check-feature-freshness.sh --worktree --strict` ✅.
+- Le guard ne signale plus les surfaces du delta courant ; les trois signaux restants (`.ai/index.md`, son miroir, `FEATURE_TEMPLATE.md`) sont hors scope et restent advisory.
+- blockers : aucun.
+- next : simuler le staging complet, exécuter le quality gate et clôturer si GO.
+
+## 2026-07-16 — review / gaps staged-only traités
+- La simulation via index Git alternatif a révélé six propriétaires absents des checks worktree : docs de migration, template du commit gate et templates du reminder.
+- Correctifs : worklogs des propriétaires migration mis à jour ; consommateurs `git-hooks`, `graph-aware-injection` et `feature-mesh-progressive-indexes` reclassés en `touches_shared:` ; `workflow/pre-turn-reminder` reste propriétaire du reminder.
+- next : régénérer les index et rejouer la simulation staged stricte.
+
+## 2026-07-16 — review / owner runtime reminder explicité
+- Le second staging simulé a révélé que le runtime `pre-turn-reminder.sh` n'avait qu'un coverer glob `.ai/**` (`dogfood-runtime-sync`).
+- `workflow/pre-turn-reminder` devient propriétaire exact du runtime comme de son miroir Jinja ; le glob dogfood reste secondaire advisory.
+- next : rejouer la simulation staged stricte.
+
+## 2026-07-16 15:46 — DONE
+
+### Evidence
+- Build : `bash .ai/scripts/build-feature-index.sh --write` ✅
+- Tests : `bash tests/unit/test-check-touches-breadth.sh` ✅ ; suite unitaire 45/45 ✅ ; smoke Copier ✅
+- Gates : freshness worktree strict ✅ ; staging complet simulé strict + gate `feat:` ✅ ; quality gate ✅
+
+### Résumé livré
+- Consommateurs des surfaces partagées reclassés en `touches_shared:` avec propriétaires structurels directs conservés.
+- Co-propriété légitime de `build-feature-index.sh` préservée et documentée.
+- Propriétaires migration, hooks, reminder et tests tracés dans leurs worklogs.
+- Signal A nettoyé pour tout le delta des index Markdown progressifs.
+
+### Commit suggéré
+refactor(quality): reclasser les surfaces partagées du feature mesh

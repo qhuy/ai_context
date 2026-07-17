@@ -15,18 +15,18 @@ touches:
   - .ai/scripts/product-status.sh
   - .ai/scripts/product-portfolio.sh
   - .ai/scripts/product-review.sh
-  - .ai/scripts/build-feature-index.sh
   - template/.ai/scripts/check-product-links.sh.jinja
   - template/.ai/scripts/product-status.sh.jinja
   - template/.ai/scripts/product-portfolio.sh.jinja
   - template/.ai/scripts/product-review.sh.jinja
-  - template/.ai/scripts/build-feature-index.sh.jinja
   - tests/unit/test-product-reports-read-only.sh
   - .ai/index.md
   - template/.ai/index.md.jinja
   - .docs/FEATURE_TEMPLATE.md
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
 touches_shared:
+  - .ai/scripts/build-feature-index.sh
+  - template/.ai/scripts/build-feature-index.sh.jinja
   - .ai/scripts/aic.sh
   - .ai/scripts/check-dogfood-drift.sh
   - .ai/scripts/dogfood-update.sh

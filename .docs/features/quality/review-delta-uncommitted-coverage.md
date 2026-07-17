@@ -6,11 +6,11 @@ status: done
 depends_on: []
 touches:
   - .ai/scripts/review-delta.sh
-  - .ai/scripts/_lib.sh
   - template/.ai/scripts/review-delta.sh.jinja
-  - template/.ai/scripts/_lib.sh.jinja
   - tests/unit/test-review-delta-uncommitted.sh
 touches_shared:
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja
   - .ai/scripts/aic.sh
   - tests/smoke-test.sh
 product: {}

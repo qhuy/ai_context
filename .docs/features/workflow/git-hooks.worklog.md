@@ -44,3 +44,7 @@
 - Décision : statut `done`; hooks Git restent le point de convergence universel, activation locale documentée.
 - Validation : relecture `tests/smoke-test.sh` bloc `[18/28]`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/git-hooks`; `bash .ai/scripts/check-features.sh --no-write`; `bash .ai/scripts/check-feature-freshness.sh --worktree --strict`; `bash tests/smoke-test.sh`.
 - Next : aucune action immédiate.
+
+## 2026-07-16 — HANDOFF gate commit
+- Le template `check-commit-features.sh.jinja` devient une dépendance partagée ; son propriétaire direct reste `quality/doc-freshness`.
+- Le contrat des hooks Git reste inchangé : le commit-msg exécute toujours le même checker et la freshness stricte.

@@ -294,7 +294,7 @@ if [[ -d "$features_dir" ]]; then
   # find -print0 pour supporter les noms avec espaces/caractères spéciaux
   while IFS= read -r -d '' f; do
     files+=("$f")
-  done < <(find "$features_dir" -mindepth 2 -maxdepth 2 -type f -name '*.md' ! -name '*.worklog.md' -print0 2>/dev/null)
+  done < <(find_feature_docs "$features_dir")
 
   # Ordre contractuel stable. Le tri newline-based couvre les chemins usuels
   # du repo, espaces inclus ; les retours ligne dans les noms de fichiers ne

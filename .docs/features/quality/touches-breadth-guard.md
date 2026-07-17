@@ -31,10 +31,10 @@ doc:
     observability: false
 progress:
   phase: done
-  step: "guard advisory livré : signaux A/B, test, wiring quality-gate/smoke et vagues de reclassement validés"
+  step: ""
   blockers: []
-  resume_hint: "aucune action immédiate ; traiter les signaux advisory restants au fil de l'eau quand leurs features propriétaires sont rouvertes"
-  updated: 2026-07-03
+  resume_hint: "feature clôturée le 2026-07-16"
+  updated: 2026-07-16
 ---
 
 # Garde-fou advisory contre la sur-couverture touches:
@@ -109,3 +109,5 @@ Clôture 2026-07-03 : `bash .ai/scripts/check-touches-breadth.sh` PASS advisory 
 - 2026-06-28 : **2ᵉ vague — globs catch-all (Signal B)** (frame de remédiation 2026-06-28, suite à la taxe observée : guardrails 5 fiches, fix A1 12 fiches, moat git désormais actif). Reclassés `touches:` → `touches_shared:`/affinés : `core/template-engine` `template/**` → `touches_shared` (garde `copier.yml` direct = le moteur) ; `quality/smoke-test` `tests/**` → `tests/smoke-test.sh` direct + `tests/**` shared ; `core/project-overlay-scope-registry` et `core/project-overlay-stable` `tests/**` → `tests/unit/test-project-overlay.sh` direct. Signal B ne liste plus que les globs **légitimes** (`dogfood-runtime-sync → .ai/**`, `git-hooks → .githooks/**`). Dé-taxe vérifiée : un édit `.jinja` n'exige plus `template-engine`. **Volontairement non reclassé** : `build-feature-index.sh`/`.jinja` reste direct sur `index-contract-v2`, `feature-mesh-contract-alignment`, `okf-strict-profile` — co-propriété légitime (contrat/parser/champ type), reclasser créerait de la sous-couverture. Reste : Signal A (README*, `_lib.sh`, `aic.sh`) + globs 2-segments non détectés par B (`tests/unit/**`), au fil de l'eau.
 - 2026-06-30 : **3ᵉ vague — dispatchers et docs publiques exact-multi** après livraison du contrat freshness `(a')`. Propriétaires exacts retenus : `core/aic-surface-canonical` pour `aic.sh` / `README_AI_CONTEXT`, `core/template-engine` pour `copier.yml`, `product/readme-positioning` pour `README.md`, `core/dogfood-runtime-sync` pour `dogfood-update.sh` / `check-dogfood-drift.sh`, `quality/smoke-test` pour `tests/smoke-test.sh`, `workflow/aic-frame-external-reference` pour `aic-frame` et les templates de frames. Les features consommatrices passent en `touches_shared:` pour garder le signal sans cascade.
 - 2026-07-03 : DONE documentaire. Le guard est livré et reste volontairement advisory ; les signaux résiduels (`_lib.sh`, `.ai/index.md`, `build-feature-index.sh`, globs légitimes) sont une dette de reclassement au fil de l'eau, pas un blocker de cette feature.
+- 2026-07-16 : fiche rouverte après HANDOFF confirmé depuis `core/feature-mesh-progressive-indexes`. 4ᵉ vague ciblée sur les exact-multi réellement touchés : propriétaires structurels conservés, consommateurs déplacés vers `touches_shared:` ; co-propriété documentée de `build-feature-index.sh` conservée.
+- 2026-07-16 : 4ᵉ vague clôturée après validation worktree et staging simulé stricts. Les surfaces du delta courant ont un propriétaire direct explicite ; les consommateurs restent visibles sans déclencher de cascade freshness.

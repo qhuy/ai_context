@@ -8,6 +8,14 @@
 #   require_cmd <bin...>        — échoue si une commande manque (stderr + exit 1)
 #   log_debug "msg"             — stderr si $AI_CONTEXT_DEBUG=1, sinon silencieux
 #   enable_globstar             — active ** (bash ≥4) ou no-op (bash 3.2 macOS)
+#   is_canonical_feature_doc <path> [features_root]
+#                               — 0 pour une fiche <scope>/<id>.md, hors docs réservés
+#   is_feature_worklog <path> [features_root]
+#                               — 0 pour un worklog <scope>/<id>.worklog.md
+#   find_feature_docs [features_root]
+#                               — émet les fiches canoniques en NUL, ordre find
+#   feature_docs_newer_than <features_root> <reference>
+#                               — 0 si une fiche canonique est plus récente
 #   with_index_lock <cmd...>    — acquiert un lock exclusif via mkdir (portable)
 #   path_matches_touch <path> <touch>
 #                               — 0 si un chemin repo matche une entrée touches:
@@ -121,6 +129,90 @@ log_debug() {
 
 enable_globstar() {
   shopt -s globstar 2>/dev/null || true
+}
+
+# Valide la forme exacte <features_root>/<scope>/<fichier>.md. Les noms réservés
+# sont classifiés séparément afin que tous les scanners, migrateurs et hooks
+# partagent le même contrat au lieu de maintenir leurs propres exclusions find.
+_feature_mesh_depth2_md() {
+  local file_path="${1#./}"
+  local features_root="${2:-$AI_CONTEXT_FEATURES_DIR}"
+  local rel scope name
+
+  features_root="${features_root%/}"
+  features_root="${features_root#./}"
+  case "$file_path" in
+    "$features_root"/*) rel="${file_path#"$features_root"/}" ;;
+    *) return 1 ;;
+  esac
+
+  case "$rel" in
+    */*) ;;
+    *) return 1 ;;
+  esac
+  scope="${rel%%/*}"
+  name="${rel#*/}"
+  [[ -n "$scope" && -n "$name" && "$name" != */* && "$name" == *.md ]]
+}
+
+is_feature_worklog() {
+  local file_path="$1"
+  local features_root="${2:-$AI_CONTEXT_FEATURES_DIR}"
+  _feature_mesh_depth2_md "$file_path" "$features_root" || return 1
+  [[ "${file_path##*/}" == *.worklog.md ]]
+}
+
+is_reserved_feature_doc() {
+  local file_path="${1#./}"
+  local features_root="${2:-$AI_CONTEXT_FEATURES_DIR}"
+  local name
+  features_root="${features_root%/}"
+  features_root="${features_root#./}"
+  case "$file_path" in
+    "$features_root"/index.md|"$features_root"/log.md) return 0 ;;
+  esac
+  _feature_mesh_depth2_md "$file_path" "$features_root" || return 1
+  name="${file_path##*/}"
+  case "$name" in
+    index.md|log.md|*.worklog.md) return 0 ;;
+  esac
+  return 1
+}
+
+is_canonical_feature_doc() {
+  local file_path="$1"
+  local features_root="${2:-$AI_CONTEXT_FEATURES_DIR}"
+  _feature_mesh_depth2_md "$file_path" "$features_root" || return 1
+  ! is_reserved_feature_doc "$file_path" "$features_root"
+}
+
+# Sortie NUL pour conserver les espaces et caractères spéciaux usuels.
+# Les retours ligne dans les noms restent hors contrat, comme pour l'index JSON.
+find_feature_docs() {
+  local features_root="${1:-$AI_CONTEXT_FEATURES_DIR}"
+  local file_path
+  [[ -d "$features_root" ]] || return 0
+  while IFS= read -r -d '' file_path; do
+    if is_canonical_feature_doc "$file_path" "$features_root"; then
+      printf '%s\0' "$file_path"
+    fi
+  done < <(find "$features_root" -mindepth 2 -maxdepth 2 -type f -name '*.md' -print0 2>/dev/null)
+}
+
+feature_docs_newer_than() {
+  local features_root="$1"
+  local reference="$2"
+  local file_path
+  [[ -e "$reference" ]] || return 0
+  [[ -d "$features_root" ]] || return 1
+  # Bash 3.2 compare -nt à la seconde sur macOS. find -newer conserve la
+  # précision du filesystem et évite un sous-processus par fiche.
+  while IFS= read -r -d '' file_path; do
+    if is_canonical_feature_doc "$file_path" "$features_root"; then
+      return 0
+    fi
+  done < <(find "$features_root" -mindepth 2 -maxdepth 2 -type f -name '*.md' -newer "$reference" -print0 2>/dev/null)
+  return 1
 }
 
 # is_structural_feature_edit <feature_path> <file_path>

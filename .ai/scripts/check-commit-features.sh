@@ -111,7 +111,21 @@ fi
 type=$(echo "$msg" | sed -E 's/^([a-z]+).*/\1/')
 if [[ "$type" == "feat" ]]; then
   staged=$(vcs_staged_paths)
-  staged_feature_docs=$(printf '%s\n' "$staged" | grep -E "^$FEATURES_DIR/.+\\.md$" || true)
+  staged_feature_docs=""
+  staged_non_feature=""
+  while IFS= read -r staged_path; do
+    [[ -n "$staged_path" ]] || continue
+    if is_canonical_feature_doc "$staged_path" "$FEATURES_DIR" \
+       || is_feature_worklog "$staged_path" "$FEATURES_DIR"; then
+      staged_feature_docs="${staged_feature_docs}${staged_path}"$'\n'
+    elif is_reserved_feature_doc "$staged_path" "$FEATURES_DIR"; then
+      # Les index/logs du mesh ne prouvent pas la documentation d'une feature,
+      # mais ne sont pas non plus du code à couvrir par touches:.
+      continue
+    else
+      staged_non_feature="${staged_non_feature}${staged_path}"$'\n'
+    fi
+  done <<< "$staged"
   if [[ -z "$staged_feature_docs" ]]; then
     echo "❌ Commit 'feat:' sans fichier feature dans le delta $(vcs_staged_label) ($FEATURES_DIR/)" >&2
     echo "   Toute nouvelle feature DOIT avoir son fichier dans $FEATURES_DIR/<scope>/<id>.md" >&2
@@ -120,7 +134,6 @@ if [[ "$type" == "feat" ]]; then
     exit 1
   fi
 
-  staged_non_feature=$(printf '%s\n' "$staged" | grep -vE "^$FEATURES_DIR/.+\\.md$" || true)
   if [[ -n "$staged_non_feature" ]]; then
     index_tmp="$(mktemp "${TMPDIR:-/tmp}/aic-commit-features.XXXXXX")"
     trap 'rm -f "$index_tmp"' EXIT

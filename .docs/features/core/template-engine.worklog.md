@@ -462,3 +462,8 @@
 - Surface couverte touchée dans le delta d'audit strict : `copier.yml`.
 - Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
 - Validation : gate ship relancée avant commit.
+
+## 2026-07-16 — HANDOFF message de migration Copier
+- Propriété directe de `copier.yml` conservée ; la feature d'index progressifs le référence en `touches_shared:`.
+- `_message_after_update` expose le dry-run puis `--apply` sans tâche d'écriture automatique sur le feature mesh project-owned.
+- Validation : dogfood drift et smoke d'upgrade Copier PASS.

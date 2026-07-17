@@ -47,7 +47,7 @@ ensure_index() {
     return
   fi
   if [[ -d "$features_dir" ]]; then
-    if find "$features_dir" -name '*.md' -newer "$index_file" -print -quit 2>/dev/null | grep -q .; then
+    if feature_docs_newer_than "$features_dir" "$index_file"; then
       log_debug "index obsolète (feature plus récente), rebuild"
       bash "$script_dir/build-feature-index.sh" --write
     fi

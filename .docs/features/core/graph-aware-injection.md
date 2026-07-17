@@ -8,6 +8,7 @@ depends_on:
 touches:
   - .docs/features/core/graph-aware-injection.md
   - .docs/features/core/graph-aware-injection.worklog.md
+touches_shared:
   - template/.ai/scripts/pre-turn-reminder.sh.jinja
 progress:
   phase: done

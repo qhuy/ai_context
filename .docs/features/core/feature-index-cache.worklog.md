@@ -151,3 +151,8 @@
 - Surface directe touchée : `_lib.sh`, `build-feature-index.sh` et tests build-index via correctifs audit (matcher strict, fallback inline comment, robustesse id/scope).
 - Décision : le contrat cache/index ne change pas ; les modifications restent compatibles avec le format `.ai/.feature-index.json`.
 - Validation ciblée : `test-build-feature-index-fallback-frontmatter`, `test-build-feature-index-robust`, `check-features --no-write` à relancer dans la gate finale.
+
+## 2026-07-16 — HANDOFF index Markdown progressifs
+- Propriété directe conservée sur `_lib.sh` et `build-feature-index.sh` ; les consommateurs historiques de `_lib.sh` passent en `touches_shared:`.
+- Impact vérifié : le cache JSON utilise le classificateur canonique et ignore les index/logs réservés ; son schéma et son format restent inchangés.
+- Validation : 45 tests unitaires, smoke Copier et dogfood drift passent dans `core/feature-mesh-progressive-indexes`.

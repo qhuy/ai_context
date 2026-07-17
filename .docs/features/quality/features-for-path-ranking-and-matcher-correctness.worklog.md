@@ -195,3 +195,8 @@
 - Intent : fermer SCR-2/SCR-6/N4.
 - Changement : les classes glob contenant `/` deviennent unsupported, `features-for-path.sh` fige un snapshot unique de l'index après rebuild, et `_score_touch_pattern` classe `Makefile`/`README` comme exact file même sans extension.
 - Tests ciblés : `test-path-matches-touch`, `test-features-for-path-relevance-ranking`, `test-matcher-multi-level` PASS.
+
+## 2026-07-16 — HANDOFF freshness des fiches
+- Propriété directe de `features-for-path.sh` conservée ; `_lib.sh` est reclassé en dépendance partagée.
+- Le rebuild on-demand ne considère plus les index/logs générés comme des fiches plus récentes.
+- Validation : contrat discriminant de `feature_docs_newer_than`, tests ranking/matcher et suite complète PASS.

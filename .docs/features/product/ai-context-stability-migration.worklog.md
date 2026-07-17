@@ -63,3 +63,7 @@
 - Surface couverte touchée dans le delta d'audit strict : `docs/upgrading.md`.
 - Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
 - Validation : gate ship relancée avant commit.
+
+## 2026-07-16 — HANDOFF upgrade index Markdown
+- `docs/upgrading.md` ajoute la migration opt-in `okf-indexes`, sa fenêtre warn-only et la vérification stricte explicite.
+- Le scénario Copier v0.11 → HEAD prouve la non-mutation, l'idempotence et le rollback.

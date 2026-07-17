@@ -4,10 +4,10 @@ scope: quality
 title: Corriger le contrat de lock de l'index feature
 status: done
 depends_on: []
-touches:
+touches: []
+touches_shared:
   - .ai/scripts/_lib.sh
   - template/.ai/scripts/_lib.sh.jinja
-touches_shared:
   - tests/smoke-test.sh
 product: {}
 external_refs:

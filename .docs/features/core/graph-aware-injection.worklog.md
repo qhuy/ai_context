@@ -15,3 +15,7 @@
 - Décision : Doc Impact Decision C — fiche feature mise à jour, aucun changement runtime dans ce commit de clôture.
 - Risques : pas de breaking change, pas de migration de données, pas d'impact sécurité/auth/tenancy ; compatibilité arrière inchangée.
 - Next : aucune action immédiate ; rouvrir seulement si le contrat focus ou le voisinage graphe change.
+
+## 2026-07-16 — HANDOFF reminder partagé
+- `pre-turn-reminder.sh.jinja` est reclassé en dépendance partagée ; son propriétaire structurel reste `workflow/pre-turn-reminder`.
+- Le contrat `AI_CONTEXT_FOCUS` et le voisinage du graphe restent inchangés.

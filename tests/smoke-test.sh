@@ -127,6 +127,10 @@ echo "[0s2/28] tests unitaires (provider VCS Git/TFVC)"
 bash tests/unit/test-vcs-provider.sh
 echo
 
+echo "[0s3/28] tests unitaires (index Markdown progressifs + migration)"
+bash tests/unit/test-feature-markdown-indexes.sh
+echo
+
 echo "[0t/28] self-check benchmark agent (plumbing, sans agent)"
 bash tests/bench/run-bench.sh --self-check
 echo
@@ -309,6 +313,28 @@ if ! ( cd "$OUT" && bash .ai/scripts/aic.sh shims ) >/dev/null 2>&1; then
 fi
 if ! ( cd "$OUT" && bash .ai/scripts/aic.sh review --help ) | grep -q "Review Delta"; then
   echo "  ✗ aic.sh review ne route pas vers review-delta"
+  exit 1
+fi
+if [[ ! -f "$OUT/.ai/scripts/migrate-okf-indexes.sh" || ! -f "$OUT/.ai/scripts/check-feature-indexes.sh" ]]; then
+  echo "  ✗ scripts OKF indexes absents du rendu Copier"
+  exit 1
+fi
+okf_indexes_dry=$( cd "$OUT" && bash .ai/scripts/aic.sh migrate okf-indexes )
+if ! printf '%s' "$okf_indexes_dry" | grep -q 'create.*\.docs/features/index.md'; then
+  echo "  ✗ aic.sh migrate okf-indexes ne route pas vers le dry-run"
+  exit 1
+fi
+if [[ -e "$OUT/.docs/features/index.md" ]]; then
+  echo "  ✗ dry-run okf-indexes a écrit l'index racine"
+  exit 1
+fi
+( cd "$OUT" && bash .ai/scripts/aic.sh migrate okf-indexes --apply >/dev/null )
+if [[ ! -f "$OUT/.docs/features/index.md" ]]; then
+  echo "  ✗ --apply okf-indexes n'a pas créé l'index racine"
+  exit 1
+fi
+if ! ( cd "$OUT" && bash .ai/scripts/check-feature-indexes.sh --strict ) >/dev/null; then
+  echo "  ✗ check-feature-indexes --strict échoue après génération"
   exit 1
 fi
 if ( cd "$OUT" && bash .ai/scripts/aic.sh inexistant ) >/dev/null 2>&1; then
@@ -1622,6 +1648,17 @@ touches:
 FEAT
 echo "// docs-root" > "$OUT_DOCS/src/foo.ts"
 ( cd "$OUT_DOCS" && bash .ai/scripts/check-features.sh >/dev/null )
+( cd "$OUT_DOCS" && bash .ai/scripts/aic.sh migrate okf-indexes --apply >/dev/null )
+if [[ ! -f "$OUT_DOCS/docs/features/index.md" || ! -f "$OUT_DOCS/docs/features/back/index.md" ]]; then
+  echo "  ✗ okf-indexes ne suit pas docs_root=docs"
+  rm -rf "$OUT_DOCS"
+  exit 1
+fi
+if [[ -e "$OUT_DOCS/.docs/features/index.md" ]]; then
+  echo "  ✗ okf-indexes a ignoré docs_root=docs et écrit sous .docs"
+  rm -rf "$OUT_DOCS"
+  exit 1
+fi
 if ! ( cd "$OUT_DOCS" && bash .ai/scripts/features-for-path.sh src/foo.ts ) | grep -q "back/sample"; then
   echo "  ✗ features-for-path ne lit pas docs/features"
   rm -rf "$OUT_DOCS"
@@ -1940,6 +1977,20 @@ fi
   # Fichier user hors périmètre template — doit survivre au update.
   # Il est versionné car Copier refuse d'updater un sous-projet dirty.
   echo "# Custom user file (test copier update)" > "$UPD_OUT/MY_CUSTOM.md"
+  mkdir -p "$UPD_OUT/.docs/features/back"
+  cat > "$UPD_OUT/.docs/features/back/legacy-owned.md" <<'FEAT'
+---
+id: legacy-owned
+scope: back
+title: Legacy project-owned
+status: active
+depends_on: []
+touches: []
+---
+
+# Legacy project-owned
+FEAT
+  legacy_feature_before="$(cksum "$UPD_OUT/.docs/features/back/legacy-owned.md")"
 
   # copier update ne fonctionne que dans un sous-projet git-tracké. Certaines
   # versions de Copier ne matérialisent pas l'answers file sur ce scénario local ;
@@ -2004,6 +2055,63 @@ EOF
     rm -rf "$UPD_OUT"
     exit 1
   fi
+  if [[ "$legacy_feature_before" != "$(cksum "$UPD_OUT/.docs/features/back/legacy-owned.md")" ]]; then
+    echo "  ✗ copier update a modifié une fiche project-owned"
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+  if [[ -e "$UPD_OUT/.docs/features/index.md" ]]; then
+    echo "  ✗ copier update a généré implicitement les index project-owned"
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+  if [[ ! -f "$UPD_OUT/.ai/scripts/migrate-okf-indexes.sh" ]]; then
+    echo "  ✗ copier update n'a pas livré la migration okf-indexes"
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+  update_check_out="$(cd "$UPD_OUT" && bash .ai/scripts/check-features.sh --no-write 2>&1)" || {
+    echo "  ✗ check-features casse la CI pendant la fenêtre warn-only"
+    printf '%s\n' "$update_check_out"
+    rm -rf "$UPD_OUT"
+    exit 1
+  }
+  if ! printf '%s' "$update_check_out" | grep -q 'warn-only vN'; then
+    echo "  ✗ check-features ne signale pas la migration okf-indexes en warn-only"
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+  ( cd "$UPD_OUT" && bash .ai/scripts/aic.sh migrate okf-indexes --apply >/dev/null )
+  if [[ ! -f "$UPD_OUT/.docs/features/index.md" || ! -f "$UPD_OUT/.docs/features/back/index.md" ]]; then
+    echo "  ✗ migration explicite okf-indexes incomplète après copier update"
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+  upgrade_indexes_before="$(cksum "$UPD_OUT/.docs/features/index.md" "$UPD_OUT/.docs/features/back/index.md")"
+  upgrade_second_out="$(cd "$UPD_OUT" && bash .ai/scripts/aic.sh migrate okf-indexes --apply)"
+  if [[ "$upgrade_indexes_before" != "$(cksum "$UPD_OUT/.docs/features/index.md" "$UPD_OUT/.docs/features/back/index.md")" ]] \
+     || ! printf '%s' "$upgrade_second_out" | grep -q '0 changement(s) appliqué(s)'; then
+    echo "  ✗ second passage okf-indexes non idempotent après copier update"
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+
+  # Le rollback documenté par git revert retire uniquement les index générés,
+  # sans toucher la fiche legacy project-owned ni le runtime livré par Copier.
+  git -C "$UPD_OUT" add .docs/features/index.md .docs/features/back/index.md
+  git -C "$UPD_OUT" commit -qm "chore: index OKF générés"
+  git -C "$UPD_OUT" revert --no-edit HEAD >/dev/null
+  if [[ -e "$UPD_OUT/.docs/features/index.md" || -e "$UPD_OUT/.docs/features/back/index.md" ]]; then
+    echo "  ✗ git revert ne retire pas proprement les index générés"
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+  if [[ "$legacy_feature_before" != "$(cksum "$UPD_OUT/.docs/features/back/legacy-owned.md")" ]]; then
+    echo "  ✗ rollback des index a modifié la fiche project-owned"
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+  ( cd "$UPD_OUT" && bash .ai/scripts/aic.sh migrate okf-indexes --apply >/dev/null )
 
   # Sanity : check-shims passe encore après update
   if ! ( cd "$UPD_OUT" && bash .ai/scripts/check-shims.sh >/dev/null 2>&1 ); then
@@ -2038,7 +2146,7 @@ EOF
   fi
 
   rm -rf "$UPD_OUT"
-  echo "  ✓ copier update v0.11.0 → HEAD : fichier user préservé + conflits externalisés + check-shims OK"
+  echo "  ✓ copier update v0.11.0 → HEAD : fichiers project-owned préservés + migration okf-indexes opt-in"
 
 echo
 echo "[28d/28] hooks Codex natifs : .codex/hooks.json opt-in via enable_codex_hooks"

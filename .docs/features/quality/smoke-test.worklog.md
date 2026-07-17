@@ -322,3 +322,8 @@
 ## 2026-07-07 — audit 2026-07-07
 - Changement : smoke réel des hooks Git (`pre-commit`, `commit-msg`, `post-checkout`) ajouté, `migrate-features` vérifie l'idempotence, `audit-features` refuse un scope inconnu, le libellé [19/28] annonce 11 workflows réels, et le profil `.codex/hooks.json` reste couvert en [28d].
 - Validation prévue : `bash -n tests/smoke-test.sh` puis smoke complet si le temps d'exécution le permet.
+
+## 2026-07-16 — HANDOFF migration Copier okf-indexes
+- Propriété directe de `tests/smoke-test.sh` conservée ; `core/vcs-provider-abstraction` devient consommateur partagé.
+- Le scénario d'upgrade prouve non-mutation, warning vN, application explicite, second passage idempotent et rollback `git revert`.
+- Validation : smoke complet PASS après remédiation de la revue Claude/Codex.

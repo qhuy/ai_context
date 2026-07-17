@@ -19,6 +19,12 @@
 
 set -uo pipefail
 
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=_lib.sh
+. "$script_dir/_lib.sh"
+repo_root="$(cd "$script_dir/../.." && pwd)"
+features_root="$repo_root/$AI_CONTEXT_FEATURES_DIR"
+
 # Mode hook uniquement (stdin JSON). Sinon no-op.
 [[ -t 0 ]] && exit 0
 payload="$(cat 2>/dev/null || true)"
@@ -31,20 +37,21 @@ case "$tool_name" in Write|Edit|MultiEdit) ;; *) exit 0 ;; esac
 file_path="$(printf '%s' "$payload" | jq -r '.tool_input.file_path // .tool_input.path // ""' 2>/dev/null || echo "")"
 [[ -z "$file_path" ]] && exit 0
 
-# Early-exit : worklog, ou pas une fiche features/<scope>/<id>.md.
+# Early-exit : uniquement une fiche canonique existante, jamais index/log/worklog.
 case "$file_path" in
-  *.worklog.md) exit 0 ;;
+  /*) ;;
+  *) file_path="$repo_root/${file_path#./}" ;;
 esac
-case "$file_path" in
-  */features/*/*.md) ;;
-  *) exit 0 ;;
-esac
+[[ -f "$file_path" ]] || exit 0
+file_path="$(cd "$(dirname "$file_path")" && pwd -P)/$(basename "$file_path")"
+if [[ -d "$features_root" ]]; then
+  features_root="$(cd "$features_root" && pwd -P)"
+fi
+is_canonical_feature_doc "$file_path" "$features_root" || exit 0
 
 # Édition d'une fiche EXISTANTE seulement (PreToolUse = avant écriture : fichier
 # absent ⇒ création ⇒ skip). On travaille sur file_path absolu (robuste aux
 # symlinks / repo_root non aligné), pas besoin de repo_root.
-[[ -f "$file_path" ]] || exit 0
-
 abs_dir="${file_path%/*}"      # .../features/<scope>
 id="${file_path##*/}"; id="${id%.md}"
 scope="${abs_dir##*/}"
@@ -58,8 +65,8 @@ oth_total=0
 oth_shown=0
 for f in "$abs_dir"/*.md; do
   [[ -e "$f" ]] || continue
+  is_canonical_feature_doc "$f" "$features_root" || continue
   bn="${f##*/}"; bn="${bn%.md}"
-  case "$bn" in *.worklog) continue ;; esac
   [[ "$bn" == "$id" ]] && continue
   if [[ "$bn" == "$id"-* || "$id" == "$bn"-* ]]; then
     family="${family}  • ${scope}/${bn}  ← même famille d'id"$'\n'

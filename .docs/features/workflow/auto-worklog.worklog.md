@@ -44,3 +44,8 @@
 - Décision : statut `done`. Le suivi “dériver updated au build-index” n'est pas un blocker de cette feature ; il devra être cadré séparément si la sémantique de staleness change.
 - Validation : `bash tests/unit/test-auto-worklog-flush.sh` PASS ; `bash tests/unit/test-stop-hook-idempotence.sh` PASS ; `bash -n` runtime/template PASS ; `bash .ai/scripts/check-dogfood-drift.sh` PASS ; `bash .ai/scripts/check-feature-docs.sh --strict workflow/auto-worklog` PASS.
 - Next : aucune action immédiate.
+
+## 2026-07-16 — HANDOFF documents réservés
+- Propriété directe de `auto-worklog-log.sh` conservée ; les consommateurs context-relevance et stop-idempotence passent en `touches_shared:`.
+- Le logger ignore les index/logs réservés comme documentation manuelle et normalise `AI_CONTEXT_DOCS_ROOT=./...` sans mangler la clé `scope/id`.
+- Validation : cas dédié dans `test-feature-markdown-indexes.sh`, suite unitaire complète et smoke PASS.

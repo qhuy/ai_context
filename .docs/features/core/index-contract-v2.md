@@ -10,14 +10,14 @@ depends_on:
 touches:
   - .ai/scripts/build-feature-index.sh
   - template/.ai/scripts/build-feature-index.sh.jinja
-  - .ai/scripts/_lib.sh
-  - template/.ai/scripts/_lib.sh.jinja
   - .ai/schema/feature.schema.json
   - template/.ai/schema/feature.schema.json
   - tests/unit/test-build-feature-index-contract.sh
   - .docs/features/core/index-contract-v2.md
   - .docs/features/core/index-contract-v2.worklog.md
 touches_shared:
+  - .ai/scripts/_lib.sh
+  - template/.ai/scripts/_lib.sh.jinja
   - docs/upgrading.md
   - CHANGELOG.md
   - README_AI_CONTEXT.md

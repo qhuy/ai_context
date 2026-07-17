@@ -62,3 +62,8 @@
 - Surface couverte touchée dans le delta d'audit strict : `template/.ai/scripts/features-for-path.sh.jinja`.
 - Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
 - Validation : gate ship relancée avant commit.
+
+## 2026-07-16 — HANDOFF classification des fiches
+- Propriété directe de `pre-turn-reminder.sh` conservée ; `features-for-path.sh` est reclassé en dépendance partagée.
+- Le reminder ne reconstruit plus l'index JSON parce qu'un index/log réservé est plus récent qu'une fiche canonique.
+- Validation : test discriminant `feature_docs_newer_than`, suite unitaire et smoke PASS.

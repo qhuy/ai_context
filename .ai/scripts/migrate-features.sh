@@ -46,7 +46,7 @@ normalize_status() {
 files=()
 while IFS= read -r -d '' f; do
   files+=("$f")
-done < <(find "$features_dir" -mindepth 2 -maxdepth 2 -type f -name '*.md' ! -name '*.worklog.md' -print0)
+done < <(find_feature_docs "$features_dir")
 
 if [[ "${#files[@]}" -eq 0 ]]; then
   echo "⚠️  aucune feature trouvée sous $features_dir"

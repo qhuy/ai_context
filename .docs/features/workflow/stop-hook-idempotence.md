@@ -5,10 +5,10 @@ title: Rendre le hook Stop idempotent sur tour sans édit structurel
 status: done
 depends_on: []
 touches:
-  - .ai/scripts/auto-worklog-log.sh
-  - template/.ai/scripts/auto-worklog-log.sh.jinja
   - tests/unit/test-stop-hook-idempotence.sh
 touches_shared:
+  - .ai/scripts/auto-worklog-log.sh
+  - template/.ai/scripts/auto-worklog-log.sh.jinja
   - .ai/scripts/auto-worklog-flush.sh
   - .ai/scripts/auto-progress.sh
   - .ai/scripts/_lib.sh

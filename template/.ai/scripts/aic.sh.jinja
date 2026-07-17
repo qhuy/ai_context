@@ -77,7 +77,8 @@ Commandes maintenance :
   doctor       diagnostic non destructif (dépendances, hooks, index, checks)
   resume       buckets EN COURS / BLOQUÉES / STALE / À FAIRE
   audit        audit-features.sh (discover <scope>)
-  migrate      migration frontmatter ; 'migrate okf-type' backfille le champ type OKF (--apply explicite)
+  migrate      migration frontmatter ; sous-commandes explicites :
+               'migrate okf-type' backfille type ; 'migrate okf-indexes' génère les index Markdown
   pr-report    rapport markdown/json d'impact feature depuis un diff git
   measure      taille contexte injecté par les hooks
   check        check-features.sh (frontmatter + scope + depends_on + touches)
@@ -920,6 +921,7 @@ EOF
   migrate)
     case "${1:-}" in
       okf-type) shift; exec bash "$script_dir/migrate-okf-type.sh" "$@" ;;
+      okf-indexes) shift; exec bash "$script_dir/migrate-okf-indexes.sh" "$@" ;;
       *)        exec bash "$script_dir/migrate-features.sh" "$@" ;;
     esac
     ;;
