@@ -139,3 +139,4 @@ Un lecteur doit pouvoir répondre rapidement à quatre questions :
   standard et `.ai/index.md` comme source de contexte lean. `README_AI_CONTEXT.md`
   reste présent comme guide généré, mais n'est plus ambigu comme porte d'entrée
   canonique du repo source.
+- 2026-07-24 (release v0.14.0) : section « Mettre à jour le template » bascule la reco de `copier update --vcs-ref=HEAD` vers le comportement par défaut de Copier (dernier tag), suite à la reprise d'une cadence de tags. `--vcs-ref=HEAD` reste documenté comme option avancée. Édition ciblée, ne rouvre pas le repositionnement global.

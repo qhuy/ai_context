@@ -89,6 +89,33 @@ la mise à jour Copier reste indépendante.
 
 ---
 
+## Cockpit de migrations post-Copier (v0.14+)
+
+Depuis v0.14.0, `okf-type` et `okf-indexes` ci-dessus peuvent être orchestrées en un
+seul passage au lieu d'être lancées une par une. Après `copier update`, préférer :
+
+```bash
+bash .ai/scripts/aic.sh migrate plan        # preview : inventorie sans rien écrire
+bash .ai/scripts/aic.sh migrate all --apply # applique okf-type puis okf-indexes, dans l'ordre
+```
+
+Le préflight bloque avant toute écriture sur : fichiers `.rej` non résolus,
+collisions d'index Markdown ; `.copier-answers.yml` absent produit une
+remédiation (`aic.sh repair-copier-metadata`) au lieu d'échouer silencieusement.
+Les commandes individuelles (`migrate okf-type`, `migrate okf-indexes`) restent
+disponibles et équivalentes si tu préfères les lancer séparément.
+
+La migration legacy `aic migrate` (normalisation frontmatter des anciens projets)
+n'entre **jamais** implicitement dans `migrate all` — elle reste manuelle pour
+éviter le churn `schema_version` sur les fiches déjà canoniques. `aic-onboard`
+(overlay projet `.ai/project/**`) reste une étape humaine séparée, signalée mais
+non déclenchée par le plan.
+
+Rollback : `git revert` des commits générés par chaque étape (les fiches
+t'appartiennent).
+
+---
+
 ## Migration de surface `aic` (v0.13+)
 
 La surface utilisateur canonique est désormais `aic` / `aic-*`. Les anciens

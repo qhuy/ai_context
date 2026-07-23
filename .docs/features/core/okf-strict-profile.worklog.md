@@ -128,3 +128,6 @@
 - Co-propriété directe de `build-feature-index.sh` et `migrate-okf-type.sh` conservée ; `_lib.sh` est reclassé en dépendance partagée.
 - La projection Markdown tolère toujours `type` absent en vN et reste découplée de la migration `okf-type`.
 - Validation : tests `okf-type`, index Markdown et smoke Copier PASS.
+
+## 2026-07-24 — couverture incidente (release v0.14.0)
+- `MIGRATION.md` reçoit une nouvelle section « Cockpit de migrations post-Copier (v0.14+) », propriété de `core/migration-orchestrator`. Aucun changement du contrat `type`/profil OKF de cette fiche ; la section « Profil strict OKF — champ type » n'est pas modifiée.

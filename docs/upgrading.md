@@ -6,16 +6,18 @@ Quand le template évolue sur GitHub (nouvelles règles, nouveaux checks, fixes)
 
 ```bash
 cd mon-projet
-copier update --vcs-ref=HEAD --conflict=rej
+copier update --conflict=rej
 ```
 
-Copier lit `.copier-answers.yml` pour retrouver les réponses initiales. Il te montre un **diff** pour chaque fichier modifié et te demande quoi faire :
+Copier lit `.copier-answers.yml` pour retrouver les réponses initiales et cible par défaut le dernier tag publié. Il te montre un **diff** pour chaque fichier modifié et te demande quoi faire :
 
 - `y` : appliquer le changement.
 - `n` : ignorer.
 - `d` : voir le diff en détail.
 
-Pourquoi `--vcs-ref=HEAD` : Copier cible souvent le dernier tag publié par défaut. Si `main` contient une version plus récente que le dernier tag, `copier update` seul peut proposer une mise à jour vers une version plus ancienne que le HEAD GitHub.
+Depuis la reprise d'une cadence de tags réguliers (voir `RELEASE.md`), le dernier tag reflète l'état courant du template : `copier update` sans `--vcs-ref` est la recommandation par défaut.
+
+`--vcs-ref=HEAD` reste disponible pour suivre `main` sans attendre le prochain tag, mais expose au risque inverse : si le dernier tag prend du retard sur `main` (ce qui s'est déjà produit), il peut appliquer des changements pas encore stabilisés en release. À utiliser en connaissance de cause, pas par défaut.
 
 Pourquoi `--conflict=rej` : en cas de merge difficile, Copier écrit des fichiers `.rej` à arbitrer au lieu d'insérer des marqueurs `<<<<<<<` directement dans les scripts. Inspecte puis supprime les `.rej` avant commit.
 

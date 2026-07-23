@@ -229,3 +229,4 @@ constituent les preuves d'exécution.
 - 2026-07-17 : le premier plan dogfood a détecté 65 ajouts artificiels de
   `schema_version` via le migrateur historique. Décision : le garder opt-in via
   `aic migrate` et limiter `migrate all` aux migrations de version actives.
+- 2026-07-24 (release v0.14.0) : `MIGRATION.md` reçoit sa section dédiée (« Cockpit de migrations post-Copier (v0.14+) »), comblant l'écart trouvé lors de la préparation de release — le `touches_shared:` anticipait déjà ce fichier mais aucun contenu n'y décrivait encore `aic migrate plan/all`. Documente le cockpit comme alternative recommandée aux commandes `okf-type`/`okf-indexes` individuelles, sans les déprécier.

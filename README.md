@@ -295,8 +295,10 @@ Guide complet : [MIGRATION.md](MIGRATION.md).
 ## Mettre à jour le template
 
 ```bash
-copier update --vcs-ref=HEAD --conflict=rej
+copier update --conflict=rej
 ```
+
+Par défaut, Copier cible le dernier tag publié (cadence régulière, voir `RELEASE.md`). Pour suivre `main` sans attendre le prochain tag, `--vcs-ref=HEAD` reste disponible mais peut appliquer des changements pas encore stabilisés — voir `docs/upgrading.md`.
 
 `--conflict=rej` garde les scripts exécutables sans marqueurs `<<<<<<<` inline ; inspecte les `.rej` avant commit.
 
@@ -338,6 +340,7 @@ Guide complet : [docs/upgrading.md](docs/upgrading.md).
 | `AI_CONTEXT_SHOW_ALL_STATUS=1` | inclut `done`, `deprecated`, `archived` dans le reminder |
 | `AI_CONTEXT_FOCUS=<scope>` | réduit l'inventaire au scope + voisins 1-hop |
 | `AI_CONTEXT_DOCS_ROOT=<dir>` | override du dossier de docs métier |
+| `AIC_DOC_GATE=off` | échappatoire tracée du gate Stop de fraîcheur (WIP explicite) |
 
 ## FAQ
 

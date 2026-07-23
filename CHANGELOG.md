@@ -2,9 +2,16 @@
 
 ## [Unreleased]
 
-> Profil strict OKF Phase 0 (`core/okf-strict-profile`) : les fiches feature deviennent
-> des concepts Open Knowledge Format valides, sans rien perdre du modèle riche.
+## [0.14.0] — 2026-07-24
+
+> Cockpit de migrations post-Copier, index Markdown progressifs, overlay registre de
+> scopes et skill `aic-onboard`, discipline de preuve transverse, hooks Codex natifs
+> opt-in, provider VCS configurable, gate Stop de fraîcheur documentaire, et profil
+> strict OKF Phase 0 (`core/okf-strict-profile`) : les fiches feature deviennent des
+> concepts Open Knowledge Format valides, sans rien perdre du modèle riche.
 > **Non-cassant** : `type` optionnel à l'introduction, requis seulement au release d'enforce suivant.
+> Élagage des shims Copilot/Cursor commoditisés par `AGENTS.md` — non-cassant, gouverné
+> par un kill criterion vérifiable (voir MIGRATION.md § « Shims Copilot / Cursor »).
 
 ### Nouveau
 - **Cockpit de migrations post-Copier** (`core/migration-orchestrator`) : `aic migrate plan` inventorie sans écrire les migrations project-owned et les étapes humaines ; `aic migrate all` reste une preview, `--apply` prévalide puis applique `okf-type` et `okf-indexes` dans l'ordre avant les checks. Les fichiers `.rej` et collisions d'index bloquent avant mutation, `.copier-answers.yml` absent produit une remédiation, et `aic-onboard` reste séparé. La migration historique `aic migrate` n'entre pas dans le batch afin d'éviter le churn `schema_version` sur les fiches canoniques.

@@ -237,3 +237,6 @@
 ## 2026-07-16 — HANDOFF documentation de migration
 - `MIGRATION.md` documente le dry-run, l'application explicite et le rollback des index progressifs sans modifier le contrat read-only des checks.
 - Validation : checks warn-only/strict, simulation staged et smoke Copier couvrent la procédure.
+
+## 2026-07-24 — couverture incidente (release v0.14.0)
+- `MIGRATION.md` reçoit une nouvelle section « Cockpit de migrations post-Copier (v0.14+) », propriété de `core/migration-orchestrator`. Le contrat read-only des checks (`--no-write`, index temporaire) n'est pas modifié.

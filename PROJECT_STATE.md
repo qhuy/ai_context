@@ -3,7 +3,7 @@
 **But** : template `copier` qui industrialise le setup AI context (multi-agent : Claude / Codex / Cursor / Gemini / Copilot) d'un nouveau projet.
 **Remote** : [github.com/qhuy/ai_context](https://github.com/qhuy/ai_context) (public)
 **Local** : chemin de développement local, non versionné.
-**Dernière version publiée** : v0.13.0 — « Contrat read-only des checks, index contract v2 & surface CLI `aic` » (voir [CHANGELOG.md](CHANGELOG.md))
+**Dernière version publiée** : v0.14.0 — « Migrations post-Copier, index progressifs, overlay registre de scopes & discipline de preuve » (voir [CHANGELOG.md](CHANGELOG.md))
 
 > Ce fichier est un **point d'entrée rapide**. Pour l'historique détaillé des versions, consulter [CHANGELOG.md](CHANGELOG.md). Pour adopter le template sur un projet existant, [MIGRATION.md](MIGRATION.md). Pour l'architecture visuelle, diagramme mermaid dans [README.md](README.md). Pour les audits historiques clos, [docs/archive/](docs/archive/) ([AUDIT.md](docs/archive/AUDIT.md) — 2026-05-01/03, [AUDIT_2026-05-06.md](docs/archive/AUDIT_2026-05-06.md)).
 
@@ -17,7 +17,7 @@
 1. Ouvrir Claude Code dans le dossier local du dépôt `ai_context`.
 2. Lire [CHANGELOG.md](CHANGELOG.md) — les dernières breaking/nouveautés.
 3. Lancer le smoke-test : `export PATH="$HOME/Library/Python/3.9/bin:$PATH" && bash tests/smoke-test.sh` (28 étapes, attendu `✅ PASS`).
-4. Consommer le template : `copier copy gh:qhuy/ai_context ./mon-projet`. Mettre à jour : `cd mon-projet && copier update --vcs-ref=HEAD --conflict=rej`.
+4. Consommer le template : `copier copy gh:qhuy/ai_context ./mon-projet`. Mettre à jour : `cd mon-projet && copier update --conflict=rej` (cible le dernier tag par défaut ; `--vcs-ref=HEAD` pour suivre `main` sans attendre le prochain tag, voir `docs/upgrading.md`).
 5. Dogfooder le repo source après évolution du template. Le repo source n'a pas de `.copier-answers.yml` et ne doit pas être mis à jour via `copier update` :
    - preview : `bash .ai/scripts/dogfood-update.sh`
    - apply : `bash .ai/scripts/dogfood-update.sh --apply`
@@ -50,9 +50,21 @@
 - `template/.ai/workflows/` — procédures internes agent-agnostic partagées par Claude et Codex : `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `document-feature`, `quality-gate`, `feature-done`, `project-guardrails`, `project-overlay-sync`, `dev-plan`, `codex-hooks-parity`, `evidence-discipline`, `mcp-policy`, `subagent-contract`.
 - `tests/smoke-test.sh` — 28 assertions end-to-end.
 
-## État actuel (v0.13.0)
+## État actuel (v0.14.0)
 
-- **HEAD Unreleased** — shims AGENTS.md natifs/lean, hooks Codex opt-in, discipline de preuve, registre de scopes + `aic-onboard`, `aic-pilot`, gate Stop de fraîcheur, OKF Phase 0, `vcs_provider`, knowledge hub, durcissements CI/docs issus de l'audit 2026-07-07.
+- **Cockpit de migrations post-Copier** — `aic migrate plan/all --apply` orchestre `okf-type` puis `okf-indexes` avec préflight (`.rej`, `.copier-answers.yml` manquant) ; la migration legacy `aic migrate` reste hors batch.
+- **Index Markdown progressifs** — `<docs_root>/features/index.md` + `index.md` par scope, générés déterministes et versionnables ; `aic migrate okf-indexes`, check warn-only vN / `--strict` prêt pour vN+1.
+- **Overlay registre de scopes + `aic-onboard`** — `.ai/project/<scope>/index.md` par app/couche, contrat `paths/meta/conventions/derived`, skill `aic-onboard` (modes init/sync/migrate auto-détectés).
+- **Discipline de preuve transverse** (`workflow/evidence-discipline`) — toute affirmation prouvée (fichier:ligne, commande, doc) ou étiquetée Hypothèse ; câblée dans `aic-review`/`aic-diagnose`/`aic-pilot`/`aic-frame`.
+- **Hooks Codex natifs opt-in** (`enable_codex_hooks`) — reminder par tour + gate Stop de fraîcheur, parité documentée avec Claude (`workflow/codex-hooks-parity`).
+- **Provider VCS configurable** (`vcs_provider`) — `git`/`tfvc`/`auto`/`none` ; TFVC explicitement documenté best-effort, non testé end-to-end.
+- **Gate Stop de fraîcheur documentaire** (`workflow/stop-turn-doc-gate`) — bloque la fin de tour si du code couvert change sans mise à jour de fiche/worklog ; échappatoire `AIC_DOC_GATE=off`.
+- **Profil strict OKF Phase 0** — champ `type` optionnel (warn-only, jamais bloquant), backfill via `aic migrate okf-type --apply`.
+- **Élagage des shims commoditisés par AGENTS.md** — Copilot/Cursor confirmés natifs avec evidence officielle ; kill criterion vérifiable (`check-agent-native-context.sh --require-confirmed`).
+- **Reprise de cadence de tags** — `copier update` sans `--vcs-ref` cible de nouveau un tag à jour ; `--vcs-ref=HEAD` documenté comme option avancée (voir `docs/upgrading.md`).
+
+### État v0.13.0 (rappel)
+
 - **Contrat read-only des checks** — `check-features.sh --no-write` valide le mesh sans écrire l'index ; `doctor`, `quality-gate`, la CI, `check-feature-freshness`, `check-feature-coverage`, `review-delta`, `pr-report` et les rapports product consomment un index temporaire ou le cache existant (warning si absent).
 - **Index contract v2** — `build-feature-index.sh --write` ne réécrit `.ai/.feature-index.json` que si le contrat JSON change (hors `generated_at`) ; ordre des features stable ; `schema_version` + `project_id` exposés ; fallback parser sans `yq` (extraction `product.portfolio.*`).
 - **Surface CLI `aic` (breaking)** — la surface publique devient `aic.sh frame/status/diagnose/document-feature/review/ship`, alignée avec les skills `aic-*`. Les anciens verbes publics de cadrage/brief/document-delta/ship-report sont supprimés (pas d'aliases).
@@ -67,13 +79,13 @@
 - **i18n** — reminder FR/EN selon `commit_language`.
 - **Presets techniques** — règles stack optionnelles via `tech_profile` (`dotnet-clean-cqrs`, `react-next`, `fullstack-dotnet-react`).
 - **Fiabilité** — `_lib.sh` helpers, matching `touches:` / `touches_shared:` centralisé, lock atomique sur index, globstar, dépendances vérifiées, JSON escaping via jq.
-- **Tags versionnés** — `v0.7.2`, `v0.8.0`, `v0.9.0`, `v0.10.0`, `v0.11.0`, `v0.12.0`, `v0.13.0` — `copier update --vcs-ref=v0.13.0` possible.
+- **Tags versionnés** — `v0.7.2`, `v0.8.0`, `v0.9.0`, `v0.10.0`, `v0.11.0`, `v0.12.0`, `v0.13.0`, `v0.14.0` — `copier update` sans `--vcs-ref` cible désormais le dernier tag à jour.
 - **Documentation** — README avec mermaid + FAQ + use cases, MIGRATION.md progressif, skills self-contained.
 - **Guardrails projet** — `.ai/guardrails.md` cadre les non-goals + glossaire métier, chargé uniquement on-demand. Le point d'entrée recommandé est `/aic-frame`; la procédure interne vit dans `.ai/workflows/project-guardrails.md`.
 - **Skills intentionnels** — `/aic-frame`, `/aic-status`, `/aic-review`, `/aic-ship`, `/aic-diagnose`, `/aic-document-feature`, `/aic-dev-plan`, `/aic-onboard`, `/aic-pilot` couvrent les intentions publiques. Les procédures internes restent en backend `.ai/workflows/`.
 - **Surface aic canonique** — `aic.sh frame/status/diagnose/document-feature/review/ship` couvre le cycle utilisateur CLI pour Codex et agents non-hookés ; `aic.sh knowledge` expose le hub knowledge. Les commandes techniques restent en maintenance.
 - **Traceability produit** — scope `product`, champs `product.*` / `external_refs` et commandes `product-status`, `product-portfolio`, `product-review`.
-- **Upgrade robuste** — `repair-copier-metadata` recrée `.copier-answers.yml` en dry-run, `template-diff` prévisualise un rendu `/tmp` sur worktree sale, et la doc recommande `copier update --vcs-ref=HEAD --conflict=rej`.
+- **Upgrade robuste** — `repair-copier-metadata` recrée `.copier-answers.yml` en dry-run, `template-diff` prévisualise un rendu `/tmp` sur worktree sale, et la doc recommande `copier update --conflict=rej` (dernier tag par défaut depuis la reprise de cadence en v0.14.0 ; `--vcs-ref=HEAD` documenté comme option avancée).
 
 ## Roadmap — pistes ouvertes
 

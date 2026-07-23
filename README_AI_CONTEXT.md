@@ -54,14 +54,13 @@ Toute feature ajoute ou met à jour un fichier `.docs/features/<scope>/<id>.md` 
 Quand le template évolue sur GitHub :
 
 ```bash
-copier update --vcs-ref=HEAD --conflict=rej
+copier update --conflict=rej
 ```
 
-Les réponses déjà données sont relues depuis `.copier-answers.yml`. Tu contrôles le diff appliqué.
+Les réponses déjà données sont relues depuis `.copier-answers.yml`. Tu contrôles le diff appliqué. Par défaut, Copier cible le dernier tag publié (cadence régulière, voir `RELEASE.md`) ; `--vcs-ref=HEAD` reste disponible pour suivre `main` sans attendre le prochain tag, au risque d'appliquer des changements pas encore stabilisés — voir `docs/upgrading.md`.
 
 `.ai/project/**` est réservé au projet : `copier update` ne doit ni supprimer ni écraser ce dossier. Voir `.ai/OWNERSHIP.md` et l'exemple `.ai/templates/project-overlay/README.md`.
 
-`--vcs-ref=HEAD` évite que Copier choisisse le dernier tag publié si le HEAD GitHub est plus récent.
 `--conflict=rej` évite les marqueurs de conflit inline dans les scripts ; inspecte les `.rej` avant commit.
 
 Si `.copier-answers.yml` manque ou ne contient pas `_src_path` / `_commit` :

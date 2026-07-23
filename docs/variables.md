@@ -87,4 +87,4 @@ Les variables `AI_CONTEXT_DOCS_ROOT`, `AI_CONTEXT_FEATURES_DIR` et `AI_CONTEXT_S
 - `.ai/templates/project-overlay/README.md` (exemple, pas un overlay actif)
 - `README_AI_CONTEXT.md`
 - `{{docs_root}}/.gitkeep`
-- `.copier-answers.yml` (tracking du template appliqué ; doit être versionné pour permettre `copier update --vcs-ref=HEAD`)
+- `.copier-answers.yml` (tracking du template appliqué ; doit être versionné pour permettre `copier update`)

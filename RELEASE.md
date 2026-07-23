@@ -42,14 +42,17 @@ Vérifier pour chaque rendu :
 
 ### 3. `copier update` sur un projet existant
 
-Si un projet consommateur de référence est dispo :
+Si un projet consommateur de référence est dispo, tester sur une **copie jetable** (jamais le projet réel) :
 
 ```bash
-cd <projet-consommateur>
-copier update --vcs-ref=HEAD --conflict=rej <chemin-vers-ai_context>
+git clone --no-hardlinks <projet-consommateur> /tmp/update-test
+cd /tmp/update-test
+# _src_path pointe normalement vers gh:qhuy/ai_context ; pour tester le repo source local,
+# éditer .copier-answers.yml (_src_path: <chemin-vers-ai_context>) puis committer localement.
+copier update --vcs-ref=HEAD --conflict=rej --defaults --trust
 ```
 
-Vérifier qu'aucune surprise sur les fichiers customisés (mesh existant, rules métier).
+`copier update` n'a qu'un seul positionnel (`destination_path`, défaut `.`) — il n'existe **aucun** moyen de passer la source en argument (contrairement à `copier copy`). La source est toujours lue depuis `_src_path` dans `.copier-answers.yml` du projet cible. Vérifier qu'aucune surprise sur les fichiers customisés (mesh existant, rules métier) et l'absence de fichiers `.rej`.
 
 ### 4. Documentation
 
