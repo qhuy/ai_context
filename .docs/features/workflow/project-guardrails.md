@@ -8,10 +8,10 @@ depends_on:
   - core/feature-mesh
 touches:
   - .ai/workflows/project-guardrails.md
-  - .ai/index.md
   - template/.ai/workflows/project-guardrails.md.jinja
-  - template/.ai/index.md.jinja
 touches_shared:
+  - .ai/index.md
+  - template/.ai/index.md.jinja
   - README_AI_CONTEXT.md
   - template/README_AI_CONTEXT.md.jinja
   - copier.yml

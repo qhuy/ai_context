@@ -2,6 +2,8 @@
 
 Ce projet a été scaffoldé depuis le template [`ai_context`](https://github.com/qhuy/ai_context). Le setup cross-agent (Claude / Codex / Cursor / Gemini / Copilot) est industrialisé.
 
+Vocabulaire maison (Pack A, shim, touches, HANDOFF, frame, OKF...) : voir [`GLOSSARY.md`](GLOSSARY.md).
+
 ## Premier pas
 
 1. **Lire [`AGENTS.md`](AGENTS.md)** puis **[`.ai/index.md`](.ai/index.md)**.

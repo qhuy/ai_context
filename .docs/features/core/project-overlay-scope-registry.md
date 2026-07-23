@@ -7,14 +7,14 @@ type: feature
 depends_on:
   - core/project-overlay-stable
 touches:
-  - ".ai/index.md"
-  - "template/.ai/index.md.jinja"
   - ".ai/OWNERSHIP.md"
   - "template/.ai/OWNERSHIP.md.jinja"
   - ".ai/templates/project-overlay/README.md"
   - "template/.ai/templates/project-overlay/README.md.jinja"
   - "tests/unit/test-project-overlay.sh"
 touches_shared:
+  - ".ai/index.md"
+  - "template/.ai/index.md.jinja"
   - ".ai/scripts/check-dogfood-drift.sh"
   - ".ai/scripts/check-ai-references.sh"
   - "docs/upgrading.md"

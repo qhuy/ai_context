@@ -230,3 +230,6 @@
 - HANDOFF interne core depuis `core/migration-orchestrator` : ajout des routes publiques `aic migrate plan` et `aic migrate all [--apply]` sans casser les sous-commandes existantes.
 - Aide runtime/template et README consommateur alignés ; la logique reste isolée dans `migrate-all.sh`.
 - Validation ciblée : `test-migration-orchestrator.sh` couvre le dispatch, le dry-run strict et les arguments invalides.
+
+## 2026-07-24 — couverture incidente (pilotage P13)
+- `README_AI_CONTEXT.md` (+ miroir template) reçoit un pointeur vers le nouveau `GLOSSARY.md`, propriété de la fiche glossaire. Aucun changement de la surface `aic`.

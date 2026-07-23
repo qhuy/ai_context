@@ -20,11 +20,11 @@ touches:
   - template/.ai/scripts/product-portfolio.sh.jinja
   - template/.ai/scripts/product-review.sh.jinja
   - tests/unit/test-product-reports-read-only.sh
-  - .ai/index.md
-  - template/.ai/index.md.jinja
   - .docs/FEATURE_TEMPLATE.md
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
 touches_shared:
+  - .ai/index.md
+  - template/.ai/index.md.jinja
   - .ai/scripts/build-feature-index.sh
   - template/.ai/scripts/build-feature-index.sh.jinja
   - .ai/scripts/aic.sh

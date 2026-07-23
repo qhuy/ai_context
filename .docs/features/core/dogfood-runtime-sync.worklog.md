@@ -514,3 +514,6 @@
 
 ## 2026-07-24 — couverture incidente (pilotage P3)
 - `.gitignore` racine reçoit une entrée `/docs/benchmarks/runs/` (hygiène repo, propriété `product/agent-efficacy-benchmark`). Aucun changement des exclusions dogfood existantes ; `check-dogfood-drift` reste vert.
+
+## 2026-07-24 — couverture incidente (pilotage P13, glob `.ai/**`)
+- `.ai/index.md` (+ miroir `template/.ai/index.md.jinja`) reçoit un pointeur vers le nouveau `GLOSSARY.md`, propriété de la fiche glossaire (voir pilotage). Couvert ici uniquement via le catch-all `touches: .ai/**`. `check-dogfood-drift` reste vert après ajout du miroir jinja identique.

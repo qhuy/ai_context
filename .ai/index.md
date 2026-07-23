@@ -2,7 +2,9 @@
 
 > Template copier pour industrialiser le contexte des agents IA
 
-Entrée unique des agents. Mode par défaut : **lean context**.
+Entrée unique des agents. Mode par défaut : **lean context**. Vocabulaire du
+framework (Pack A, shim, touches, HANDOFF, frame, OKF, dogfood...) : voir
+[`GLOSSARY.md`](../GLOSSARY.md).
 
 ## Pack A — always load
 

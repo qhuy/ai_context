@@ -7,12 +7,12 @@ depends_on:
   - workflow/claude-skills
 touches:
   - .ai/agent/**
-  - .ai/index.md
   - .claude/skills/aic-diagnose/**
   - template/.ai/agent/**
-  - template/.ai/index.md.jinja
   - template/.claude/skills/aic-diagnose/**
 touches_shared:
+  - .ai/index.md
+  - template/.ai/index.md.jinja
   - copier.yml
   - README.md
 progress:

@@ -25,9 +25,9 @@ touches:
   - template/.agents/skills/aic/**
   - template/.agents/skills/aic-document-feature/**
   - template/.agents/skills/aic-ship/**
+touches_shared:
   - .ai/index.md
   - template/.ai/index.md.jinja
-touches_shared:
   - .claude/skills/aic-frame/**
   - template/.claude/skills/aic-frame/**
   - .agents/skills/aic-frame/**

@@ -5,14 +5,14 @@ title: Overlay projet stable
 status: done
 depends_on: []
 touches:
-  - "template/.ai/index.md.jinja"
   - "template/.ai/OWNERSHIP.md.jinja"
   - "template/.ai/templates/project-overlay/README.md.jinja"
-  - ".ai/index.md"
   - ".ai/OWNERSHIP.md"
   - ".ai/templates/project-overlay/README.md"
   - "tests/unit/test-project-overlay.sh"
 touches_shared:
+  - "template/.ai/index.md.jinja"
+  - ".ai/index.md"
   - "docs/upgrading.md"
   - "copier.yml"
   - "template/README_AI_CONTEXT.md.jinja"

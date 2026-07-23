@@ -99,3 +99,6 @@
 ## 2026-07-17 — rollback VCS du cockpit de migration
 - Les conseils de rollback de `core/migration-orchestrator` restent formulés en termes de revert du VCS, sans supposer Git dans le runtime.
 - Les surfaces partagées `copier.yml` et `README_AI_CONTEXT.md` conservent les contrats provider existants ; aucun appel Git n'est ajouté au cockpit.
+
+## 2026-07-24 — couverture incidente (pilotage P13)
+- `README_AI_CONTEXT.md` (+ miroir template) reçoit un pointeur vers le nouveau `GLOSSARY.md`. Aucun changement du contrat provider VCS.

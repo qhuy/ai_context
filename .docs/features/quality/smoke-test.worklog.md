@@ -327,3 +327,6 @@
 - Propriété directe de `tests/smoke-test.sh` conservée ; `core/vcs-provider-abstraction` devient consommateur partagé.
 - Le scénario d'upgrade prouve non-mutation, warning vN, application explicite, second passage idempotent et rollback `git revert`.
 - Validation : smoke complet PASS après remédiation de la revue Claude/Codex.
+
+## 2026-07-24 — assertion GLOSSARY.md (pilotage P13)
+- Nouvelle assertion `[2/28]` : `GLOSSARY.md` présent après scaffold par défaut et lié depuis `.ai/index.md` ou `README_AI_CONTEXT.md`. Smoke complet relancé, PASS.

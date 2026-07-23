@@ -38,6 +38,8 @@ testé.
 | Utiliser Claude et Codex avec le même langage | surface `aic` : frame, pilot, status, diagnose, document-feature, review, ship |
 | Garder un projet mature propre | hooks git, checks CI, doctor, smoke-test, migration Copier |
 
+Vocabulaire maison utilisé dans ce README (Pack A, shim, touches, HANDOFF...) : voir [GLOSSARY.md](GLOSSARY.md).
+
 ## Pour qui
 
 `ai_context` est utile si tu as :
@@ -382,6 +384,7 @@ Oui. Utilise `docs_root=docs` si nécessaire et crée des scopes adaptés
 ## Documentation
 
 - [README_AI_CONTEXT.md](README_AI_CONTEXT.md) - guide généré dans les projets consommateurs ; dans ce repo source, `README.md` reste l'entrée canonique
+- [GLOSSARY.md](GLOSSARY.md) - vocabulaire maison (Pack A, shim, mesh, touches, HANDOFF, frame, OKF, dogfood...)
 - [docs/getting-started.md](docs/getting-started.md) - démarrage détaillé
 - [MIGRATION.md](MIGRATION.md) - migration brownfield
 - [docs/upgrading.md](docs/upgrading.md) - updates Copier

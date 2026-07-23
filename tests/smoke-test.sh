@@ -173,6 +173,15 @@ if ! grep -q "Project Overlay" "$OUT/.ai/index.md"; then
   exit 1
 fi
 echo "  ✓ .ai/index.md mentionne Project Overlay"
+if [[ ! -f "$OUT/GLOSSARY.md" ]]; then
+  echo "  ✗ GLOSSARY.md absent"
+  exit 1
+fi
+if ! grep -q "GLOSSARY.md" "$OUT/.ai/index.md" "$OUT/README_AI_CONTEXT.md"; then
+  echo "  ✗ GLOSSARY.md non lié depuis .ai/index.md ou README_AI_CONTEXT.md"
+  exit 1
+fi
+echo "  ✓ GLOSSARY.md présent et lié"
 if ! ( cd "$OUT" && bash .ai/scripts/review-delta.sh --help ) | grep -q "Review Delta"; then
   echo "  ✗ review-delta.sh --help invalide"
   exit 1
