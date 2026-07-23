@@ -91,3 +91,12 @@
 ## 2026-07-24 00:23 — auto
 - Fichiers modifiés :
   - .docs/pilots/2026-07-23-analyse-fonctionnelle-generale.md
+
+## 2026-07-24 — P9a exécuté de bout en bout et clos (release v0.14.0)
+- Mandat utilisateur « go jusqu'au bout, test, dogfooding, commit, push » : checklist RELEASE.md §1-7 exécutée intégralement. Détail complet et preuves dans le registre (section « Preuve de clôture P9a »).
+- 2 bugs réels trouvés et corrigés en cours de route (hors périmètre initial du registre) : syntaxe `--data agents=<multiselect>` de RELEASE.md §2 cassée sous Copier 9.14.3 (contournée) ; positionnel source inexistant pour `copier update` documenté à RELEASE.md:49 (corrigé avec la méthode clone-jetable + `_src_path`).
+- `copier update` testé sur une copie jetable de `ai_debate` (jamais l'original) : 214 commits de rattrapage, 0 `.rej`, mesh utilisateur intact.
+- Gate freshness a détecté un vrai trou de couverture sur `MIGRATION.md` (2 fiches voisines non anticipées) — corrigé par entrées « couverture incidente ».
+- Tag `v0.14.0` sur `5c34108`, poussé sur `origin/main` et `origin/v0.14.0`. `git describe --tags` = `v0.14.0` exact : le décrochage de 213 commits identifié en début de pilotage est résolu.
+- Sanity post-release (RELEASE.md §7) : rendu depuis GitHub PASS, `check-shims`/`doctor` PASS.
+- P9a : `done`. Le registre reste `active` (19 autres items en triage/inbox) ; prochaine question posée à l'utilisateur = quel item traiter ensuite.

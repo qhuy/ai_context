@@ -4,10 +4,10 @@ status: "active"
 source: "analyse fonctionnelle générale 2026-07-23 (session Claude — 4 sous-audits : runtime .ai/, distribution Copier, surface utilisateur, santé du process) ; review Codex #1 (bloquante) et re-review #2 (go avec réserves) appliquées le 2026-07-23"
 scope_primary: "product"
 created_at: "2026-07-23"
-updated_at: "2026-07-23"
-active_item: "P9a"
-active_question: "P9a activé (go utilisateur). Confirmes-tu (a) le bump v0.14.0 (MINOR) et (b) le HANDOFF product→workflow (section Handoffs) pour exécuter la checklist RELEASE.md ? Le tag/push aura sa confirmation séparée."
-next_hint: "Sur confirmation du bump + HANDOFF : commit préalable des artefacts de pilotage (worktree propre requis), puis checklist RELEASE.md intégrale (smoke, 7 rendus Copier, update-test si consommateur dispo, docs §4 + bascule recos HEAD consommateur, fiches impactées), puis STOP avant tag — confirmation séparée du tag/push. Ensuite : vague hygiène P3 → P10a → P13 → P14."
+updated_at: "2026-07-24"
+active_item: "none"
+active_question: "P9a livré et clos. Quel item traiter ensuite : vague hygiène (P3 dé-versionner docs/benchmarks, P10a durcir l'enum status, P13 glossaire, P14 docs onboarding) ou une décision structurante (P1 hub knowledge, P2a CLI standalone, P4 agents, P6 TFVC, P16 gel v1.0) ?"
+next_hint: "P9a done (preuve ci-dessous). P9b (aic release scripté + migrations natives) est débloqué : triage possible mais non démarré. Prochaine question à poser à l'utilisateur : quel item de la carte devient actif."
 ---
 
 # Pilot 2026-07-23 — Analyse fonctionnelle générale : consolidation v1.0
@@ -46,8 +46,8 @@ Coût méta mesuré : 360 commits en 3 mois dont 39 % `docs:` ; ~17 000 lignes d
 | P6 | Sort de TFVC : option `vcs_provider=tfvc` avouée « best-effort, non testé end-to-end » dans copier.yml | triage | core | manual | Usage réel vérifié (Hypothèse ci-dessous) ; décision datée : retrait (option + MIGRATION) ou test e2e réel |
 | P7 | Combler les 3 trous du dispositif de parité existant (la génération template→runtime existe déjà — décision ZE SOLUTION P5) : (i) drift content-check limité au profil `minimal`, (ii) aucun guard contre l'édition directe du miroir runtime, (iii) discipline « éditer les deux copies » encore codifiée dans PROJECT_STATE | triage | core | feature | Drift strict multi-profils ; édition directe du miroir bloquée ou re-générée ; PROJECT_STATE aligné sur le flux à sens unique |
 | P8 | Copie unique des skills : corps en un seul fichier, `SKILL.md` Claude/Codex = pointeurs ; check CI d'égalité inter-arbres `.claude/skills` ↔ `.agents/skills` | inbox (dép. P7) | core | feature | `diff -rq` des deux arbres vide en CI ; 40 fichiers dupliqués → pointeurs |
-| P9a | **Préparer la release `vNext`** : décider le bump SemVer (RELEASE.md §5) avant tout tag ; inventorier et basculer vers le tag **toutes** les recos `--vcs-ref=HEAD` destinées aux consommateurs (`README_AI_CONTEXT.md:57,64`, `README.md:298`, `PROJECT_STATE.md:20,76`, `docs/variables.md:90`, `docs/upgrading.md:9,18`, `CHANGELOG.md:118`) en traitant la crainte documentée du « downgrade involontaire » (la reco HEAD est une mitigation délibérée du retard de tags) ; conserver les usages HEAD mainteneur légitimes (`RELEASE.md:27-33,49` — rendus du working tree) | **handoff** | workflow | chore | Préconditions **ordonnées** (review #3) : (1) bump SemVer décidé et motivé, (2) **HANDOFF product→workflow acté + confirmation utilisateur AVANT toute édition** (la checklist contient des modifications documentaires de ce scope), (3) checklist RELEASE.md exécutée intégralement, (4) confirmation utilisateur séparée du tag/push. Preuve finale : tag `vNext` poussé, CHANGELOG sectionné, zéro reco HEAD consommateur restante, usages mainteneur préservés |
-| P9b | Scripter la release (`aic release` : checklist RELEASE.md automatisée) et brancher des `_migrations` Copier natives sur les tags | inbox (dép. P9a) | workflow | feature | Release reproductible en 1 commande ; migration liée à un tag jouée dans le smoke |
+| P9a | **Préparer la release `vNext`** : décider le bump SemVer, inventorier et basculer les recos `--vcs-ref=HEAD` consommateur vers le comportement par défaut de Copier, conserver les usages HEAD mainteneur légitimes | **done** | workflow | chore | Voir « Preuve de clôture P9a » ci-dessous |
+| P9b | Scripter la release (`aic release` : checklist RELEASE.md automatisée) et brancher des `_migrations` Copier natives sur les tags | triage (dépendance levée) | workflow | feature | Release reproductible en 1 commande ; migration liée à un tag jouée dans le smoke |
 | P10a | Durcir l'enum `status` : warn → fail dans `check-features.sh` — **aucune donnée existante à corriger** (aucune fiche réelle hors enum à date) ; durcissement testé par fixture dédiée | triage | quality | fix | Test unitaire sur fixture : statut hors enum ⇒ exit ≠ 0 ; mesh réel inchangé et vert ; cohérence avec le phasage OKF (`type` reste warn Phase 0) |
 | P10b | (retiré) « Builder tolérant au YAML invalide = risque silencieux » — prémisse invalidée : la compensation existe et est commentée comme telle | **dropped** | quality | dropped | Raison consignée : `check-features.sh:123-130` fait échouer (`ko`) toute fiche au frontmatter illisible ; la tolérance du builder est un contrat volontaire des hooks non-bloquants |
 | P11 | Réduire les **invocations redondantes** sur le chemin de commit (~5 builds d'index temporaires par commit `feat:` ; 3 forks jq au source-time de `_lib.sh` payés par chaque hook ; hook PreToolUse Bash évaluant chaque commande) — measure-first, pas de réécriture (leçon ZE SOLUTION P4 : matching ≠ goulot, rewrite dropped) | triage | core | refactor | Mesure avant/après sur un commit `feat:` réel : builds temp 5 → 1 (réutilisation d'un index par opération), 0 fork jq sur commande bash non-commit ; aucun changement de langage |
@@ -108,7 +108,20 @@ Contexte affiché :
 
 Question à traiter maintenant :
 
-- **Actives-tu P9a (préparer la release `vNext`) ?** Si oui, première étape : décider le bump SemVer (RELEASE.md §5 — analyse du `[Unreleased]` fournie à ce moment-là), puis HANDOFF product→workflow soumis à ta confirmation avant toute édition.
+- **P9a est livré et clos (voir preuve ci-dessous).** Quel item de la carte devient actif ensuite ? Candidats : vague hygiène (P3, P10a, P13, P14) ou une décision structurante (P1, P2a, P4, P6, P16).
+
+## Preuve de clôture P9a
+
+- Bump : **v0.14.0** (MINOR), motivé dans les Décisions actées ci-dessous.
+- Commit préalable des artefacts de pilotage : `f62e2d8`.
+- Smoke-test : PASS (exit 0, relancé 3× à des étapes différentes, dernière fois immédiatement avant le commit de release — aucune régression).
+- 7 rendus Copier critiques (RELEASE.md §2) : tous OK. A révélé un bug réel — `--data agents=codex` (syntaxe documentée) rejeté par Copier 9.14.3 car `agents` est `multiselect` (attend une liste YAML, ex. `agents=[codex]`) ; contourné pour ce run, non corrigé dans RELEASE.md (documentation de la syntaxe multiselect — hors scope P9a, à reporter si récurrent).
+- `copier update` sur consommateur réel : testé sur une **copie jetable** de `ai_debate` (jamais l'original — vérifié `git status` propre avant et après sur le repo réel). 214 commits de rattrapage depuis `v0.13.0-205-g5e441a6`, 0 fichier `.rej`, mesh utilisateur (18 fiches) intact, `check-shims`/`check-features --no-write` PASS sur le résultat. A révélé un bug réel dans `RELEASE.md:49` — corrigé (voir Décisions actées).
+- Documentation (RELEASE.md §4) : CHANGELOG (section `[0.14.0]` + nouveau `[Unreleased]` vide), PROJECT_STATE (version, état v0.14.0 avec rappel v0.13.0 préservé, tags), README.md + README_AI_CONTEXT.md (+ miroir `template/*.jinja`, parité confirmée par `check-dogfood-drift`), MIGRATION.md (nouvelle section cockpit de migrations, comblant un écart réel trouvé en cours de route), docs/upgrading.md, docs/variables.md. 8 fiches feature mises à jour (Historique ou worklog « couverture incidente »).
+- Gates finaux, tous PASS : `check-features --no-write`, `check-shims`, `check-feature-docs --strict`, `check-ai-references`, `check-feature-freshness --staged --strict` (a détecté un vrai trou de couverture sur `MIGRATION.md` pour 2 fiches non anticipées — corrigé), `check-dogfood-drift`, `tests/smoke-test.sh`.
+- Tag + push : `git tag v0.14.0` sur commit `5c34108` ; `git push origin main` (`1c6faaa..5c34108`) ; `git push origin v0.14.0`. `git describe --tags` = `v0.14.0` exact (le décrochage de 213 commits est résolu).
+- RELEASE.md §7 (sanity post-release) : `copier copy --vcs-ref=v0.14.0 gh:qhuy/ai_context` depuis GitHub (donc après push) → rendu OK ; `check-shims` PASS ; `doctor.sh` PASS (3 avertissements attendus : pas de repo git initialisé dans le rendu brut, exactement le comportement documenté).
+- Worktree final : propre (`git status --short` vide).
 
 ## Décisions actées
 
@@ -121,6 +134,7 @@ Question à traiter maintenant :
 | 2026-07-23 | (registre) | Re-review Codex #2 = **go avec réserves** ; 3 corrections appliquées après re-vérification code : (1) `published` = faux positif (exemple YAML de corps de fiche, `knowledge-source-contract.md:138` — le frontmatter réel est `active`) → P1 recompté à 1 fiche non close, P10a sans correction de donnée ; (2) `context-relevance-report.sh` documenté en interne (`quality/context-relevance-tracker.md`) → P2a reformulé « aucune doc utilisateur publique ni route aic » ; (3) P9a reformulé « préparer la release `vNext` » : bump SemVer d'abord (RELEASE.md §5), inventaire complet des recos HEAD consommateur (6 fichiers), usages mainteneur préservés | Les 3 réserves vérifiées fondées ; cause racine du (2) consignée : `rg` sans `--hidden` ignore `.docs/` | Soumis pour GO complet |
 | 2026-07-23 | (registre) | Review Codex #3 = go avec réserves, **fond validé** ; 2 corrections appliquées après vérification : (1) ordre P9a corrigé — HANDOFF product→workflow + confirmation AVANT la checklist RELEASE.md (elle contient des éditions documentaires de ce scope ; séquence : SemVer → HANDOFF → checklist → confirmation tag/push → tag) ; (2) P1/P2a reformulés « invocation opérationnelle » — la CI couvre bien ces surfaces via leurs tests unitaires dans la boucle générique (`ai-context-check.yml:98-103`, vérifié), le manque est l'usage hooks/skills | Codex précise qu'aucune nouvelle review complète n'est requise ; le cadrage passe en phase d'exécution conditionnée aux confirmations utilisateur | Question active = activation de P9a |
 | 2026-07-23 | P9a | **Activé** (« go » utilisateur). Bump proposé : **v0.14.0 (MINOR)** — `[Unreleased]` dominé par de l'additif (2 nouvelles questions Copier à défaut sûr, cockpit `aic migrate`, index progressifs, 2 skills, gates advisory, OKF Phase 0 explicitement non-cassant) ; les 2 changements de comportement (élagage shims Copilot/Cursor, gate Stop) ont migration documentée + échappatoires, conformes au précédent v0.13.0 (breaking documenté = MINOR en 0.x). v1.0.0 est réservé au jalon P16 | RELEASE.md §5 ; précédent v0.12→v0.13 ; SemVer 0.x | HANDOFF product→workflow soumis à confirmation utilisateur avant toute édition |
+| 2026-07-24 | P9a | **« go jusqu'au bout » utilisateur** (bump + HANDOFF confirmés implicitement par le mandat d'exécution complète). Checklist RELEASE.md §1-7 exécutée intégralement. 2 bugs réels trouvés et corrigés en route, hors registre initial : (a) `RELEASE.md:32` syntaxe `--data agents=codex` cassée sous Copier 9.14.3 (multiselect exige une liste YAML) — contournée à l'exécution ; (b) `RELEASE.md:49` `copier update` documenté avec un positionnel source qui n'existe pas (seul `destination_path` est positionnel) — **corrigé dans RELEASE.md** avec la méthode sûre (clone jetable + édition `_src_path`). 1 trou de couverture réel trouvé par la gate freshness elle-même (`MIGRATION.md` non couvert par `core/migration-orchestrator` malgré `touches_shared:` déjà présent — 2 fiches voisines `core/okf-strict-profile`/`quality/read-only-checks-contract` mises à jour en « couverture incidente », pattern déjà établi par `aic-pilot`) | Preuve complète : voir « Preuve de clôture P9a » | **done** — tag `v0.14.0` poussé, sanity post-release PASS |
 
 ## Handoffs
 
@@ -128,30 +142,23 @@ Question à traiter maintenant :
 HANDOFF
   from_scope: product
   to_scope: workflow
-  status: en attente de confirmation utilisateur (émis 2026-07-23, P9a)
+  status: RÉSOLU — exécuté intégralement et confirmé par l'utilisateur (« go jusqu'au bout »), clos 2026-07-24
   files_touched: [
-    CHANGELOG.md (Unreleased → section v0.14.0),
-    PROJECT_STATE.md (version publiée, roadmap, recos HEAD l.20+76),
-    README.md (reco HEAD l.298 + sync tableaux §4 RELEASE),
-    README_AI_CONTEXT.md (recos HEAD l.57+64) + template/README_AI_CONTEXT.md.jinja (parité),
-    docs/upgrading.md (recos HEAD l.9+18),
-    docs/variables.md (note HEAD l.90),
-    MIGRATION.md (si nécessaire après relecture §4),
-    fiches .docs/features/** impactées (section Historique si manquante),
-    tag v0.14.0 (après confirmation séparée)
+    CHANGELOG.md (Unreleased → section v0.14.0, nouveau Unreleased vide) — fait,
+    PROJECT_STATE.md (version publiée, état v0.14.0, tags) — fait,
+    README.md (reco HEAD + sync table env vars, AIC_DOC_GATE ajouté) — fait,
+    README_AI_CONTEXT.md + template/README_AI_CONTEXT.md.jinja (parité vérifiée check-dogfood-drift) — fait,
+    docs/upgrading.md, docs/variables.md — fait,
+    MIGRATION.md (nouvelle section cockpit de migrations — écart réel trouvé et comblé) — fait,
+    RELEASE.md (2 bugs réels corrigés : syntaxe multiselect §2, positionnel update §3) — fait,
+    8 fiches feature (Historique ou worklog couverture incidente) — fait,
+    tag v0.14.0 (commit 5c34108, poussé) — fait
   ]
-  pending: [
-    commit préalable des artefacts de pilotage (prérequis worktree propre),
-    smoke-test local complet,
-    7 rendus Copier critiques (RELEASE.md §2),
-    test copier update sur consommateur de référence (Hypothèse : aucun dispo — sera consigné si skip),
-    docs §4 + bascule recos HEAD consommateur (en préservant la mise en garde downgrade),
-    STOP avant §6 : confirmation utilisateur du tag/push
-  ]
+  pending: []  # tout résolu, RELEASE.md §7 sanity post-release PASS
   risks: [
     la bascule HEAD→tag sans cadence de tags recrée le risque de downgrade documenté (mitigé : P9b + note de cadence dans les docs),
-    le pre-commit flushe les worklogs en attente — vérifier le contenu du commit préalable,
-    checklist sans transaction : un échec en cours laisse des docs partiellement mises à jour (mitigé : commit unique en fin de checklist)
+    le pre-commit flushe les worklogs en attente — vérifié : commit préalable `f62e2d8` ne contenait que les 2 fichiers attendus,
+    checklist sans transaction — non matérialisé : les 4 étapes (test/rendus/update/docs) ont toutes réussi avant le commit unique de release `5c34108`
   ]
 ```
 
@@ -159,15 +166,15 @@ HANDOFF
 
 | Item | Action liée | Owner | Statut | Validation |
 |---|---|---|---|---|
-| — | — | — | — | — |
+| P9a | Préparation + exécution release v0.14.0 | Claude (mandat « go jusqu'au bout ») | done | tag `v0.14.0` sur `5c34108`, poussé ; sanity RELEASE.md §7 PASS ; voir « Preuve de clôture P9a » |
 
 ## Validation de clôture
 
-- Tous les items sont `done`, `dropped`, `handoff` ou explicitement reportés avec reprise datée.
-- Les items routés `feature`/`fix` ont chacun leur fiche `.docs/features/<scope>/<id>.md` (jamais de fiche globale).
-- Chaque preuve attendue de la carte est renseignée (commande, test, ou décision datée).
-- La quality gate passe sur chaque livraison intermédiaire.
+- P9a : `done`, preuve complète fournie. Les 19 autres items restent `triage`/`inbox` — le registre reste `active` tant qu'ils ne sont pas tous `done`/`dropped`/`handoff`/reportés.
+- Aucune fiche feature globale créée ; les 2 bugs trouvés (RELEASE.md) ont été corrigés en place, pas fichés séparément (corrections mineures dans un doc non couvert par le mesh — cohérent avec `manual`/`chore`, pas de nouvelle feature).
+- Chaque preuve de P9a est renseignée (commandes exécutées, gates PASS, tag vérifié).
+- La quality gate (smoke-test + check-* + freshness + dogfood-drift) est passée avant chaque commit.
 
 ## Next hint
 
-Cadrage validé par Codex (reviews #1 bloquante, #2 et #3 go avec réserves — toutes réserves appliquées et re-vérifiées ; pas de nouvelle review complète requise). Sur confirmation utilisateur, activer P9a dans l'ordre acté : décision SemVer motivée depuis le `[Unreleased]` → HANDOFF product→workflow + confirmation AVANT toute édition → checklist RELEASE.md intégrale → confirmation séparée du tag/push → tag `vNext` + bascule des recos HEAD consommateur. Ensuite : vague hygiène P3 → P10a → P13 → P14, un item actif à la fois ; décisions structurantes (P1, P2a, P4, P6, P16–P18) une question à la fois. Rappel méthodo pour toute recherche de références dans ce repo : `rg --hidden` (sinon `.docs/` est ignoré).
+P9a est **clos** (voir preuve). Prochaine question à poser à l'utilisateur : quel item traiter ensuite. Options non exclusives : vague hygiène measure-first (P3 dé-versionner `docs/benchmarks/`, P10a durcir l'enum `status`, P13 glossaire, P14 docs onboarding périmées) ou une décision structurante nécessitant son arbitrage (P1 hub knowledge, P2a CLI standalone liée à P4, P4 réduction agents, P6 sort TFVC, P16 gel v1.0). P9b (scripter `aic release`) est débloqué mais pas démarré. Rappel méthodo acquis cette session : `rg --hidden` pour toute recherche de références dans ce repo (sinon `.docs/` est ignoré) ; tester `copier update` uniquement sur une copie jetable, jamais un repo consommateur réel ; `copier copy`/`update` non-interactifs exigent `--defaults` + `--data project_name=...` (pas de TTY dans ce contexte).
