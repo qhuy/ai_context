@@ -327,3 +327,4 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   `with` 2/3 vs `without` 2/3, Δ 0 point, IC très large [-73.1 ; 73.1].
   Lecture : la tâche est techniquement valide mais non discriminante, car la
   condition `without` reconstruit aussi la réponse ; ne pas rerun tel quel.
+- 2026-07-24 (pilotage P3, hygiène repo) : `docs/benchmarks/runs/` (15 Mo, 246 fichiers — traces brutes `agent.stderr.log`/`agent.stdout.log`/`check.log` des runs passés) retiré du contrôle de version (`git rm -r --cached` + entrée `.gitignore`) ; conservé intact sur disque, non supprimé. `docs/benchmarks/reports/` (200 Ko, synthèses exploitables) et `PROTOCOL.md` restent versionnés à l'identique. Aucun changement du protocole, du runner ni de la logique de grading.

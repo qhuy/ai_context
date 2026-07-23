@@ -511,3 +511,6 @@
 - Nouveau runtime `.ai/scripts/migrate-all.sh` et miroir `template/.ai/scripts/migrate-all.sh.jinja` ajoutés avec contenu identique et mode exécutable.
 - Le dispatcher `aic.sh` et son miroir exposent les mêmes routes `migrate plan/all`.
 - Validation prévue : `check-dogfood-drift.sh` sur les profils rendus avant clôture.
+
+## 2026-07-24 — couverture incidente (pilotage P3)
+- `.gitignore` racine reçoit une entrée `/docs/benchmarks/runs/` (hygiène repo, propriété `product/agent-efficacy-benchmark`). Aucun changement des exclusions dogfood existantes ; `check-dogfood-drift` reste vert.
