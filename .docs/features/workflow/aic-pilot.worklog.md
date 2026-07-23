@@ -55,3 +55,39 @@
 ## 2026-07-07 18:51 — auto
 - Fichiers modifiés :
   - .docs/pilots/2026-07-07-audit-remediation.md
+
+## 2026-07-23 18:32 — auto
+- Fichiers modifiés :
+  - .docs/pilots/2026-07-23-analyse-fonctionnelle-generale.md
+
+## 2026-07-23 — pilotage « analyse fonctionnelle générale » : cadrage corrigé après review Codex #1
+
+- Registre `.docs/pilots/2026-07-23-analyse-fonctionnelle-generale.md` créé (propositions P1–P18 de l'analyse fonctionnelle du jour : carte, challenges, séquencement), puis **corrigé suite à la review Codex #1 (bloquante)** :
+  - P9a maintenu `blocked` : checklist RELEASE.md non exécutée, HANDOFF product→workflow non acté — aucun tag lancé ;
+  - P1 requalifié : hub knowledge routé et documenté (`aic.sh:65-66,915` vérifié) — l'enjeu est le wiring automatisé absent + l'adoption non mesurée, pas une « île » ;
+  - P2a requalifié : `check-agent-native-context.sh` documenté consommateur (`docs/upgrading.md:231,241` vérifié) — décision brancher/déprécier, pas suppression d'office ;
+  - P10 scindé : P10a = fix enum `status` warn→fail (`check-features.sh:162-165`) ; P10b = dropped, prémisse invalidée (`check-features.sh:123-130` bloque déjà le frontmatter illisible) ;
+  - routes normalisées vers le contrat aic-pilot (une route unique par item) ;
+  - section « Prémisses vérifiées » ajoutée : preuves actuelles par item (commandes/fichier:ligne), hypothèses étiquetées (TFVC, consommateurs externes).
+- Intégration des décisions antérieures ZE SOLUTION (2026-06-30) pour ne pas re-litiger : P7 reframé sur les trous du dispositif dogfood existant (drift content-check limité au profil `minimal`, pas de guard anti-édition-directe) ; P11 borné measure-first sans réécriture ; P17 relié à `product/agent-efficacy-benchmark` (runs réels en attente).
+- Aucun chantier lancé. En attente : re-review Codex du cadrage corrigé.
+
+## 2026-07-23 — re-review Codex #2 (go avec réserves) : cadrage v3
+
+- Verdict Codex #2 extrait de sa session locale : **go avec réserves** — blocages de méthode levés, 3 corrections factuelles exigées. Chacune re-vérifiée dans le code avant application :
+  - `status: published` = **faux positif** : `product/knowledge-federation.md:5` est `active` en frontmatter ; le `published` vu initialement est un exemple YAML du schéma knowledge dans un corps de fiche (`knowledge-source-contract.md:138,146`). → P1 recompté (1 fiche non close), P10a purgé de toute correction de donnée (fixture de test uniquement).
+  - `context-relevance-report.sh` documenté en interne (`quality/context-relevance-tracker.md:39,62`) → P2a reformulé « aucune doc utilisateur publique ni route aic » ; lien explicité entre `check-agent-native-context.sh` et le kill criterion de `core/agents-md-native-collapse-path.md:106` (instrument de P4).
+  - P9a reformulé « **préparer la release `vNext`** » : bump SemVer d'abord (RELEASE.md §5), inventaire complet des recos `--vcs-ref=HEAD` consommateur (README_AI_CONTEXT:57,64, README:298, PROJECT_STATE:20,76, variables:90, upgrading:9,18, CHANGELOG:118), usages mainteneur HEAD préservés (RELEASE.md:27-33,49) ; nuance consignée : la reco HEAD est une mitigation délibérée du retard de tags → P9a inclut l'engagement de cadence.
+- Leçon méthodo consignée au registre : `rg` sans `--hidden` ignore `.docs/` — cause racine des deux erreurs de prémisse.
+- Toujours aucun tag ni chantier lancé. En attente : GO complet Codex sur le cadrage v3.
+
+## 2026-07-23 — review Codex #3 : fond validé, cadrage v4 (final)
+
+- Verdict #3 : go avec réserves, **fond validé**, pas de nouvelle review complète requise. 2 corrections appliquées après vérification :
+  - **Ordre P9a corrigé** : le HANDOFF product→workflow + confirmation précède désormais la checklist RELEASE.md (elle contient des éditions documentaires de ce scope — CHANGELOG, PROJECT_STATE, README). Séquence actée : décision SemVer → HANDOFF + confirmation → checklist intégrale → confirmation tag/push → tag.
+  - **P1/P2a reformulés « invocation opérationnelle »** : la CI couvre bien ces surfaces via leurs tests unitaires dans la boucle générique (`ai-context-check.yml:98-103` + `tests/unit/test-knowledge-workflow.sh`, vérifié) ; le manque est l'usage opérationnel hooks/skills, pas la couverture de test.
+- Le pilotage passe en phase d'exécution conditionnée : question active = activation de P9a par l'utilisateur (bump SemVer → HANDOFF à confirmer). Toujours aucun tag ni chantier lancé à ce stade.
+
+## 2026-07-24 00:23 — auto
+- Fichiers modifiés :
+  - .docs/pilots/2026-07-23-analyse-fonctionnelle-generale.md
