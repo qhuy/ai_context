@@ -65,3 +65,8 @@ docs(product): clôturer le repositionnement README
 
 ## 2026-07-24 — couverture incidente (pilotage P13)
 - Ajout d'un pointeur vers le nouveau `GLOSSARY.md` (table intro + section Documentation). N'affecte pas le repositionnement du README ; simple lien de vocabulaire.
+
+## 2026-07-24 — hygiène onboarding (pilotage P14)
+- Alignement `--no-write` : `check-features.sh` du quickstart et de la table « Checks utiles » écrivait l'index au premier run, en contradiction avec le contrat read-only v0.13.
+- Ajout du pointeur `examples/` (réponses Copier pré-remplies) dans la section Documentation.
+- Aucun changement de structure ou de positionnement du README.

@@ -1,9 +1,14 @@
 project_name: my-api
 project_description: API backend uniquement (C#/Node/Go/...)
 scope_profile: backend
+adoption_mode: standard
+vcs_provider: git
+tech_profile: dotnet-clean-cqrs
 commit_language: fr
 docs_root: docs
 agents:
   - claude
   - codex
+enable_codex_hooks: true
+enable_copilot_shim: false
 enable_ci_guard: true

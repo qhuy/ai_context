@@ -13,10 +13,13 @@ Cette page distingue deux familles :
 | `project_description` | str | "" | Description 1 ligne dans l'index |
 | `scope_profile` | choice | `fullstack` | Détermine la liste `scopes` (voir profils) |
 | `adoption_mode` | choice | `standard` | Module l'enforcement scaffoldé : `lite`, `standard` ou `strict` |
+| `vcs_provider` | choice | `git` | Provider source-control pour les checks de delta/freshness : `git`, `tfvc` (best-effort, non testé end-to-end), `auto` ou `none` |
 | `tech_profile` | choice | `generic` | Ajoute des règles stack optionnelles (`dotnet-clean-cqrs`, `react-next`, `fullstack-dotnet-react`) |
 | `commit_language` | choice | `fr` | Langue des commits imposée par les règles |
 | `docs_root` | str | `.docs` | Dossier racine de la doc métier (`.docs` ou `docs`) |
 | `agents` | multiselect | `[claude, codex]` | Shims / hooks générés |
+| `enable_codex_hooks` | bool | `false` | Si `codex` sélectionné : génère `.codex/hooks.json` (hooks Codex natifs opt-in — reminder par tour + gate de fraîcheur fin de turn) |
+| `enable_copilot_shim` | bool | `false` | Si `copilot` sélectionné : génère `.github/copilot-instructions.md` en plus d'`AGENTS.md` (compat Copilot Chat/review IDE) |
 | `enable_ci_guard` | bool | `true` | Ajoute `.github/workflows/ai-context-check.yml` |
 
 ## Variables runtime `AI_CONTEXT_*`

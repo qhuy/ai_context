@@ -471,3 +471,6 @@
 - `_message_after_update` remplace la liste manuelle des migrations OKF par `aic migrate plan` puis `aic migrate all --apply`.
 - Le message conserve `aic-onboard` comme étape humaine séparée et `aic migrate` comme compatibilité legacy opt-in.
 - `README_AI_CONTEXT.md.jinja` documente la nouvelle surface sans retirer les commandes ciblées.
+
+## 2026-07-24 — complétude docs/variables.md (pilotage P14)
+- La table des 12 questions Copier ne documentait que 9 entrées : `vcs_provider`, `enable_codex_hooks` et `enable_copilot_shim` manquaient. Ajoutées dans l'ordre exact posé par `copier.yml`. Aucun changement de `copier.yml` ni des variables elles-mêmes.

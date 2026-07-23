@@ -1,8 +1,13 @@
 project_name: mini-app
 project_description: Projet minimal de démo
 scope_profile: minimal
+adoption_mode: lite
+vcs_provider: git
+tech_profile: generic
 commit_language: fr
 docs_root: .docs
 agents:
   - claude
+enable_codex_hooks: false
+enable_copilot_shim: false
 enable_ci_guard: false

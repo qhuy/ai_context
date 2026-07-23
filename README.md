@@ -73,6 +73,8 @@ git add -A
 git commit -m "chore: installer ai_context"
 ```
 
+Réponses pré-remplies pour un scaffold non-interactif (`copier copy --data-file examples/backend-only.yml ...`) : voir [examples/](examples/).
+
 Activer les hooks git si le mode choisi les génère :
 
 ```bash
@@ -84,7 +86,7 @@ Vérifier l'installation :
 
 ```bash
 bash .ai/scripts/check-shims.sh
-bash .ai/scripts/check-features.sh
+bash .ai/scripts/check-features.sh --no-write
 bash .ai/scripts/check-feature-docs.sh
 bash .ai/scripts/aic.sh frame "première tâche"
 ```
@@ -325,7 +327,7 @@ Guide complet : [docs/upgrading.md](docs/upgrading.md).
 |---|---|
 | `bash .ai/scripts/check-shims.sh` | vérifie que les shims restent minces et pointent vers `.ai/index.md` |
 | `bash .ai/scripts/check-agent-config.sh` | vérifie les configs Claude/Codex et scripts de hooks référencés |
-| `bash .ai/scripts/check-features.sh` | valide frontmatter, scopes, `depends_on`, `touches` |
+| `bash .ai/scripts/check-features.sh --no-write` | valide frontmatter, scopes, `depends_on`, `touches` (read-only) |
 | `bash .ai/scripts/check-feature-docs.sh` | vérifie les sections obligatoires des fiches |
 | `bash .ai/scripts/check-feature-freshness.sh --staged --strict` | bloque si code stage sans fiche/worklog stage |
 | `bash .ai/scripts/check-feature-coverage.sh` | détecte les fichiers non couverts par une feature |
@@ -389,6 +391,7 @@ Oui. Utilise `docs_root=docs` si nécessaire et crée des scopes adaptés
 - [MIGRATION.md](MIGRATION.md) - migration brownfield
 - [docs/upgrading.md](docs/upgrading.md) - updates Copier
 - [docs/variables.md](docs/variables.md) - variables Copier
+- [examples/](examples/) - réponses Copier pré-remplies (`--data-file`) pour scaffold non-interactif
 - [CHANGELOG.md](CHANGELOG.md) - versions et breaking changes
 - [PROJECT_STATE.md](PROJECT_STATE.md) - état et roadmap mainteneur
 

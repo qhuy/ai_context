@@ -1,10 +1,15 @@
 project_name: my-fullstack-app
 project_description: App fullstack avec backend + front + sécurité
 scope_profile: fullstack
+adoption_mode: standard
+vcs_provider: git
+tech_profile: fullstack-dotnet-react
 commit_language: fr
 docs_root: .docs
 agents:
   - claude
   - codex
   - cursor
+enable_codex_hooks: false
+enable_copilot_shim: false
 enable_ci_guard: true
