@@ -96,3 +96,6 @@
   - template/.ai/scripts/check-feature-freshness.sh.jinja
   - tests/unit/test-build-feature-index-fallback-frontmatter.sh
   - tests/unit/test-check-commit-features-relevance.sh
+## 2026-07-17 — rollback VCS du cockpit de migration
+- Les conseils de rollback de `core/migration-orchestrator` restent formulés en termes de revert du VCS, sans supposer Git dans le runtime.
+- Les surfaces partagées `copier.yml` et `README_AI_CONTEXT.md` conservent les contrats provider existants ; aucun appel Git n'est ajouté au cockpit.

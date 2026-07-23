@@ -17,6 +17,7 @@ Fiches canoniques de ce scope.
 - [Injection contextuelle filtrée par graphe (AI_CONTEXT_FOCUS)](graph-aware-injection.md) — `graph-aware-injection` · `done` · `feature`
 - [Contrat v2 de l'index feature](index-contract-v2.md) — `index-contract-v2` · `done` · `feature`
 - [Contrat knowledge source](knowledge-source-contract.md) — `knowledge-source-contract` · `done` · `contract`
+- [Orchestrateur de migrations post-Copier](migration-orchestrator.md) — `migration-orchestrator` · `done` · `feature`
 - [Profil strict OKF (Open Knowledge Format) des fiches feature](okf-strict-profile.md) — `okf-strict-profile` · `done` · `feature`
 - [Squelettes bootstrap pour DS registry et atomic map](preset-ds-skeletons.md) — `preset-ds-skeletons` · `done` · `feature`
 - [Overlay projet comme registre de scopes](project-overlay-scope-registry.md) — `project-overlay-scope-registry` · `done` · `feature`

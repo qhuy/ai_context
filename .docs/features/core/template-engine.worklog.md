@@ -467,3 +467,7 @@
 - Propriété directe de `copier.yml` conservée ; la feature d'index progressifs le référence en `touches_shared:`.
 - `_message_after_update` expose le dry-run puis `--apply` sans tâche d'écriture automatique sur le feature mesh project-owned.
 - Validation : dogfood drift et smoke d'upgrade Copier PASS.
+## 2026-07-17 — message post-update orienté cockpit
+- `_message_after_update` remplace la liste manuelle des migrations OKF par `aic migrate plan` puis `aic migrate all --apply`.
+- Le message conserve `aic-onboard` comme étape humaine séparée et `aic migrate` comme compatibilité legacy opt-in.
+- `README_AI_CONTEXT.md.jinja` documente la nouvelle surface sans retirer les commandes ciblées.

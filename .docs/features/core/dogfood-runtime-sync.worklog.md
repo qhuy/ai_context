@@ -507,3 +507,7 @@
   - .ai/scripts/check-shims.sh
   - .githooks/README.md
   - .githooks/pre-commit
+## 2026-07-17 — miroir du cockpit de migration
+- Nouveau runtime `.ai/scripts/migrate-all.sh` et miroir `template/.ai/scripts/migrate-all.sh.jinja` ajoutés avec contenu identique et mode exécutable.
+- Le dispatcher `aic.sh` et son miroir exposent les mêmes routes `migrate plan/all`.
+- Validation prévue : `check-dogfood-drift.sh` sur les profils rendus avant clôture.

@@ -103,6 +103,7 @@ bash .ai/scripts/aic.sh template-diff
 | Réparer le mesh | `bash .ai/scripts/aic.sh repair` |
 | Réparer les métadonnées Copier | `bash .ai/scripts/aic.sh repair-copier-metadata` |
 | Prévisualiser le template | `bash .ai/scripts/aic.sh template-diff` |
+| Planifier/appliquer les migrations post-Copier | `bash .ai/scripts/aic.sh migrate plan` puis `bash .ai/scripts/aic.sh migrate all --apply` |
 | Relire mon delta | `bash .ai/scripts/aic.sh review` |
 | Préparer le ship | `bash .ai/scripts/aic.sh ship` |
 | Tracer les initiatives produit | `bash .ai/scripts/aic.sh product-status` puis `bash .ai/scripts/aic.sh product-portfolio` |
@@ -123,6 +124,8 @@ Claude reçoit le contexte feature automatiquement via hooks. Codex et les autre
 - `bash .ai/scripts/check-agent-config.sh` — validation non destructive des configs Claude/Codex et scripts référencés.
 - `bash .ai/scripts/check-features.sh --no-write` — maillage feature sans réécrire le cache.
 - `bash .ai/scripts/build-feature-index.sh --write` — rebuild explicite de `.ai/.feature-index.json`.
+- `bash .ai/scripts/aic.sh migrate plan` — inventorie et prévalide toutes les migrations de version sans écrire.
+- `bash .ai/scripts/aic.sh migrate all [--apply]` — preview par défaut ; avec `--apply`, backfill OKF puis index Markdown et validations.
 - `bash .ai/scripts/aic.sh migrate okf-indexes` — prévisualise les index Markdown racine/par scope sans écrire.
 - `bash .ai/scripts/aic.sh migrate okf-indexes --apply` — génère les index project-owned, déterministes et versionnables.
 - `bash .ai/scripts/check-feature-indexes.sh [--strict]` — contrôle leur fraîcheur (`warn` en vN, `--strict` prépare l'enforcement futur).

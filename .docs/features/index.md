@@ -6,7 +6,7 @@ Navigation progressive du feature mesh.
 
 ## Scopes
 
-- [`core`](core/index.md) — 19 features
+- [`core`](core/index.md) — 20 features
 - [`product`](product/index.md) — 5 features
 - [`quality`](quality/index.md) — 15 features
 - [`workflow`](workflow/index.md) — 25 features

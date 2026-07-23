@@ -226,3 +226,7 @@
 - Propriété directe de `aic.sh` conservée ; les features consommatrices sont reclassées en `touches_shared:`.
 - La surface canonique expose `aic migrate okf-indexes` sans changer les commandes existantes.
 - Validation : routage CLI couvert par `test-feature-markdown-indexes.sh` et le smoke Copier.
+## 2026-07-17 — orchestration publique des migrations
+- HANDOFF interne core depuis `core/migration-orchestrator` : ajout des routes publiques `aic migrate plan` et `aic migrate all [--apply]` sans casser les sous-commandes existantes.
+- Aide runtime/template et README consommateur alignés ; la logique reste isolée dans `migrate-all.sh`.
+- Validation ciblée : `test-migration-orchestrator.sh` couvre le dispatch, le dry-run strict et les arguments invalides.

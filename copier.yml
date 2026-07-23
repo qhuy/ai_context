@@ -132,14 +132,12 @@ _message_after_copy: |
 
 _message_after_update: |
   ♻️  AI context mis à jour depuis le template.
-  Vérifier : bash .ai/scripts/check-shims.sh && bash .ai/scripts/check-features.sh
-  Si des fichiers .rej ont été créés par --conflict=rej, arbitre-les puis supprime-les avant commit.
-  Profil OKF : si check-features signale un champ 'type' absent sur tes fiches,
-  lance le backfill non destructif : bash .ai/scripts/aic.sh migrate okf-type --apply
-  Index Markdown progressifs (project-owned, jamais générés automatiquement par Copier) :
-    1. Prévisualiser : bash .ai/scripts/aic.sh migrate okf-indexes
-    2. Appliquer      : bash .ai/scripts/aic.sh migrate okf-indexes --apply
-  Pendant la version d'introduction, leur absence reste un warning et ne casse pas la CI.
+  Cockpit de migration project-owned :
+    1. Prévisualiser : bash .ai/scripts/aic.sh migrate plan
+    2. Appliquer      : bash .ai/scripts/aic.sh migrate all --apply
+  Le préflight bloque sur les fichiers .rej et les collisions connues avant toute écriture.
+  aic-onboard reste une étape humaine séparée quand le plan la recommande.
+  Les migrations legacy restent opt-in via : bash .ai/scripts/aic.sh migrate
 
 # ─────────────────── Questions ───────────────────
 

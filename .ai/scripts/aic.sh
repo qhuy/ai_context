@@ -78,6 +78,7 @@ Commandes maintenance :
   resume       buckets EN COURS / BLOQUÉES / STALE / À FAIRE
   audit        audit-features.sh (discover <scope>)
   migrate      migration frontmatter ; sous-commandes explicites :
+               'migrate plan' inventorie sans écrire ; 'migrate all [--apply]' orchestre les migrations
                'migrate okf-type' backfille type ; 'migrate okf-indexes' génère les index Markdown
   pr-report    rapport markdown/json d'impact feature depuis un diff git
   measure      taille contexte injecté par les hooks
@@ -920,6 +921,8 @@ EOF
   audit)      exec bash "$script_dir/audit-features.sh" "$@" ;;
   migrate)
     case "${1:-}" in
+      plan) shift; exec bash "$script_dir/migrate-all.sh" --plan "$@" ;;
+      all) shift; exec bash "$script_dir/migrate-all.sh" "$@" ;;
       okf-type) shift; exec bash "$script_dir/migrate-okf-type.sh" "$@" ;;
       okf-indexes) shift; exec bash "$script_dir/migrate-okf-indexes.sh" "$@" ;;
       *)        exec bash "$script_dir/migrate-features.sh" "$@" ;;
