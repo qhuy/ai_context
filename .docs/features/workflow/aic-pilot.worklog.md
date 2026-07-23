@@ -100,3 +100,16 @@
 - Tag `v0.14.0` sur `5c34108`, poussé sur `origin/main` et `origin/v0.14.0`. `git describe --tags` = `v0.14.0` exact : le décrochage de 213 commits identifié en début de pilotage est résolu.
 - Sanity post-release (RELEASE.md §7) : rendu depuis GitHub PASS, `check-shims`/`doctor` PASS.
 - P9a : `done`. Le registre reste `active` (19 autres items en triage/inbox) ; prochaine question posée à l'utilisateur = quel item traiter ensuite.
+
+## 2026-07-24 — mandat autopilot, scope product clos (6/6)
+
+- Utilisateur : « auto pilot les 19 items ». Séquencement par scope (précédent ZE SOLUTION 2026-06-30), HANDOFF explicite entre scopes, arbitrages produit structurants proposés (pas décidés seuls).
+- **P3** (`f0619c0`) : `docs/benchmarks/runs/` untracked (246 fichiers, conservés sur disque). Prémisse `.DS_Store` corrigée : déjà gitignorés, jamais tracked.
+- **P13** (`8703973`) : `GLOSSARY.md` livré via template avec `{{docs_root}}` substitué (sert aussi les consommateurs, pas seulement le repo source). A révélé et corrigé une sur-couverture `.ai/index.md` (6 fiches en `touches:` direct → `touches_shared:`, même pattern que `quality/touches-breadth-guard`).
+- **P14** (`ea3fd47`) : `docs/getting-started.md` réécrit pour la surface v0.14+, `docs/variables.md` complété à 12/12, `examples/*.yml` régénérés et testés (`copier copy --data-file`, 3/3 OK), `--no-write` aligné dans README.
+- **P18b** (`9f109a4`) : cadence d'audit recalibrée (release + mensuelle, honnête sur l'absence d'automatisation réelle). Frames : décision de ne rien changer — mécanisme légitime pour décisions structurantes uniques, la faible fréquence n'est pas un problème.
+- **P1** et **P17** : investigués (measure-first), pas décidés unilatéralement — routés `validated`, recommandation prête :
+  - P1 : adoption du hub knowledge mesurée à zéro (`.ai/.context-relevance.jsonl` 0 occurrence, aucun commit/worklog d'usage). Recommandation : geler.
+  - P17 : **prémisse corrigée** — les runs réels du benchmark existent déjà (`docs/benchmarks/reports/2026-07-03-product-decision-readout.md`, N=3, 2 repos, +66.7 pts, -39.6% tokens, `decision_state=commit` déjà acté 2026-07-03). Ce qui reste ouvert : validation par repo vraiment indépendant, `next_decision_date` dépassée sans nouvelle décision tracée.
+- Tous les gates (check-features/shims/docs/ai-references/freshness/dogfood-drift) et smoke-test complet PASS avant chaque commit.
+- HANDOFF product→quality émis pour P5/P10a/P18a.

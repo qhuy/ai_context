@@ -2,12 +2,12 @@
 pilot_id: "2026-07-23-analyse-fonctionnelle-generale"
 status: "active"
 source: "analyse fonctionnelle générale 2026-07-23 (session Claude — 4 sous-audits : runtime .ai/, distribution Copier, surface utilisateur, santé du process) ; review Codex #1 (bloquante) et re-review #2 (go avec réserves) appliquées le 2026-07-23"
-scope_primary: "product"
+scope_primary: "quality"
 created_at: "2026-07-23"
 updated_at: "2026-07-24"
-active_item: "none"
-active_question: "P9a livré et clos. Quel item traiter ensuite : vague hygiène (P3 dé-versionner docs/benchmarks, P10a durcir l'enum status, P13 glossaire, P14 docs onboarding) ou une décision structurante (P1 hub knowledge, P2a CLI standalone, P4 agents, P6 TFVC, P16 gel v1.0) ?"
-next_hint: "P9a done (preuve ci-dessous). P9b (aic release scripté + migrations natives) est débloqué : triage possible mais non démarré. Prochaine question à poser à l'utilisateur : quel item de la carte devient actif."
+active_item: "P5"
+active_question: "Mandat autopilot en cours. Scope product clos (6/6 : P3/P13/P14/P18b done, P1/P17 validated avec recommandation). HANDOFF product→quality émis pour P5/P10a/P18a. P1 (geler le hub knowledge) et P17 (repo tiers indépendant) restent en attente d'arbitrage utilisateur — non bloquant pour la suite du batch."
+next_hint: "Poursuivre l'autopilot : scope quality (P5, P10a, P18a), puis HANDOFF vers core (P2a, P4, P6, P7, P8, P11), puis workflow (P2b, P9b, P12, P15), puis retour product pour P16 (gel v1.0, une fois P7/P10a/P12-14 livrés). P1/P17 restent affichés en tête de carte pour arbitrage utilisateur dès qu'il est disponible."
 ---
 
 # Pilot 2026-07-23 — Analyse fonctionnelle générale : consolidation v1.0
@@ -37,10 +37,10 @@ Coût méta mesuré : 360 commits en 3 mois dont 39 % `docs:` ; ~17 000 lignes d
 
 | ID | Sujet | Statut | Scope probable | Route | Preuve attendue |
 |---|---|---|---|---|---|
-| P1 | Statuer sur le hub knowledge : verbe CLI routé et documenté mais **aucune invocation opérationnelle automatisée** (hooks/skills — la CI couvre le sous-système via son test unitaire, pas d'usage opérationnel), **adoption non mesurée**, chantier stale 20 j, 1 fiche non close (`product/knowledge-federation` active ; les 2 fiches dev knowledge sont `done`) | triage | product | manual | Décision datée : mesurer l'adoption (critère + échéance) / geler (fiche soldée, code conservé) / extraire (branche) — avec critère de kill explicite |
+| P1 | Statuer sur le hub knowledge — **investigué, recommandation prête, décision finale utilisateur** : adoption mesurée à **zéro** (`.ai/.context-relevance.jsonl` 0 occurrence « knowledge » ; aucun worklog ni commit d'usage réel, uniquement des commits de construction). Recommandation : **geler** (rétrograder `product/knowledge-federation` de `active`, code conservé intact, aucune extraction) — measure-first a tranché, cohérent avec ZE SOLUTION P4/P5 | validated | product | manual | Confirmation utilisateur du gel (ou contre-argument) |
 | P2a | Statuer sur les 2 CLI standalone sans invocation opérationnelle automatisée ni doc utilisateur publique (leur couverture CI se limite à leurs tests unitaires via la boucle générique) : `check-agent-native-context.sh` (documentée consommateur `upgrading.md`, **instrument du kill criterion** de `core/agents-md-native-collapse-path.md:106` — outil de la décision P4) et `context-relevance-report.sh` (reporter standalone contractuel, doc interne `quality/context-relevance-tracker.md`, aucune route `aic`) | triage | core | manual | Décision par script : exposer publiquement (route `aic`/doctor + doc) / conserver en outil interne documenté / déprécier — datée, avec suite routée ; cohérence avec P4 exigée pour le premier |
 | P2b | Élaguer les workflows morts et fusionner les contrats transverses (`feature-resume.md` supplanté par script, `feature-handoff.md` mort opérationnel ; `mcp-policy`+`subagent-contract`+`evidence-discipline` → 1 contrat agent) | triage | workflow | refactor | 15 → ~8 workflows ; `check-ai-references.sh` vert ; refs skills mises à jour |
-| P3 | Dé-versionner `docs/benchmarks/runs/` (15 Mo, 276 fichiers trackés) ; conserver `reports/` + `PROTOCOL.md` ; retirer les 3 `.DS_Store` trackés sous `template/` | triage | product | chore | `git ls-files docs/benchmarks/runs` vide ; `.gitignore` couvre ; reports conservés |
+| P3 | Dé-versionner `docs/benchmarks/runs/` | **done** | product | chore | `f0619c0` : 246 fichiers untracked, conservés sur disque ; `.DS_Store` déjà gitignorés (jamais tracked — prémisse initiale corrigée) |
 | P4 | Réduire les cibles agents de 5 à « claude + codex + tier AGENTS.md-natif » (retrait des shims cursor/gemini/copilot dédiés) | triage | core | manual | Décision de positionnement datée ; si oui : suite routée `feature` (copier.yml simplifié, MIGRATION.md documente le retrait) |
 | P5 | Dégraisser les artefacts doc triplés : quality gate ×3 → 1 ; stubs `rules/core.md` / `rules/quality.md` ; section « État » de `PROJECT_STATE.md` → pointeur + roadmap | triage | quality | docs | Un seul artefact gate référencé ; `index.md` sans double pointeur ; PROJECT_STATE ≤ ~40 lignes |
 | P6 | Sort de TFVC : option `vcs_provider=tfvc` avouée « best-effort, non testé end-to-end » dans copier.yml | triage | core | manual | Usage réel vérifié (Hypothèse ci-dessous) ; décision datée : retrait (option + MIGRATION) ou test e2e réel |
@@ -52,13 +52,13 @@ Coût méta mesuré : 360 commits en 3 mois dont 39 % `docs:` ; ~17 000 lignes d
 | P10b | (retiré) « Builder tolérant au YAML invalide = risque silencieux » — prémisse invalidée : la compensation existe et est commentée comme telle | **dropped** | quality | dropped | Raison consignée : `check-features.sh:123-130` fait échouer (`ko`) toute fiche au frontmatter illisible ; la tolérance du builder est un contrat volontaire des hooks non-bloquants |
 | P11 | Réduire les **invocations redondantes** sur le chemin de commit (~5 builds d'index temporaires par commit `feat:` ; 3 forks jq au source-time de `_lib.sh` payés par chaque hook ; hook PreToolUse Bash évaluant chaque commande) — measure-first, pas de réécriture (leçon ZE SOLUTION P4 : matching ≠ goulot, rewrite dropped) | triage | core | refactor | Mesure avant/après sur un commit `feat:` réel : builds temp 5 → 1 (réutilisation d'un index par opération), 0 fork jq sur commande bash non-commit ; aucun changement de langage |
 | P12 | `aic init` (successeur du `first-run` supprimé en v0.13 sans alias) + fiche d'exemple livrée non-vide (ex. `workflow/ai-context-adoption.md` pré-remplie avec les réponses Copier en `touches:` réels) | triage | workflow | feature | Parcours guidé exécutable post-scaffold ; mesh non vide au jour 1 ; smoke couvre `init` |
-| P13 | `GLOSSARY.md` : Pack A, shim, mesh, touches/touches_shared, freshness, frame, HANDOFF, overlay, OKF, dogfood — lié depuis README + `.ai/index.md` | triage | product | docs | Chaque terme employé par README/index défini ; `check-ai-references.sh` vert |
-| P14 | Réparer les docs d'onboarding : réécrire `docs/getting-started.md`, compléter `docs/variables.md` (12/12 questions), régénérer + référencer `examples/*.yml`, aligner `--no-write`, source getting-started unique (les 4 autres surfaces = renvois), arbre de décision frame/pilot/dev-plan/diagnose | triage | product | docs | Docs alignées sur la surface v0.13+ ; examples référencés depuis README ; cohérence `--no-write` partout |
+| P13 | `GLOSSARY.md` | **done** | product | docs | `8703973` : glossaire livré via template (`{{docs_root}}` substitué), lié README/index.md/README_AI_CONTEXT. A aussi corrigé une sur-couverture `.ai/index.md` (6 fiches → `touches_shared:`) |
+| P14 | Réparer les docs d'onboarding | **done** | product | docs | `ea3fd47` : getting-started réécrit, variables.md 12/12, examples testés + référencés, `--no-write` aligné dans README |
 | P15 | Aligner les noms sur l'axe `aic *`, partie **additive seulement** : route `aic onboard` manquante, alias non documentés (`frame-bootstrap`, `frame-context`), mismatch `aic plan` ↔ skill `aic-dev-plan` documenté ; tout renommage breaking reporté au chantier v1.0 (P16) | triage | workflow | feature | Routes CLI = noms skills pour les 10 intentions ; aliases documentés ou retirés ; zéro breaking avant v1.0 |
 | P16 | Gel v1.0 : étendre le moratoire bash en moratoire de surface ; définir le contrat public (format `index.md` + schéma fiche + jeu de hooks + ~10 intentions `aic`) ; critères de sortie = P7, P9, P10a, P12–P14 livrés | triage | product | manual | Décision datée ; CONTRIBUTING étendu ; contrat v1.0 énuméré ; checklist de sortie publiée |
-| P17 | Boucle de feedback réelle : adopter sur 1–2 projets réels, livrer le repo démo (roadmap P3), exécuter les **runs réels** du benchmark A/B (fiche `product/agent-efficacy-benchmark` : scaffold livré, runs = action mainteneur en attente) et publier 1 rapport | triage | product | manual | Hypothèse consommateurs tranchée ; repo démo public ; 1 rapport de runs réels publié ; priorités du trimestre suivant sourcées de cet usage |
+| P17 | Boucle de feedback réelle — **prémisse initiale corrigée** : les runs réels ont déjà eu lieu (`docs/benchmarks/reports/2026-07-03-product-decision-readout.md` : N=3, 2 repos `ai_context`+`ai_debate`, +66.7 pts succès, -39.6% tokens, `decision_state=commit` déjà acté le 2026-07-03). Ce qui reste réellement ouvert : validation par un repo **vraiment indépendant** (non-mainteneur) avant tout claim `scale` — condition posée par la fiche elle-même ; `next_decision_date: 2026-07-15` dépassée sans nouvelle décision tracée ; repo démo public (publication = permission explicite requise, hors mandat autopilot) | validated | product | manual | Confirmation utilisateur : chercher un repo tiers indépendant / republier next_decision_date / accepter l'état actuel comme suffisant |
 | P18a | Check CI de cohérence CHANGELOG ↔ PROJECT_STATE ↔ copier.yml (recommandé par l'audit 07-07, jamais implémenté ; la dette a récidivé 2×) | triage | quality | feature | Le check échoue sur les dérives déjà constatées (variables manquantes, état périmé) ; branché CI |
-| P18b | Recalibrer les rituels : cadence d'audit réaliste (« hebdo » sans occurrence depuis 16 j) ; trancher le sort des frames (3 en 3 mois, aucun depuis le 28-06) | triage | product | manual | Décisions datées dans ce registre ; routine replanifiée ou retirée ; frames réhabilités ou retirés du template |
+| P18b | Recalibrer les rituels | **done** | product | manual | `9f109a4` : cadence recalibrée (avant chaque release + mensuelle si volume) dans `REVIEW_PROMPT.md` ; frames conservés tels quels (mécanisme légitime pour décisions structurantes uniques, distinct de pilot — pas un problème à corriger) |
 
 ## Prémisses vérifiées (preuves actuelles)
 
@@ -162,15 +162,31 @@ HANDOFF
   ]
 ```
 
+```text
+HANDOFF
+  from_scope: product
+  to_scope: quality
+  status: en cours (mandat autopilot, 2026-07-24)
+  files_touched: [P5 pas encore commencé, P10a pas encore commencé, P18a pas encore commencé]
+  pending: [P5 dégraisser artefacts triplés, P10a durcir enum status par fixture, P18a check CI cohérence]
+  risks: [aucun identifié à ce stade — items bien scopés, non destructifs]
+```
+
 ## Suivi d'exécution
 
 | Item | Action liée | Owner | Statut | Validation |
 |---|---|---|---|---|
 | P9a | Préparation + exécution release v0.14.0 | Claude (mandat « go jusqu'au bout ») | done | tag `v0.14.0` sur `5c34108`, poussé ; sanity RELEASE.md §7 PASS ; voir « Preuve de clôture P9a » |
+| P3 | Dé-versionner docs/benchmarks/runs/ | Claude (mandat autopilot) | done | `f0619c0` |
+| P13 | GLOSSARY.md | Claude (mandat autopilot) | done | `8703973` |
+| P14 | Réparer docs onboarding | Claude (mandat autopilot) | done | `ea3fd47` |
+| P18b | Recalibrer rituels | Claude (mandat autopilot) | done | `9f109a4` |
+| P1 | Investiguer adoption hub knowledge | Claude (mandat autopilot) | validated | Adoption = 0 mesuré ; recommandation geler ; décision finale utilisateur en attente |
+| P17 | Investiguer usage réel | Claude (mandat autopilot) | validated | Prémisse corrigée (runs réels déjà faits, decision_state déjà commit) ; reste ouvert : repo tiers indépendant |
 
 ## Validation de clôture
 
-- P9a : `done`, preuve complète fournie. Les 19 autres items restent `triage`/`inbox` — le registre reste `active` tant qu'ils ne sont pas tous `done`/`dropped`/`handoff`/reportés.
+- P9a, P3, P13, P14, P18b : `done`, preuve complète fournie. P1, P17 : `validated` (investigués, recommandation prête, arbitrage final utilisateur). Items restants (quality/core/workflow scopes + P16) : `triage`/`inbox` — le registre reste `active`.
 - Aucune fiche feature globale créée ; les 2 bugs trouvés (RELEASE.md) ont été corrigés en place, pas fichés séparément (corrections mineures dans un doc non couvert par le mesh — cohérent avec `manual`/`chore`, pas de nouvelle feature).
 - Chaque preuve de P9a est renseignée (commandes exécutées, gates PASS, tag vérifié).
 - La quality gate (smoke-test + check-* + freshness + dogfood-drift) est passée avant chaque commit.
