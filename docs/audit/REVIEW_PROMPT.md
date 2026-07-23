@@ -1,7 +1,15 @@
 # Cahier des charges — Audit complet automatisé d'`ai_context`
 
-> Spec autoritaire de l'audit hebdomadaire. La routine planifiée (`weekly-ai-context-audit`)
-> lit ce fichier et l'exécute. Améliore l'audit en éditant ce fichier — pas la routine.
+> Spec autoritaire de l'audit. La routine (`weekly-ai-context-audit`) lit ce
+> fichier et l'exécute. Améliore l'audit en éditant ce fichier — pas la routine.
+>
+> **Cadence** : recalibrée le 2026-07-24 (pilotage P18b). L'étiquette
+> « hebdomadaire » n'a jamais tenu en pratique (audits réels : 2026-05-06,
+> 2026-06-08, 2026-07-03, 2026-07-07 — rythme mensuel par rafales, pas
+> calendaire). Cadence réaliste retenue : **avant chaque release taguée**
+> (voir `RELEASE.md`) et au minimum mensuelle si le volume de commits reste
+> soutenu entre deux releases. Déclenchement manuel par le mainteneur ; aucune
+> automatisation cron ne l'exécute aujourd'hui.
 
 ## RÔLE
 
