@@ -5,117 +5,62 @@
 **Local** : chemin de développement local, non versionné.
 **Dernière version publiée** : v0.14.0 — « Migrations post-Copier, index progressifs, overlay registre de scopes & discipline de preuve » (voir [CHANGELOG.md](CHANGELOG.md))
 
-> Ce fichier est un **point d'entrée rapide**. Pour l'historique détaillé des versions, consulter [CHANGELOG.md](CHANGELOG.md). Pour adopter le template sur un projet existant, [MIGRATION.md](MIGRATION.md). Pour l'architecture visuelle, diagramme mermaid dans [README.md](README.md). Pour les audits historiques clos, [docs/archive/](docs/archive/) ([AUDIT.md](docs/archive/AUDIT.md) — 2026-05-01/03, [AUDIT_2026-05-06.md](docs/archive/AUDIT_2026-05-06.md)).
+> Ce fichier est un **point d'entrée rapide** — pas l'historique détaillé (→ [CHANGELOG.md](CHANGELOG.md)), pas l'architecture du code (→ le code et [README.md](README.md)), pas la migration (→ [MIGRATION.md](MIGRATION.md)). Pour les audits historiques clos, [docs/archive/](docs/archive/).
 
 ## Notes mainteneur
 
 - 2026-05-07 : ce repo a servi de cible distincte pour un run supervisé depuis `ai_debate`, avec chargement prouvé de ses règles locales.
-- 2026-06-29 : audit stratégique (multi-agents) + remédiation. **Backlog et avancement tracés dans [`.docs/frames/2026-06-28-audit-strategique-remediation.md`](.docs/frames/2026-06-28-audit-strategique-remediation.md)** — son `next_hint` est le point de reprise canonique. Durcissements livrés : moat git réactivé (`core.hooksPath=.githooks`), fix body-leak du parseur fallback `build-feature-index`, anti-churn auto-worklog (`.session-docs.log`), dé-taxe `touches:` (globs catch-all → `touches_shared`), shims dérivés d'`AGENTS.md` (`CLAUDE.md`/`GEMINI.md` = `@AGENTS.md` ; voir `core/agents-md-shim-canonical`), `schema_version` opérationnalisé, divergence `id` schema↔checker réconciliée. Suite : C2a (validateur schéma — à cadrer, aucun validateur JSON-Schema dispo aujourd'hui), Phase 1 résiduelle (cf. frame).
+- 2026-06-29 : audit stratégique (multi-agents) + remédiation. Backlog tracé dans [`.docs/frames/2026-06-28-audit-strategique-remediation.md`](.docs/frames/2026-06-28-audit-strategique-remediation.md).
+- 2026-07-24 : pilotage autopilot (`.docs/pilots/2026-07-23-analyse-fonctionnelle-generale.md`) — release v0.14.0, dégraissage de ce fichier (P5 : suppression de la section Architecture redondante avec le code, collapse des rappels de version au profit d'un pointeur CHANGELOG).
 
 ## Comment reprendre le dev
 
 1. Ouvrir Claude Code dans le dossier local du dépôt `ai_context`.
 2. Lire [CHANGELOG.md](CHANGELOG.md) — les dernières breaking/nouveautés.
-3. Lancer le smoke-test : `export PATH="$HOME/Library/Python/3.9/bin:$PATH" && bash tests/smoke-test.sh` (28 étapes, attendu `✅ PASS`).
-4. Consommer le template : `copier copy gh:qhuy/ai_context ./mon-projet`. Mettre à jour : `cd mon-projet && copier update --conflict=rej` (cible le dernier tag par défaut ; `--vcs-ref=HEAD` pour suivre `main` sans attendre le prochain tag, voir `docs/upgrading.md`).
-5. Dogfooder le repo source après évolution du template. Le repo source n'a pas de `.copier-answers.yml` et ne doit pas être mis à jour via `copier update` :
+3. Lancer le smoke-test : `bash tests/smoke-test.sh` (28 étapes, attendu `✅ PASS`).
+4. Consommer le template : `copier copy gh:qhuy/ai_context ./mon-projet`. Mettre à jour : `cd mon-projet && copier update --conflict=rej` (cible le dernier tag par défaut ; `--vcs-ref=HEAD` pour suivre `main`, voir `docs/upgrading.md`).
+5. Dogfooder le repo source après évolution du template (pas de `.copier-answers.yml`, jamais de `copier update` sur lui-même) :
    - preview : `bash .ai/scripts/dogfood-update.sh`
    - apply : `bash .ai/scripts/dogfood-update.sh --apply`
    - drift : `bash .ai/scripts/check-dogfood-drift.sh`
 
-## Architecture (vue d'ensemble)
-
-- `copier.yml` — questions utilisateur (`project_name`, `project_description`, `scope_profile`, `adoption_mode`, `vcs_provider`, `tech_profile`, `commit_language`, `docs_root`, `agents`, `enable_codex_hooks`, `enable_copilot_shim`, `enable_ci_guard`) + `_exclude` conditionnel.
-- `template/` — racine du template (`_subdirectory: template`, `_templates_suffix: .jinja`).
-- `template/AGENTS.md.jinja` = entrée canonique cross-agent lean ; `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md` opt-in et `.cursor/rules/*.mdc` scopés = shims ou règles vers `.ai/index.md`.
-- `template/.ai/` = source unique de vérité (rules, QUALITY_GATE, scripts, reminder, skills).
-- `template/.ai/config.yml` — configuration runtime scaffoldée (coverage/progress/context), avec fallback defaults côté scripts.
-- `resume-features.sh` consomme `progress.stale_after_days` depuis cette config (si présent) ; défaut conservé à 14 jours.
-- `template/.ai/schema/feature.schema.json` — contrat frontmatter de référence (alignement progressif des checks Bash).
-- `template/.ai/scripts/doctor.sh` — diagnostic non destructif (dépendances, hooks, checks).
-- `template/.ai/scripts/audit-features.sh` — audit agent-agnostique (`discover`, dry-run par défaut, `--apply` explicite).
-- `template/.ai/scripts/migrate-features.sh` — migration frontmatter (`schema_version`, status legacy, champs manquants) en dry-run/apply.
-- `template/.ai/scripts/pr-report.sh` — rapport markdown/json d'impact features depuis un diff git.
-- `template/.ai/scripts/review-delta.sh` — synthèse review-friendly du delta courant (fichiers, features, risques, checks).
-- `template/.ai/scripts/aic.sh` — surface CLI canonique alignée avec les skills `aic-*`.
-- `.ai/scripts/dogfood-update.sh` + `check-dogfood-drift.sh` — scripts source-only pour appliquer / contrôler le runtime rendu dans ce repo sans utiliser `copier update` sur le repo mainteneur.
-- Le drift dogfood contrôle aussi les fichiers destination-only ; `dogfood-update.sh --apply` supprime le runtime obsolète sauf caches et scripts source-only explicitement exclus.
-- CI : `yq` versionnée et `shellcheck` sur `.ai/scripts/*.sh` dans les workflows de garde.
-- CI check : matrix `ubuntu-latest` + `macos-latest` sur le workflow principal.
-- `copier.yml` expose `adoption_mode` (`lite`, `standard`, `strict`) pour calibrer hooks/CI dès le scaffold.
-- `template/{{docs_root}}/features/<scope>/` = maillage feature par scope (back, front, architecture, security).
-- `template/.githooks/commit-msg` + `post-checkout` — enforcement Conventional Commits et rebuild index au switch de branche.
-- `template/.claude/settings.json.jinja` — hooks UserPromptSubmit / PreToolUse / PostToolUse / Stop.
-- `template/.claude/skills/aic-*/` et `template/.agents/skills/aic-*/` — 10 skills publics alignés : `aic`, `aic-frame`, `aic-status`, `aic-diagnose`, `aic-document-feature`, `aic-review`, `aic-ship`, `aic-dev-plan`, `aic-onboard`, `aic-pilot`.
-- `template/.ai/workflows/` — procédures internes agent-agnostic partagées par Claude et Codex : `feature-new`, `feature-resume`, `feature-update`, `feature-handoff`, `feature-audit`, `document-feature`, `quality-gate`, `feature-done`, `project-guardrails`, `project-overlay-sync`, `dev-plan`, `codex-hooks-parity`, `evidence-discipline`, `mcp-policy`, `subagent-contract`.
-- `tests/smoke-test.sh` — 28 assertions end-to-end.
-
 ## État actuel (v0.14.0)
 
 - **Cockpit de migrations post-Copier** — `aic migrate plan/all --apply` orchestre `okf-type` puis `okf-indexes` avec préflight (`.rej`, `.copier-answers.yml` manquant) ; la migration legacy `aic migrate` reste hors batch.
-- **Index Markdown progressifs** — `<docs_root>/features/index.md` + `index.md` par scope, générés déterministes et versionnables ; `aic migrate okf-indexes`, check warn-only vN / `--strict` prêt pour vN+1.
-- **Overlay registre de scopes + `aic-onboard`** — `.ai/project/<scope>/index.md` par app/couche, contrat `paths/meta/conventions/derived`, skill `aic-onboard` (modes init/sync/migrate auto-détectés).
-- **Discipline de preuve transverse** (`workflow/evidence-discipline`) — toute affirmation prouvée (fichier:ligne, commande, doc) ou étiquetée Hypothèse ; câblée dans `aic-review`/`aic-diagnose`/`aic-pilot`/`aic-frame`.
-- **Hooks Codex natifs opt-in** (`enable_codex_hooks`) — reminder par tour + gate Stop de fraîcheur, parité documentée avec Claude (`workflow/codex-hooks-parity`).
-- **Provider VCS configurable** (`vcs_provider`) — `git`/`tfvc`/`auto`/`none` ; TFVC explicitement documenté best-effort, non testé end-to-end.
+- **Index Markdown progressifs** — `<docs_root>/features/index.md` + `index.md` par scope, générés déterministes et versionnables ; check warn-only vN / `--strict` prêt pour vN+1.
+- **Overlay registre de scopes + `aic-onboard`** — `.ai/project/<scope>/index.md` par app/couche, skill `aic-onboard` (modes init/sync/migrate auto-détectés).
+- **Discipline de preuve transverse** (`workflow/evidence-discipline`) — toute affirmation prouvée ou étiquetée Hypothèse ; câblée dans `aic-review`/`aic-diagnose`/`aic-pilot`/`aic-frame`.
+- **Hooks Codex natifs opt-in** (`enable_codex_hooks`) — reminder par tour + gate Stop de fraîcheur, parité documentée avec Claude.
+- **Provider VCS configurable** (`vcs_provider`) — `git`/`tfvc`/`auto`/`none` ; TFVC best-effort, non testé end-to-end.
 - **Gate Stop de fraîcheur documentaire** (`workflow/stop-turn-doc-gate`) — bloque la fin de tour si du code couvert change sans mise à jour de fiche/worklog ; échappatoire `AIC_DOC_GATE=off`.
-- **Profil strict OKF Phase 0** — champ `type` optionnel (warn-only, jamais bloquant), backfill via `aic migrate okf-type --apply`.
-- **Élagage des shims commoditisés par AGENTS.md** — Copilot/Cursor confirmés natifs avec evidence officielle ; kill criterion vérifiable (`check-agent-native-context.sh --require-confirmed`).
-- **Reprise de cadence de tags** — `copier update` sans `--vcs-ref` cible de nouveau un tag à jour ; `--vcs-ref=HEAD` documenté comme option avancée (voir `docs/upgrading.md`).
+- **Profil strict OKF Phase 0** — champ `type` optionnel (warn-only), backfill via `aic migrate okf-type --apply`.
+- **Élagage des shims commoditisés par AGENTS.md** — Copilot/Cursor confirmés natifs ; kill criterion vérifiable (`check-agent-native-context.sh --require-confirmed`).
+- **Reprise de cadence de tags** — `copier update` sans `--vcs-ref` cible de nouveau un tag à jour.
+- **Tags versionnés** : `v0.7.2` → `v0.14.0`.
 
-### État v0.13.0 (rappel)
-
-- **Contrat read-only des checks** — `check-features.sh --no-write` valide le mesh sans écrire l'index ; `doctor`, `quality-gate`, la CI, `check-feature-freshness`, `check-feature-coverage`, `review-delta`, `pr-report` et les rapports product consomment un index temporaire ou le cache existant (warning si absent).
-- **Index contract v2** — `build-feature-index.sh --write` ne réécrit `.ai/.feature-index.json` que si le contrat JSON change (hors `generated_at`) ; ordre des features stable ; `schema_version` + `project_id` exposés ; fallback parser sans `yq` (extraction `product.portfolio.*`).
-- **Surface CLI `aic` (breaking)** — la surface publique devient `aic.sh frame/status/diagnose/document-feature/review/ship`, alignée avec les skills `aic-*`. Les anciens verbes publics de cadrage/brief/document-delta/ship-report sont supprimés (pas d'aliases).
-- **Installation Codex** — quand `codex` est dans `agents`, le template génère `.agents/skills/` avec les mêmes 10 intentions publiques que Claude. Les hooks Codex natifs restent opt-in via `enable_codex_hooks`.
-
-### État v0.12.0 (rappel)
-
-- **Feature mesh** — frontmatter validé, détection cycles, warn si active dépend de deprecated, scope enum, touches morte bloquante, `touches_shared` pour surfaces de review non bloquantes.
-- **Continuité inter-session** — frontmatter `progress:` + worklog append-only par feature + `resume-features.sh` 4 buckets.
-- **Auto-worklog** — hooks `PostToolUse` + `Stop` logguent automatiquement les éditions ; `progress.updated` n'est bumpé que sur transition de phase ou update manuel.
-- **Coût tokens maîtrisé** — reminder compressé, filtrage par status, `measure-context-size.sh`, **graph-aware injection** via `AI_CONTEXT_FOCUS=<scope>` (scope + voisins 1-hop).
-- **i18n** — reminder FR/EN selon `commit_language`.
-- **Presets techniques** — règles stack optionnelles via `tech_profile` (`dotnet-clean-cqrs`, `react-next`, `fullstack-dotnet-react`).
-- **Fiabilité** — `_lib.sh` helpers, matching `touches:` / `touches_shared:` centralisé, lock atomique sur index, globstar, dépendances vérifiées, JSON escaping via jq.
-- **Tags versionnés** — `v0.7.2`, `v0.8.0`, `v0.9.0`, `v0.10.0`, `v0.11.0`, `v0.12.0`, `v0.13.0`, `v0.14.0` — `copier update` sans `--vcs-ref` cible désormais le dernier tag à jour.
-- **Documentation** — README avec mermaid + FAQ + use cases, MIGRATION.md progressif, skills self-contained.
-- **Guardrails projet** — `.ai/guardrails.md` cadre les non-goals + glossaire métier, chargé uniquement on-demand. Le point d'entrée recommandé est `/aic-frame`; la procédure interne vit dans `.ai/workflows/project-guardrails.md`.
-- **Skills intentionnels** — `/aic-frame`, `/aic-status`, `/aic-review`, `/aic-ship`, `/aic-diagnose`, `/aic-document-feature`, `/aic-dev-plan`, `/aic-onboard`, `/aic-pilot` couvrent les intentions publiques. Les procédures internes restent en backend `.ai/workflows/`.
-- **Surface aic canonique** — `aic.sh frame/status/diagnose/document-feature/review/ship` couvre le cycle utilisateur CLI pour Codex et agents non-hookés ; `aic.sh knowledge` expose le hub knowledge. Les commandes techniques restent en maintenance.
-- **Traceability produit** — scope `product`, champs `product.*` / `external_refs` et commandes `product-status`, `product-portfolio`, `product-review`.
-- **Upgrade robuste** — `repair-copier-metadata` recrée `.copier-answers.yml` en dry-run, `template-diff` prévisualise un rendu `/tmp` sur worktree sale, et la doc recommande `copier update --conflict=rej` (dernier tag par défaut depuis la reprise de cadence en v0.14.0 ; `--vcs-ref=HEAD` documenté comme option avancée).
+Historique complet des versions précédentes (v0.7 → v0.13) : [CHANGELOG.md](CHANGELOG.md).
 
 ## Roadmap — pistes ouvertes
 
-**P1 — stabilisation runtime** *(largement traité en v0.12.0)*
-- ✅ `progress.auto_transitions.spec_to_implement` consommé par `auto-progress.sh` (vrai opt-out).
-- ✅ `context.max_tokens_warn` consommé par `pre-turn-reminder.sh` (warning stderr).
-- ✅ `adoption_mode=strict` renforcé : CI ajoute `doctor --strict` + `coverage --strict`.
-- ✅ `feature-index.json` expose `schema_version` + `project_id`.
-- ✅ Cycle update robuste : metadata Copier réparable et preview externe du template.
-- 🚧 Reste à faire : consommer `context.show_statuses` et `context.default_focus` (aujourd'hui via env vars `AI_CONTEXT_*`).
-- CI source repo : workflow GitHub Actions sur `qhuy/ai_context` lui-même qui exécute `tests/smoke-test.sh` (matrix Ubuntu/macOS).
-- Dog-fooding : appliquer pleinement le mesh sur `ai_context` lui-même (déjà partiellement fait sous `.docs/features/`).
-- Dog-fooding runtime : script source-only disponible ; les workflows CI source restent volontairement hors synchronisation car plus stricts que le rendu downstream.
+**P1 — stabilisation runtime**
+- 🚧 Consommer `context.show_statuses` et `context.default_focus` (aujourd'hui via env vars `AI_CONTEXT_*`).
+- Dog-fooding runtime : les workflows CI source restent volontairement hors synchronisation car plus stricts que le rendu downstream.
 
 **P2 — confort UX**
 - Pipelines CI hors GitHub Actions (Azure DevOps, GitLab).
 - Profil `scope_profile=custom` interactif (liste CSV `custom_scopes` + jinja loop).
-- `pr-report.sh` enrichi : exclusions par défaut (`README.md`, `.github/**`, `.ai/**`, `docs/**`), warnings `feature done modifiée`, formats `markdown`/`json`, options `--base`/`--head` pour CI, distinction direct/shared.
 - Graphe Mermaid auto-généré du mesh (depuis l'index JSON).
 - Site docs statique (mkdocs-material) sourcé depuis README/CHANGELOG/MIGRATION/skills.
 
 **P3 — extensions**
 - MCP (Model Context Protocol) côté agents pour pousser le contexte au lieu d'injecter par hook.
-- Learning log automatique : Stop hook append patterns récurrents à `.ai/memory/<scope>.md` avec gate de validation manuelle (évite pollution).
-- Benchmarks publics (gain tokens / temps de hook) sur projets de référence.
+- Learning log automatique : Stop hook append patterns récurrents à `.ai/memory/<scope>.md` avec gate de validation manuelle.
+- Benchmarks publics (gain tokens / temps de hook) sur projets de référence — premiers runs maintainer-only réalisés, voir `docs/benchmarks/reports/`.
 - Repo démo externe consommant `ai_context` à jour.
 
 ## Règle anti-doc-drift
 
-Quand une fonctionnalité change, les fichiers suivants **doivent** être revus dans le même chantier (la règle est rappelée dans `CONTRIBUTING.md` et bloquée par `tests/smoke-test.sh` quand applicable) :
+Quand une fonctionnalité change, les fichiers suivants **doivent** être revus dans le même chantier (rappelée dans `CONTRIBUTING.md`, bloquée par `tests/smoke-test.sh` quand applicable) :
 
 - `README.md` (référence utilisateur)
 - `CHANGELOG.md` (`Unreleased` regroupé par release future)
@@ -129,16 +74,13 @@ Quand une fonctionnalité change, les fichiers suivants **doivent** être revus 
 ## Points d'attention
 
 - **Hook Bash `git commit`** — extraction heuristique du message (`-m "..."`, heredoc). Fallback sur `.githooks/commit-msg`.
-- **Globs `touches:`** — la sémantique est centralisée dans `_lib.sh` (`path_matches_touch`) ; utiliser `touches_shared:` pour les surfaces transverses afin d'éviter que des globs trop larges augmentent le bruit de freshness.
+- **Globs `touches:`** — sémantique centralisée dans `_lib.sh` (`path_matches_touch`) ; utiliser `touches_shared:` pour les surfaces transverses afin d'éviter que des globs trop larges augmentent le bruit de freshness (voir `check-touches-breadth.sh`).
 
 ## Tests
 
-- `bash tests/unit/test-path-matches-touch.sh` — 18 cas unitaires sur le helper de matching `touches:`.
-- `bash tests/unit/test-check-feature-freshness.sh` — non-régression staged freshness quand un fichier est couvert par plusieurs features.
-- `bash tests/unit/test-dogfood-drift-extra.sh` — non-régression drift dogfood sur fichier runtime destination-only.
-- `bash tests/unit/test-review-delta-shared.sh` — non-régression `touches_shared` visible en review mais non bloquant en freshness.
-- `bash tests/smoke-test.sh` — 28 étapes principales (+ étape unit + étape bonus big-mesh), requiert `copier` dans le PATH (`pip install --user copier`).
-- CI GitHub Actions (`enable_ci_guard: true` par défaut) — `check-shims` + `check-features` (avec validation `touches:` dure) + `check-ai-references`. Matrix `template-smoke-test.yml` étendue à `windows-latest` (best-effort, non-bloquant).
+- `bash tests/smoke-test.sh` — suite principale end-to-end, requiert `copier` dans le PATH (`pip install --user copier`).
+- `bash tests/unit/*.sh` — tests unitaires ciblés (matching `touches:`, freshness, dogfood-drift, etc.), tous lancés par la CI.
+- CI GitHub Actions (`enable_ci_guard: true` par défaut) — `check-shims` + `check-features` + `check-ai-references`. Matrix `template-smoke-test.yml` étendue à `windows-latest` (best-effort, non-bloquant).
 
 ## Quick refs
 

@@ -233,3 +233,10 @@
 
 ## 2026-07-24 — couverture incidente (pilotage P13)
 - `README_AI_CONTEXT.md` (+ miroir template) reçoit un pointeur vers le nouveau `GLOSSARY.md`, propriété de la fiche glossaire. Aucun changement de la surface `aic`.
+
+## 2026-07-24 — dégraissage PROJECT_STATE.md (pilotage P5)
+- Section « Architecture (vue d'ensemble) » (26 lignes) retirée : redondante avec le code et README.md, jamais synchronisée de façon fiable.
+- Cascade « État actuel vX / rappel v(X-1) / rappel v(X-2) » collapsée : seul l'état v0.14.0 reste, pointeur unique vers CHANGELOG.md pour l'historique complet — évite que la section grossisse indéfiniment à chaque release.
+- Roadmap allégée des items ✅ déjà livrés (redondants avec CHANGELOG). 146 → 91 lignes.
+- Prémisse initiale du pilotage P5 sur « quality gate ×3 » et stubs `rules/core.md`/`rules/quality.md` invalidée après lecture complète : ce sont un contrat (QUALITY_GATE.md), une procédure (workflows/quality-gate.md) et des points d'extension volontairement minimaux — pas une triplication. Aucun changement sur ces 3 fichiers.
+- Validation : `check-ai-references.sh` PASS (aucune ancre cassée), aucune autre fiche ne référence ce fichier via `touches:`.
