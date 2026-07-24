@@ -191,3 +191,12 @@
 - Round 4 (CLI autonome, v5) : les 2 bloquants du round 3 jugés résolus, les 2 réserves jugées bien intégrées, Bloc A toujours correctement réservé, « aucun nouveau problème bloquant ». Verdict formel : « VERDICT: go avec réserves ».
 - 3 réserves textuelles finales, classées par Codex « intégrables sans nouveau round », chacune re-vérifiée avant intégration : (1) fraîcheur au check-in portée par `commit-msg` → `check-commit-features.sh:169`, PAS par `pre-commit` (`.githooks/pre-commit:73` = auto-progression seule) — attribution corrigée dans le canal git hooks ; (2) dimension `scope_profile`/`scopes` dérivée ajoutée à la matrice (les règles de scope de `_exclude` en dépendent) ; (3) formulations absolues bornées (la CI rendue tourne sur push/PR sans activation locale ; « rien de plus » limité aux 5 garanties).
 - **v6 = texte d'entente Claude↔Codex.** Mandat « je vous laisse trouver une entente » rempli côté texte en 2 rounds autonomes (v4→bloquant→v5→go avec réserves→v6). Restent les 3 décisions Bloc A, réservées à l'utilisateur : P4 (gemini/antigravity), classification CLI 4 niveaux, `type` requis.
+
+## 2026-07-24 14:50 — auto
+- Fichiers modifiés :
+  - .docs/pilots/2026-07-23-analyse-fonctionnelle-generale.md
+
+## 2026-07-24 — Bloc A tranché par l'utilisateur : exécution Bloc B/C lancée
+- Réponses verbatim : « 1/gemini n'est pas concerné, on n'utilise pas Gemini 2/ok 3/ok ».
+- (1) P4 → traduit en option (c) : retrait du choix `gemini` avant gel (0.x breaking-MINOR, précédent v0.13). Traduction exécutive flaggée au registre, veto utilisateur possible jusqu'au tag. (2) Classification CLI 4 niveaux validée telle que proposée. (3) `type` requis dès v1.0.
+- Exécution planifiée dans le next_hint du registre (9 étapes, gates complets par commit). Hors automatisation : B5 (TFVC réel de l'org) et C14 (tag) — checkpoints utilisateur.
