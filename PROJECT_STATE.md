@@ -69,7 +69,7 @@ Quand une fonctionnalité change, les fichiers suivants **doivent** être revus 
 - `copier.yml` (questions + `_message_after_copy`)
 - `template/.claude/skills/**/SKILL.md.jinja` + `workflow.md.jinja` (workflows skill alignés)
 - `tests/smoke-test.sh` (au moins une assertion)
-- Les deux versions des scripts si applicable : `.ai/scripts/<name>` (dogfooding) **et** `template/.ai/scripts/<name>.jinja` (template). Une divergence accidentelle est un bug.
+- Les deux versions des scripts si applicable : `.ai/scripts/<name>` (dogfooding) **et** `template/.ai/scripts/<name>.jinja` (template). Une divergence accidentelle est un bug. `bash .ai/scripts/check-runtime-template-mirror.sh` (advisory) signale un déséquilibre staged sur `.ai/scripts/*.sh` et `.ai/workflows/*.md`.
 
 ## Points d'attention
 

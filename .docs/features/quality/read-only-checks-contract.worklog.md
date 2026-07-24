@@ -243,3 +243,6 @@
 
 ## 2026-07-24 — couverture incidente (pilotage P18a)
 - `.github/workflows/ai-context-check.yml` : nouveau step `check-release-coherence` (script read-only, aucune écriture) + path triggers. Le contrat read-only des checks existants n'est pas modifié.
+
+## 2026-07-24 — couverture incidente (pilotage P7)
+- `.github/workflows/ai-context-check.yml` : nouveau step `check-runtime-template-mirror` (read-only, advisory). Le contrat read-only des checks existants n'est pas modifié.

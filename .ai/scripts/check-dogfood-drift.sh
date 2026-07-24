@@ -89,6 +89,28 @@ check_profile_sanity() {
   fi
 }
 
+# Sanity de contenu sur les fichiers scopés (règles back/front/tech, .cursor,
+# GEMINI.md, copilot-instructions.md, .codex/hooks.json...) qui n'existent que
+# dans les profils conditionnels et n'ont donc PAS de copie runtime dogfoodée
+# dans ce repo (scope_profile=minimal) contre laquelle comparer le contenu
+# octet-à-octet. Seul filet possible ici : ni vide, ni Jinja non résolu — ça
+# attrape une vraie régression de rendu (variable mal nommée, conditionnelle
+# cassée) que la seule vérification d'existence laisserait passer.
+check_rendered_file_sanity() {
+  local profile="$1"
+  local out_dir="$2"
+  local rel="$3"
+  local path="$out_dir/$rel"
+  [[ -f "$path" ]] || return 0
+  if [[ ! -s "$path" ]]; then
+    echo "profile-drift: $profile/$rel rendu vide"
+    diff_found=1
+  elif grep -qE '\{\{|\{%' "$path"; then
+    echo "profile-drift: $profile/$rel contient du Jinja non résolu"
+    diff_found=1
+  fi
+}
+
 compare_file() {
   local label="$1"
   local src="$2"
@@ -145,6 +167,21 @@ check_profile_sanity "fullstack-cursor" "$out_conditional" \
   ".ai/rules/stack-fullstack-dotnet-react.md"
 check_profile_sanity "codex-hooks" "$out_codex_hooks" \
   ".codex/hooks.json"
+
+# Sanity de contenu sur les fichiers scopés sans copie runtime (pilotage P7) :
+# back/front/architecture/security/handoff n'existent pas non plus dans le
+# profil minimal dogfoodé (scope_profile=minimal) mais sont bien rendus par
+# fullstack-cursor (scope_profile=fullstack) — seule occasion de les vérifier.
+for rel in \
+  ".ai/rules/back.md" ".ai/rules/front.md" ".ai/rules/architecture.md" \
+  ".ai/rules/security.md" ".ai/rules/handoff.md" \
+  ".ai/rules/tech-dotnet.md" ".ai/rules/tech-react.md" \
+  ".ai/rules/stack-fullstack-dotnet-react.md" \
+  ".cursor/rules/back.mdc" ".cursor/rules/front.mdc" \
+  "GEMINI.md" ".github/copilot-instructions.md"; do
+  check_rendered_file_sanity "fullstack-cursor" "$out_conditional" "$rel"
+done
+check_rendered_file_sanity "codex-hooks" "$out_codex_hooks" ".codex/hooks.json"
 
 compare_tree ".ai" "$out/.ai" ".ai"
 compare_file ".claude/settings.json" "$out/.claude/settings.json" ".claude/settings.json"

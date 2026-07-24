@@ -240,3 +240,6 @@
 - Roadmap allégée des items ✅ déjà livrés (redondants avec CHANGELOG). 146 → 91 lignes.
 - Prémisse initiale du pilotage P5 sur « quality gate ×3 » et stubs `rules/core.md`/`rules/quality.md` invalidée après lecture complète : ce sont un contrat (QUALITY_GATE.md), une procédure (workflows/quality-gate.md) et des points d'extension volontairement minimaux — pas une triplication. Aucun changement sur ces 3 fichiers.
 - Validation : `check-ai-references.sh` PASS (aucune ancre cassée), aucune autre fiche ne référence ce fichier via `touches:`.
+
+## 2026-07-24 — couverture incidente (pilotage P7)
+- `PROJECT_STATE.md` référence le nouveau `check-runtime-template-mirror.sh` en complément de la règle anti-drift écrite. Aucun changement de la surface `aic`.

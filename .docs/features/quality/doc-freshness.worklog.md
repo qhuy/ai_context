@@ -132,3 +132,6 @@
 
 ## 2026-07-24 — couverture incidente (pilotage P18a)
 - `.github/workflows/ai-context-check.yml` : nouveau step `check-release-coherence` + path triggers. Aucun changement du contrat de fraîcheur documentaire lui-même.
+
+## 2026-07-24 — couverture incidente (pilotage P7)
+- `.github/workflows/ai-context-check.yml` : nouveau step `check-runtime-template-mirror` (advisory). Aucun changement du contrat de fraîcheur documentaire lui-même.

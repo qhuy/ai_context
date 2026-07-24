@@ -34,6 +34,7 @@ DOGFOOD_AI_RUNTIME_RSYNC_EXCLUDES+=(
   --exclude="scripts/check-dogfood-drift.sh"
   --exclude="scripts/dogfood-runtime-lib.sh"
   --exclude="scripts/check-release-coherence.sh"
+  --exclude="scripts/check-runtime-template-mirror.sh"
 )
 
 DOGFOOD_DATED_DOC_RSYNC_EXCLUDES=(
@@ -53,7 +54,7 @@ dogfood_is_dated_project_doc() {
 dogfood_is_ai_runtime_extra_ignored() {
   local rel="$1"
   case "$rel" in
-    .feature-index.json|.progress-history.jsonl|.session-edits.log|.session-edits.flushed|.session-docs.log|.context-relevance.jsonl|.context-relevance.jsonl.old|guardrails.md|project|project/*|scripts/dogfood-update.sh|scripts/check-dogfood-drift.sh|scripts/dogfood-runtime-lib.sh|scripts/check-release-coherence.sh)
+    .feature-index.json|.progress-history.jsonl|.session-edits.log|.session-edits.flushed|.session-docs.log|.context-relevance.jsonl|.context-relevance.jsonl.old|guardrails.md|project|project/*|scripts/dogfood-update.sh|scripts/check-dogfood-drift.sh|scripts/dogfood-runtime-lib.sh|scripts/check-release-coherence.sh|scripts/check-runtime-template-mirror.sh)
       return 0
       ;;
   esac
@@ -82,7 +83,7 @@ source-only ignored:
 - .docs/frames/YYYY-MM-DD-*.md
 - .docs/pilots/YYYY-MM-DD-*.md
 - .ai/guardrails.md (projet-spécifique, comme .ai/project/**)
-- .ai/scripts/dogfood-update.sh / check-dogfood-drift.sh / dogfood-runtime-lib.sh / check-release-coherence.sh (outillage source-only)
+- .ai/scripts/dogfood-update.sh / check-dogfood-drift.sh / dogfood-runtime-lib.sh / check-release-coherence.sh / check-runtime-template-mirror.sh (outillage source-only)
 - tests/**
 - template/**
 NOTE

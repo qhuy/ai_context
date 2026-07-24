@@ -137,3 +137,7 @@ jobs:
 
       - name: check-release-coherence
         run: bash .ai/scripts/check-release-coherence.sh
+
+      - name: check-runtime-template-mirror (advisory, diff PR)
+        if: github.event_name == 'pull_request'
+        run: bash .ai/scripts/check-runtime-template-mirror.sh --base="origin/${{ github.base_ref }}" --head=HEAD
