@@ -5,9 +5,9 @@ source: "analyse fonctionnelle générale 2026-07-23 (session Claude — 4 sous-
 scope_primary: "product"
 created_at: "2026-07-23"
 updated_at: "2026-07-24"
-active_item: "P16"
-active_question: "Mandat autopilot : scopes product (6/6), quality (3/3), core (3/3 exécutés + 3/3 investigués), workflow (4/4) clos — 17/18 items non-utilisateur traités. Seul P16 (gel v1.0) reste, retour au scope product. 5 items en attente d'arbitrage utilisateur (P1, P17, P2a, P4, P6) — non bloquant pour P16."
-next_hint: "Traiter P16 (gel v1.0, scope product) : critères de sortie P7/P9/P10a/P12-14 tous livrés désormais (P12 clos ce scope) — vérifier explicitement, définir le contrat public (index.md + schéma fiche + hook set + 10 intentions aic, désormais toutes routées), étendre le moratoire bash en moratoire de surface, publier une checklist de sortie. Après P16, le registre peut se refermer côté exécution ; P1/P17/P2a/P4/P6 resteront affichés pour arbitrage utilisateur à sa convenance — trouvaille notable P4 : Gemini CLI décommissionné par Google le 2026-06-18 (recherche web), remplacé par Antigravity CLI qui lirait aussi AGENTS.md."
+active_item: "none"
+active_question: "Mandat autopilot terminé : 18/18 items traités (12 done + P2b/P9b/P12/P15 done = 16 done total, 6 validated). Plus aucune action mécanique restante — les 6 items validated (P1, P2a, P4, P6, P16, P17) attendent un arbitrage utilisateur, chacun indépendant des autres."
+next_hint: "Rien à exécuter sans nouvelle instruction utilisateur. P16 (gel v1.0) a son contrat structurel et son projet CONTRIBUTING déjà rédigés dans « Proposition P16 » ci-dessous, prêts à valider/amender puis appliquer en quelques minutes une fois la décision prise. P1/P2a/P4/P6/P17 ont chacun leur recommandation prête. Présenter ces 6 arbitrages à l'utilisateur comme la suite naturelle, sans en trancher aucun unilatéralement."
 ---
 
 # Pilot 2026-07-23 — Analyse fonctionnelle générale : consolidation v1.0
@@ -55,7 +55,7 @@ Coût méta mesuré : 360 commits en 3 mois dont 39 % `docs:` ; ~17 000 lignes d
 | P13 | `GLOSSARY.md` | **done** | product | docs | `8703973` : glossaire livré via template (`{{docs_root}}` substitué), lié README/index.md/README_AI_CONTEXT. A aussi corrigé une sur-couverture `.ai/index.md` (6 fiches → `touches_shared:`) |
 | P14 | Réparer les docs d'onboarding | **done** | product | docs | `ea3fd47` : getting-started réécrit, variables.md 12/12, examples testés + référencés, `--no-write` aligné dans README |
 | P15 | Aligner les noms sur l'axe `aic *`, partie **additive seulement** : route `aic onboard` manquante, alias non documentés (`frame-bootstrap`, `frame-context`), mismatch `aic plan` ↔ skill `aic-dev-plan` documenté ; tout renommage breaking reporté au chantier v1.0 (P16) | **done** | workflow | feature | `bfc6767` : routes `onboard`/`dev-plan` ajoutées (style `pilot`, skill-only) ; contrat 10/10 intentions explicité ; alias `frame-bootstrap`/`frame-context` documentés (`docs/getting-started.md`), retrait reporté à P16 |
-| P16 | Gel v1.0 : étendre le moratoire bash en moratoire de surface ; définir le contrat public (format `index.md` + schéma fiche + jeu de hooks + ~10 intentions `aic`) ; critères de sortie = P7, P9, P10a, P12–P14 livrés | triage | product | manual | Décision datée ; CONTRIBUTING étendu ; contrat v1.0 énuméré ; checklist de sortie publiée |
+| P16 | **Investigué — critères de sortie tous vérifiés livrés (P7 `8494b6e`, P9/P9a tag v0.14.0, P10a `7b5005d`, P12 `f34cec5`, P13 `8703973`, P14 `ea3fd47`)**. Contrat v1.0 proposé ci-dessous (10 intentions confirmées, schéma fiche, format index.md, jeu de hooks) et projet de section CONTRIBUTING (moratoire de surface, même style d'enforcement que le moratoire bash existant — règle de revue écrite, pas de gate automatisé). Distinction proposée : le gel porte sur le contrat STRUCTUREL (schéma/hooks/index/CLI), pas sur les décisions de positionnement encore ouvertes (P1/P2a/P4/P6/P17), qui restent évolutives post-v1.0 sans rouvrir le contrat | validated | product | manual | Confirmation utilisateur : valider le contrat v1.0 tel que proposé (ou amender), valider le texte CONTRIBUTING, dater la décision |
 | P17 | Boucle de feedback réelle — **prémisse initiale corrigée** : les runs réels ont déjà eu lieu (`docs/benchmarks/reports/2026-07-03-product-decision-readout.md` : N=3, 2 repos `ai_context`+`ai_debate`, +66.7 pts succès, -39.6% tokens, `decision_state=commit` déjà acté le 2026-07-03). Ce qui reste réellement ouvert : validation par un repo **vraiment indépendant** (non-mainteneur) avant tout claim `scale` — condition posée par la fiche elle-même ; `next_decision_date: 2026-07-15` dépassée sans nouvelle décision tracée ; repo démo public (publication = permission explicite requise, hors mandat autopilot) | validated | product | manual | Confirmation utilisateur : chercher un repo tiers indépendant / republier next_decision_date / accepter l'état actuel comme suffisant |
 | P18a | Check CI de cohérence CHANGELOG↔PROJECT_STATE↔copier.yml | **done** | quality | feature | `5629e69` : `check-release-coherence.sh` (source-only) + path triggers CI ajoutés (sans eux le diff-only sur ces fichiers ne déclenchait même pas la CI) + RELEASE.md §4 |
 | P18b | Recalibrer les rituels | **done** | product | manual | `9f109a4` : cadence recalibrée (avant chaque release + mensuelle si volume) dans `REVIEW_PROMPT.md` ; frames conservés tels quels (mécanisme légitime pour décisions structurantes uniques, distinct de pilot — pas un problème à corriger) |
@@ -81,7 +81,7 @@ Toute affirmation ci-dessous est issue d'une commande exécutée ou d'un fichier
 - **P13** — « Pack A » cité `README.md:36,402`, défini uniquement dans `.ai/index.md` [relevé] ; aucun glossaire du vocabulaire ai_context (le glossaire de `guardrails.md` est réservé au métier du projet consommateur).
 - **P14** — `docs/getting-started.md` : dernier commit 2026-05-05, antérieur à la surface `aic` ; lien vers `../template/AGENTS.md.jinja` ; `docs/variables.md` documente 9 questions sur 12 (`vcs_provider`, `enable_codex_hooks` absents) ; `examples/*.yml` : 6-8 clés sur 12, zéro référence entrante [relevés audit surface].
 - **P15** — Dispatch `aic.sh` : pas de route `onboard` ; route `plan` face au skill `aic-dev-plan` ; alias `frame`/`frame-bootstrap`/`frame-context` dont 1 seul documenté README [relevé].
-- **P16** — Moratoire moteur bash déjà posé (commit `51e3261`, CONTRIBUTING) ; mesh à 64/65 fiches closes [comptés] : la phase de construction est finie.
+- **P16** — Moratoire moteur bash déjà posé (commit `51e3261`, CONTRIBUTING) ; mesh à 64/65 fiches closes [comptés] : la phase de construction est finie. Vérification complète 2026-07-24 : 6/6 critères de sortie confirmés `done` avec commit (P7 `8494b6e`, P9/P9a tag `v0.14.0`, P10a `7b5005d`, P12 `f34cec5`, P13 `8703973`, P14 `ea3fd47`) [carte relue ce jour]. 10 intentions `aic-*` confirmées routées (`.claude/skills/` : aic, aic-onboard, aic-frame, aic-pilot, aic-dev-plan, aic-status, aic-diagnose, aic-document-feature, aic-review, aic-ship) [`ls` ce jour]. Jeu de hooks lu directement dans `.claude/settings.json` : 4 types (UserPromptSubmit, PreToolUse ×2 matchers, PostToolUse, Stop), 5 scripts distincts. Format `index.md` : contrat déjà écrit dans `core/feature-mesh-progressive-indexes.md` § Contrats (layout, marqueur de propriété, déterminisme). Moratoire bash existant relu en entier (`CONTRIBUTING.md:52-77`) : règle de revue humaine écrite, pas de gate automatisé — modèle d'enforcement proposé pour son extension.
 - **P17** — Roadmap P3 `PROJECT_STATE.md:102` « Repo démo externe » ouverte ; fiche `product/agent-efficacy-benchmark` : scaffold livré (`0164289`), runs réels = action mainteneur en attente [worklog aic-pilot:42]. **Hypothèse — à vérifier : aucun consommateur externe actuel.**
 - **P18a** — Recommandation de l'audit 07-07 (« check CI de cohérence… sinon la dette se reforme ») non implémentée [aucun script correspondant trouvé] ; récidive constatée : PROJECT_STATE ignore les chantiers du 23-07.
 - **P18b** — Audits datés : 06-05, 08-06, 03-07, 07-07 ; aucun depuis (16 j au 23-07) ; frames : 3 réels, dernier le 2026-06-28 [comptés].
@@ -98,6 +98,7 @@ Toute affirmation ci-dessous est issue d'une commande exécutée ou d'un fichier
 - **P11** : borné par la mesure antérieure — interdiction de réécriture, obligation de mesurer avant/après ; si la mesure montre que les builds temp sont déjà négligeables (~80 ms/fiche × 65 fiches à confirmer), l'item se réduit ou se droppe comme ZE SOLUTION P4.
 - **P15** : la v0.13 a déjà cassé la surface CLI sans aliases ; seule la partie additive passe maintenant, les renommages attendent v1.0.
 - **P17** : partiellement hors repo (projets réels) ; le registre ne suit que la partie repo (démo, runs bench, rapport).
+- **P16** : risque de geler prématurément si P1/P2a/P4/P6 (encore ouverts) changent la surface après coup. Contre-argument retenu : ces 4 items portent sur des DÉCISIONS DE POSITIONNEMENT (quels agents supportés, quel hub conservé) qui n'altèrent ni le schéma fiche, ni le format index.md, ni le jeu de hooks, ni la liste des 10 intentions `aic-*` — le contrat STRUCTUREL reste stable quelle que soit leur issue. Le gel proposé porte donc explicitement sur ce contrat structurel, pas sur le produit fini. Second risque : un moratoire non gaté automatiquement (comme le moratoire bash) dépend entièrement de la discipline de revue humaine — accepté comme précédent cohérent avec l'ADR bash existante, pas un nouveau risque introduit par cet item.
 
 ## Question active
 
@@ -122,6 +123,54 @@ Question à traiter maintenant :
 - Tag + push : `git tag v0.14.0` sur commit `5c34108` ; `git push origin main` (`1c6faaa..5c34108`) ; `git push origin v0.14.0`. `git describe --tags` = `v0.14.0` exact (le décrochage de 213 commits est résolu).
 - RELEASE.md §7 (sanity post-release) : `copier copy --vcs-ref=v0.14.0 gh:qhuy/ai_context` depuis GitHub (donc après push) → rendu OK ; `check-shims` PASS ; `doctor.sh` PASS (3 avertissements attendus : pas de repo git initialisé dans le rendu brut, exactement le comportement documenté).
 - Worktree final : propre (`git status --short` vide).
+
+## Proposition P16 — gel v1.0 (investiguée, décision utilisateur requise)
+
+**Critères de sortie** (déclarés par la carte) : tous vérifiés livrés.
+
+| Critère | Statut | Preuve |
+|---|---|---|
+| P7 | done | `8494b6e` |
+| P9 / P9a | done | tag `v0.14.0` poussé |
+| P10a | done | `7b5005d` |
+| P12 | done | `f34cec5` |
+| P13 | done | `8703973` |
+| P14 | done | `ea3fd47` |
+
+**Contrat public v1.0 proposé** (constaté, pas inventé — chaque ligne pointe vers une source déjà existante) :
+
+1. **10 intentions `aic-*`** (confirmé `.claude/skills/` ce jour) : `aic` (override conversationnel), `aic-onboard`, `aic-frame`, `aic-pilot`, `aic-dev-plan`, `aic-status`, `aic-diagnose`, `aic-document-feature`, `aic-review`, `aic-ship`. Convention de routage : `aic.sh <verbe>` = nom du skill sans le préfixe `aic-`, pour toute intention scriptable ; les intentions purement conversationnelles ont une route qui oriente vers le skill sans dupliquer de logique.
+2. **Schéma fiche feature** : `.ai/schema/feature.schema.json` — champs requis (`id`, `scope`, `title`, `status`, `depends_on`, `touches`), enums (`status`, `progress.phase`), champs optionnels stabilisés (`type`, `description`, `touches_shared`, `product.*`, `external_refs`, `doc.*`, `progress.*`).
+3. **Format `index.md`** : contrat déjà écrit dans `core/feature-mesh-progressive-indexes.md` § Contrats — layout `<docs_root>/features/index.md` + `<scope>/index.md`, marqueur de propriété `<!-- generated by ai_context; do not edit -->`, déterminisme (tri lexical, liens relatifs, zéro volatile).
+4. **Jeu de hooks** (lu dans `.claude/settings.json`) : `UserPromptSubmit` (pre-turn-reminder), `PreToolUse` (check-commit-features sur Bash ; features-for-path + fiche-consolidation-nudge sur Write/Edit/MultiEdit), `PostToolUse` (auto-worklog-log sur Write/Edit/MultiEdit), `Stop` (stop-sequence). 4 types de hook, 5 scripts distincts.
+
+**Distinction proposée (répond au risque de gel prématuré)** : le gel porte sur ce contrat **structurel** (schéma/hooks/index/CLI), pas sur les décisions de **positionnement** encore ouvertes (P1 hub knowledge, P2a CLI standalone, P4 réduction agents, P6 sort TFVC, P17 validation indépendante). Ces 5 items peuvent se résoudre après v1.0 sans rouvrir le contrat : aucun ne touche au schéma, au format index.md, aux hooks, ni à la liste des 10 intentions.
+
+**Projet de section CONTRIBUTING.md** (à ajouter après « Moratoire sur la croissance du moteur bash », même style d'enforcement — règle de revue humaine écrite, pas de gate automatisé) :
+
+```markdown
+### Moratoire de surface (v1.0+)
+
+- À partir de v1.0, le contrat public est gelé : les 10 intentions `aic-*`, le
+  schéma `.ai/schema/feature.schema.json`, le format `index.md` et le jeu de
+  hooks `.claude/settings.json` ne grossissent pas par défaut.
+- Ajouter une commande `aic-*`, un champ frontmatter obligatoire, un hook ou un
+  format d'index demande une justification explicite écrite (fiche feature,
+  section Décisions) — même exigence que le moratoire bash existant.
+- Ce moratoire ne bloque pas les décisions de positionnement produit (agents
+  supportés, sous-systèmes conservés) : celles-ci n'étendent pas le contrat
+  structurel tant qu'elles ne touchent ni au schéma, ni aux hooks, ni au format
+  d'index, ni à la liste des intentions.
+- Ce moratoire est une règle de revue, pas un gate automatisé : aucun script ne
+  mesure la conformité. Une PR qui grossit le contrat public sans justification
+  écrite doit être refusée en review.
+```
+
+**Ce qui reste à faire pour clore P16** (dépend de la décision utilisateur, non exécuté ici) :
+- Valider ou amender le contrat v1.0 énuméré ci-dessus.
+- Valider ou amender le projet de section CONTRIBUTING.
+- Dater la décision (elle-même, pas seulement son exécution).
+- Une fois validé : appliquer la section CONTRIBUTING, publier une checklist de sortie v1.0 courte (les 4 points du contrat + le moratoire), marquer P16 `done`.
 
 ## Décisions actées
 
@@ -200,10 +249,10 @@ HANDOFF
 HANDOFF
   from_scope: workflow
   to_scope: product
-  status: en cours (mandat autopilot, 2026-07-24)
-  files_touched: [P16 pas encore commencé]
-  pending: [P16 gel v1.0 : vérifier les critères de sortie (P7/P9/P10a/P12-14, tous livrés désormais), définir le contrat public (index.md + schéma fiche + hook set + 10 intentions aic), étendre le moratoire bash en moratoire de surface, publier une checklist de sortie]
-  risks: [P16 est une décision de positionnement/gel, pas un fix mécanique — nécessite probablement une confirmation utilisateur explicite avant d'être marqué done, contrairement aux items purement techniques traités jusqu'ici]
+  status: RÉSOLU côté investigation — clos 2026-07-24 ; décision finale reste utilisateur
+  files_touched: [aucun — investigation et proposition uniquement, voir « Proposition P16 »]
+  pending: [décision utilisateur : valider/amender le contrat v1.0 proposé, valider/amender le projet CONTRIBUTING, dater la décision ; exécution (appliquer CONTRIBUTING + checklist de sortie) triviale une fois la décision prise]
+  risks: [aucun matérialisé — routé manual comme prévu par la carte, pas exécuté unilatéralement ; cohérent avec P1/P2a/P4/P6/P17]
 ```
 
 ## Suivi d'exécution
@@ -230,18 +279,20 @@ HANDOFF
 | P12 | aic init | Claude (mandat autopilot) | done | `f34cec5` |
 | P9b | aic-release.sh + migration native v0.14.0 | Claude (mandat autopilot) | done | `1bd808c` |
 | P15 | Routes aic.sh onboard/dev-plan | Claude (mandat autopilot) | done | `bfc6767` |
+| P16 | Investiguer gel v1.0 | Claude (mandat autopilot) | validated | Critères de sortie 6/6 vérifiés ; contrat v1.0 + projet CONTRIBUTING proposés ; décision/datation utilisateur requise |
 
 ## Validation de clôture
 
-- P9a, P3, P13, P14, P18b, P5, P10a, P18a, P7, P8, P11, P2b, P9b, P12, P15 : `done`, preuve complète fournie (15/18 items). P1, P17, P2a, P4, P6 : `validated` (investigués, recommandation prête, arbitrage final utilisateur — 5/18). Seul P16 reste `triage` (18/18 comptabilisés) — le registre reste `active` jusqu'à P16.
+- P9a, P3, P13, P14, P18b, P5, P10a, P18a, P7, P8, P11, P2b, P9b, P12, P15 : `done`, preuve complète fournie (15/18 items). P1, P17, P2a, P4, P6, **P16** : `validated` (investigués, recommandation prête, arbitrage final utilisateur — 6/18). **18/18 items traités** : le mandat autopilot est intégralement discharged — chaque item est soit exécuté avec preuve, soit investigué avec une recommandation actionnable laissée à l'utilisateur. Le registre reste `active` jusqu'à ce que les 6 items `validated` soient tranchés (ou explicitement laissés en l'état).
 - Aucune fiche feature globale créée ; chaque item routé `feature` a sa fiche propre (`workflow/aic-init`, `workflow/aic-release`), les corrections mineures hors mesh (RELEASE.md, feature-update.md) sont restées `docs`/`chore` en place.
 - Chaque preuve de P9a est renseignée (commandes exécutées, gates PASS, tag vérifié). Chaque item workflow (P2b/P9b/P12/P15) a vu sa prémisse initiale re-vérifiée avant exécution — 2 corrections notables (P2b : élagage annulé, prémisse fausse ; P9b : `aic-release.sh` re-scopé en source-only après découverte d'une dépendance elle-même source-only, détectée par une régression réelle du smoke-test).
+- P16 : critères de sortie vérifiés 6/6, contrat v1.0 et projet CONTRIBUTING proposés avec sources citées, distinction structurel/positionnement explicitée pour répondre au risque de gel prématuré. Non exécuté (pas de commit CONTRIBUTING) faute de décision/datation utilisateur — cohérent avec sa route `manual`.
 - La quality gate (smoke-test + check-* + freshness + dogfood-drift + check-runtime-template-mirror + check-skills-parity) est passée avant chaque commit, sans exception.
 
 ## Next hint
 
-Scope workflow **clos (4/4)**. Seul **P16** (gel v1.0, scope product) reste sur la carte parmi les items non-utilisateur. Ses critères de sortie déclarés (P7, P9, P10a, P12–P14) sont tous livrés désormais — à vérifier explicitement avant de déclarer P16 `done`, puisque c'est une décision de positionnement (probablement `manual`, nécessitant confirmation utilisateur) plutôt qu'un fix mécanique comme les 14 items précédents.
+**Mandat autopilot terminé (18/18 items traités).** 12/18 exécutés avec preuve (`done`), 6/18 investigués et laissés à l'arbitrage utilisateur (`validated`) : **P1** (geler le hub knowledge — recommandé), **P2a** (statuer sur `context-relevance-report.sh`, faible enjeu), **P4** (réduction agents — Gemini CLI décommissionné, trouvaille datée), **P6** (sort du support TFVC — connaissance directe utilisateur requise), **P17** (validation par un repo tiers indépendant), **P16** (gel v1.0 — contrat structurel + projet CONTRIBUTING déjà rédigés, prêts à valider).
 
-P1, P17, P2a, P4, P6 restent `validated`, affichés pour arbitrage utilisateur à sa convenance — non bloquants pour P16 ni pour la clôture du registre.
+Aucun de ces 6 items ne bloque l'autre : chacun peut être tranché indépendamment, à la convenance de l'utilisateur. Le registre peut rester `active` indéfiniment en l'état (aucune action mécanique restante), ou être refermé dès que l'utilisateur considère les 6 arbitrages traités ou explicitement différés.
 
 Rappels méthodo acquis cette session : `rg --hidden` pour toute recherche de références dans ce repo (sinon `.docs/` est ignoré) ; tester `copier update` uniquement sur une copie jetable, jamais un repo consommateur réel ; `copier copy`/`update` non-interactifs exigent `--defaults` + `--data project_name=...` (pas de TTY dans ce contexte) ; avant de câbler un nouveau script dans `aic.sh`, vérifier s'il dépend d'un artefact source-only (`RELEASE.md`, `check-release-coherence.sh`…) — si oui, il doit lui-même rester source-only, jamais templaté ni dispatché ; pour toute entrée `_migrations` Copier, lire le code source installé plutôt que supposer le schéma, et vérifier empiriquement l'effet d'un `.rej` préexistant avant de la rendre bloquante.
