@@ -2,12 +2,12 @@
 pilot_id: "2026-07-23-analyse-fonctionnelle-generale"
 status: "active"
 source: "analyse fonctionnelle générale 2026-07-23 (session Claude — 4 sous-audits : runtime .ai/, distribution Copier, surface utilisateur, santé du process) ; review Codex #1 (bloquante) et re-review #2 (go avec réserves) appliquées le 2026-07-23"
-scope_primary: "core"
+scope_primary: "workflow"
 created_at: "2026-07-23"
 updated_at: "2026-07-24"
-active_item: "P7"
-active_question: "Mandat autopilot en cours. Scopes product (6/6) et quality (3/3) clos. HANDOFF quality→core émis pour P2a/P4/P6/P7/P8/P11. P1 (geler hub knowledge) et P17 (repo tiers indépendant) restent en attente d'arbitrage utilisateur — non bloquant pour la suite."
-next_hint: "Poursuivre l'autopilot : scope core (P7 d'abord — P8 en dépend ; P11 measure-first ; P2a/P4/P6 investigués et recommandés, pas décidés seuls), puis HANDOFF workflow (P2b, P9b, P12, P15), puis retour product pour P16 (gel v1.0, une fois P7/P10a/P12-14 livrés — P10a déjà fait). P1/P17 restent affichés pour arbitrage utilisateur dès qu'il est disponible."
+active_item: "P2b"
+active_question: "Mandat autopilot en cours. Scopes product (6/6), quality (3/3), core (3/3 exécutés : P7/P8/P11 ; 3/3 investigués : P2a/P4/P6) clos. HANDOFF core→workflow émis pour P2b/P9b/P12/P15. 5 items en attente d'arbitrage utilisateur (P1, P17, P2a, P4, P6) — non bloquant pour la suite."
+next_hint: "Poursuivre l'autopilot : scope workflow (P2b, P9b, P12, P15), puis retour product pour P16 (gel v1.0 — critères de sortie P7/P10a/P12-14 : P7+P10a déjà faits, P12 à faire dans ce scope, P14 déjà fait scope product). P1/P17/P2a/P4/P6 restent affichés pour arbitrage utilisateur dès qu'il est disponible — trouvaille notable P4 : Gemini CLI décommissionné par Google le 2026-06-18 (recherche web), remplacé par Antigravity CLI qui lirait aussi AGENTS.md."
 ---
 
 # Pilot 2026-07-23 — Analyse fonctionnelle générale : consolidation v1.0
@@ -38,12 +38,12 @@ Coût méta mesuré : 360 commits en 3 mois dont 39 % `docs:` ; ~17 000 lignes d
 | ID | Sujet | Statut | Scope probable | Route | Preuve attendue |
 |---|---|---|---|---|---|
 | P1 | Statuer sur le hub knowledge — **investigué, recommandation prête, décision finale utilisateur** : adoption mesurée à **zéro** (`.ai/.context-relevance.jsonl` 0 occurrence « knowledge » ; aucun worklog ni commit d'usage réel, uniquement des commits de construction). Recommandation : **geler** (rétrograder `product/knowledge-federation` de `active`, code conservé intact, aucune extraction) — measure-first a tranché, cohérent avec ZE SOLUTION P4/P5 | validated | product | manual | Confirmation utilisateur du gel (ou contre-argument) |
-| P2a | Statuer sur les 2 CLI standalone sans invocation opérationnelle automatisée ni doc utilisateur publique (leur couverture CI se limite à leurs tests unitaires via la boucle générique) : `check-agent-native-context.sh` (documentée consommateur `upgrading.md`, **instrument du kill criterion** de `core/agents-md-native-collapse-path.md:106` — outil de la décision P4) et `context-relevance-report.sh` (reporter standalone contractuel, doc interne `quality/context-relevance-tracker.md`, aucune route `aic`) | triage | core | manual | Décision par script : exposer publiquement (route `aic`/doctor + doc) / conserver en outil interne documenté / déprécier — datée, avec suite routée ; cohérence avec P4 exigée pour le premier |
+| P2a | **Investigué — `check-agent-native-context.sh` n'est PAS orphelin** : c'est l'outil qui a validé le retrait des shims dédiés cursor/copilot déjà livré ce cycle (`core/agents-md-native-collapse-path`, voir P4) — il fait son travail, aucune action requise. `context-relevance-report.sh` reste genuinement indécouvrable (doc interne seule, 0 route `aic`) | validated | core | manual | Recommandation : laisser `check-agent-native-context.sh` tel quel ; décider d'exposer `context-relevance-report.sh` via `aic` ou de l'accepter comme outillage mainteneur — arbitrage utilisateur, faible enjeu |
 | P2b | Élaguer les workflows morts et fusionner les contrats transverses (`feature-resume.md` supplanté par script, `feature-handoff.md` mort opérationnel ; `mcp-policy`+`subagent-contract`+`evidence-discipline` → 1 contrat agent) | triage | workflow | refactor | 15 → ~8 workflows ; `check-ai-references.sh` vert ; refs skills mises à jour |
 | P3 | Dé-versionner `docs/benchmarks/runs/` | **done** | product | chore | `f0619c0` : 246 fichiers untracked, conservés sur disque ; `.DS_Store` déjà gitignorés (jamais tracked — prémisse initiale corrigée) |
-| P4 | Réduire les cibles agents de 5 à « claude + codex + tier AGENTS.md-natif » (retrait des shims cursor/gemini/copilot dédiés) | triage | core | manual | Décision de positionnement datée ; si oui : suite routée `feature` (copier.yml simplifié, MIGRATION.md documente le retrait) |
+| P4 | **Investigué — largement déjà fait**, prémisse initiale partiellement obsolète : `.ai/native-context-support.tsv` confirme cursor + copilot natifs AGENTS.md (evidence officielle datée 2026-07-06) ; leurs shims dédiés sont déjà retirés/opt-in ce cycle (`core/agents-md-native-collapse-path`, déjà dans le CHANGELOG v0.14.0) — le README `Honnêteté runtime` le documente déjà honnêtement. Reste ouvert et **nouveau** (recherche web datée) : Google a arrêté Gemini CLI pour la plupart des utilisateurs le 2026-06-18, remplacé par « Antigravity CLI » qui lirait aussi AGENTS.md et supporterait `.agents/skills/` — `gemini` reste pourtant un choix `agents` actif dans `copier.yml:210`. Claude lui-même est `pending` (non confirmé) dans le même registre | validated | core | manual | Décision produit requise : (a) retirer/déprécier `gemini`, (b) ajouter `antigravity` comme choix (recherche plus approfondie d'abord), ou (c) statu quo documenté. Hors mandat autopilot — changement de surface publique (copier.yml, MIGRATION.md) |
 | P5 | Dégraisser PROJECT_STATE.md | **done** (prémisse quality-gate ×3 invalidée) | quality | docs | `d94830d` : 146→91 lignes. Quality gate ×3 relu en entier : contrat/procédure/extension-point, pas une triplication — aucun changement là |
-| P6 | Sort de TFVC : option `vcs_provider=tfvc` avouée « best-effort, non testé end-to-end » dans copier.yml | triage | core | manual | Usage réel vérifié (Hypothèse ci-dessous) ; décision datée : retrait (option + MIGRATION) ou test e2e réel |
+| P6 | **Investigué, hypothèse non tranchable par archéologie de code** : `copier.yml:181` avoue toujours « best-effort, non testé end-to-end » ; aucune trace d'un consommateur TFVC réel trouvée dans ce repo (git log, docs, mémoire) — mais l'absence de preuve n'est pas la preuve de l'absence, seul l'utilisateur sait s'il existe un client TFVC réel | validated | core | manual | Question directe à l'utilisateur : connais-tu un usage TFVC réel ? Sinon → retrait propre (option + MIGRATION.md, ~286 LOC `_vcs.sh` simplifiées) ; sinon → cadrer un test e2e réel |
 | P7 | Combler les 3 trous du dispositif de parité existant (la génération template→runtime existe déjà — décision ZE SOLUTION P5) : (i) drift content-check limité au profil `minimal`, (ii) aucun guard contre l'édition directe du miroir runtime, (iii) discipline « éditer les deux copies » encore codifiée dans PROJECT_STATE | triage | core | feature | Drift strict multi-profils ; édition directe du miroir bloquée ou re-générée ; PROJECT_STATE aligné sur le flux à sens unique |
 | P8 | Copie unique des skills : corps en un seul fichier, `SKILL.md` Claude/Codex = pointeurs ; check CI d'égalité inter-arbres `.claude/skills` ↔ `.agents/skills` | inbox (dép. P7) | core | feature | `diff -rq` des deux arbres vide en CI ; 40 fichiers dupliqués → pointeurs |
 | P9a | **Préparer la release `vNext`** : décider le bump SemVer, inventorier et basculer les recos `--vcs-ref=HEAD` consommateur vers le comportement par défaut de Copier, conserver les usages HEAD mainteneur légitimes | **done** | workflow | chore | Voir « Preuve de clôture P9a » ci-dessous |
@@ -134,6 +134,8 @@ Question à traiter maintenant :
 | 2026-07-23 | (registre) | Re-review Codex #2 = **go avec réserves** ; 3 corrections appliquées après re-vérification code : (1) `published` = faux positif (exemple YAML de corps de fiche, `knowledge-source-contract.md:138` — le frontmatter réel est `active`) → P1 recompté à 1 fiche non close, P10a sans correction de donnée ; (2) `context-relevance-report.sh` documenté en interne (`quality/context-relevance-tracker.md`) → P2a reformulé « aucune doc utilisateur publique ni route aic » ; (3) P9a reformulé « préparer la release `vNext` » : bump SemVer d'abord (RELEASE.md §5), inventaire complet des recos HEAD consommateur (6 fichiers), usages mainteneur préservés | Les 3 réserves vérifiées fondées ; cause racine du (2) consignée : `rg` sans `--hidden` ignore `.docs/` | Soumis pour GO complet |
 | 2026-07-23 | (registre) | Review Codex #3 = go avec réserves, **fond validé** ; 2 corrections appliquées après vérification : (1) ordre P9a corrigé — HANDOFF product→workflow + confirmation AVANT la checklist RELEASE.md (elle contient des éditions documentaires de ce scope ; séquence : SemVer → HANDOFF → checklist → confirmation tag/push → tag) ; (2) P1/P2a reformulés « invocation opérationnelle » — la CI couvre bien ces surfaces via leurs tests unitaires dans la boucle générique (`ai-context-check.yml:98-103`, vérifié), le manque est l'usage hooks/skills | Codex précise qu'aucune nouvelle review complète n'est requise ; le cadrage passe en phase d'exécution conditionnée aux confirmations utilisateur | Question active = activation de P9a |
 | 2026-07-24 | P5, P10a, P18a | Scope quality clos (3/3, mandat autopilot). P5 : prémisse « quality gate ×3 » invalidée après lecture complète (contrat/procédure/extension-point) — seul PROJECT_STATE.md dégraissé. P10a : durcissement sans impact sur le mesh réel. P18a : nouveau check `check-release-coherence.sh`, a aussi révélé que la CI ne se déclenchait même pas sur un diff limité à CHANGELOG/PROJECT_STATE/copier.yml (path triggers manquants, corrigés) | Gates + smoke-test complets PASS après chaque commit | HANDOFF quality→core émis pour P2a/P4/P6/P7/P8/P11 |
+| 2026-07-24 | P7, P8, P11 | Scope core clos (3/3 exécutés). P7 : prémisse corrigée (aucune copie runtime des fichiers scopés à comparer, ce repo dogfoode `minimal` — fix = sanity de rendu + nouveau `check-runtime-template-mirror.sh`). P8 : prémisse corrigée (1 seule divergence réelle sur toute la surface skills, intentionnelle) — fix = `check-skills-parity.sh` templaté plutôt qu'une restructuration risquée. P11 : mesure confirmée et plus grave qu'estimé (1024 forks yq, ~5s/build, ~25s/commit simulé) — optimisé à ~1.9s/~9.2s (2.7x), avec un vrai bug de précédence bash `read`+`IFS=tab` détecté et documenté en cours de route | Diff sémantique JSON strict + 9 tests unitaires + smoke-test complet PASS | HANDOFF core→workflow émis pour P2b/P9b/P12/P15 |
+| 2026-07-24 | P2a, P4, P6 | Investigués, non décidés (route `manual`). P2a : `check-agent-native-context.sh` n'est pas orphelin, il a servi à valider le retrait déjà livré des shims cursor/copilot. P4 : prémisse partiellement obsolète — cursor/copilot déjà réduits ce cycle ; **trouvaille nouvelle** (recherche web) : Gemini CLI décommissionné par Google le 2026-06-18, remplacé par Antigravity CLI (lirait aussi AGENTS.md) — `gemini` reste pourtant un choix actif `copier.yml`. P6 : hypothèse TFVC non tranchable par archéologie de code, requiert la connaissance directe de l'utilisateur | Recherche web datée pour P4 ; code lu pour P2a ; absence de preuve non concluante pour P6 | Arbitrage utilisateur requis sur les 3 |
 | 2026-07-23 | P9a | **Activé** (« go » utilisateur). Bump proposé : **v0.14.0 (MINOR)** — `[Unreleased]` dominé par de l'additif (2 nouvelles questions Copier à défaut sûr, cockpit `aic migrate`, index progressifs, 2 skills, gates advisory, OKF Phase 0 explicitement non-cassant) ; les 2 changements de comportement (élagage shims Copilot/Cursor, gate Stop) ont migration documentée + échappatoires, conformes au précédent v0.13.0 (breaking documenté = MINOR en 0.x). v1.0.0 est réservé au jalon P16 | RELEASE.md §5 ; précédent v0.12→v0.13 ; SemVer 0.x | HANDOFF product→workflow soumis à confirmation utilisateur avant toute édition |
 | 2026-07-24 | P9a | **« go jusqu'au bout » utilisateur** (bump + HANDOFF confirmés implicitement par le mandat d'exécution complète). Checklist RELEASE.md §1-7 exécutée intégralement. 2 bugs réels trouvés et corrigés en route, hors registre initial : (a) `RELEASE.md:32` syntaxe `--data agents=codex` cassée sous Copier 9.14.3 (multiselect exige une liste YAML) — contournée à l'exécution ; (b) `RELEASE.md:49` `copier update` documenté avec un positionnel source qui n'existe pas (seul `destination_path` est positionnel) — **corrigé dans RELEASE.md** avec la méthode sûre (clone jetable + édition `_src_path`). 1 trou de couverture réel trouvé par la gate freshness elle-même (`MIGRATION.md` non couvert par `core/migration-orchestrator` malgré `touches_shared:` déjà présent — 2 fiches voisines `core/okf-strict-profile`/`quality/read-only-checks-contract` mises à jour en « couverture incidente », pattern déjà établi par `aic-pilot`) | Preuve complète : voir « Preuve de clôture P9a » | **done** — tag `v0.14.0` poussé, sanity post-release PASS |
 
@@ -177,10 +179,20 @@ HANDOFF
 HANDOFF
   from_scope: quality
   to_scope: core
+  status: RÉSOLU — 6/6 items traités (3 exécutés, 3 investigués), clos 2026-07-24
+  files_touched: [check-dogfood-drift.sh + check-runtime-template-mirror.sh nouveau (8494b6e), check-skills-parity.sh nouveau (1015e87), build-feature-index.sh optimisé (074438a)]
+  pending: []
+  risks: [aucun matérialisé — P2a/P4/P6 correctement laissés à l'arbitrage utilisateur, pas de retrait exécuté unilatéralement]
+```
+
+```text
+HANDOFF
+  from_scope: core
+  to_scope: workflow
   status: en cours (mandat autopilot, 2026-07-24)
-  files_touched: [P2a/P4/P6 pas encore investigués, P7 pas encore commencé, P8 dépend P7, P11 pas encore mesuré]
-  pending: [P7 combler les 3 trous dogfood-drift, P8 copie unique skills (dép. P7), P11 chemin chaud measure-first, P2a/P4/P6 investigation + recommandation sans décision unilatérale]
-  risks: [P4/P6 sont des décisions de positionnement produit — investiguer et recommander, ne pas exécuter de retrait sans confirmation utilisateur]
+  files_touched: [P2b/P9b/P12/P15 pas encore commencés]
+  pending: [P2b élaguer workflows morts, P9b scripter aic release, P12 aic init + fiche exemple, P15 alignement noms additive-only]
+  risks: [aucun identifié à ce stade]
 ```
 
 ## Suivi d'exécution
@@ -197,10 +209,16 @@ HANDOFF
 | P5 | Dégraisser PROJECT_STATE.md | Claude (mandat autopilot) | done | `d94830d` |
 | P10a | Durcir enum status | Claude (mandat autopilot) | done | `7b5005d` |
 | P18a | check-release-coherence.sh | Claude (mandat autopilot) | done | `5629e69` |
+| P7 | Combler les 3 trous dogfood-drift | Claude (mandat autopilot) | done | `8494b6e` |
+| P8 | check-skills-parity.sh | Claude (mandat autopilot) | done | `1015e87` |
+| P11 | Consolider forks yq/jq build-feature-index | Claude (mandat autopilot) | done | `074438a` |
+| P2a | Investiguer 2 CLI standalone | Claude (mandat autopilot) | validated | `check-agent-native-context.sh` non orphelin ; `context-relevance-report.sh` reste à statuer |
+| P4 | Investiguer réduction agents | Claude (mandat autopilot) | validated | Cursor/copilot déjà réduits ; Gemini CLI décommissionné (recherche web datée) — arbitrage requis |
+| P6 | Investiguer sort TFVC | Claude (mandat autopilot) | validated | Hypothèse non tranchable sans connaissance directe utilisateur |
 
 ## Validation de clôture
 
-- P9a, P3, P13, P14, P18b, P5, P10a, P18a : `done`, preuve complète fournie. P1, P17 : `validated` (investigués, recommandation prête, arbitrage final utilisateur). Items restants (core/workflow scopes + P16) : `triage`/`inbox` — le registre reste `active`.
+- P9a, P3, P13, P14, P18b, P5, P10a, P18a, P7, P8, P11 : `done`, preuve complète fournie. P1, P17, P2a, P4, P6 : `validated` (investigués, recommandation prête, arbitrage final utilisateur). Items restants (workflow scope + P16) : `triage`/`inbox` — le registre reste `active`.
 - Aucune fiche feature globale créée ; les 2 bugs trouvés (RELEASE.md) ont été corrigés en place, pas fichés séparément (corrections mineures dans un doc non couvert par le mesh — cohérent avec `manual`/`chore`, pas de nouvelle feature).
 - Chaque preuve de P9a est renseignée (commandes exécutées, gates PASS, tag vérifié).
 - La quality gate (smoke-test + check-* + freshness + dogfood-drift) est passée avant chaque commit.
