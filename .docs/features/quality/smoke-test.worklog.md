@@ -333,3 +333,6 @@
 
 ## 2026-07-24 — assertion check-skills-parity (pilotage P8)
 - Nouvelle assertion `[2/28]` : `check-skills-parity.sh` passe sur le scaffold par défaut (claude+codex). Smoke complet relancé, PASS.
+
+## 2026-07-24 — assertion aic.sh init (pilotage P12)
+- Nouvelle assertion `[2/28]` : `aic.sh init` active `core.hooksPath` au premier passage, puis confirme l'idempotence (« déjà configuré ») au second passage, avant le `rm -rf` du `.git` de test qui suit dans le script. Smoke complet relancé, PASS (log complet vérifié via grep, pas seulement le statut de sortie).

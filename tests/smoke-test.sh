@@ -229,6 +229,24 @@ if [[ "$inc_count" -ne 0 ]]; then
   exit 1
 fi
 echo "  ✓ pr-report.sh format=json + exclusions par défaut + --include-docs OK"
+# aic.sh init : diagnostic + activation hooks git idempotente (testé avant le rm -rf du .git ci-dessous)
+init_out1=$( cd "$OUT" && bash .ai/scripts/aic.sh init 2>&1 )
+if ! printf '%s' "$init_out1" | grep -q "core.hooksPath configuré sur .githooks"; then
+  echo "  ✗ aic.sh init n'active pas core.hooksPath au premier passage"
+  echo "$init_out1"
+  exit 1
+fi
+init_out2=$( cd "$OUT" && bash .ai/scripts/aic.sh init 2>&1 )
+if ! printf '%s' "$init_out2" | grep -q "core.hooksPath déjà configuré"; then
+  echo "  ✗ aic.sh init n'est pas idempotent sur core.hooksPath"
+  echo "$init_out2"
+  exit 1
+fi
+if ! printf '%s' "$init_out2" | grep -q "Prochaine étape"; then
+  echo "  ✗ aic.sh init n'affiche pas la prochaine étape"
+  exit 1
+fi
+echo "  ✓ aic.sh init OK (diagnostic + hooks git idempotents + prochaine étape)"
 rm -rf "$OUT/.git" "$OUT/README.md" "$OUT/src/sample.ts"
 # Wrapper aic.sh : --help liste la surface canonique ; routage vers scripts.
 aic_help=$( cd "$OUT" && bash .ai/scripts/aic.sh --help )

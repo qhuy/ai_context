@@ -46,6 +46,7 @@ Usage: bash .ai/scripts/aic.sh <command> [args...]
 CLI aic — surface scriptable alignée avec les skills aic-*.
 
 Commandes utilisateur :
+  init         parcours guidé post-scaffold : doctor, hooks git, prochaine étape
   frame "<objectif>"
                bootstrap de contexte : scope probable, docs à lire, feature candidates
                Ne remplace pas le skill aic-frame pour un cadrage critique.
@@ -894,6 +895,7 @@ esac
 shift
 
 case "$cmd" in
+  init)       exec bash "$script_dir/aic-init.sh" "$@" ;;
   frame|frame-bootstrap|frame-context) run_frame "$@" ;;
   pilot)
     cat <<'EOF'

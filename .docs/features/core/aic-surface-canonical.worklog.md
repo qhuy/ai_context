@@ -243,3 +243,6 @@
 
 ## 2026-07-24 — couverture incidente (pilotage P7)
 - `PROJECT_STATE.md` référence le nouveau `check-runtime-template-mirror.sh` en complément de la règle anti-drift écrite. Aucun changement de la surface `aic`.
+
+## 2026-07-24 — couverture incidente (pilotage P12)
+- `aic.sh` / `aic.sh.jinja` : ajout de la route `init` (dispatch + aide), additive uniquement. Le détail fonctionnel vit dans `workflow/aic-init`.
