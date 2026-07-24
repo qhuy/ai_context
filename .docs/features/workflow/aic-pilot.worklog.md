@@ -113,3 +113,11 @@
   - P17 : **prémisse corrigée** — les runs réels du benchmark existent déjà (`docs/benchmarks/reports/2026-07-03-product-decision-readout.md`, N=3, 2 repos, +66.7 pts, -39.6% tokens, `decision_state=commit` déjà acté 2026-07-03). Ce qui reste ouvert : validation par repo vraiment indépendant, `next_decision_date` dépassée sans nouvelle décision tracée.
 - Tous les gates (check-features/shims/docs/ai-references/freshness/dogfood-drift) et smoke-test complet PASS avant chaque commit.
 - HANDOFF product→quality émis pour P5/P10a/P18a.
+
+## 2026-07-24 — mandat autopilot, scope quality clos (3/3)
+
+- **P5** (`d94830d`) : dégraissage `PROJECT_STATE.md` (146→91 lignes — section Architecture retirée, cascade « État actuel/rappels » collapsée). Prémisse initiale du registre invalidée après lecture complète : `quality/QUALITY_GATE.md` (contrat), `workflows/quality-gate.md` (procédure), `rules/core.md`/`rules/quality.md` (extension-points volontairement minimaux) ne sont PAS une triplication — aucun changement sur ces 3 fichiers.
+- **P10a** (`7b5005d`) : enum `status` warn→fail dans `check-features.sh` + miroir template. Nouveau test fixture `test-check-features-status-enum-strict.sh`. Mesh réel (65 fiches) vérifié inchangé avant durcissement.
+- **P18a** (`5629e69`) : nouveau script source-only `check-release-coherence.sh` (version CHANGELOG↔PROJECT_STATE + complétude `docs/variables.md` vs `copier.yml`), testé positif et négatif. A révélé que `.github/workflows/ai-context-check.yml` ne se déclenchait même pas sur un diff limité à CHANGELOG/PROJECT_STATE/copier.yml (path triggers manquants — corrigé). Câblé aussi dans `RELEASE.md` §4. Non mirroré côté template (fichiers comparés inexistants côté consommateur, cohérent avec l'exemption drift déjà accordée à ce workflow).
+- Tous les gates + smoke-test complet PASS avant chaque commit.
+- HANDOFF quality→core émis pour P2a/P4/P6/P7/P8/P11.
