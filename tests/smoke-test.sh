@@ -143,6 +143,11 @@ copier copy --defaults --trust \
 echo
 echo "[2/28] check-shims"
 bash "$OUT/.ai/scripts/check-shims.sh"
+if ! ( cd "$OUT" && bash .ai/scripts/check-skills-parity.sh ) >/dev/null 2>&1; then
+  echo "  ✗ check-skills-parity échoue sur un scaffold sain (claude+codex par défaut)"
+  exit 1
+fi
+echo "  ✓ check-skills-parity OK"
 if [[ ! -f "$OUT/.ai/schema/feature.schema.json" ]]; then
   echo "  ✗ .ai/schema/feature.schema.json absent"
   exit 1

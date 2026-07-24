@@ -330,3 +330,6 @@
 
 ## 2026-07-24 — assertion GLOSSARY.md (pilotage P13)
 - Nouvelle assertion `[2/28]` : `GLOSSARY.md` présent après scaffold par défaut et lié depuis `.ai/index.md` ou `README_AI_CONTEXT.md`. Smoke complet relancé, PASS.
+
+## 2026-07-24 — assertion check-skills-parity (pilotage P8)
+- Nouvelle assertion `[2/28]` : `check-skills-parity.sh` passe sur le scaffold par défaut (claude+codex). Smoke complet relancé, PASS.

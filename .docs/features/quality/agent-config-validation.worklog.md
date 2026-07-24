@@ -108,3 +108,6 @@ Source session : automation veille-techno
 
 ## 2026-07-24 — couverture incidente (pilotage P7)
 - `.github/workflows/ai-context-check.yml` : nouveau step `check-runtime-template-mirror` (advisory, diff PR). Aucun changement de la validation des configs agent.
+
+## 2026-07-24 — couverture incidente (pilotage P8)
+- `.ai/workflows/quality-gate.md` (+ miroir) et `.github/workflows/ai-context-check.yml` (+ miroir template) : nouveau check `check-skills-parity`. Aucun changement de la validation des configs agent.

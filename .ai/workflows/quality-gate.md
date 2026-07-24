@@ -12,6 +12,7 @@
 Exécuter **dans cet ordre**, ne pas s'arrêter au premier fail :
 ```bash
 bash .ai/scripts/check-shims.sh
+bash .ai/scripts/check-skills-parity.sh
 bash .ai/scripts/check-agent-config.sh
 bash .ai/scripts/check-ai-references.sh
 bash .ai/scripts/check-features.sh --no-write
@@ -42,6 +43,7 @@ Format markdown, même structure à chaque fois :
 | Check | Status | Détails |
 |---|---|---|
 | check-shims | ✅ / ❌ | <sortie courte> |
+| check-skills-parity | ✅ / ❌ | <divergences .claude/skills ↔ .agents/skills, hors exception documentée> |
 | check-agent-config | ✅ / ⚠️ / ❌ | <configs agents et scripts référencés> |
 | check-ai-references | ✅ / ❌ | <sortie> |
 | check-features --no-write | ✅ / ❌ | <sortie> |
