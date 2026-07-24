@@ -153,3 +153,13 @@
 - Arbitrages actés : **P1** gel exécuté (`knowledge-federation` : `decision_state: cut`, `status: done`, code intact) ; **P2a** statu quo ; **P6** TFVC CONSERVÉ — c'est le repository principal de l'organisation de l'utilisateur (fait non dérivable du repo, l'archéologie concluait à tort « aucun consommateur ») → le gap s'inverse : test e2e TFVC à cadrer ; **P17** opportuniste, `next_decision_date` re-datée 2026-10-01.
 - Proposition P16 amendée en conséquence (caveat SemVer/P4, question TFVC-e2e comme critère de sortie potentiel) ; prompt de review Codex rédigé et fourni à l'utilisateur — gate avant adoption, l'auteur de la proposition ne peut pas être son seul validateur.
 - État : 16/18 done, P16 (verdict Codex attendu) et P4 (vérification Antigravity avant tag v1.0) restants.
+
+## 2026-07-24 10:26 — auto
+- Fichiers modifiés :
+  - .docs/pilots/2026-07-23-analyse-fonctionnelle-generale.md
+
+## 2026-07-24 — review Codex #4 (P16) bloquante : re-vérifiée, acceptée, proposition v3
+- Review récupérée depuis la session Codex locale (rollout du 23-07, poursuivie le 24-07) — le bloc à coller était resté vide dans le message utilisateur.
+- Consigne utilisateur respectée : chaque constat re-vérifié dans le dépôt AVANT acceptation. 6 acceptés avec preuve, 1 accepté-réserve recadré (manifeste : routes+questions+enums d'abord, matrice de capacités en extension). Preuves marquantes : incohérence doc `feature-index-cache.md:78` (« tableau » vs enveloppe réelle, vérifiée par `jq keys`) ; câblage hooks Codex ≠ Claude (`.codex/hooks.json.jinja` : 2 événements vs 4) ; `init` livré P12 mais omis du contrat proposé le même jour ; prémisse P4 corrigée et re-vérifiée aux 2 sources officielles (WebFetch) ; preuve interne `smoke-test.sh:2027` que copier update exige un sous-projet git — le chemin d'upgrade TFVC est structurellement non résolu, pas juste non testé.
+- § Proposition P16 réécrite en v3 dans le registre : contrat 8 éléments (questions Copier, CLI classifiée, schéma, index JSON, config.yml, shims, garanties comportementales des hooks — pas le câblage —, matrice d'enforcement), checklist de sortie 3 blocs (A décisions, B chantiers dont E2E TFVC, C gouvernance/manifeste), CONTRIBUTING v3 adossé au manifeste. Carte P16 + P4 mises à jour (prémisse corrigée sourcée).
+- Aucun chantier Bloc B lancé, aucune décision Bloc A prise — re-review Codex round 2 demandée sur la v3 (prompt fourni à l'utilisateur).
