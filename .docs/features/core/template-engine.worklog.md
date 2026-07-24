@@ -474,3 +474,6 @@
 
 ## 2026-07-24 — complétude docs/variables.md (pilotage P14)
 - La table des 12 questions Copier ne documentait que 9 entrées : `vcs_provider`, `enable_codex_hooks` et `enable_copilot_shim` manquaient. Ajoutées dans l'ordre exact posé par `copier.yml`. Aucun changement de `copier.yml` ni des variables elles-mêmes.
+
+## 2026-07-24 — migration native `_migrations` (pilotage P9b)
+- `copier.yml` reçoit une entrée `_migrations` (schéma moderne, vérifié directement dans le code source Copier installé plutôt que supposé) câblée sur `version: v0.14.0`. Stage `after` (défaut), commande `bash .ai/scripts/aic.sh migrate plan || true` — lecture seule et non bloquante, cf. `core/migration-orchestrator` § Invariants. Détail complet (dont la découverte empirique de vrais `.rej` sur le scénario `v0.11.0 → HEAD` qui a motivé le `|| true`) dans `workflow/aic-release`.

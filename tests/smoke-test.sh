@@ -2060,6 +2060,12 @@ EOF
       exit 1
     fi
   fi
+  # Migration native _migrations (copier.yml) : doit se jouer en franchissant la
+  # borne v0.14.0 (from=v0.11.0 < 0.14.0 <= to=HEAD). Volontairement non bloquante
+  # (`|| true` dans copier.yml) : ce scénario produit de vrais .rej (préflight
+  # bloqué), donc on vérifie seulement qu'elle a été invoquée, pas son verdict.
+  native_migration_fired=0
+  grep -q "migrations post-Copier" "$update_log" && native_migration_fired=1
   rm -f "$update_log"
 
   conflict_markers="/tmp/ai-context-copier-inline-conflicts-$$.log"
@@ -2177,8 +2183,14 @@ EOF
     exit 1
   fi
 
+  if [[ "$native_migration_fired" -ne 1 ]]; then
+    echo "  ✗ migration native _migrations (v0.14.0) non jouée pendant copier update v0.11.0 → HEAD"
+    rm -rf "$UPD_OUT"
+    exit 1
+  fi
+
   rm -rf "$UPD_OUT"
-  echo "  ✓ copier update v0.11.0 → HEAD : fichiers project-owned préservés + migration okf-indexes opt-in"
+  echo "  ✓ copier update v0.11.0 → HEAD : fichiers project-owned préservés + migration okf-indexes opt-in + migration native v0.14.0 jouée"
 
 echo
 echo "[28d/28] hooks Codex natifs : .codex/hooks.json opt-in via enable_codex_hooks"

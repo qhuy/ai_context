@@ -336,3 +336,7 @@
 
 ## 2026-07-24 — assertion aic.sh init (pilotage P12)
 - Nouvelle assertion `[2/28]` : `aic.sh init` active `core.hooksPath` au premier passage, puis confirme l'idempotence (« déjà configuré ») au second passage, avant le `rm -rf` du `.git` de test qui suit dans le script. Smoke complet relancé, PASS (log complet vérifié via grep, pas seulement le statut de sortie).
+
+## 2026-07-24 — assertion migration native v0.14.0 (pilotage P9b)
+- Étape `[28c/28]` étendue : la sortie de `copier update v0.11.0 → HEAD` est capturée dans une variable avant la suppression du log, puis vérifiée pour « migrations post-Copier » (preuve que l'entrée `_migrations` de `copier.yml` s'est bien déclenchée en franchissant la borne v0.14.0). Vérifie l'invocation, pas le verdict (ce scénario produit de vrais `.rej`, donc un plan bloqué — attendu, non bloquant grâce au `|| true` de la commande native).
+- Une régression réelle a été détectée et corrigée en cours de route : l'ajout initial (non mirroré) de `.ai/scripts/aic-release.sh` faisait échouer `[0d/28] test-dogfood-drift-extra.sh`. Root cause + fix documentés dans `workflow/aic-release`.

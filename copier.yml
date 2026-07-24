@@ -139,6 +139,22 @@ _message_after_update: |
   aic-onboard reste une étape humaine séparée quand le plan la recommande.
   Les migrations legacy restent opt-in via : bash .ai/scripts/aic.sh migrate
 
+# Migration native : câblée sur le tag v0.14.0 (première version où existent
+# `aic migrate plan` et les migrateurs okf-type/okf-indexes). Copier ne la joue
+# qu'au franchissement de cette borne (from_version < 0.14.0 <= to_version), donc
+# aucun effet sur les updates ultérieurs. Stage "after" (défaut, ne pas changer) :
+# en "before", le script `aic.sh` de la version d'origine n'a pas encore la
+# commande `migrate`. Volontairement read-only (`migrate plan`, jamais `--apply`)
+# et non bloquant (`|| true`) : le cockpit core/migration-orchestrator interdit à
+# Copier d'écrire silencieusement dans le mesh/l'overlay, et un `.rej` préexistant
+# ne doit jamais faire échouer `copier update` lui-même (vérifié empiriquement :
+# le scénario v0.11.0 → HEAD du smoke-test produit de vrais `.rej`, qui feraient
+# sortir `migrate plan` en erreur sans ce garde-fou). Seul un humain déclenche
+# `migrate all --apply`.
+_migrations:
+  - version: v0.14.0
+    command: "bash .ai/scripts/aic.sh migrate plan || true"
+
 # ─────────────────── Questions ───────────────────
 
 project_name:

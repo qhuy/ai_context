@@ -102,3 +102,6 @@
 
 ## 2026-07-24 — couverture incidente (pilotage P13)
 - `README_AI_CONTEXT.md` (+ miroir template) reçoit un pointeur vers le nouveau `GLOSSARY.md`. Aucun changement du contrat provider VCS.
+
+## 2026-07-24 — couverture incidente (pilotage P9b)
+- `copier.yml` reçoit une entrée `_migrations` sans rapport avec le provider VCS (câblage d'une migration native `aic migrate plan`, lecture seule). Aucun changement du contrat provider. Détail dans `workflow/aic-release`.

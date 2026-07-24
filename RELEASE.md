@@ -29,7 +29,7 @@ copier copy --defaults --trust --vcs-ref=HEAD --data project_name=smoke-lite --d
 copier copy --defaults --trust --vcs-ref=HEAD --data project_name=smoke-strict --data adoption_mode=strict . /tmp/ai-context-strict
 copier copy --defaults --trust --vcs-ref=HEAD --data project_name=smoke-docs --data docs_root=docs . /tmp/ai-context-docs
 copier copy --defaults --trust --vcs-ref=HEAD --data project_name=smoke-en --data commit_language=en . /tmp/ai-context-en
-copier copy --defaults --trust --vcs-ref=HEAD --data project_name=smoke-codex --data agents=codex . /tmp/ai-context-codex
+copier copy --defaults --trust --vcs-ref=HEAD --data project_name=smoke-codex --data 'agents=[codex]' . /tmp/ai-context-codex
 copier copy --defaults --trust --vcs-ref=HEAD --data project_name=smoke-fullstack \
   --data scope_profile=fullstack --data tech_profile=fullstack-dotnet-react . /tmp/ai-context-fullstack
 ```

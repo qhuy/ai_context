@@ -535,3 +535,6 @@
 - Fix livré à la place, conforme à l'objectif réel de l'item (« check CI d'égalité inter-arbres ») : nouveau `check-skills-parity.sh` (**templaté**, contrairement à `check-release-coherence.sh`/`check-runtime-template-mirror.sh` — la parité claude/codex concerne aussi tout projet consommateur qui sélectionne les deux agents, pas seulement ce repo). Compare `.claude/skills` ↔ `.agents/skills` récursivement, neutralise l'exception documentée avant diff, bloquant (pas advisory) car une divergence silencieuse ici est un vrai bug du contrat `workflow/intentional-skills`.
 - Câblé dans `.ai/workflows/quality-gate.md` (+ miroir template) Phase 1, dans les deux CI (`ai-context-check.yml` + miroir template), et smoke-test `[2/28]`.
 - Testé positif (divergence réelle détectée), négatif (arbres identiques et exception documentée tolérée), et cas asymétrique (fichier présent d'un seul côté) via `tests/unit/test-check-skills-parity.sh`.
+
+## 2026-07-24 — couverture incidente (pilotage P9b)
+- `dogfood-runtime-lib.sh` : `aic-release.sh` ajouté à l'ignore-list source-only (même traitement que `check-release-coherence.sh`), suite à la découverte que ce nouveau script dépend de tooling lui-même source-only et ne doit donc jamais être rendu aux consommateurs. Détail complet dans `workflow/aic-release`.
