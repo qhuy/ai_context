@@ -207,3 +207,6 @@
 - Surfaces couvertes touchées dans le delta d'audit strict : `.ai/index.md` et `template/.ai/index.md.jinja`.
 - Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
 - Validation : gate ship relancée avant commit.
+
+## 2026-07-24 — couverture incidente (pilotage P2b, recadré)
+- `feature-update.md` (+ miroir) : la ligne « Procedure chain » citait `.ai/workflows/feature-handoff.md` comme étape active alors que le HANDOFF cross-scope est désormais le format inline de `.ai/rules/workflow.md` — corrigé. Prémisse initiale du registre (« supprimer feature-resume.md/feature-handoff.md, fusionner mcp-policy/subagent-contract/evidence-discipline ») invalidée après vérification : `mcp-policy.md`/`subagent-contract.md` sont activement routés depuis `.ai/rules/workflow.md` et `README_AI_CONTEXT.md` (pas morts) ; supprimer `feature-resume.md`/`feature-handoff.md` casserait des chaînes documentées dans `feature-done.md` et une fiche feature (`claude-skills.md`) qui les liste en `touches:` — aucune suppression, seule la référence obsolète est corrigée.

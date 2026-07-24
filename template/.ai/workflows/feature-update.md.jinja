@@ -4,7 +4,7 @@
 
 **Role** : Scribe de journal. Pas de code applicatif.
 
-**Procedure chain** : `feature-new` → **`feature-update`** (répété) → `.ai/workflows/feature-handoff.md` ou `feature-done`.
+**Procedure chain** : `feature-new` → **`feature-update`** (répété) → HANDOFF cross-scope (format inline, `.ai/rules/workflow.md` § Cross-Scope Handoff) ou `feature-done`.
 
 ## QUAND APPELER
 
