@@ -22,6 +22,7 @@ touches:
 touches_shared:
   - CHANGELOG.md
   - docs/upgrading.md
+  - docs/getting-started.md
   - README.md
   - copier.yml
   - tests/smoke-test.sh
@@ -38,10 +39,10 @@ doc:
     observability: false
 progress:
   phase: done
-  step: "surface aic canonique livrée, aic-pilot/aic-onboard intégrés et smoke validé"
+  step: "surface aic canonique complète : 10/10 intentions ont une route aic.sh (onboard + dev-plan ajoutées, additive-only)"
   blockers: []
   resume_hint: "aucune action immédiate ; rouvrir si une nouvelle commande publique aic ou un alias legacy est ajouté"
-  updated: 2026-07-03
+  updated: 2026-07-24
 type: feature
 ---
 
@@ -109,14 +110,21 @@ utilisateur.
 
 ## Contrats
 
-- Surface publique canonique :
+- Surface publique canonique (10 intentions) :
   - `aic`
+  - `aic-onboard`
   - `aic-frame`
+  - `aic-pilot`
+  - `aic-dev-plan`
   - `aic-status`
   - `aic-diagnose`
   - `aic-document-feature`
   - `aic-review`
   - `aic-ship`
+- Route CLI `aic.sh <verbe>` = nom du skill sans le prefixe `aic-`, pour toute
+  intention scriptable. Pour les intentions purement conversationnelles
+  (`pilot`, `dev-plan`, `onboard`), la route existe mais pointe vers un message
+  d'orientation vers le skill, jamais vers une logique dupliquee.
 - Les workflows internes `.ai/workflows/*` restent la source procedurale
   partagee.
 
@@ -152,3 +160,4 @@ Aucune dependance frontmatter.
 - 2026-07-03 : fiche clôturée en `done`. La surface publique canonique reste `aic`/`aic-*`, `aic-pilot` et `aic-onboard` sont intégrés, et les adaptations VCS n'ont pas changé l'UX commande. Doc Impact Decision : C — fiche feature et worklog mis à jour.
 - 2026-07-07 (P6, hygiène repo) : `AUDIT.md` et `AUDIT_2026-05-06.md` déplacés vers `docs/archive/` (0 et 1 référence mesh respectivement, vérifié par `rg` avant déplacement). `PROJECT_STATE.md` lie désormais vers `docs/archive/`. Les 60 fiches `status: done` restent en place : `build-feature-index.sh` scanne `-mindepth 2 -maxdepth 2` sous `.docs/features/` (non récursif) — les archiver casserait silencieusement `depends_on`/`touches` sans bénéfice fonctionnel (déjà masquées du reminder par défaut). Décision confirmée avec l'utilisateur plutôt que suivie à la lettre depuis ANALYSE.md.
 - 2026-07-24 (release v0.14.0) : `README_AI_CONTEXT.md` (+ miroir `template/README_AI_CONTEXT.md.jinja`) et `PROJECT_STATE.md` bascule la reco `copier update` de `--vcs-ref=HEAD` par défaut vers le comportement par défaut de Copier (dernier tag), suite à la reprise d'une cadence de tags (voir `RELEASE.md`). `--vcs-ref=HEAD` reste documenté comme option avancée. Aucun changement de la surface `aic` elle-même.
+- 2026-07-24 (pilotage P15, additive-only) : écart trouvé et corrigé — `aic-onboard` et `aic-dev-plan` faisaient déjà partie de la taxonomie canonique (skills existants, mentionnés dans l'Objectif depuis 2026-06-19) mais n'avaient **aucune route `aic.sh`** correspondante. Ajout de `onboard` et `dev-plan` au dispatch (message d'orientation vers le skill, même style que `pilot`, aucune logique dupliquée). Contrat § mis à jour : 10/10 intentions listées explicitement, plus la règle de dérivation `aic.sh <verbe>` = nom du skill sans le préfixe `aic-`. Tout renommage des routes existantes (`frame-bootstrap`/`frame-context` → retrait, `plan` vs `dev-plan`) reste hors périmètre et reporté au chantier v1.0 (`P16`) : additive-only, zéro breaking avant cette version.

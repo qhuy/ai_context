@@ -84,6 +84,7 @@ modifier le workspace.
 
 | Situation | Commande |
 |---|---|
+| Projet multi-apps/couches, savoir tribal à capturer | `aic-onboard` |
 | Une intention précise, avant d'écrire du code | `aic-frame` |
 | Un audit, plusieurs constats/bugs/décisions à ne pas oublier | `aic-pilot` |
 | Cadrage déjà posé, besoin de structurer l'exécution multi-étapes | `aic-dev-plan` |
@@ -95,6 +96,10 @@ modifier le workspace.
 
 Détail des dix intentions et de leur surface CLI équivalente (Codex, agents
 non hookés) : `README_AI_CONTEXT.md` § Workflow quotidien.
+
+`aic.sh frame-bootstrap` / `aic.sh frame-context` sont des alias historiques
+stricts de `aic.sh frame` (voir `bash .ai/scripts/aic.sh --help`) : préférer
+`frame` pour toute nouvelle documentation ou automatisation.
 
 ## Test en local du template lui-même
 

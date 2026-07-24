@@ -47,6 +47,7 @@ CLI aic — surface scriptable alignée avec les skills aic-*.
 
 Commandes utilisateur :
   init         parcours guidé post-scaffold : doctor, hooks git, prochaine étape
+  onboard      skill-only : utiliser aic-onboard pour peupler/migrer l'overlay projet .ai/project
   frame "<objectif>"
                bootstrap de contexte : scope probable, docs à lire, feature candidates
                Ne remplace pas le skill aic-frame pour un cadrage critique.
@@ -55,6 +56,7 @@ Commandes utilisateur :
   frame-context "<objectif>"
                alias explicite de frame
   pilot        skill-only : utiliser aic-pilot pour audit général ou suivi transverse
+  dev-plan     skill-only : utiliser aic-dev-plan pour structurer l'exécution multi-étapes
   status       état actionnable : features, delta, hooks, checks, prochaine action
   diagnose ["symptôme"]
                diagnostic court du goulot probable et prochaine action
@@ -896,6 +898,17 @@ shift
 
 case "$cmd" in
   init)       exec bash "$script_dir/aic-init.sh" "$@" ;;
+  onboard)
+    cat <<'EOF'
+## AIC Onboard
+
+`onboard` est un skill conversationnel, pas une commande CLI déterministe.
+
+Utilise `aic-onboard` pour peupler, maintenir ou migrer l'overlay projet `.ai/project`
+(registre de scopes). Modes init/sync/migrate auto-détectés ; écrit uniquement sous
+`.ai/project/**`, après confirmation humaine.
+EOF
+    ;;
   frame|frame-bootstrap|frame-context) run_frame "$@" ;;
   pilot)
     cat <<'EOF'
@@ -905,6 +918,17 @@ case "$cmd" in
 
 Utilise `aic-pilot` pour un audit général, un backlog de constats ou un suivi transverse.
 Le skill affiche la carte globale, traite un item actif à la fois et pose une seule question décisionnelle.
+EOF
+    ;;
+  dev-plan)
+    cat <<'EOF'
+## AIC Dev Plan
+
+`dev-plan` est un skill conversationnel, pas une commande CLI déterministe.
+
+Utilise `aic-dev-plan` pour transformer une intention déjà cadrée en plan d'exécution
+vérifiable : surfaces touchées, ordre des étapes, handoffs, contrats traversants et
+checks par étape. Plan-only — aucun code, aucun commit.
 EOF
     ;;
   status)     run_status "$@" ;;

@@ -246,3 +246,10 @@
 
 ## 2026-07-24 — couverture incidente (pilotage P12)
 - `aic.sh` / `aic.sh.jinja` : ajout de la route `init` (dispatch + aide), additive uniquement. Le détail fonctionnel vit dans `workflow/aic-init`.
+
+## 2026-07-24 — routes onboard + dev-plan (pilotage P15, additive-only)
+- Écart réel trouvé par vérification directe : `aic-onboard` et `aic-dev-plan` sont des skills existants (le premier dans la taxonomie canonique depuis 2026-06-19), mais `aic.sh` n'avait de route ni pour l'un ni pour l'autre. Corrigé : deux nouvelles entrées de dispatch (`onboard`, `dev-plan`), même style que `pilot` (message d'orientation vers le skill, pas de logique dupliquée puisque les deux sont purement conversationnels — vérifié qu'aucun script `.ai/scripts/` ne les porte).
+- Contrat § de la fiche mis à jour : liste des 10 intentions rendue explicite (elle en oubliait 3 : `pilot`, `onboard`, `dev-plan`), plus la règle de dérivation `aic.sh <verbe>` = nom du skill sans `aic-`.
+- Alias `frame-bootstrap`/`frame-context` : déjà documentés dans `aic.sh --help` mais absents de la prose (`README_AI_CONTEXT.md`, `docs/getting-started.md`). Un footnote ajouté dans `docs/getting-started.md` (pas de duplication dans README pour limiter le risque de drift — cf. `aic.sh --help` comme source de vérité). Retrait explicitement hors périmètre (breaking, reporté à P16/v1.0).
+- `docs/getting-started.md` : ligne `aic-onboard` manquante dans la table « Quand utiliser quoi » (8/10 intentions listées) — ajoutée. Ajouté à `touches_shared` de cette fiche (documentation de la surface `aic`, cohérent avec son objet).
+- Validation : `bash .ai/scripts/aic.sh onboard` / `dev-plan` testés directement (sortie attendue), `check-dogfood-drift.sh` + smoke complet PASS après mirroring runtime/template.
