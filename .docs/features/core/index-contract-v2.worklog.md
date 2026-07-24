@@ -93,3 +93,6 @@
 - Co-propriété directe de `build-feature-index.sh` conservée ; `_lib.sh` devient une dépendance partagée de cette fiche.
 - L'index JSON reste contractuellement inchangé pendant l'ajout de la projection Markdown progressive.
 - Validation : tests de contrat existants et suite unitaire complète PASS.
+
+## 2026-07-24 — couverture incidente (pilotage P11)
+- `build-feature-index.sh` (+ miroir) : consolidation des forks yq/jq par fiche (propriété substantielle `core/feature-index-cache`). Le contrat JSON v2 (`schema_version`, `project_id`, stabilité hors `generated_at`) n'est pas modifié — vérifié par diff sémantique strict sur les 65 fiches réelles.

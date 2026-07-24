@@ -131,3 +131,6 @@
 
 ## 2026-07-24 — couverture incidente (release v0.14.0)
 - `MIGRATION.md` reçoit une nouvelle section « Cockpit de migrations post-Copier (v0.14+) », propriété de `core/migration-orchestrator`. Aucun changement du contrat `type`/profil OKF de cette fiche ; la section « Profil strict OKF — champ type » n'est pas modifiée.
+
+## 2026-07-24 — couverture incidente (pilotage P11)
+- `build-feature-index.sh` (+ miroir) : consolidation des forks yq/jq par fiche (propriété substantielle `core/feature-index-cache`). Le champ `type` (profil OKF Phase 0, warn-only) reste extrait à l'identique dans l'objet combiné ; aucun changement de comportement.

@@ -73,3 +73,6 @@
 - Co-propriété directe de `build-feature-index.sh` conservée conformément à la décision du 2026-06-28.
 - Le parser exclut désormais centralement `index.md`, `log.md` et `*.worklog.md` sans changer le schéma du mesh.
 - Validation : index JSON limité aux fiches canoniques dans `test-feature-markdown-indexes.sh`.
+
+## 2026-07-24 — couverture incidente (pilotage P11)
+- `build-feature-index.sh` (+ miroir) : consolidation des forks yq/jq par fiche (~5s→~1.9s, propriété substantielle `core/feature-index-cache`). Contrat JSON produit inchangé (diff sémantique vérifié identique sur les 65 fiches réelles).

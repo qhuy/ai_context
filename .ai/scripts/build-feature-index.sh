@@ -119,27 +119,62 @@ feature_to_json() {
   if [[ $has_yq -eq 1 ]]; then
     local fm
     fm=$(extract_frontmatter "$file")
-    # Robustesse : valider que le frontmatter parse en YAML AVANT d'extraire.
-    # Une fiche malformée est ignorée (warn + return 1) plutôt que de faire
-    # planter tout l'index — et en cascade tous les hooks qui l'appellent.
-    if ! printf '%s' "$fm" | yq -e -o=json '.' >/dev/null 2>&1; then
+    # Un seul yq (validation + les 14 champs en un objet combiné) au lieu de
+    # 14 forks séparés par fiche — mesuré : 1024 forks yq / 69 fiches, ~5s de
+    # build (pilotage P11). L'échec de ce yq unique couvre aussi la validation
+    # YAML : une fiche malformée est ignorée (warn + return 1) plutôt que de
+    # faire planter tout l'index — et en cascade tous les hooks qui l'appellent.
+    local combined
+    if ! combined=$(printf '%s' "$fm" | yq -o=json -I=0 '{
+        "id": (.id // ""),
+        "scope": (.scope // ""),
+        "status": (.status // ""),
+        "type": (.type // ""),
+        "phase": (.progress.phase // ""),
+        "step": (.progress.step // ""),
+        "resume_hint": (.progress.resume_hint // ""),
+        "updated": (.progress.updated // ""),
+        "touches": (.touches // []),
+        "touches_shared": (.touches_shared // []),
+        "depends_on": (.depends_on // []),
+        "product": (.product // {}),
+        "external_refs": (.external_refs // {}),
+        "blockers": (.progress.blockers // [])
+      }' 2>/dev/null); then
       echo "⚠️  build-feature-index : frontmatter YAML illisible, fiche ignorée : $rel" >&2
       return 1
     fi
-    id=$(echo "$fm" | yq -r '.id // ""')
-    scope=$(echo "$fm" | yq -r '.scope // ""')
-    status=$(echo "$fm" | yq -r '.status // ""')
-    type=$(echo "$fm" | yq -r '.type // ""')
-    touches_json=$(echo "$fm" | yq -o=json -I=0 '.touches // []')
-    touches_shared_json=$(echo "$fm" | yq -o=json -I=0 '.touches_shared // []')
-    deps_json=$(echo "$fm" | yq -o=json -I=0 '.depends_on // []')
-    product_json=$(echo "$fm" | yq -o=json -I=0 '.product // {}')
-    external_refs_json=$(echo "$fm" | yq -o=json -I=0 '.external_refs // {}')
-    phase=$(echo "$fm" | yq -r '.progress.phase // ""')
-    step=$(echo "$fm" | yq -r '.progress.step // ""')
-    blockers_json=$(echo "$fm" | yq -o=json -I=0 '.progress.blockers // []')
-    resume_hint=$(echo "$fm" | yq -r '.progress.resume_hint // ""')
-    updated=$(echo "$fm" | yq -r '.progress.updated // ""')
+    # Un seul jq lit les 8 scalaires, un par ligne (`while read` Bash 3.2-safe,
+    # pas de mapfile). Volontairement pas de découpage par tabulation `@tsv` :
+    # bash `read` avec `IFS=$'\t'` COLLAPSE les tabulations consécutives même
+    # sur un champ vide isolé (bug réel rencontré ici, tab reste classé
+    # IFS-whitespace même seul dans IFS) — un `step` vide décalait tous les
+    # champs suivants. Le découpage par ligne suppose ces 8 champs mono-ligne
+    # (convention du schéma ; vérifié qu'aucune fiche du mesh n'y déroge à ce
+    # jour) ; un saut de ligne littéral dans l'un d'eux romprait ce contrat.
+    local _lineno=0 _line
+    while IFS= read -r _line; do
+      case "$_lineno" in
+        0) id="$_line" ;;
+        1) scope="$_line" ;;
+        2) status="$_line" ;;
+        3) type="$_line" ;;
+        4) phase="$_line" ;;
+        5) step="$_line" ;;
+        6) resume_hint="$_line" ;;
+        7) updated="$_line" ;;
+      esac
+      _lineno=$((_lineno + 1))
+    done < <(printf '%s' "$combined" | jq -r '.id, .scope, .status, .type, .phase, .step, .resume_hint, .updated')
+    # Les blobs JSON restent des forks jq séparés, mais sur $combined déjà
+    # parsé par yq (pas sur le YAML brut) : simple et correct, sans risque de
+    # découpage fragile sur du contenu structuré imbriqué.
+    touches_json=$(printf '%s' "$combined" | jq -c '.touches')
+    touches_shared_json=$(printf '%s' "$combined" | jq -c '.touches_shared')
+    deps_json=$(printf '%s' "$combined" | jq -c '.depends_on')
+    product_json=$(printf '%s' "$combined" | jq -c '.product')
+    external_refs_json=$(printf '%s' "$combined" | jq -c '.external_refs')
+    blockers_json=$(printf '%s' "$combined" | jq -c '.blockers')
   else
     id=$(extract_scalar_awk "$file" "id")
     scope=$(extract_scalar_awk "$file" "scope")
