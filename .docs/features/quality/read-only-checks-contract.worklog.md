@@ -240,3 +240,6 @@
 
 ## 2026-07-24 — couverture incidente (release v0.14.0)
 - `MIGRATION.md` reçoit une nouvelle section « Cockpit de migrations post-Copier (v0.14+) », propriété de `core/migration-orchestrator`. Le contrat read-only des checks (`--no-write`, index temporaire) n'est pas modifié.
+
+## 2026-07-24 — couverture incidente (pilotage P18a)
+- `.github/workflows/ai-context-check.yml` : nouveau step `check-release-coherence` (script read-only, aucune écriture) + path triggers. Le contrat read-only des checks existants n'est pas modifié.

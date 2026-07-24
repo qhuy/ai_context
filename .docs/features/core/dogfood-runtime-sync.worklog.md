@@ -520,3 +520,6 @@
 
 ## 2026-07-24 — couverture incidente (pilotage P10a, glob `.ai/**`)
 - `check-features.sh` (+ miroir) durci sur l'enum `status`, propriété substantielle de `quality/feature-schema-validator`. Couvert ici uniquement via le catch-all `touches: .ai/**`. `check-dogfood-drift` reste vert.
+
+## 2026-07-24 — nouveau script source-only (pilotage P18a)
+- `.ai/scripts/check-release-coherence.sh` ajouté (couvert par `touches: .ai/**`) et déclaré source-only dans `dogfood-runtime-lib.sh` (exclusions rsync + `dogfood_is_ai_runtime_extra_ignored`), aux côtés de `dogfood-update.sh`/`check-dogfood-drift.sh`. Propriété substantielle : `quality/ci-guard`. `check-dogfood-drift` reste vert.

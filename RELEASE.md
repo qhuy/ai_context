@@ -61,6 +61,7 @@ copier update --vcs-ref=HEAD --conflict=rej --defaults --trust
 - `MIGRATION.md` : si comportement utilisateur change, instructions claires.
 - `README.md` : tableaux Modes d'adoption / Champs actifs `.ai/config.yml` / Variables d'env synchronisés.
 - Toutes les fiches `.docs/features/**/*.md` impactées : section **Historique** mise à jour avec la date et un résumé.
+- Vérification automatique : `bash .ai/scripts/check-release-coherence.sh` (version CHANGELOG↔PROJECT_STATE + questions `copier.yml` toutes documentées dans `docs/variables.md`). Aussi branché en continu dans `.github/workflows/ai-context-check.yml`.
 
 ### 5. Versioning
 

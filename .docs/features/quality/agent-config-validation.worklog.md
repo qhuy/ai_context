@@ -102,3 +102,6 @@ Source session : automation veille-techno
 ## 2026-07-07 18:51 — auto
 - Fichiers modifiés :
   - template/.github/workflows/ai-context-check.yml.jinja
+
+## 2026-07-24 — couverture incidente (pilotage P18a)
+- `.github/workflows/ai-context-check.yml` : nouveau step `check-release-coherence` (source-only, non mirroré dans le template) + nouveaux path triggers. Aucun changement de la validation des configs agent.

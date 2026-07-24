@@ -129,3 +129,6 @@
 - Propriété directe de `check-commit-features.sh` conservée ; les consommateurs VCS/régression passent en `touches_shared:`.
 - Un index/log réservé ne satisfait pas l'obligation de fiche d'un commit `feat:`, mais n'est plus pris pour du code à couvrir.
 - Validation : régression dédiée dans `test-feature-markdown-indexes.sh` et tests freshness/commit PASS.
+
+## 2026-07-24 — couverture incidente (pilotage P18a)
+- `.github/workflows/ai-context-check.yml` : nouveau step `check-release-coherence` + path triggers. Aucun changement du contrat de fraîcheur documentaire lui-même.

@@ -11,6 +11,10 @@ on:
       - 'CLAUDE.md'
       - 'GEMINI.md'
       - '.github/copilot-instructions.md'
+      - 'CHANGELOG.md'
+      - 'PROJECT_STATE.md'
+      - 'copier.yml'
+      - 'docs/variables.md'
   pull_request:
     paths:
       - '.ai/**'
@@ -21,6 +25,10 @@ on:
       - 'CLAUDE.md'
       - 'GEMINI.md'
       - '.github/copilot-instructions.md'
+      - 'CHANGELOG.md'
+      - 'PROJECT_STATE.md'
+      - 'copier.yml'
+      - 'docs/variables.md'
 
 jobs:
   check:
@@ -126,3 +134,6 @@ jobs:
       - name: check-feature-freshness (diff PR strict)
         if: github.event_name == 'pull_request'
         run: bash .ai/scripts/check-feature-freshness.sh --base="origin/${{ github.base_ref }}" --head=HEAD --strict
+
+      - name: check-release-coherence
+        run: bash .ai/scripts/check-release-coherence.sh
