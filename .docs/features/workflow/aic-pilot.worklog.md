@@ -182,3 +182,12 @@
 - Verdict round 3 : BLOQUANT. Corrections 2-7 du round 2 jugées bien intégrées ; 2 nouveaux bloquants, chacun re-vérifié avant amendement : (1) cellule CI fausse (prédicat réel `adoption_mode ≠ lite ET (enable_ci_guard OU strict)`, copier.yml:55) + capacités agrégées entre canaux (Claude 5 garanties / Codex 2 / git hooks 3 rôles — vérifiés dans les fichiers de hooks) ; (2) `context.show_statuses`/`default_focus` gelées « actives » sans aucun lecteur (grep vide, PROJECT_STATE.md:46 en roadmap 🚧, le reminder lit les env vars AI_CONTEXT_*).
 - v5 : élément 8 réécrit par canal + prédicat CI exact ; élément 6 réduit aux clés réellement lues (chaque clé avec son lecteur cité — `docs_root` vérifié lu par aic.sh:137, contrairement aux 2 exclues) ; nouveau chantier B9 (implémenter ou retirer les 2 clés placeholder, précédent v0.12) ; B7 élargi (title promis mais absent de la sortie réelle de l'index, formulation d'idempotence) ; manifeste approfondi (types/nullabilités index).
 - Round 4 lancé. Garde-fou : arrêt et remontée à l'utilisateur si round 5 encore bloquant.
+
+## 2026-07-24 14:36 — auto
+- Fichiers modifiés :
+  - .docs/pilots/2026-07-23-analyse-fonctionnelle-generale.md
+
+## 2026-07-24 — round 4 : GO AVEC RÉSERVES — ENTENTE ATTEINTE (v6)
+- Round 4 (CLI autonome, v5) : les 2 bloquants du round 3 jugés résolus, les 2 réserves jugées bien intégrées, Bloc A toujours correctement réservé, « aucun nouveau problème bloquant ». Verdict formel : « VERDICT: go avec réserves ».
+- 3 réserves textuelles finales, classées par Codex « intégrables sans nouveau round », chacune re-vérifiée avant intégration : (1) fraîcheur au check-in portée par `commit-msg` → `check-commit-features.sh:169`, PAS par `pre-commit` (`.githooks/pre-commit:73` = auto-progression seule) — attribution corrigée dans le canal git hooks ; (2) dimension `scope_profile`/`scopes` dérivée ajoutée à la matrice (les règles de scope de `_exclude` en dépendent) ; (3) formulations absolues bornées (la CI rendue tourne sur push/PR sans activation locale ; « rien de plus » limité aux 5 garanties).
+- **v6 = texte d'entente Claude↔Codex.** Mandat « je vous laisse trouver une entente » rempli côté texte en 2 rounds autonomes (v4→bloquant→v5→go avec réserves→v6). Restent les 3 décisions Bloc A, réservées à l'utilisateur : P4 (gemini/antigravity), classification CLI 4 niveaux, `type` requis.
