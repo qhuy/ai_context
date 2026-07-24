@@ -94,3 +94,6 @@
 - Propriété directe de `check-features.sh` et `check-feature-docs.sh` conservée ; les consommateurs passent en `touches_shared:`.
 - Les deux checks utilisent le classificateur canonique et ignorent les index/logs/worklogs réservés.
 - Validation : checks stricts et tests de documents réservés PASS.
+
+## 2026-07-24 — durcissement enum status (pilotage P10a)
+- `check-features.sh` (+ miroir template) : enum `status` warn→fail, propriété substantielle de `quality/feature-schema-validator` (voir son Historique pour le détail). Aucun changement du contrat frontmatter lui-même (mêmes clés, même enum) ; seule la sévérité change. Mesh réel (65 fiches) inchangé et vert.

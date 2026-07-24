@@ -12,6 +12,7 @@ touches:
   - .docs/features/quality/feature-schema-validator.md
   - .docs/features/quality/feature-schema-validator.worklog.md
   - tests/unit/test-schema-driven-required.sh
+  - tests/unit/test-check-features-status-enum-strict.sh
 touches_shared:
   - .ai/schema/feature.schema.json
   - template/.ai/schema/feature.schema.json
@@ -156,3 +157,4 @@ Non requis (`doc.requires.observability: false`). Preuves = sorties `check-featu
   runtime recommandé `check-jsonschema` (pip) car Python/pip déjà requis par Copier ;
   migration warn→fail alignée sur `okf-strict-profile`. Décision ouverte : runtime exact.
 - 2026-07-03 : DONE documentaire après recadrage livré. Le runtime externe est abandonné ; l'incrément clos dérive `.required` depuis le schéma via `read_schema_enum`, garde le fallback Bash, et le test discriminant est branché dans le smoke `[0q/28]`. Les suites pattern `id` / enums imbriqués deviennent des features séparées si priorisées.
+- 2026-07-24 (pilotage P10a) : enum `status` durci warn→fail dans `check-features.sh` (+ miroir template). Aucune fiche réelle n'était hors enum (vérifié `rg --hidden` avant durcissement) — le `published` initialement suspecté était un exemple YAML du schéma knowledge, pas un frontmatter feature. Test dédié `tests/unit/test-check-features-status-enum-strict.sh` (fixture, sans dépendance yq). `progress.phase` et `type` restent en warn (phasage OKF Phase 0 volontaire, non concerné par ce durcissement).

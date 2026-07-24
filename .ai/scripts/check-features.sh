@@ -5,7 +5,7 @@
 #   - présence du frontmatter YAML
 #   - clés obligatoires : id, scope, title, status, depends_on, touches
 #     (depends_on / touches peuvent valoir [] mais doivent être déclarées)
-#   - status ∈ {draft, active, done, deprecated, archived} (warn si hors enum)
+#   - status ∈ {draft, active, done, deprecated, archived} (bloquant si hors enum)
 #   - progress.phase ∈ {spec, implement, test, review, done, blocked} (warn si hors enum)
 #   - scope == nom du dossier parent
 #   - chaque depends_on pointe vers un fichier existant
@@ -159,10 +159,11 @@ for f in "${files[@]}"; do
     file_fail=1
   fi
 
-  # status enum (warn, pas fail)
+  # status enum (bloquant)
   declared_status=$(echo "$fm" | grep -E '^status:' | sed -E 's/^status:[[:space:]]*//; s/["'"'"']//g' | tr -d '[:space:]')
   if [[ -n "$declared_status" ]] && ! is_valid_status "$declared_status"; then
-    warn "$f : status='$declared_status' hors enum ($STATUS_ENUM)"
+    ko "$f : status='$declared_status' hors enum ($STATUS_ENUM)"
+    file_fail=1
   fi
 
   # progress.phase enum (warn, pas fail) — aligné avec .ai/schema/feature.schema.json
