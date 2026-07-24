@@ -21,7 +21,7 @@ product:
   success_metric: "Δ taux de succès de tâche (% de tâches d'une suite figée complétées correctement, jugé objectivement) entre un agent AVEC ai_context et le même agent sur repo NU, sur >=2 repos de référence et N runs pour absorber la stochasticité."
   leading_indicator: "Δ coût de contexte (tokens chargés par tâche) avec vs sans ai_context — disponible avant le grader complet, valide tôt la direction."
   decision_state: commit
-  next_decision_date: 2026-07-15
+  next_decision_date: 2026-10-01
   kill_criteria:
     - "Aucun Δ de succès significatif après itération du protocole sur >=2 repos réels."
     - "Le gain ne tient qu'à un repo artificiel taillé pour ai_context (pas de validité externe)."
@@ -328,3 +328,4 @@ publiés restent datés et immuables (un résultat n'est pas réécrit, il est c
   Lecture : la tâche est techniquement valide mais non discriminante, car la
   condition `without` reconstruit aussi la réponse ; ne pas rerun tel quel.
 - 2026-07-24 (pilotage P3, hygiène repo) : `docs/benchmarks/runs/` (15 Mo, 246 fichiers — traces brutes `agent.stderr.log`/`agent.stdout.log`/`check.log` des runs passés) retiré du contrôle de version (`git rm -r --cached` + entrée `.gitignore`) ; conservé intact sur disque, non supprimé. `docs/benchmarks/reports/` (200 Ko, synthèses exploitables) et `PROTOCOL.md` restent versionnés à l'identique. Aucun changement du protocole, du runner ni de la logique de grading.
+- 2026-07-24 (pilotage P17, arbitrage utilisateur) : validation par repo tiers indépendant actée en mode **opportuniste** — pas de chantier dédié ; le benchmark sera rejoué le jour où un vrai projet externe (non-mainteneur) se présente. `next_decision_date` re-datée 2026-07-15 → 2026-10-01 (elle était échue de 9 jours sans décision tracée — dette de discipline du product loop, pas un choix) : à cette date, soit un repo tiers s'est présenté et le run a eu lieu, soit on re-date à nouveau explicitement. La réserve « pas de scale public avant preuve indépendante » du 2026-07-03 reste inchangée.

@@ -39,3 +39,9 @@
 - Risques : import silencieux sans provenance ou publication de contenu sensible.
 - Validation attendue : scénario source -> publish candidate -> search depuis repo consommateur -> link local avec provenance visible.
 - Resume hint : attendre le contrat `core/knowledge-source-contract`, puis créer la fiche workflow dédiée.
+
+## 2026-07-24 — done / initiative cut (arbitrage utilisateur, pilotage P1)
+- Décision utilisateur actée : gel du hub knowledge. `decision_state: commit → cut`, `status: active → done` (conforme à la règle product : « done avec décision de cut documentée »), `next_decision_date` vidée (décision terminale).
+- Motivation : aucun signal d'adoption à date de décision échue (2026-07-15). Preuve porteuse = archéologie worklogs/commits (uniquement des commits de construction) ; la télémétrie `.context-relevance.jsonl` ne pouvait pas capturer un usage CLI et n'est PAS la preuve.
+- Aucun kill criterion déclenché — cut faute de signal, réversible : tout le code reste livré (`knowledge.sh`, route `aic knowledge`, tests unitaires en CI).
+- next : rien. Rouvrir uniquement sur usage réel tracé.

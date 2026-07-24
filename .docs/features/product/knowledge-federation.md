@@ -2,7 +2,7 @@
 id: knowledge-federation
 scope: product
 title: Federation de connaissances ai_context
-status: active
+status: done
 type: feature
 description: "Initiative produit pour publier, retrouver et reutiliser des connaissances ai_context entre projets sans remplacer le contexte local de chaque repo."
 depends_on: []
@@ -16,8 +16,8 @@ product:
   target_user: "Mainteneurs de projets utilisant ai_context, equipes de migration, tech leads et non-techs qui doivent consulter ou valider des connaissances projet."
   success_metric: "Une connaissance produite dans un projet source peut etre retrouvee, referencee et reutilisee dans un projet consommateur avec provenance, fraicheur et sensibilite explicites."
   leading_indicator: "Un MVP de knowledge source permet publish/search/link sur deux projets reels sans duplication manuelle de l'analyse initiale."
-  decision_state: commit
-  next_decision_date: 2026-07-15
+  decision_state: cut
+  next_decision_date: ""
   kill_criteria:
     - "La solution remplace le .ai local au lieu de le completer."
     - "La publication devient implicite ou diffuse des informations sensibles sans validation humaine."
@@ -40,11 +40,11 @@ doc:
     rollout: true
     observability: true
 progress:
-  phase: review
-  step: "contrat minimal et backend MVP Git/Markdown décidés"
+  phase: done
+  step: "initiative cut le 2026-07-24 : pas de signal d'adoption à date de décision échue ; code conservé intact"
   blockers: []
-  resume_hint: "créer ensuite core/knowledge-source-contract puis workflow/knowledge-publish-search-link dans des tours dédiés ; ne pas mélanger avec R1"
-  updated: 2026-07-03
+  resume_hint: "ne rouvrir que sur signal d'adoption réel (usage aic knowledge tracé dans un worklog/commit) ; le MVP publish/search/link reste livré et fonctionnel"
+  updated: 2026-07-24
 ---
 
 # Federation de connaissances ai_context
@@ -268,3 +268,17 @@ Cette initiative est conceptuellement reliee a `product/ai-context-stability-mig
 - 2026-07-03 : décision MVP — `decision_state=commit`, backend Git/Markdown,
   contrat minimal obligatoire et passations vers futures features `core`,
   `workflow` et `quality`.
+- 2026-07-24 : **décision de cut** (arbitrage utilisateur, pilotage P1 de
+  l'analyse fonctionnelle générale 2026-07-23). Motivation honnête : aucun
+  signal d'adoption réel à date de décision échue (`next_decision_date`
+  2026-07-15 dépassée) — l'archéologie worklogs/commits ne montre que des
+  commits de construction, aucun usage opérationnel de `aic knowledge`.
+  Précision de preuve : `.ai/.context-relevance.jsonl` ne pouvait
+  structurellement PAS capturer un usage CLI (il ne logge que les événements
+  inject/touch des hooks Write/Edit) — la preuve porteuse est l'archéologie,
+  pas la télémétrie. Aucun des 4 kill_criteria n'est déclenché : c'est un cut
+  faute de signal, pas un kill criterion atteint. Code conservé intact
+  (`knowledge.sh`, `_knowledge.sh`, route `aic knowledge`, tests) — réversible
+  si un usage réel apparaît. Les fiches d'ingénierie livrées
+  (`core/knowledge-source-contract`, `workflow/knowledge-publish-search-link`)
+  restent `done`, inchangées.

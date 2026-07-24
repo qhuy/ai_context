@@ -176,3 +176,9 @@
 - Réserves : confirmer avant communication publique par un repo vraiment indépendant, un N plus grand ou un second modèle.
 - Validation : checks documentaires et gate repo à lancer dans ce tour avant commit.
 - Next : aucune action immédiate sur R4/P1 ; une suite benchmark indépendante doit être cadrée comme nouvelle initiative ou nouveau livrable si le projet passe au scale public.
+
+## 2026-07-24 — done / re-datage décision (arbitrage utilisateur, pilotage P17)
+- Arbitrage acté : validation par repo tiers indépendant en mode opportuniste (pas de chantier dédié, pas de forçage artificiel — cohérent avec l'exigence « vraiment indépendant » de la fiche).
+- `next_decision_date` re-datée 2026-07-15 → 2026-10-01 : elle était échue de 9 jours sans décision tracée. La discipline du product loop exige une date vivante même pour « différer ».
+- Réserve « pas de scale public avant preuve indépendante » inchangée.
+- next : au 2026-10-01, run sur repo tiers si disponible, sinon re-dater explicitement.
