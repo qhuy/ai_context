@@ -119,6 +119,10 @@ echo "[0q2/28] tests unitaires (champ type requis depuis v1.0)"
 bash tests/unit/test-check-features-type-required.sh
 echo
 
+echo "[0q3/28] tests unitaires (clés context.* de config.yml réellement lues)"
+bash tests/unit/test-context-config-keys.sh
+echo
+
 echo "[0r/28] tests unitaires (ranking features-for-path par pertinence tracker)"
 bash tests/unit/test-features-for-path-relevance-ranking.sh
 echo

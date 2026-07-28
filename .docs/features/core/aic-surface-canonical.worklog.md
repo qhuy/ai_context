@@ -268,3 +268,6 @@
 - Vérification outillée plutôt que visuelle : script ad-hoc confrontant les routes du `case` de dispatch (31) aux entrées de l'aide — zéro route non listée, zéro entrée sans route.
 - `deprecated` porte désormais une raison explicite : alias historiques pour `frame-bootstrap`/`frame-context`, `decision_state=cut` pour `knowledge` (cohérence avec l'arbitrage P1 du même jour).
 - Assertion smoke réécrite (l'ancienne grepait l'en-tête « Commandes utilisateur : », désormais absent) : exige les 4 en-têtes + vérifie le classement de 2 routes témoins par section. Smoke complet PASS.
+
+## 2026-07-24 — couverture incidente (v1.0, B9 clés context.*)
+- `PROJECT_STATE.md` : item roadmap « Consommer context.show_statuses / default_focus » passé de 🚧 à ✅ (livré en v1.0). Aucun changement de la surface `aic`.

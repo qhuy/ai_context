@@ -43,7 +43,7 @@ Historique complet des versions précédentes (v0.7 → v0.13) : [CHANGELOG.md](
 ## Roadmap — pistes ouvertes
 
 **P1 — stabilisation runtime**
-- 🚧 Consommer `context.show_statuses` et `context.default_focus` (aujourd'hui via env vars `AI_CONTEXT_*`).
+- ✅ `context.show_statuses` et `context.default_focus` consommées depuis `.ai/config.yml` (v1.0) ; les env vars `AI_CONTEXT_SHOW_ALL_STATUS` / `AI_CONTEXT_FOCUS` gardent la priorité.
 - Dog-fooding runtime : les workflows CI source restent volontairement hors synchronisation car plus stricts que le rendu downstream.
 
 **P2 — confort UX**

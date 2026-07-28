@@ -112,3 +112,6 @@
 ## 2026-07-28 15:51 — auto
 - Fichiers modifiés :
   - copier.yml
+
+## 2026-07-24 — couverture incidente (v1.0, B9 clés context.*)
+- `.ai/config.yml` (+ miroir template) : commentaires ajoutés sur la précédence de `context.show_statuses` / `context.default_focus`. La section `vcs.provider` est inchangée ; aucun impact sur le contrat provider VCS.

@@ -362,3 +362,6 @@
 ## 2026-07-24 — assertion d'aide réécrite (v1.0, classification CLI)
 - L'ancienne assertion grepait l'en-tête « Commandes utilisateur : », supprimé par la restructuration en 4 niveaux — elle aurait échoué. Réécrite : exige les 4 en-têtes de niveau (`stable`, `stable-maintenance`, `deprecated`, `interne`) et vérifie le classement de 2 routes témoins par section (`init` en stable, `knowledge` en deprecated) plutôt qu'une simple présence de chaîne.
 - La boucle existante sur les routes attendues et la garde anti-réintroduction des anciens noms publics sont conservées telles quelles. Smoke complet PASS.
+
+## 2026-07-24 — étape [0q3/28] : clés context.* de config.yml (v1.0, B9)
+- Nouveau test unitaire `tests/unit/test-context-config-keys.sh` branché dans le prélude : 7 assertions sur la précédence env var > config > défaut pour `context.show_statuses` et `context.default_focus`, dont la garde « liste vide ne masque pas tout le mesh ».

@@ -165,3 +165,6 @@
 - **Mesure après** : ~1.85-1.9s/run (stable sur 3 runs), 5 runs à la suite = **~9.2s** (vs ~25s) — **~2.7x** sur le chemin de commit simulé.
 - **Validation de non-régression** : diff sémantique JSON strict (hors `generated_at`) entre l'index produit avant/après sur les 65 fiches réelles = identique. 9 tests unitaires existants (contract/fallback/robust/schema-driven/yaml-strict/status-enum/cycle-detection/freshness) + le mesh réel via `check-features.sh --no-write` PASS. `check-dogfood-drift.sh` PASS (miroir template appliqué à l'identique).
 - Aucun changement du contrat JSON produit, du fallback awk, ni du comportement de validation (fiche malformée toujours exclue avec warning).
+
+## 2026-07-24 — couverture incidente (v1.0, B9 clés context.*)
+- `_lib.sh` (+ miroir) : `visible_statuses_jq()` lit désormais `context.show_statuses` depuis `.ai/config.yml` (yq seul, défaut inchangé sans config). Aucun changement du cache d'index ni de son contrat — seule la liste de statuts passée en `--argjson` au filtrage jq est désormais configurable.

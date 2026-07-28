@@ -30,7 +30,12 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 require_cmd jq
 
 format="text"
+# Précédence focus : --focus=<scope> (plus bas) > AI_CONTEXT_FOCUS > context.default_focus
+# de .ai/config.yml > aucun focus. read_config retombe sur "" sans yq ou sans clé.
 focus="${AI_CONTEXT_FOCUS:-}"
+if [[ -z "$focus" ]]; then
+  focus="$(read_config 'context.default_focus' '' "$(cd "$script_dir/../.." && pwd)/.ai/config.yml")"
+fi
 for arg in "$@"; do
   case "$arg" in
     --format=*) format="${arg#--format=}" ;;

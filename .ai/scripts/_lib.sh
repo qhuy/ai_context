@@ -99,15 +99,29 @@ TYPE_ENUM="$(read_schema_enum '.properties.type.enum' 'feature contract workflow
 
 # Retourne la liste JSON des status visibles dans le reminder.
 # Par défaut : active + draft (les features en cours / à venir).
-# Override : AI_CONTEXT_SHOW_ALL_STATUS=1 → tous les status.
-# Le fallback '?' (status absent) reste toujours visible pour ne rien masquer
-# par accident si le frontmatter est incomplet.
+# Précédence : AI_CONTEXT_SHOW_ALL_STATUS=1 (tous les status) > context.show_statuses
+# de .ai/config.yml > défaut codé. Le fallback '?' (status absent) reste toujours
+# visible pour ne rien masquer par accident si le frontmatter est incomplet.
+# Lecture via yq uniquement (comme read_config) : sans yq ou sans clé, on retombe
+# silencieusement sur le défaut — aucun parseur YAML supplémentaire ajouté ici.
 visible_statuses_jq() {
   if [[ "${AI_CONTEXT_SHOW_ALL_STATUS:-0}" == "1" ]]; then
     echo '["draft","active","done","deprecated","archived","?"]'
-  else
-    echo '["active","draft","?"]'
+    return 0
   fi
+
+  local config_file="${AI_CONTEXT_CONFIG_FILE:-.ai/config.yml}"
+  if [[ -f "$config_file" ]] && command -v yq >/dev/null 2>&1; then
+    local configured
+    configured=$(yq -o=json -I=0 '.context.show_statuses' "$config_file" 2>/dev/null || true)
+    # Ne retenir qu'un tableau JSON non vide ; sinon défaut.
+    if [[ -n "$configured" && "$configured" != "null" && "$configured" == \[*\] && "$configured" != "[]" ]]; then
+      echo "$configured"
+      return 0
+    fi
+  fi
+
+  echo '["active","draft","?"]'
 }
 
 require_cmd() {

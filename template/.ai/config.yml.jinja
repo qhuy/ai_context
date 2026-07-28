@@ -49,9 +49,15 @@ progress:
     spec_to_implement: true
 
 context:
+  # Statuts affichés dans l'inventaire du reminder. "?" = frontmatter sans status
+  # (gardé visible pour ne rien masquer par accident). Une liste vide est ignorée
+  # (retour au défaut) plutôt que de masquer tout le mesh.
+  # Priorité : AI_CONTEXT_SHOW_ALL_STATUS=1 > cette clé > défaut [active, draft, "?"].
   show_statuses:
     - active
     - draft
     - "?"
+  # Scope de focus par défaut (réduit l'inventaire au scope + voisins 1-hop).
+  # null = pas de focus. Priorité : --focus=<scope> > AI_CONTEXT_FOCUS > cette clé.
   default_focus: null
   max_tokens_warn: 6000

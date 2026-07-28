@@ -67,3 +67,10 @@
 - Propriété directe de `pre-turn-reminder.sh` conservée ; `features-for-path.sh` est reclassé en dépendance partagée.
 - Le reminder ne reconstruit plus l'index JSON parce qu'un index/log réservé est plus récent qu'une fiche canonique.
 - Validation : test discriminant `feature_docs_newer_than`, suite unitaire et smoke PASS.
+
+## 2026-07-24 — v1.0 / B9 : clés context.* réellement lues
+- Chantier B9 du gel v1.0 (review Codex round 3) : `context.show_statuses` et `context.default_focus` étaient scaffoldées sans lecteur — impossible de les geler comme « clés actives » du contrat.
+- Décision : implémenter plutôt que retirer. Le précédent v0.12 (placeholders `auto_transitions.*` retirés) visait des clés sans sémantique ; ici le comportement existe via env vars et `context.max_tokens_warn` de la même section est déjà lu. Coût mesuré : ~10 lignes en `yq` seul, pas de nouveau parseur YAML (hors moratoire bash).
+- `_lib.sh:visible_statuses_jq()` (+ miroir) lit `context.show_statuses` ; `pre-turn-reminder.sh` (+ miroir) lit `context.default_focus`. Précédence : env var > config > défaut. Garde : une liste vide retombe sur le défaut au lieu de masquer tout le mesh.
+- Commentaires de `.ai/config.yml` (+ miroir) documentent la précédence pour le consommateur. Roadmap `PROJECT_STATE` passée de 🚧 à ✅.
+- Validation : 7 assertions dans `tests/unit/test-context-config-keys.sh` (config appliquée, env var prioritaire, config absente, liste vide, clé absente, default_focus lu, env var focus prioritaire) — la lecture de `default_focus` est prouvée par le warn « focus ignoré » sur un scope inexistant, preuve discriminante. dogfood-drift + smoke complet PASS.
