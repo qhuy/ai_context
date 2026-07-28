@@ -97,3 +97,7 @@
 
 ## 2026-07-24 — durcissement enum status (pilotage P10a)
 - `check-features.sh` (+ miroir template) : enum `status` warn→fail, propriété substantielle de `quality/feature-schema-validator` (voir son Historique pour le détail). Aucun changement du contrat frontmatter lui-même (mêmes clés, même enum) ; seule la sévérité change. Mesh réel (65 fiches) inchangé et vert.
+
+## 2026-07-24 — v1.0 / type requis dans le contrat frontmatter (pilotage P16 Bloc A)
+- `.ai/schema/feature.schema.json` (+ miroir template, livré en `.json` brut sans Jinja) : `type` ajouté à `.required`. Le contrat frontmatter du mesh passe donc de 6 à 7 clés obligatoires (`id`, `scope`, `title`, `status`, `type`, `depends_on`, `touches`).
+- `FEATURE_TEMPLATE.md` (+ miroir) aligné. Détail complet (rollout warn→fail tenu, non-doublon de diagnostic, vérification 67/67 fiches) dans `core/okf-strict-profile`.

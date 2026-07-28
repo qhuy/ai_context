@@ -345,3 +345,12 @@
 - L'étape scaffoldait `agents=["gemini"]` et exigeait un `GEMINI.md` — impossible désormais. Réécrite en assertion négative : Copier doit REFUSER `agents=[gemini]` (« Invalid choice ») et `template/GEMINI.md.jinja` doit être absent. Le volet « cursor seul » est conservé tel quel.
 - Piège vérifié au passage : `copier copy <repo-git>` rend depuis HEAD, pas depuis le working tree — c'est pourquoi le smoke passe par une copie rsync (`$SRC`). Un test ad-hoc lancé directement sur `.` donne un verdict faux tant que le changement n'est pas committé.
 - Smoke complet relancé : PASS (ligne de preuve vérifiée dans le log, pas seulement l'exit code).
+
+## 2026-07-24 — étape [0q2/28] : type requis (v1.0)
+- Nouveau test unitaire `tests/unit/test-check-features-type-required.sh` branché dans le prélude : 3 cas fonctionnels (absent / hors enum / valide), garde de non-doublon (1 seul ✗ pour une absence) et garde schéma (`type` dans `.required`).
+
+## 2026-07-24 — fixtures alignées sur le contrat v1.0 (type requis)
+- Le durcissement `type` a fait échouer l'assertion `[11/28]` (« check-features accepte depends_on: [] / touches: [] ») — non pas à cause du fixture visé, mais parce que 5 fiches de test créées plus tôt et **jamais supprimées** (`product/activation-test`, `core/base`, `back/sample`, `back/base`, `back/child`) persistaient dans le mesh du scaffold sans `type` et faisaient échouer le `check-features` global. Régression réelle du test, pas du code.
+- Corrigé : `type: feature` ajouté à 26 fixtures heredoc. Exclusion volontaire de `legacy-migrate`, dont l'objet EST un frontmatter legacy incomplet (`status: in_progress`, sans depends_on/touches/type) pour exercer `migrate-features.sh` — vérifié après coup que son assertion de migration passe toujours.
+- Effet secondaire positif : les fixtures qui testent un AUTRE défaut (`missing-deps`, `bogus`, `phase-typo`) échouent désormais pour ce seul défaut, plus par effet de bord d'un `type` manquant.
+- Smoke complet PASS (exit 0, ligne `[0q2/28]` et assertion migrate-features vérifiées dans le log).

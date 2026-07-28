@@ -543,3 +543,6 @@
 - `check-dogfood-drift.sh` : profil `fullstack-cursor` ne rend plus `gemini` dans `agents` (le rendu échouerait — valeur retirée des `choices`) ; `GEMINI.md` retiré des deux listes de sanity (existence + contenu) puisqu'il n'est plus rendu ; commentaire d'exemple mis à jour.
 - `.ai/guardrails.md` : liste d'agents alignée (Codex / Cursor / Copilot).
 - Vérifié : `check-dogfood-drift.sh` PASS après le changement (les 3 profils rendent sans erreur).
+
+## 2026-07-24 — couverture incidente (v1.0, type requis)
+- `.docs/FEATURE_TEMPLATE.md` + `.ai/schema/feature.schema.json` mirrorés vers `template/` (le schéma est livré en `.json` brut, sans Jinja — le drift l'a détecté immédiatement après l'édition runtime seule, gate faisant son travail). `check-dogfood-drift` PASS après mirroring.

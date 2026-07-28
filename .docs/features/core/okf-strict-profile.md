@@ -47,7 +47,7 @@ doc:
 type: feature
 progress:
   phase: done
-  step: "Phase 0 warn-only validée ; enforce vN+1 routé hors scope core"
+  step: "Phase 1 livrée en v1.0 : type requis (warn -> fail), rollout warn->fail sur 2 releases respecté"
   blockers: []
   resume_hint: "aucune action core immédiate ; rouvrir une fiche dédiée pour l'enforce vN+1 ou un consommateur OKF réel"
   updated: 2026-07-03
@@ -113,7 +113,7 @@ Du point de vue d'un mainteneur de projet consommateur, à la réception de la v
 1. `copier update` récupère le schema, les checks, les scripts et la commande de migration ; aucune fiche project-owned n'est touchée.
 2. La bannière `_message_after_update` invite à lancer `bash .ai/scripts/aic.sh migrate okf-type --apply`.
 3. `aic migrate okf-type` (dry-run par défaut) liste les fiches sans `type` ; `--apply` injecte `type: feature` de façon idempotente.
-4. `check-features.sh` émet un **warning** (pas d'échec) tant que `type` manque : CI verte.
+4. `check-features.sh` émettait un **warning** en Phase 0 ; depuis **v1.0 (Phase 1)** `type` est dans `.required` du schéma et son absence **échoue** (`ko`), avec le hint de backfill. Le rollout `warn -> fail` sur 2 releases (v0.14 -> v1.0) est donc respecté.
 5. À la version vN+1, `type` devient requis : une fiche sans `type` fait échouer le check, dont le message cite la commande de backfill.
 
 Du point de vue de ce repo (dogfood) : les ~40 fiches existantes reçoivent `type: feature` via la même commande, validées avant tout tag.
@@ -199,5 +199,6 @@ Les copies de ces trois points sont des livrables (claires, en français, action
 
 ## Historique / décisions
 
+- 2026-07-24 (v1.0, pilotage P16 Bloc A) : **Phase 1 livrée — `type` devient requis** sur décision utilisateur. `type` ajouté à `.required` du schéma (donc bloquant via la boucle générique `REQUIRED_FIELDS`, elle-même dérivée du schéma) ; l'enum reste vérifié séparément ; `$comment` du schéma requalifié. Le rollout annoncé `warn -> fail` sur 2 releases est tenu : warn en v0.14, fail en v1.0. Mesh réel vérifié AVANT durcissement — 67/67 fiches canoniques portent déjà `type` (les 4 `index.md` sans `type` sont des documents réservés, exclus par `is_canonical_feature_doc`), donc zéro fiche à corriger. Régression évitée en cours de route : une revalidation locale de l'absence produisait **deux** `✗` pour le même défaut (générique + locale) — supprimée, et le hint de backfill déplacé sur le message générique ; `tests/unit/test-check-features-type-required.sh` verrouille désormais le non-doublon en plus des 3 cas fonctionnels.
 - 2026-06-25 — Cadrage validé (`aic-frame`, niveau high). Décision de routage : feature. Thèse « profil strict d'OKF » retenue ; options C (export) déférée et D (migration native) rejetée. Arbitrages confirmés par l'utilisateur : enum `type` = `feature|contract|workflow|reference` ; cadence 2 releases ; backfill `type` seul. Compatibilité Claude **et** Codex posée en exigence de premier ordre.
 - 2026-07-03 — Clôture DONE de la Phase 0 core : `type` reste optionnel en warn-only, `migrate okf-type` est validé, le drift dogfood est propre et l'enforce vN+1 reste une suite dédiée.

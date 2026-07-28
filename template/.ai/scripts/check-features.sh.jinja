@@ -134,7 +134,11 @@ for f in "${files[@]}"; do
 
   for key in $REQUIRED_FIELDS; do
     if ! echo "$fm" | grep -qE "^$key:"; then
-      ko "$f : clé frontmatter '$key' manquante"
+      if [[ "$key" == "type" ]]; then
+        ko "$f : clé frontmatter 'type' manquante (requise depuis v1.0) — backfill : bash .ai/scripts/aic.sh migrate okf-type --apply"
+      else
+        ko "$f : clé frontmatter '$key' manquante"
+      fi
       file_fail=1
     fi
   done
@@ -190,11 +194,13 @@ for f in "${files[@]}"; do
   if echo "$fm" | grep -qE '^type:'; then
     declared_type=$(echo "$fm" | grep -E '^type:' | sed -E 's/^type:[[:space:]]*//; s/["'"'"']//g' | tr -d '[:space:]')
     if ! is_valid_type "$declared_type"; then
-      warn "$f : type='$declared_type' hors enum ($TYPE_ENUM)"
+      ko "$f : type='$declared_type' hors enum ($TYPE_ENUM)"
+      file_fail=1
     fi
-  else
-    warn "$f : champ 'type' absent (profil OKF) — lance : bash .ai/scripts/aic.sh migrate okf-type --apply"
   fi
+  # L'ABSENCE de 'type' n'est pas revalidée ici : depuis v1.0 la clé est dans
+  # .required du schéma, donc la boucle REQUIRED_FIELDS ci-dessus la signale
+  # déjà (avec le hint de backfill). Dupliquer produirait deux ✗ pour un défaut.
 
   deps=$(fm_list "$f" "depends_on")
   while IFS= read -r dep; do

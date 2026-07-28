@@ -4,7 +4,7 @@ scope: <product | back | front | architecture | security>
 title: <Titre court de la feature>
 status: draft
 # Profil strict OKF (core/okf-strict-profile) : nature de l'asset documenté.
-# feature | contract | workflow | reference. Optionnel aujourd'hui, requis à terme.
+# feature | contract | workflow | reference. REQUIS depuis v1.0.
 type: feature
 # Optionnel : une phrase de résumé (champ OKF `description`). La forme longue reste ## Résumé.
 description: ""
@@ -173,6 +173,7 @@ Choix marquants, ADRs liées, décisions produit.
 - `scope` : doit matcher le dossier parent (`features/<scope>/`)
 - `title` : résumé humain
 - `status` : `draft` | `active` | `done` | `deprecated` | `archived`
+- `type` : `feature` | `contract` | `workflow` | `reference` (requis depuis v1.0)
 - `depends_on` : liste de `<scope>/<id>` (ex : `back/payment-intent`)
 - `touches` : paths (globs OK) du code qui implémente cette feature
 

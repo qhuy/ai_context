@@ -134,3 +134,10 @@
 
 ## 2026-07-24 — couverture incidente (pilotage P11)
 - `build-feature-index.sh` (+ miroir) : consolidation des forks yq/jq par fiche (propriété substantielle `core/feature-index-cache`). Le champ `type` (profil OKF Phase 0, warn-only) reste extrait à l'identique dans l'objet combiné ; aucun changement de comportement.
+
+## 2026-07-24 — v1.0 / Phase 1 : type requis (pilotage P16 Bloc A)
+- Décision utilisateur (Bloc A, question 3) : `type` requis dès v1.0 plutôt que reporté à un premier MAJOR.
+- Livré : `type` ajouté à `.required` du schéma + `$comment` requalifié ; `check-features.sh` (+ miroir template) passe l'absence en `ko` via la boucle générique, avec hint `aic migrate okf-type --apply` ; `FEATURE_TEMPLATE.md` (+ miroir) documente `type` comme requis ; nouveau `tests/unit/test-check-features-type-required.sh` branché en `[0q2/28]`.
+- Vérifié AVANT durcissement : 67/67 fiches canoniques ont déjà `type` (classification via `find_feature_docs` du `_lib.sh`, pas un `find` naïf — les 4 `index.md` de scope sont des documents réservés, pas des fiches). Zéro migration nécessaire sur ce repo.
+- Régression détectée et corrigée pendant l'implémentation : la présence de `type` étant désormais couverte par la boucle `REQUIRED_FIELDS` (dérivée du schéma, prouvé par `test-schema-driven-required.sh`), ma revalidation locale produisait 2 diagnostics pour 1 défaut. Branche `else` retirée ; le hint de backfill vit maintenant sur le message générique, conditionné à la clé `type`. Le test dédié assert explicitement `count == 1`.
+- Validation : les 3 cas (absent / hors enum / valide) + garde schéma PASS ; check-features sur le mesh réel PASS ; tests schema/enum/yaml/id existants PASS.

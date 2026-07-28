@@ -96,3 +96,6 @@
 
 ## 2026-07-24 — couverture incidente (pilotage P11)
 - `build-feature-index.sh` (+ miroir) : consolidation des forks yq/jq par fiche (propriété substantielle `core/feature-index-cache`). Le contrat JSON v2 (`schema_version`, `project_id`, stabilité hors `generated_at`) n'est pas modifié — vérifié par diff sémantique strict sur les 65 fiches réelles.
+
+## 2026-07-24 — couverture incidente (v1.0, type requis)
+- `template/.ai/schema/feature.schema.json` : `type` ajouté à `.required` (miroir du runtime). Aucun changement du contrat de l'index JSON lui-même — `type` était déjà émis par `build-feature-index.sh` (défaut `feature`), donc pas de bump `schema_version`.

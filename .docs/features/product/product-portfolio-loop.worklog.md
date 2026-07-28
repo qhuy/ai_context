@@ -160,3 +160,6 @@
 - Fichiers modifiés :
   - .ai/scripts/build-feature-index.sh
   - template/.ai/scripts/build-feature-index.sh.jinja
+
+## 2026-07-24 — couverture incidente (v1.0, type requis)
+- `FEATURE_TEMPLATE.md` (+ miroir template) : `type` documenté comme requis depuis v1.0 (commentaire inline + liste « Frontmatter obligatoire »). Aucun changement des champs `product.*` ni de la boucle portfolio.

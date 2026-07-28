@@ -5,7 +5,7 @@
   "description": "Contrat minimal des features markdown (frontmatter YAML).",
   "$comment": "Rôle dans ai_context : SOURCE de référence du contrat frontmatter. Les enums (status, progress.phase) et le pattern `id` en sont dérivés et appliqués par check-features.sh (read_schema_enum + regex alignée). Ce n'est PAS un validateur JSON-Schema complet exécuté au runtime — l'éthos est bash/jq/yq sans dépendance ajv/check-jsonschema. Les consommateurs downstream peuvent valider leurs fiches contre ce schéma avec leur propre outil.",
   "type": "object",
-  "required": ["id", "scope", "title", "status", "depends_on", "touches"],
+  "required": ["id", "scope", "title", "status", "type", "depends_on", "touches"],
   "additionalProperties": true,
   "properties": {
     "id": {
@@ -25,7 +25,7 @@
       "enum": ["draft", "active", "done", "deprecated", "archived"]
     },
     "type": {
-      "$comment": "Optionnel dans le schema vN pour migration progressive ; check-features.sh signale son absence et le rendra requis lors de la prochaine rupture de contrat documentée.",
+      "$comment": "Requis depuis v1.0 (profil OKF sorti de sa fenêtre de migration) : check-features.sh échoue si absent ou hors enum. Backfill outillé : aic migrate okf-type --apply.",
       "type": "string",
       "enum": ["feature", "contract", "workflow", "reference"]
     },

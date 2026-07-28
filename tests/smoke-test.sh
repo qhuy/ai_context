@@ -115,6 +115,10 @@ echo "[0q/28] tests unitaires (clés requises dérivées du schéma)"
 bash tests/unit/test-schema-driven-required.sh
 echo
 
+echo "[0q2/28] tests unitaires (champ type requis depuis v1.0)"
+bash tests/unit/test-check-features-type-required.sh
+echo
+
 echo "[0r/28] tests unitaires (ranking features-for-path par pertinence tracker)"
 bash tests/unit/test-features-for-path-relevance-ranking.sh
 echo
@@ -398,6 +402,7 @@ id: doc-incomplete
 scope: back
 title: Doc incomplete
 status: draft
+type: feature
 depends_on: []
 touches: []
 doc:
@@ -428,6 +433,7 @@ id: doc-complete
 scope: back
 title: Doc complete
 status: draft
+type: feature
 depends_on: []
 touches: []
 doc:
@@ -555,6 +561,7 @@ id: activation-test
 scope: product
 title: Activation Test
 status: active
+type: feature
 depends_on: []
 touches: []
 product:
@@ -590,6 +597,7 @@ id: base
 scope: core
 title: Base
 status: active
+type: feature
 depends_on: []
 touches: []
 ---
@@ -604,6 +612,7 @@ id: sample
 scope: back
 title: Sample
 status: active
+type: feature
 depends_on:
   - core/base
 touches:
@@ -776,6 +785,7 @@ id: base
 scope: back
 title: Base feature
 status: active
+type: feature
 depends_on: []
 touches: []
 ---
@@ -786,6 +796,7 @@ id: child
 scope: back
 title: Child feature
 status: active
+type: feature
 depends_on:
   - back/base
 touches:
@@ -818,6 +829,7 @@ id: bogus
 scope: back
 title: Bogus status
 status: typo
+type: feature
 depends_on: []
 touches:
   - src/foo.ts
@@ -837,6 +849,7 @@ id: phase-typo
 scope: back
 title: Bogus phase
 status: active
+type: feature
 depends_on: []
 touches:
   - src/foo.ts
@@ -859,6 +872,7 @@ id: missing-deps
 scope: back
 title: Missing depends_on / touches
 status: active
+type: feature
 ---
 FEAT
 miss_out=$( cd "$OUT" && bash .ai/scripts/check-features.sh 2>&1 || true )
@@ -886,6 +900,7 @@ id: empty-arrays
 scope: back
 title: Empty depends_on/touches arrays
 status: draft
+type: feature
 depends_on: []
 touches: []
 ---
@@ -965,6 +980,7 @@ id: paused-feat
 scope: back
 title: Feature paused via schema-derived enum
 status: paused
+type: feature
 depends_on: []
 touches:
   - src/foo.ts
@@ -1040,6 +1056,7 @@ id: legacy
 scope: back
 title: Legacy closed feature
 status: done
+type: feature
 depends_on: []
 touches:
   - src/foo.ts
@@ -1085,6 +1102,7 @@ id: inprog
 scope: back
 title: In progress feature
 status: active
+type: feature
 depends_on: []
 touches:
   - src/foo.ts
@@ -1115,6 +1133,7 @@ id: blocked
 scope: back
 title: Blocked feature
 status: active
+type: feature
 depends_on: []
 touches:
   - src/foo.ts
@@ -1179,6 +1198,7 @@ id: autofeat
 scope: back
 title: Auto worklog test
 status: active
+type: feature
 depends_on: []
 touches:
   - src/foo.ts
@@ -1236,6 +1256,7 @@ id: specfeat
 scope: back
 title: Spec feature test
 status: draft
+type: feature
 depends_on: []
 touches:
   - src/bar.ts
@@ -1471,6 +1492,7 @@ id: cycle_a
 scope: back
 title: Cycle A
 status: active
+type: feature
 depends_on:
   - back/cycle_b
 touches:
@@ -1483,6 +1505,7 @@ id: cycle_b
 scope: back
 title: Cycle B
 status: active
+type: feature
 depends_on:
   - back/cycle_a
 touches:
@@ -1504,6 +1527,7 @@ id: old_api
 scope: back
 title: Old API
 status: deprecated
+type: feature
 depends_on: []
 touches:
   - src/foo.ts
@@ -1515,6 +1539,7 @@ id: new_api
 scope: back
 title: New API
 status: active
+type: feature
 depends_on:
   - back/old_api
 touches:
@@ -1560,6 +1585,7 @@ id: api
 scope: back
 title: API layer
 status: active
+type: feature
 depends_on: []
 touches:
   - src/foo.ts
@@ -1571,6 +1597,7 @@ id: ui
 scope: front
 title: UI consuming API
 status: active
+type: feature
 depends_on:
   - back/api
 touches:
@@ -1583,6 +1610,7 @@ id: unrelated
 scope: architecture
 title: Unrelated concern
 status: active
+type: feature
 depends_on: []
 touches:
   - src/foo.ts
@@ -1630,6 +1658,7 @@ id: dead
 scope: back
 title: Dead touches
 status: active
+type: feature
 depends_on: []
 touches:
   - this/path/does/not/exist
@@ -1673,6 +1702,7 @@ id: sample
 scope: back
 title: Docs root sample
 status: active
+type: feature
 depends_on: []
 touches:
   - src/foo.ts
@@ -2016,6 +2046,7 @@ id: legacy-owned
 scope: back
 title: Legacy project-owned
 status: active
+type: feature
 depends_on: []
 touches: []
 ---
