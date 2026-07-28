@@ -102,6 +102,36 @@ else
   fail "provider none devrait etre silencieux"
 fi
 
+# ─── Régression : normalisation des chemins (fail-open TFVC, trouvé par l'E2E) ───
+# `_vcs_normalize_path` collapsait les slashes répétés via une substitution bash
+# qui INSÉRAIT un backslash littéral (`/a/b//c` -> `/a/b\/c`). Conséquence : la
+# relativisation échouait, `vcs_pending_paths` renvoyait un chemin ABSOLU, aucun
+# `touches:` ne matchait, et `check-feature-freshness --staged --strict` PASSAIT
+# au lieu de bloquer — un fail-open silencieux du gate cœur en TFVC.
+norm_cases="
+/a/b/proj|/a/b//proj/src/x.cs|src/x.cs
+/a/b//proj|/a/b/proj/src/x.cs|src/x.cs
+/a/b/proj|/a/b///proj/src/x.cs|src/x.cs
+/a/b/proj|\\a\\b\\proj\\src\\x.cs|src/x.cs
+/a/b/proj|/a/b/proj/src/x.cs|src/x.cs
+"
+# NB : process substitution et non pipe — un `... | while` tourne dans un
+# sous-shell et perdrait les incréments de $failures (le test afficherait FAIL
+# mais sortirait 0, donc ne gaterait rien).
+while IFS='|' read -r nroot npath nexp; do
+  [[ -n "$nroot" ]] || continue
+  ngot="$(_vcs_relativize_path "$nroot" "$npath")"
+  if [[ "$ngot" == "$nexp" ]]; then
+    pass "relativize($nroot, $npath) = $nexp"
+  else
+    fail "relativize($nroot, $npath) = '$ngot' au lieu de '$nexp' (fail-open possible)"
+  fi
+  case "$ngot" in
+    *'\\'*) fail "relativize a produit un backslash littéral : $ngot" ;;
+    /*) fail "relativize a renvoyé un chemin absolu ($ngot) : aucun touches: ne matcherait" ;;
+  esac
+done < <(printf '%s\n' "$norm_cases")
+
 if [[ "$failures" -gt 0 ]]; then
   echo "$failures échec(s)" >&2
   exit 1

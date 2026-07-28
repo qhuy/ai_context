@@ -135,6 +135,10 @@ echo "[0s2/28] tests unitaires (provider VCS Git/TFVC)"
 bash tests/unit/test-vcs-provider.sh
 echo
 
+echo "[0s2b/28] tests unitaires (E2E TFVC : scaffold + gate de fraîcheur)"
+bash tests/unit/test-tfvc-e2e.sh
+echo
+
 echo "[0s3/28] tests unitaires (index Markdown progressifs + migration)"
 bash tests/unit/test-feature-markdown-indexes.sh
 echo

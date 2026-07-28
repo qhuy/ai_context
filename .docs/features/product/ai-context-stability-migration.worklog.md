@@ -70,3 +70,7 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
 - `docs/upgrading.md` : mentions `GEMINI.md` retirées des sections shims (le fichier n'est plus rendu ; le registre natif n'a pas de ligne `gemini`). Aucun changement du contrat de migration/stabilité.
+
+## 2026-07-24 — v1.0 / B6 : chemin d'upgrade TFVC documenté
+- `docs/upgrading.md` : nouvelle section « Mettre à jour un workspace TFVC (sans `.git`) ». Comble un trou réel du parcours de migration — `copier update` refuse un workspace non-git (vérifié), et aucun chemin alternatif n'était documenté pour le provider principal de l'organisation utilisatrice.
+- Chemin documenté prouvé end-to-end (copie Git jetable hors workspace → update → `tf checkout` → application) : `_commit` avance, code métier préservé, 0 `.rej`, aucun `.git` dans le workspace, checks verts. Détail dans `core/vcs-provider-abstraction`.

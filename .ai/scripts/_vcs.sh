@@ -83,10 +83,12 @@ _vcs_tf_cmd() {
 _vcs_normalize_path() {
   local path="$1"
   path="${path//$'\r'/}"
-  path="$(printf '%s' "$path" | tr '\\' '/')"
-  while [[ "$path" == *'//'* ]]; do
-    path="${path//\/\//\/}"
-  done
+  # Backslashes -> slashes (chemins Windows/TFVC), puis collapse des slashes
+  # répétés. Le collapse passe par sed : la substitution bash `${path//\/\//\/}`
+  # insère un backslash littéral au lieu de collapser (vérifié empiriquement —
+  # `/a/b//c` devenait `/a/b\/c`), ce qui faisait échouer la relativisation et
+  # rendait le gate de fraîcheur TFVC PASSANT au lieu de bloquant (fail-open).
+  path="$(printf '%s' "$path" | tr '\\' '/' | sed 's#//*#/#g')"
   path="${path#./}"
   printf '%s\n' "$path"
 }

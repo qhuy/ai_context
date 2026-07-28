@@ -365,3 +365,6 @@
 
 ## 2026-07-24 — étape [0q3/28] : clés context.* de config.yml (v1.0, B9)
 - Nouveau test unitaire `tests/unit/test-context-config-keys.sh` branché dans le prélude : 7 assertions sur la précédence env var > config > défaut pour `context.show_statuses` et `context.default_focus`, dont la garde « liste vide ne masque pas tout le mesh ».
+
+## 2026-07-24 — étape [0s2b/28] : E2E TFVC (v1.0, B4)
+- Nouveau test `tests/unit/test-tfvc-e2e.sh` branché dans le prélude : scaffold Copier `vcs_provider=tfvc` réel + faux `tf`, 5 assertions dont la chaîne d'enforcement complète (freshness strict bloquant puis passant). Ce test a trouvé un fail-open réel du gate de fraîcheur en TFVC (détail dans `core/vcs-provider-abstraction`).

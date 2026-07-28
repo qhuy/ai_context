@@ -30,6 +30,7 @@ copier copy --defaults --trust --vcs-ref=HEAD --data project_name=smoke-strict -
 copier copy --defaults --trust --vcs-ref=HEAD --data project_name=smoke-docs --data docs_root=docs . /tmp/ai-context-docs
 copier copy --defaults --trust --vcs-ref=HEAD --data project_name=smoke-en --data commit_language=en . /tmp/ai-context-en
 copier copy --defaults --trust --vcs-ref=HEAD --data project_name=smoke-codex --data 'agents=[codex]' . /tmp/ai-context-codex
+copier copy --defaults --trust --vcs-ref=HEAD --data project_name=smoke-tfvc --data vcs_provider=tfvc . /tmp/ai-context-tfvc
 copier copy --defaults --trust --vcs-ref=HEAD --data project_name=smoke-fullstack \
   --data scope_profile=fullstack --data tech_profile=fullstack-dotnet-react . /tmp/ai-context-fullstack
 ```
@@ -39,6 +40,11 @@ Vérifier pour chaque rendu :
 - fichiers attendus présents (`AGENTS.md`, `.ai/index.md`, `.ai/scripts/*`, `.docs/FEATURE_TEMPLATE.md`)
 - fichiers exclus correctement absents (`.githooks` en `lite`, `.claude/` sans Claude, `tech-react.md` hors `react-next`, etc.)
 - message post-copy cohérent avec les fichiers générés (pas d'instruction pour un fichier absent)
+- profil `tfvc` : **pas** de `.githooks` (l'enforcement passe par les hooks agent + CI),
+  provider persisté dans `.ai/config.yml` / `.copier-answers.yml`. La chaîne complète
+  (doctor, review, freshness strict sur pending changes) est couverte automatiquement
+  par `tests/unit/test-tfvc-e2e.sh` avec un faux `tf` ; la validation sur le `tf` RÉEL
+  de l'organisation reste une étape mainteneur — voir `core/vcs-provider-abstraction`.
 
 ### 3. `copier update` sur un projet existant
 

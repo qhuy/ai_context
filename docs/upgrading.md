@@ -243,6 +243,56 @@ passer le kill criterion :
 bash .ai/scripts/check-agent-native-context.sh --require-confirmed claude
 ```
 
+## Mettre à jour un workspace TFVC (sans `.git`)
+
+`copier update` **refuse** de tourner hors d'un sous-projet git-tracké — vérifié :
+il sort avec « Updating is only supported in git-tracked subprojects. » C'est une
+contrainte de Copier, pas d'ai_context : l'update calcule un diff entre deux
+rendus via Git.
+
+Chemin supporté (vérifié end-to-end) — **copie Git jetable hors du workspace**,
+puis application contrôlée du delta. Ne jamais `git init` dans le workspace TFVC
+lui-même : un `.git` résident y crée un risque de check-in accidentel et peut
+interférer avec `tf`.
+
+```bash
+# 1. Copier le workspace vers un emplacement jetable, HORS du mapping TFVC
+rsync -a /chemin/workspace-tfvc/ /tmp/aic-upgrade/
+
+# 2. En faire un dépôt Git temporaire (dans la copie uniquement)
+cd /tmp/aic-upgrade
+git init -q && git add -A && git commit -qm "snapshot workspace"
+
+# 3. Update Copier normalement dans la copie
+copier update --defaults --trust --conflict=rej
+
+# 4. Inspecter le delta AVANT de toucher au workspace
+git --no-pager diff --stat HEAD
+git diff --name-only HEAD          # liste des fichiers à rendre éditables
+
+# 5. Rendre ces fichiers éditables côté TFVC, puis appliquer
+cd /chemin/workspace-tfvc
+tf checkout <chaque-fichier-de-la-liste>
+rsync -a --exclude='.git' /tmp/aic-upgrade/ /chemin/workspace-tfvc/
+
+# 6. Vérifier, puis check-in via TFVC
+bash .ai/scripts/check-shims.sh
+bash .ai/scripts/check-features.sh --no-write
+```
+
+Ce que le test end-to-end prouve sur ce chemin : le `_commit` de
+`.copier-answers.yml` avance bien, le code métier local est préservé, aucun `.rej`
+n'est produit sur un scaffold sain, aucun `.git` n'atterrit dans le workspace, et
+`check-shims` / `check-features` passent sur le résultat.
+
+Étape 5 : `tf checkout` avant écriture est nécessaire car TFVC garde les fichiers
+en lecture seule hors pending change. Si un fichier est déjà en pending change, le
+`checkout` est un no-op.
+
+Alternative si la copie jetable n'est pas praticable : `aic template-diff` rend le
+template dans `/tmp` et liste les écarts sans rien modifier — utile pour évaluer
+l'ampleur d'un update avant de l'engager.
+
 ## Rebase "clean" (repartir d'un scaffold frais)
 
 Si la dérive est trop grosse :
