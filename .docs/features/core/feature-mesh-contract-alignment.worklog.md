@@ -76,3 +76,6 @@
 
 ## 2026-07-24 — couverture incidente (pilotage P11)
 - `build-feature-index.sh` (+ miroir) : consolidation des forks yq/jq par fiche (~5s→~1.9s, propriété substantielle `core/feature-index-cache`). Contrat JSON produit inchangé (diff sémantique vérifié identique sur les 65 fiches réelles).
+
+## 2026-07-24 — couverture incidente (v1.0, B8)
+- `build-feature-index.sh` (+ miroir) : commentaire `schema_version` reformulé (politique de bump énoncée dans les deux sens). Aucun changement du parsing ni de l'alignement de contrat.

@@ -168,3 +168,8 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, B9 clés context.*)
 - `_lib.sh` (+ miroir) : `visible_statuses_jq()` lit désormais `context.show_statuses` depuis `.ai/config.yml` (yq seul, défaut inchangé sans config). Aucun changement du cache d'index ni de son contrat — seule la liste de statuts passée en `--argjson` au filtrage jq est désormais configurable.
+
+## 2026-07-24 — v1.0 / B7+B8 : fiche et politique de bump réconciliées avec le réel
+- **B7** — 4 écarts fiche↔sortie corrigés, chacun vérifié avant écriture : `title` promis mais jamais émis (`jq keys` → 11 clés, pas de `title`) ; « tableau JSON » alors que la sortie est une enveloppe `{schema_version, project_id, generated_at, features[]}` ; invariant « byte-identique, pas de timestamp » faux dans ses deux moitiés (il Y A `generated_at`, et l'idempotence porte sur le fichier non réécrit — prouvé : 2 runs stdout diffèrent d'1s sur `generated_at`, 2 `--write` laissent le mtime stable) ; Contrats enrichi des types et nullabilités par clé, dont « aucune clé émise à null » (valeur vide typée, constaté sur les 67 fiches).
+- **B8** — le commentaire et les 3 messages d'échec du snapshot test prescrivaient « bumper la version » pour TOUT changement de clés, contredisant la politique du builder (`build-feature-index.sh` : ajout compatible = pas de bump). Reformulés : le test force une décision consciente, l'issue dépend de la nature du changement (ajout compatible → MAJ snapshot sans bump / retrait-renommage-sémantique → MAJ snapshot + bump). Le commentaire source du builder énonce désormais les deux branches explicitement.
+- Aucun changement de code émetteur : `schema_version` reste à 1, le jeu de clés est inchangé. Validation : snapshot test PASS, check-features PASS, dogfood-drift PASS.

@@ -39,7 +39,7 @@ type: feature
 
 ### Inclus
 
-- L'agrégation des frontmatter (`id`, `scope`, `title`, `status`, `depends_on`, `touches`, `touches_shared`, `progress?`, `product?`, `external_refs?`, `path`) en un tableau JSON.
+- L'agrégation des frontmatter (`id`, `scope`, `status`, `type`, `depends_on`, `touches`, `touches_shared`, `product`, `external_refs`, `progress`, `path`) dans une **enveloppe** JSON `{schema_version, project_id, generated_at, features[]}`. `title` n'est **pas** émis : il n'est utile qu'à la lecture humaine de la fiche, jamais aux consommateurs de l'index.
 - Le parsing YAML (`yq v4` si dispo, fallback awk/sed bash 3.2) et l'échappement JSON sûr via `jq -nc --arg`.
 - Le verrou atomique `mkdir` autour de l'écriture du cache et le rebuild on-demand (hook + reminder si fichier manquant).
 - Les deux variantes maintenues en parallèle : runtime dogfoodé (`.ai/scripts/build-feature-index.sh`) et gabarit Copier (`.jinja`), plus les helpers de matching partagés dans `_lib.sh`.
@@ -59,7 +59,7 @@ type: feature
 
 ## Invariants
 
-- Deux builds successifs sans changement de source produisent un JSON byte-identique (ordre stable, pas de timestamp).
+- Deux builds successifs sans changement de source **ne réécrivent pas le fichier** `.ai/.feature-index.json` (mtime stable) : l'ordre des features est déterministe et le contrat est comparé hors `generated_at`. La sortie **stdout**, elle, diffère d'un run à l'autre par `generated_at` — l'idempotence porte sur le fichier écrit, pas sur le flux.
 - Une fiche au frontmatter invalide est exclue avec warning mais n'arrête jamais le build (cache toujours produit).
 - Les paths contenant quotes/backslashes sont échappés sûrement (`jq -nc --arg`), jamais concaténés à la main.
 - Le cache reste gitignoré et reconstructible : aucune source de vérité ne vit dans `.feature-index.json`.
@@ -75,13 +75,17 @@ type: feature
 
 ## Contrats
 
-- Sortie : tableau JSON `[{id, scope, title, status, depends_on, touches, touches_shared, progress?, path}]`.
-- Idempotent : 2 builds successifs produisent un JSON byte-identique.
+- Sortie : enveloppe JSON typée
+  - `schema_version` (string), `project_id` (string), `generated_at` (string ISO-8601 UTC), `features` (array) ;
+  - par feature : `id`, `scope`, `status`, `type`, `path` (string) ; `touches`, `touches_shared`, `depends_on` (array) ; `product`, `external_refs`, `progress` (object) ;
+  - `progress` : `phase`, `step`, `resume_hint`, `updated` (string), `blockers` (array).
+  Aucune clé n'est émise à `null` : les champs absents du frontmatter reçoivent leur valeur vide typée (`[]`, `{}`, `""`). Pas de clé `title`.
+- Idempotent au niveau du fichier : deux `--write` successifs sans changement laissent `.ai/.feature-index.json` intact (comparaison hors `generated_at`). La sortie stdout varie par `generated_at`.
 - Tolérance : feature au frontmatter invalide → exclue + warning, pas d'arrêt.
 
 ## Validation
 
-- Idempotence : deux exécutions consécutives de `build-feature-index.sh` produisent un JSON byte-identique (couvert par les tests unitaires `index contract` sous `tests/unit/`).
+- Idempotence : deux `build-feature-index.sh --write` consécutifs laissent le fichier inchangé ; le contrat stdout est stable hors `generated_at` (couvert par `tests/unit/test-build-feature-index-contract.sh`, qui compare aussi le jeu de clés émises à un snapshot couplé à `schema_version`).
 - Échappement : une fiche dont un `touches:` contient quote/backslash produit un JSON valide (`jq .` ne lève pas d'erreur).
 - Tolérance : une fiche au frontmatter invalide est exclue avec warning sans faire échouer le build.
 - Parité runtime/gabarit : le smoke-test rejoue `copier copy` puis vérifie que le script généré (`.jinja`) produit le même cache que le runtime dogfoodé.
@@ -94,6 +98,7 @@ type: feature
 
 ## Historique / décisions
 
+- 2026-07-24 (v1.0, chantier B7 du gel P16) : **fiche réconciliée avec la sortie réelle**, sur les 4 points relevés par la review Codex round 3. (a) `title` était promis dans Périmètre et Contrats mais n'est **pas** émis par `build-feature-index.sh` — vérifié par `jq keys` sur l'index réel, 11 clés dont aucune `title` ; retiré et justifié (utile à la lecture humaine, inutile aux consommateurs). (b) « tableau JSON » remplacé par l'enveloppe réelle `{schema_version, project_id, generated_at, features[]}`. (c) L'invariant « JSON byte-identique, pas de timestamp » était faux dans les deux moitiés : il Y A un timestamp (`generated_at`) et l'idempotence porte sur le **fichier** (non réécrit quand le contrat est inchangé), pas sur stdout — vérifié empiriquement : deux runs stdout diffèrent d'une seconde sur `generated_at`, deux `--write` laissent le mtime stable. (d) Contrats enrichi des **types et nullabilités** par clé (exigence de l'élément 5 du contrat v1.0), dont le fait qu'aucune clé n'est émise à `null` (valeur vide typée à la place, constaté sur les 67 fiches).
 - v0.7.2 : fix bug silencieux d'escaping JSON (paths avec quotes corrompaient le JSONL).
 - 2026-04-24 : centralisation du matching `touches:` dans `_lib.sh` (`path_matches_touch` + `features_matching_path`). Les hooks/scripts consommateurs partagent désormais la même sémantique exact/dossier/glob/`/**`.
 - 2026-04-24 : `AI_CONTEXT_DOCS_ROOT` et `AI_CONTEXT_FEATURES_DIR` ajoutés dans `_lib.sh` pour que les scripts runtime suivent le `docs_root` rendu par Copier au lieu de réencoder `.docs/features`.

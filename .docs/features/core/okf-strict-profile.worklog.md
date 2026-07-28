@@ -141,3 +141,6 @@
 - Vérifié AVANT durcissement : 67/67 fiches canoniques ont déjà `type` (classification via `find_feature_docs` du `_lib.sh`, pas un `find` naïf — les 4 `index.md` de scope sont des documents réservés, pas des fiches). Zéro migration nécessaire sur ce repo.
 - Régression détectée et corrigée pendant l'implémentation : la présence de `type` étant désormais couverte par la boucle `REQUIRED_FIELDS` (dérivée du schéma, prouvé par `test-schema-driven-required.sh`), ma revalidation locale produisait 2 diagnostics pour 1 défaut. Branche `else` retirée ; le hint de backfill vit maintenant sur le message générique, conditionné à la clé `type`. Le test dédié assert explicitement `count == 1`.
 - Validation : les 3 cas (absent / hors enum / valide) + garde schéma PASS ; check-features sur le mesh réel PASS ; tests schema/enum/yaml/id existants PASS.
+
+## 2026-07-24 — couverture incidente (v1.0, B8)
+- `build-feature-index.sh` (+ miroir) : commentaire `schema_version` reformulé pour énoncer les deux branches de la politique SemVer (breaking → MAJOR + bump ; ajout compatible → MINOR sans bump). Aucun changement de l'émission du champ `type` ni du profil OKF.

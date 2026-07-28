@@ -354,9 +354,14 @@ generated_at=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 config_file="$repo_root/.ai/config.yml"
 project_id="$(read_config 'project_id' "$(basename "$repo_root")" "$config_file")"
 
-# schema_version: contrat stable du JSON émis. Bumper en cas de breaking change
-# (renommer/supprimer un champ, changer la sémantique d'un type). Les ajouts
-# rétro-compatibles ne nécessitent pas de bump.
+# schema_version: contrat stable du JSON émis (élément 5 du contrat public v1.0).
+# Politique SemVer, dans les deux sens :
+#   - breaking (renommer/supprimer un champ, changer la sémantique d'un type)
+#     -> MAJOR côté template ET bump de schema_version ici ;
+#   - ajout rétro-compatible d'un champ -> MINOR, SANS bump.
+# Le snapshot de clés de tests/unit/test-build-feature-index-contract.sh applique
+# cette politique : il échoue sur tout changement de clés pour forcer la décision,
+# sans présumer laquelle des deux branches s'applique.
 output=$(jq -n \
   --arg schema_version "1" \
   --arg project_id "$project_id" \

@@ -99,3 +99,7 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, type requis)
 - `template/.ai/schema/feature.schema.json` : `type` ajouté à `.required` (miroir du runtime). Aucun changement du contrat de l'index JSON lui-même — `type` était déjà émis par `build-feature-index.sh` (défaut `feature`), donc pas de bump `schema_version`.
+
+## 2026-07-24 — v1.0 / B8 : politique de bump clarifiée dans le snapshot test
+- Le commentaire et les 3 messages d'échec du snapshot de clés prescrivaient « bumper la version » pour tout changement, contredisant la politique du builder (ajout rétro-compatible = pas de bump). Reformulés : le test force la décision consciente, l'issue dépend de la nature du changement (ajout compatible → MAJ snapshot seule ; retrait/renommage/sémantique → MAJ snapshot + bump).
+- `schema_version` reste à 1 et le jeu de clés est inchangé — aucune rupture de contrat, seule la guidance était fausse. Snapshot test PASS.
