@@ -108,3 +108,7 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
 - `README_AI_CONTEXT.md` (+ miroir template) : liste d'agents mise à jour. Aucun changement du contrat provider VCS.
+
+## 2026-07-28 15:51 — auto
+- Fichiers modifiés :
+  - copier.yml

@@ -22,3 +22,7 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
 - `copier.yml` : choix `gemini` retiré + commentaire de décision. Aucun changement de `aic-release.sh` ni de l'entrée `_migrations`.
+
+## 2026-07-28 15:51 — auto
+- Fichiers modifiés :
+  - copier.yml

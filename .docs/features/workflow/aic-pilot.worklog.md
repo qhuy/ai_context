@@ -200,3 +200,7 @@
 - Réponses verbatim : « 1/gemini n'est pas concerné, on n'utilise pas Gemini 2/ok 3/ok ».
 - (1) P4 → traduit en option (c) : retrait du choix `gemini` avant gel (0.x breaking-MINOR, précédent v0.13). Traduction exécutive flaggée au registre, veto utilisateur possible jusqu'au tag. (2) Classification CLI 4 niveaux validée telle que proposée. (3) `type` requis dès v1.0.
 - Exécution planifiée dans le next_hint du registre (9 étapes, gates complets par commit). Hors automatisation : B5 (TFVC réel de l'org) et C14 (tag) — checkpoints utilisateur.
+
+## 2026-07-28 15:51 — auto
+- Fichiers modifiés :
+  - .docs/pilots/2026-07-23-analyse-fonctionnelle-generale.md

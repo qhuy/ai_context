@@ -256,3 +256,8 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
 - `README_AI_CONTEXT.md` (+ miroir template) : mention cross-agent réduite à Claude/Codex/Cursor/Copilot. Aucun changement de la surface `aic`. Détail dans `core/agents-md-shim-canonical`.
+
+## 2026-07-28 15:51 — auto
+- Fichiers modifiés :
+  - .ai/scripts/aic.sh
+  - template/.ai/scripts/aic.sh.jinja

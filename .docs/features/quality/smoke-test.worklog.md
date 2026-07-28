@@ -354,3 +354,7 @@
 - Corrigé : `type: feature` ajouté à 26 fixtures heredoc. Exclusion volontaire de `legacy-migrate`, dont l'objet EST un frontmatter legacy incomplet (`status: in_progress`, sans depends_on/touches/type) pour exercer `migrate-features.sh` — vérifié après coup que son assertion de migration passe toujours.
 - Effet secondaire positif : les fixtures qui testent un AUTRE défaut (`missing-deps`, `bogus`, `phase-typo`) échouent désormais pour ce seul défaut, plus par effet de bord d'un `type` manquant.
 - Smoke complet PASS (exit 0, ligne `[0q2/28]` et assertion migrate-features vérifiées dans le log).
+
+## 2026-07-28 15:51 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh

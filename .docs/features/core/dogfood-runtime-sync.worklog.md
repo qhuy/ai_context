@@ -546,3 +546,9 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, type requis)
 - `.docs/FEATURE_TEMPLATE.md` + `.ai/schema/feature.schema.json` mirrorés vers `template/` (le schéma est livré en `.json` brut, sans Jinja — le drift l'a détecté immédiatement après l'édition runtime seule, gate faisant son travail). `check-dogfood-drift` PASS après mirroring.
+
+## 2026-07-28 15:51 — auto
+- Fichiers modifiés :
+  - .ai/scripts/aic.sh
+  - .ai/scripts/check-dogfood-drift.sh
+  - .ai/scripts/check-shims.sh

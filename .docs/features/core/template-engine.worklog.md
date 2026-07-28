@@ -482,3 +482,8 @@
 - `copier.yml` : `choices: [claude, codex, cursor, copilot]` — `gemini` retiré (aucun usage ; Gemini CLI grand public arrêté le 2026-06-18). Commentaire inline expliquant la décision et pointant MIGRATION.md pour les consommateurs existants.
 - `_exclude` allégé d'une ligne, `_message_after_copy` mis à jour, `docs/variables.md` documente le retrait et le résiduel legacy.
 - Détail complet (tolérance legacy check-shims, correctif infer_agents_yaml, piège HEAD vs working tree) dans `core/agents-md-shim-canonical`.
+
+## 2026-07-28 15:51 — auto
+- Fichiers modifiés :
+  - copier.yml
+  - docs/variables.md

@@ -73,3 +73,7 @@ docs(product): clôturer le repositionnement README
 
 ## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
 - `README.md` : colonne Gemini retirée du tableau « Honnêteté runtime » (5 → 4 agents), mentions cross-agent et arborescence générée alignées. Le positionnement et l'invariant d'honnêteté runtime sont inchangés — la table reste explicite sur les écarts de capacité entre agents.
+
+## 2026-07-28 15:51 — auto
+- Fichiers modifiés :
+  - README.md
