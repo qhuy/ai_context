@@ -45,16 +45,19 @@ Usage: bash .ai/scripts/aic.sh <command> [args...]
 
 CLI aic — surface scriptable alignée avec les skills aic-*.
 
-Commandes utilisateur :
+Surface classifiée (contrat public v1.0) — 4 niveaux :
+  stable              gelée : retrait ou renommage = MAJOR
+  stable-maintenance  publique et documentée : nom, rôle et code de retour gelés ;
+                      la forme exacte de la sortie texte ne l'est pas
+  deprecated          fonctionne encore, retrait possible en v2 — ne plus utiliser
+  interne             non contractuelle (plomberie hooks), peut changer en MINOR
+
+── stable ──
   init         parcours guidé post-scaffold : doctor, hooks git, prochaine étape
   onboard      skill-only : utiliser aic-onboard pour peupler/migrer l'overlay projet .ai/project
   frame "<objectif>"
                bootstrap de contexte : scope probable, docs à lire, feature candidates
                Ne remplace pas le skill aic-frame pour un cadrage critique.
-  frame-bootstrap "<objectif>"
-               alias explicite de frame
-  frame-context "<objectif>"
-               alias explicite de frame
   pilot        skill-only : utiliser aic-pilot pour audit général ou suivi transverse
   dev-plan     skill-only : utiliser aic-dev-plan pour structurer l'exécution multi-étapes
   status       état actionnable : features, delta, hooks, checks, prochaine action
@@ -65,36 +68,45 @@ Commandes utilisateur :
                avec path : contexte feature juste-à-temps pour ce fichier
   review       synthèse review-friendly du delta courant
   ship         rapport de sortie : delta, docs, checks, commit proposé
-  knowledge <publish|search|link|import|freshness>
-               hub knowledge Git/Markdown : publier explicitement, chercher, lier, importer
 
-Commandes maintenance :
+── stable-maintenance ──
+  doctor       diagnostic non destructif (dépendances, hooks, index, checks)
+  migrate      migration frontmatter ; sous-commandes explicites :
+               'migrate plan' inventorie sans écrire ; 'migrate all [--apply]' orchestre les migrations
+               'migrate okf-type' backfille type ; 'migrate okf-indexes' génère les index Markdown
   repair [--apply]
                plan de réparation du mesh ; --apply reconstruit seulement l'index
+  repair-copier-metadata [--apply] [--src-path <src>] [--commit <ref>]
+               recrée .copier-answers.yml si absent ou incomplet
+  template-diff [--src-path <src>] [--vcs-ref <ref>]
+               rend le template dans /tmp et liste les écarts sans toucher au repo
+  resume       buckets EN COURS / BLOQUÉES / STALE / À FAIRE
+  audit        audit-features.sh (discover <scope>)
+  check        check-features.sh (frontmatter + scope + depends_on + touches)
+  check-docs   check-feature-docs.sh (sections feature ; --strict <scope/id> avant DONE)
+  coverage     check-feature-coverage.sh (orphelins)
+  shims        check-shims.sh (cohérence shims racine ↔ .ai/index.md)
+  index        build-feature-index.sh (rebuild .ai/.feature-index.json)
+  pr-report    rapport markdown/json d'impact feature depuis un diff git
+  measure      taille contexte injecté par les hooks
   product-status
                vue des initiatives product et features dev liées
   product-portfolio
                comparaison read-only : impact, confiance, coût, recommandation
   product-review product/<id>
                review décisionnelle d'une initiative product
-  doctor       diagnostic non destructif (dépendances, hooks, index, checks)
-  resume       buckets EN COURS / BLOQUÉES / STALE / À FAIRE
-  audit        audit-features.sh (discover <scope>)
-  migrate      migration frontmatter ; sous-commandes explicites :
-               'migrate plan' inventorie sans écrire ; 'migrate all [--apply]' orchestre les migrations
-               'migrate okf-type' backfille type ; 'migrate okf-indexes' génère les index Markdown
-  pr-report    rapport markdown/json d'impact feature depuis un diff git
-  measure      taille contexte injecté par les hooks
-  check        check-features.sh (frontmatter + scope + depends_on + touches)
-  check-docs   check-feature-docs.sh (sections feature ; --strict <scope/id> avant DONE)
-  coverage     check-feature-coverage.sh (orphelins)
-  shims        check-shims.sh (cohérence shims racine ↔ .ai/index.md)
-  index        build-feature-index.sh (rebuild .ai/.feature-index.json)
-  reminder     pre-turn-reminder.sh (sortie text ou json)
-  repair-copier-metadata [--apply] [--src-path <src>] [--commit <ref>]
-               recrée .copier-answers.yml si absent ou incomplet
-  template-diff [--src-path <src>] [--vcs-ref <ref>]
-               rend le template dans /tmp et liste les écarts sans toucher au repo
+
+── deprecated ──
+  frame-bootstrap "<objectif>"
+               alias historique de frame — préférer 'frame'
+  frame-context "<objectif>"
+               alias historique de frame — préférer 'frame'
+  knowledge <publish|search|link|import|freshness>
+               hub knowledge Git/Markdown ; initiative arrêtée (decision_state=cut,
+               faute de signal d'adoption). Le code reste fonctionnel.
+
+── interne ──
+  reminder     pre-turn-reminder.sh (sortie text ou json) — invoqué par les hooks
 
 Help : --help, -h, help
 HELP

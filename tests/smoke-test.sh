@@ -254,8 +254,21 @@ echo "  ✓ aic.sh init OK (diagnostic + hooks git idempotents + prochaine étap
 rm -rf "$OUT/.git" "$OUT/README.md" "$OUT/src/sample.ts"
 # Wrapper aic.sh : --help liste la surface canonique ; routage vers scripts.
 aic_help=$( cd "$OUT" && bash .ai/scripts/aic.sh --help )
-if ! printf '%s' "$aic_help" | grep -q "Commandes utilisateur :"; then
-  echo "  ✗ aic.sh --help ne liste pas les commandes"
+# Contrat v1.0 : l'aide classe chaque route en 4 niveaux (stable,
+# stable-maintenance, deprecated, interne). Les 4 en-têtes doivent être présents.
+for level in "── stable ──" "── stable-maintenance ──" "── deprecated ──" "── interne ──"; do
+  if ! printf '%s' "$aic_help" | grep -Fq "$level"; then
+    echo "  ✗ aic.sh --help ne classe pas la surface : section '$level' absente"
+    exit 1
+  fi
+done
+# Une route deprecated doit être annoncée comme telle, pas listée en stable.
+if ! printf '%s' "$aic_help" | sed -n '/── deprecated ──/,/── interne ──/p' | grep -Fq "knowledge"; then
+  echo "  ✗ aic.sh --help ne classe pas 'knowledge' en deprecated (décision P1 cut)"
+  exit 1
+fi
+if ! printf '%s' "$aic_help" | sed -n '/── stable ──/,/── stable-maintenance ──/p' | grep -Fq 'init '; then
+  echo "  ✗ aic.sh --help ne classe pas 'init' en stable"
   exit 1
 fi
 for expected in 'frame "<objectif>"' "pilot" "status" 'diagnose ["symptôme"]' "document-feature [path]" "review" "ship" "product-status" "check-docs"; do

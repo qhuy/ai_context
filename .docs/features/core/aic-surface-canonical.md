@@ -110,6 +110,11 @@ utilisateur.
 
 ## Contrats
 
+- **Classification en 4 niveaux (contrat v1.0)**, matérialisée dans `aic.sh --help` :
+  - `stable` (10 routes) : `init`, `onboard`, `frame`, `pilot`, `dev-plan`, `status`, `diagnose`, `document-feature`, `review`, `ship` — retrait/renommage = MAJOR ;
+  - `stable-maintenance` (17 routes) : `doctor`, `migrate`, `repair`, `repair-copier-metadata`, `template-diff`, `resume`, `audit`, `check`, `check-docs`, `coverage`, `shims`, `index`, `pr-report`, `measure`, `product-status`, `product-portfolio`, `product-review` — publiques et documentées (`_message_after_update` pour `migrate`, RELEASE.md §7 pour `doctor`, README_AI_CONTEXT pour `repair-copier-metadata`/`template-diff`) : nom, rôle et code de retour gelés, la forme exacte de la sortie texte ne l'est pas ;
+  - `deprecated` (3 routes) : `frame-bootstrap`, `frame-context` (alias historiques de `frame`), `knowledge` (initiative `cut`, code conservé) — fonctionnent, retrait possible en v2 ;
+  - `interne` (1 route) : `reminder` — plomberie hooks, non contractuelle, peut changer en MINOR.
 - Surface publique canonique (10 intentions) :
   - `aic`
   - `aic-onboard`
@@ -153,6 +158,7 @@ Aucune dependance frontmatter.
 
 ## Historique / décisions
 
+- 2026-07-24 (v1.0, pilotage P16 Bloc A) : **classification de la surface CLI en 4 niveaux** validée par l'utilisateur et matérialisée dans `aic.sh --help` (+ miroir template). Motif : la review Codex #4 a montré que « 10 intentions » ne décrivait pas le contrat CLI réel — l'aide exposait 13 entrées sous « Commandes utilisateur » (dont `init`, livré le même jour mais absent du contrat proposé, et `knowledge` alors que P1 venait de l'acter en `cut`), et rangeait `migrate`/`doctor`/`repair-copier-metadata`/`template-diff` en « maintenance » non contractuelle alors qu'elles sont données au consommateur par `_message_after_update`, RELEASE.md §7 et README_AI_CONTEXT. D'où le niveau intermédiaire `stable-maintenance`. Vérifié par script que les 31 routes du dispatch sont toutes listées et classées, sans route orpheline ni entrée d'aide sans route. Assertion smoke réécrite : elle exige les 4 en-têtes de niveau et vérifie le classement de deux routes témoins (`init` en stable, `knowledge` en deprecated) au lieu de l'ancien en-tête « Commandes utilisateur : ».
 - 2026-05-06 : decision de faire une migration breaking sans alias legacy, avec
   un commit dedie au sous-chantier.
 - 2026-06-19 : ajout de `aic-onboard` a la taxonomie canonique (init/sync/migrate

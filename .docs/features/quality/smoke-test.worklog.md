@@ -358,3 +358,7 @@
 ## 2026-07-28 15:51 — auto
 - Fichiers modifiés :
   - tests/smoke-test.sh
+
+## 2026-07-24 — assertion d'aide réécrite (v1.0, classification CLI)
+- L'ancienne assertion grepait l'en-tête « Commandes utilisateur : », supprimé par la restructuration en 4 niveaux — elle aurait échoué. Réécrite : exige les 4 en-têtes de niveau (`stable`, `stable-maintenance`, `deprecated`, `interne`) et vérifie le classement de 2 routes témoins par section (`init` en stable, `knowledge` en deprecated) plutôt qu'une simple présence de chaîne.
+- La boucle existante sur les routes attendues et la garde anti-réintroduction des anciens noms publics sont conservées telles quelles. Smoke complet PASS.

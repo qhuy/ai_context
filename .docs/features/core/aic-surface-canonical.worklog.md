@@ -261,3 +261,10 @@
 - Fichiers modifiés :
   - .ai/scripts/aic.sh
   - template/.ai/scripts/aic.sh.jinja
+
+## 2026-07-24 — v1.0 / classification CLI en 4 niveaux (pilotage P16 Bloc A)
+- Décision utilisateur (Bloc A, question 2) : classification validée telle que proposée.
+- `aic.sh --help` (+ miroir template, vérifié identique) restructuré : en-tête expliquant les 4 niveaux et leur garantie SemVer, puis sections `── stable ──` (10), `── stable-maintenance ──` (17), `── deprecated ──` (3), `── interne ──` (1).
+- Vérification outillée plutôt que visuelle : script ad-hoc confrontant les routes du `case` de dispatch (31) aux entrées de l'aide — zéro route non listée, zéro entrée sans route.
+- `deprecated` porte désormais une raison explicite : alias historiques pour `frame-bootstrap`/`frame-context`, `decision_state=cut` pour `knowledge` (cohérence avec l'arbitrage P1 du même jour).
+- Assertion smoke réécrite (l'ancienne grepait l'en-tête « Commandes utilisateur : », désormais absent) : exige les 4 en-têtes + vérifie le classement de 2 routes témoins par section. Smoke complet PASS.
