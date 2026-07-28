@@ -13,7 +13,7 @@ ai_context **ne** vise **pas** à :
 - Remplacer un framework spec-driven (BMAD, Spec Kit, Kiro) — il est la couche **locale** de gates
   et de traçabilité code↔doc **au-dessus** d'eux.
 - Offrir une parité runtime identique entre agents. L'expérience la plus riche est sur **Claude**
-  (hooks live). Codex / Cursor / Gemini / Copilot bénéficient des shims + git hooks + checks.
+  (hooks live). Codex / Cursor / Copilot bénéficient des shims + git hooks + checks.
   **Ne jamais masquer cette asymétrie** (cf. `product/readme-positioning`, kill_criteria).
 - Générer le contexte à la place de l'humain — il en **force la fraîcheur**, il ne l'invente pas.
 - Être un runtime à installer — c'est un **template Copier**, sans dépendance hors `bash`/`jq`

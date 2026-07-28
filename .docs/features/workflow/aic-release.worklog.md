@@ -19,3 +19,6 @@
 - Corrigé : `aic-release.sh` rendu source-only (retiré de `template/`, retiré du dispatch `aic.sh` source ET template, ajouté à l'ignore-list `dogfood-runtime-lib.sh`). Assertion smoke-test correspondante retirée (testait le mauvais artefact au mauvais endroit).
 - Smoke-test complet PASS après correction ; assertion `[28c/28]` étendue pour prouver que la migration native est bien jouée (« migrations post-Copier » présent dans le log `copier update`, capturé avant sa suppression).
 - next : gates finaux + commit.
+
+## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
+- `copier.yml` : choix `gemini` retiré + commentaire de décision. Aucun changement de `aic-release.sh` ni de l'entrée `_migrations`.

@@ -17,7 +17,7 @@ Ces fichiers viennent du template et peuvent évoluer lors de `copier update` :
 - `.ai/config.yml`
 - `.ai/context-ignore.md`
 - `.ai/reminder.md`
-- Shims générés : `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`, `.cursor/rules/**`
+- Shims générés : `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md`, `.cursor/rules/**`
 - Runtime généré : `.githooks/**`, `.github/workflows/**`, `.claude/**`, `.agents/**`
 
 ## Project-owned

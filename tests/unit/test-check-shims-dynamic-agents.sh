@@ -3,6 +3,11 @@
 #
 # Verrouille le contrat: check-shims lit les agents actives depuis
 # .copier-answers.yml et echoue si un shim active manque.
+#
+# Les fixtures utilisent volontairement `gemini`, retire des choix copier.yml en
+# v1.0 : ce test verrouille desormais aussi la TOLERANCE LEGACY — un consommateur
+# scaffolde avant v1.0 garde `gemini` dans ses answers, et son GEMINI.md doit
+# rester valide par check-shims au lieu d'etre rejete comme agent inconnu.
 
 set -euo pipefail
 

@@ -182,3 +182,6 @@
 - `next_decision_date` re-datée 2026-07-15 → 2026-10-01 : elle était échue de 9 jours sans décision tracée. La discipline du product loop exige une date vivante même pour « différer ».
 - Réserve « pas de scale public avant preuve indépendante » inchangée.
 - next : au 2026-10-01, run sur repo tiers si disponible, sinon re-dater explicitement.
+
+## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
+- `tests/bench/run-bench.sh` : `GEMINI.md` retiré de la liste de nettoyage `strip_ai_context` (le fichier n'est plus rendu). Aucun changement du protocole, du runner ni du grading.

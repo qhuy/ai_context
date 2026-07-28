@@ -1,6 +1,6 @@
 # PROJECT_STATE — ai_context
 
-**But** : template `copier` qui industrialise le setup AI context (multi-agent : Claude / Codex / Cursor / Gemini / Copilot) d'un nouveau projet.
+**But** : template `copier` qui industrialise le setup AI context (multi-agent : Claude / Codex / Cursor / Copilot) d'un nouveau projet.
 **Remote** : [github.com/qhuy/ai_context](https://github.com/qhuy/ai_context) (public)
 **Local** : chemin de développement local, non versionné.
 **Dernière version publiée** : v0.14.0 — « Migrations post-Copier, index progressifs, overlay registre de scopes & discipline de preuve » (voir [CHANGELOG.md](CHANGELOG.md))

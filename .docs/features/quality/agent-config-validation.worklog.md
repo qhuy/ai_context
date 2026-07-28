@@ -111,3 +111,6 @@ Source session : automation veille-techno
 
 ## 2026-07-24 — couverture incidente (pilotage P8)
 - `.ai/workflows/quality-gate.md` (+ miroir) et `.github/workflows/ai-context-check.yml` (+ miroir template) : nouveau check `check-skills-parity`. Aucun changement de la validation des configs agent.
+
+## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
+- `template/.github/workflows/ai-context-check.yml.jinja` : path trigger `GEMINI.md` retiré. Aucun changement de la validation de config agent.

@@ -33,7 +33,7 @@ qualité technique, best practices, optimisation, failles/sécurité, et gaps fo
 
 `ai_context` est un **template Copier** (≈ v0.13.0) qui injecte une couche de « lean context »
 multi-agents dans des projets consommateurs, pour que les agents IA (Claude Code, Codex,
-+ shims statiques Cursor/Gemini/Copilot) restent fiables et traçables.
++ shims statiques Cursor/Copilot) restent fiables et traçables.
 
 Le dépôt est **à double nature** :
 - la **racine** (`/.ai`, `/.claude`, `/.githooks`, `/.agents`, `.docs/`) = l'instance *dogfood* (le template appliqué à lui-même) ;

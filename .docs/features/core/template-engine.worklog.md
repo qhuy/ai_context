@@ -477,3 +477,8 @@
 
 ## 2026-07-24 — migration native `_migrations` (pilotage P9b)
 - `copier.yml` reçoit une entrée `_migrations` (schéma moderne, vérifié directement dans le code source Copier installé plutôt que supposé) câblée sur `version: v0.14.0`. Stage `after` (défaut), commande `bash .ai/scripts/aic.sh migrate plan || true` — lecture seule et non bloquante, cf. `core/migration-orchestrator` § Invariants. Détail complet (dont la découverte empirique de vrais `.rej` sur le scénario `v0.11.0 → HEAD` qui a motivé le `|| true`) dans `workflow/aic-release`.
+
+## 2026-07-24 — v1.0 / choix agents réduit (pilotage P16 Bloc A)
+- `copier.yml` : `choices: [claude, codex, cursor, copilot]` — `gemini` retiré (aucun usage ; Gemini CLI grand public arrêté le 2026-06-18). Commentaire inline expliquant la décision et pointant MIGRATION.md pour les consommateurs existants.
+- `_exclude` allégé d'une ligne, `_message_after_copy` mis à jour, `docs/variables.md` documente le retrait et le résiduel legacy.
+- Détail complet (tolérance legacy check-shims, correctif infer_agents_yaml, piège HEAD vs working tree) dans `core/agents-md-shim-canonical`.

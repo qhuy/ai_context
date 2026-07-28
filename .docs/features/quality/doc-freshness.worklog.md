@@ -138,3 +138,6 @@
 
 ## 2026-07-24 — couverture incidente (pilotage P8)
 - `.github/workflows/ai-context-check.yml` (+ miroir) : nouveau step `check-skills-parity`. Aucun changement du contrat de fraîcheur documentaire lui-même.
+
+## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
+- `template/.github/workflows/ai-context-check.yml.jinja` : path trigger `GEMINI.md` retiré (le fichier n'est plus rendu). Aucun changement du contrat de fraîcheur documentaire.

@@ -46,7 +46,7 @@ Vocabulaire maison utilisé dans ce README (Pack A, shim, touches, HANDOFF...) :
 
 - un projet qui va durer plus que quelques prompts ;
 - plusieurs features en parallèle ;
-- Claude Code, Codex, Cursor, Gemini ou Copilot sur le même repo ;
+- Claude Code, Codex, Cursor ou Copilot sur le même repo ;
 - une équipe qui veut que les agents suivent les mêmes règles ;
 - un besoin de traçabilité entre décisions produit, docs et code.
 
@@ -134,7 +134,7 @@ Selon les agents, scopes et modes choisis :
 
 ```text
 mon-projet/
-├── AGENTS.md / CLAUDE.md / GEMINI.md
+├── AGENTS.md / CLAUDE.md
 ├── .ai/
 │   ├── index.md                  # entrée canonique, chargement lean
 │   ├── context-ignore.md         # exclusions de contexte Codex/on-demand
@@ -184,16 +184,16 @@ Le principe :
 
 Tous les agents ne reçoivent pas le même niveau d'automatisation.
 
-| Capacité | Claude Code | Codex | Cursor | Gemini | Copilot |
-|---|---|---|---|---|---|
-| Entrée racine (AGENTS.md ou shim dédié) | `CLAUDE.md` (@AGENTS.md) | `AGENTS.md` natif | `AGENTS.md` natif | `GEMINI.md` (@AGENTS.md) | `AGENTS.md` natif (coding agent) ; shim opt-in pour Chat/review |
-| Git hooks et checks au commit | Oui | Oui | Oui | Oui | Oui |
-| Skills `aic-*` locaux | Oui | Oui, si `codex` sélectionné | Non | Non | Non |
-| Injection automatique au début du tour | Oui | Opt-in (`enable_codex_hooks`) | Non | Non | Non |
-| Injection feature avant édition | Oui | Manuel via `aic.sh document-feature` | Partiel via `.mdc` scopés (back/front) | Non | Non |
-| Gate de fraîcheur doc en fin de tour | Oui | Opt-in (`enable_codex_hooks`) | Non | Non | Non |
-| Auto-worklog en fin de tour | Oui | Non | Non | Non | Non |
-| Auto-progression `spec -> implement` au commit | Oui | Oui | Oui | Oui | Oui |
+| Capacité | Claude Code | Codex | Cursor | Copilot |
+|---|---|---|---|---|
+| Entrée racine (AGENTS.md ou shim dédié) | `CLAUDE.md` (@AGENTS.md) | `AGENTS.md` natif | `AGENTS.md` natif | `AGENTS.md` natif (coding agent) ; shim opt-in pour Chat/review |
+| Git hooks et checks au commit | Oui | Oui | Oui | Oui |
+| Skills `aic-*` locaux | Oui | Oui, si `codex` sélectionné | Non | Non |
+| Injection automatique au début du tour | Oui | Opt-in (`enable_codex_hooks`) | Non | Non |
+| Injection feature avant édition | Oui | Manuel via `aic.sh document-feature` | Partiel via `.mdc` scopés (back/front) | Non |
+| Gate de fraîcheur doc en fin de tour | Oui | Opt-in (`enable_codex_hooks`) | Non | Non |
+| Auto-worklog en fin de tour | Oui | Non | Non | Non |
+| Auto-progression `spec -> implement` au commit | Oui | Oui | Oui | Oui |
 
 Conclusion pragmatique :
 

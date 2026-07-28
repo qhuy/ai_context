@@ -18,7 +18,7 @@ signal concret le justifie — c'est le mécanisme qui garde le contexte lean.
 
 Un fichier minimal qui redirige un agent vers la source unique de vérité au
 lieu de dupliquer son contenu. Exemple : `CLAUDE.md` (7 lignes, `@AGENTS.md`)
-ou `GEMINI.md` sont des shims vers `AGENTS.md`, qui est lui-même auto-suffisant
+est un shim vers `AGENTS.md`, qui est lui-même auto-suffisant
 et pointe vers `.ai/index.md`. Un shim existe uniquement parce qu'un agent
 donné ne lit pas encore `AGENTS.md` nativement (voir `.ai/native-context-support.tsv`
 pour le registre de qui lit quoi nativement).

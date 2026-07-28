@@ -67,3 +67,6 @@
 ## 2026-07-16 — HANDOFF upgrade index Markdown
 - `docs/upgrading.md` ajoute la migration opt-in `okf-indexes`, sa fenêtre warn-only et la vérification stricte explicite.
 - Le scénario Copier v0.11 → HEAD prouve la non-mutation, l'idempotence et le rollback.
+
+## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
+- `docs/upgrading.md` : mentions `GEMINI.md` retirées des sections shims (le fichier n'est plus rendu ; le registre natif n'a pas de ligne `gemini`). Aucun changement du contrat de migration/stabilité.

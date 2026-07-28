@@ -253,3 +253,6 @@
 - Alias `frame-bootstrap`/`frame-context` : déjà documentés dans `aic.sh --help` mais absents de la prose (`README_AI_CONTEXT.md`, `docs/getting-started.md`). Un footnote ajouté dans `docs/getting-started.md` (pas de duplication dans README pour limiter le risque de drift — cf. `aic.sh --help` comme source de vérité). Retrait explicitement hors périmètre (breaking, reporté à P16/v1.0).
 - `docs/getting-started.md` : ligne `aic-onboard` manquante dans la table « Quand utiliser quoi » (8/10 intentions listées) — ajoutée. Ajouté à `touches_shared` de cette fiche (documentation de la surface `aic`, cohérent avec son objet).
 - Validation : `bash .ai/scripts/aic.sh onboard` / `dev-plan` testés directement (sortie attendue), `check-dogfood-drift.sh` + smoke complet PASS après mirroring runtime/template.
+
+## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
+- `README_AI_CONTEXT.md` (+ miroir template) : mention cross-agent réduite à Claude/Codex/Cursor/Copilot. Aucun changement de la surface `aic`. Détail dans `core/agents-md-shim-canonical`.

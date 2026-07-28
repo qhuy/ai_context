@@ -68,3 +68,6 @@
 - Décision : statut `done` ; la CI reste le filet d'enforcement au-dessus des hooks locaux, avec Windows best-effort.
 - Validation : `shellcheck -S error` sur 90 fichiers collectés PASS ; YAML source chargé par `yaml.safe_load` ; `bash .ai/scripts/check-dogfood-drift.sh` PASS ; `bash .ai/scripts/check-feature-docs.sh --strict quality/ci-guard` PASS ; `bash .ai/scripts/check-feature-freshness.sh --worktree --strict` OK.
 - Next : aucune action immédiate.
+
+## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
+- Path trigger `GEMINI.md` retiré des deux workflows (runtime `.github/workflows/ai-context-check.yml` + miroir template) : le fichier n'est plus rendu depuis le retrait du choix `gemini`. Aucun changement des étapes de check ni du contrat CI.

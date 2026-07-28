@@ -538,3 +538,8 @@
 
 ## 2026-07-24 — couverture incidente (pilotage P9b)
 - `dogfood-runtime-lib.sh` : `aic-release.sh` ajouté à l'ignore-list source-only (même traitement que `check-release-coherence.sh`), suite à la découverte que ce nouveau script dépend de tooling lui-même source-only et ne doit donc jamais être rendu aux consommateurs. Détail complet dans `workflow/aic-release`.
+
+## 2026-07-24 — v1.0 / retrait gemini des profils de rendu (pilotage P16 Bloc A)
+- `check-dogfood-drift.sh` : profil `fullstack-cursor` ne rend plus `gemini` dans `agents` (le rendu échouerait — valeur retirée des `choices`) ; `GEMINI.md` retiré des deux listes de sanity (existence + contenu) puisqu'il n'est plus rendu ; commentaire d'exemple mis à jour.
+- `.ai/guardrails.md` : liste d'agents alignée (Codex / Cursor / Copilot).
+- Vérifié : `check-dogfood-drift.sh` PASS après le changement (les 3 profils rendent sans erreur).

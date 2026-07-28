@@ -90,7 +90,7 @@ check_profile_sanity() {
 }
 
 # Sanity de contenu sur les fichiers scopés (règles back/front/tech, .cursor,
-# GEMINI.md, copilot-instructions.md, .codex/hooks.json...) qui n'existent que
+# copilot-instructions.md, .cursor/rules/*.mdc, .codex/hooks.json...) qui n'existent que
 # dans les profils conditionnels et n'ont donc PAS de copie runtime dogfoodée
 # dans ce repo (scope_profile=minimal) contre laquelle comparer le contenu
 # octet-à-octet. Seul filet possible ici : ni vide, ni Jinja non résolu — ça
@@ -155,12 +155,11 @@ out_conditional="$out_root/fullstack-cursor"
 out_codex_hooks="$out_root/codex-hooks"
 
 render_profile "dogfood-minimal" "$out" "minimal" "standard" "generic" '["claude","codex"]' "true"
-render_profile "fullstack-cursor" "$out_conditional" "fullstack" "strict" "fullstack-dotnet-react" '["claude","codex","cursor","gemini","copilot"]' "false" "enable_copilot_shim=true"
+render_profile "fullstack-cursor" "$out_conditional" "fullstack" "strict" "fullstack-dotnet-react" '["claude","codex","cursor","copilot"]' "false" "enable_copilot_shim=true"
 render_profile "codex-hooks" "$out_codex_hooks" "minimal" "standard" "generic" '["claude","codex"]' "true" "enable_codex_hooks=true"
 check_profile_sanity "fullstack-cursor" "$out_conditional" \
   ".cursor/rules/back.mdc" \
   ".cursor/rules/front.mdc" \
-  "GEMINI.md" \
   ".github/copilot-instructions.md" \
   ".ai/rules/tech-dotnet.md" \
   ".ai/rules/tech-react.md" \
@@ -178,7 +177,7 @@ for rel in \
   ".ai/rules/tech-dotnet.md" ".ai/rules/tech-react.md" \
   ".ai/rules/stack-fullstack-dotnet-react.md" \
   ".cursor/rules/back.mdc" ".cursor/rules/front.mdc" \
-  "GEMINI.md" ".github/copilot-instructions.md"; do
+  ".github/copilot-instructions.md"; do
   check_rendered_file_sanity "fullstack-cursor" "$out_conditional" "$rel"
 done
 check_rendered_file_sanity "codex-hooks" "$out_codex_hooks" ".codex/hooks.json"

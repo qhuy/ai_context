@@ -437,7 +437,7 @@ failure_kind_for() {
 # --- Conditions : dépouiller la couche ai_context pour 'without' ---
 strip_ai_context() {
   local dir="$1"
-  ( cd "$dir" && rm -rf .ai .docs AGENTS.md CLAUDE.md GEMINI.md \
+  ( cd "$dir" && rm -rf .ai .docs AGENTS.md CLAUDE.md \
       .agents .claude/skills .github/copilot-instructions.md .cursor 2>/dev/null || true )
 }
 

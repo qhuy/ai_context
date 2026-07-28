@@ -72,8 +72,11 @@ Les variables `AI_CONTEXT_DOCS_ROOT`, `AI_CONTEXT_FEATURES_DIR` et `AI_CONTEXT_S
 | `claude` | `CLAUDE.md`, `.claude/settings.json`, `.claude/skills/aic-*` |
 | `codex` | `AGENTS.md` (toujours généré) + `.agents/skills/aic-*` si `codex` est sélectionné |
 | `cursor` | `.cursor/rules/back.mdc` / `front.mdc` scopés par globs, si les scopes existent (sinon rien — AGENTS.md est lu nativement) |
-| `gemini` | `GEMINI.md` |
 | `copilot` | `.github/copilot-instructions.md` seulement si `enable_copilot_shim=true` (sinon rien — AGENTS.md est lu nativement par le coding agent) |
+
+`gemini` a été retiré des choix en v1.0 (aucun usage constaté ; Gemini CLI grand
+public arrêté par Google le 2026-06-18). Un projet scaffoldé avant garde son
+`GEMINI.md` résiduel — voir `MIGRATION.md` § v1.0 pour le retirer proprement.
 
 `AGENTS.md` est toujours généré : c'est l'entrée canonique cross-agent (standard émergent).
 

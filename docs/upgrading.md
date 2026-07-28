@@ -187,7 +187,7 @@ Voir aussi `.ai/OWNERSHIP.md` dans les repos générés.
 
 Pour les projets existants, accepter en priorité les mises à jour de :
 
-- `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`
+- `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md`
 - `.ai/index.md`
 - `.ai/context-ignore.md`
 - `.ai/rules/core.md`, `.ai/rules/workflow.md`, `.ai/rules/quality.md`
@@ -219,13 +219,13 @@ bash .ai/scripts/check-feature-docs.sh
 Les shims deviennent plus stricts et moins dupliqués :
 
 - `AGENTS.md` reste toujours présent et porte les hard rules minimales inline.
-- `CLAUDE.md` et `GEMINI.md` peuvent importer `@AGENTS.md` ; le shim Copilot est devenu opt-in (`enable_copilot_shim`, défaut false — le coding agent lit `AGENTS.md` nativement).
-- `check-shims.sh` lit `agents` dans `.copier-answers.yml` quand ce fichier existe, et consulte le registre `.ai/native-context-support.tsv` : un shim dédié absent est accepté si l'agent y est `confirmed` (copilot, cursor) ; sinon (`pending` — claude, gemini) il doit exister et rester lean. Un shim présent est toujours validé.
+- `CLAUDE.md` peut importer `@AGENTS.md` ; le shim Copilot est devenu opt-in (`enable_copilot_shim`, défaut false — le coding agent lit `AGENTS.md` nativement).
+- `check-shims.sh` lit `agents` dans `.copier-answers.yml` quand ce fichier existe, et consulte le registre `.ai/native-context-support.tsv` : un shim dédié absent est accepté si l'agent y est `confirmed` (copilot, cursor) ; sinon (`pending` — claude) il doit exister et rester lean. Un shim présent est toujours validé.
 - Sans `.copier-answers.yml`, le check garde un fallback compatible avec les anciens scaffolds et valide les shims présents.
 - `copier update` ne supprime pas automatiquement les fichiers retirés du template. Après l'élagage, `.cursor/rules/protocol-reminder.mdc` et `.github/copilot-instructions.md` peuvent donc rester dans un projet ancien comme fichiers utilisateur. Supprime-les manuellement si tu veux adopter le modèle lean, sauf si tu utilises encore Copilot Chat/review IDE et que tu as choisi `enable_copilot_shim=true`.
 
 Après `copier update`, accepte en priorité les changements sur `AGENTS.md`,
-`CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md` et
+`CLAUDE.md`, `.github/copilot-instructions.md` et
 `.ai/scripts/check-shims.sh`, puis lance :
 
 ```bash

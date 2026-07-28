@@ -41,6 +41,9 @@ add_agent() {
   candidate="${candidate//\'/}"
   candidate="$(printf '%s' "$candidate" | tr -d '[:space:]')"
 
+  # `gemini` conservé en tolérance legacy : retiré des choix copier.yml en v1.0,
+  # mais un consommateur scaffoldé avant garde la valeur dans .copier-answers.yml
+  # jusqu'à sa migration — son GEMINI.md doit continuer d'être validé, pas rejeté.
   case "$candidate" in
     claude|codex|cursor|gemini|copilot) ;;
     *) return 0 ;;

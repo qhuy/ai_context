@@ -63,7 +63,7 @@ Industrialiser la génération du contexte AI dans n'importe quel projet via `co
 
 - `project_name` requis ; validateur bloque si vide.
 - `scope_profile` ∈ {minimal, backend, fullstack, custom} → dérive `scopes` (variable calculée).
-- `agents` multiselect ∈ {claude, codex, cursor, gemini, copilot} → conditionne shims.
+- `agents` multiselect ∈ {claude, codex, cursor, copilot} → conditionne shims. `gemini` retiré en v1.0 (aucun usage) ; tolérance legacy conservée dans `check-shims`.
 - `docs_root` (default `.docs`) configure le dossier feature mesh.
 - `tech_profile` ∈ {generic, dotnet-clean-cqrs, react-next, fullstack-dotnet-react} → génère des règles stack optionnelles sans modifier les scopes métier.
 - `.ai/context-ignore.md` est rendu systématiquement pour guider la récupération de contexte Codex/on-demand.
@@ -87,6 +87,7 @@ Ce moteur produit le squelette consommé par `feature-mesh`, `feature-index-cach
 
 ## Historique / décisions
 
+- 2026-07-24 (v1.0, pilotage P16 Bloc A) : choix `agents` réduit à {claude, codex, cursor, copilot} — `gemini` retiré (aucun usage constaté). Breaking-MINOR assumé en 0.x conformément au précédent v0.13 : le faire avant le gel v1.0 évite un MAJOR ultérieur. Migration documentée pour les consommateurs ayant `gemini` dans leurs answers.
 - v0.1 : profil unique fullstack.
 - v0.4 : introduction des 4 profils + agents multiselect.
 - v0.7.2 : `_envops.keep_trailing_newline` pour préserver les `\n` finaux après rendu jinja.

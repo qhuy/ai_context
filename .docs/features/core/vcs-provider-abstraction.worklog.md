@@ -105,3 +105,6 @@
 
 ## 2026-07-24 — couverture incidente (pilotage P9b)
 - `copier.yml` reçoit une entrée `_migrations` sans rapport avec le provider VCS (câblage d'une migration native `aic migrate plan`, lecture seule). Aucun changement du contrat provider. Détail dans `workflow/aic-release`.
+
+## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
+- `README_AI_CONTEXT.md` (+ miroir template) : liste d'agents mise à jour. Aucun changement du contrat provider VCS.

@@ -249,3 +249,6 @@
 
 ## 2026-07-24 — couverture incidente (pilotage P8)
 - `.ai/workflows/quality-gate.md` (+ miroir) et `.github/workflows/ai-context-check.yml` (+ miroir) : nouveau check `check-skills-parity` (read-only). Le contrat read-only des checks existants n'est pas modifié.
+
+## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
+- `template/.github/workflows/ai-context-check.yml.jinja` : path trigger `GEMINI.md` retiré (le fichier n'est plus rendu). Aucun changement du contrat read-only des checks.

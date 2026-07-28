@@ -2332,7 +2332,7 @@ rm -rf "$combo_scopes"
 echo "  ✓ check-shims suit les scopes du profil rendu (backend sans back.md → FAIL)"
 
 echo
-echo "[28g/28] matrice agents : cursor seul et gemini seul (jamais scaffoldés sans claude)"
+echo "[28g/28] matrice agents : cursor seul scaffoldable ; gemini retiré des choix (v1.0)"
 # cursor seul, sans claude/codex — AGENTS.md natif + .mdc scopés, aucun autre shim.
 combo_cursor_only="/tmp/ai-context-smoke-cursoronly-$$"
 copier copy --defaults --trust \
@@ -2362,32 +2362,23 @@ if ! ( cd "$combo_cursor_only" && bash .ai/scripts/check-shims.sh ) >/dev/null 2
 fi
 rm -rf "$combo_cursor_only"
 
-# gemini seul, sans claude/codex — AGENTS.md + GEMINI.md, aucun autre shim.
-combo_gemini_only="/tmp/ai-context-smoke-geminionly-$$"
-copier copy --defaults --trust \
-  --data project_name=smoke-gemini-only \
-  --data agents='["gemini"]' \
-  "$SRC" "$combo_gemini_only" >/dev/null
-for absent in CLAUDE.md .claude .agents .cursor .github/copilot-instructions.md; do
-  if [[ -e "$combo_gemini_only/$absent" ]]; then
-    echo "  ✗ $absent généré alors que agents=[gemini] seul"
-    rm -rf "$combo_gemini_only"
-    exit 1
-  fi
-done
-if [[ ! -f "$combo_gemini_only/GEMINI.md" ]]; then
-  echo "  ✗ GEMINI.md absent alors que agents=[gemini] seul"
-  rm -rf "$combo_gemini_only"
+# `gemini` retiré des choix en v1.0 (décision P16) : Copier doit REFUSER la valeur
+# et aucun GEMINI.md ne doit plus être rendu, quel que soit le profil.
+combo_gemini_rejected="/tmp/ai-context-smoke-geminirejected-$$"
+if copier copy --defaults --trust \
+    --data project_name=smoke-gemini-removed \
+    --data agents='["gemini"]' \
+    "$SRC" "$combo_gemini_rejected" >/dev/null 2>&1; then
+  echo "  ✗ agents=[gemini] accepté alors que la valeur est retirée des choix (v1.0)"
+  rm -rf "$combo_gemini_rejected"
   exit 1
 fi
-if ! ( cd "$combo_gemini_only" && bash .ai/scripts/check-shims.sh ) >/dev/null 2>&1; then
-  echo "  ✗ check-shims fail sur scaffold gemini seul"
-  ( cd "$combo_gemini_only" && bash .ai/scripts/check-shims.sh ) || true
-  rm -rf "$combo_gemini_only"
+rm -rf "$combo_gemini_rejected"
+if [[ -e "$SRC/template/GEMINI.md.jinja" ]]; then
+  echo "  ✗ template/GEMINI.md.jinja encore présent (doit être supprimé en v1.0)"
   exit 1
 fi
-rm -rf "$combo_gemini_only"
-echo "  ✓ cursor seul et gemini seul : shims corrects, aucun artefact d'agent non sélectionné"
+echo "  ✓ cursor seul OK ; agents=[gemini] refusé et template GEMINI supprimé"
 
 echo
 echo "[bonus] big-mesh : budget tokens + focus graph-aware"

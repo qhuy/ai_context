@@ -340,3 +340,8 @@
 ## 2026-07-24 — assertion migration native v0.14.0 (pilotage P9b)
 - Étape `[28c/28]` étendue : la sortie de `copier update v0.11.0 → HEAD` est capturée dans une variable avant la suppression du log, puis vérifiée pour « migrations post-Copier » (preuve que l'entrée `_migrations` de `copier.yml` s'est bien déclenchée en franchissant la borne v0.14.0). Vérifie l'invocation, pas le verdict (ce scénario produit de vrais `.rej`, donc un plan bloqué — attendu, non bloquant grâce au `|| true` de la commande native).
 - Une régression réelle a été détectée et corrigée en cours de route : l'ajout initial (non mirroré) de `.ai/scripts/aic-release.sh` faisait échouer `[0d/28] test-dogfood-drift-extra.sh`. Root cause + fix documentés dans `workflow/aic-release`.
+
+## 2026-07-24 — assertion [28g/28] réécrite en négatif (v1.0, retrait gemini)
+- L'étape scaffoldait `agents=["gemini"]` et exigeait un `GEMINI.md` — impossible désormais. Réécrite en assertion négative : Copier doit REFUSER `agents=[gemini]` (« Invalid choice ») et `template/GEMINI.md.jinja` doit être absent. Le volet « cursor seul » est conservé tel quel.
+- Piège vérifié au passage : `copier copy <repo-git>` rend depuis HEAD, pas depuis le working tree — c'est pourquoi le smoke passe par une copie rsync (`$SRC`). Un test ad-hoc lancé directement sur `.` donne un verdict faux tant que le changement n'est pas committé.
+- Smoke complet relancé : PASS (ligne de preuve vérifiée dans le log, pas seulement l'exit code).

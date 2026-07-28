@@ -105,3 +105,6 @@
 - Surfaces couvertes touchées dans le delta d'audit strict : `.ai/OWNERSHIP.md`, `.ai/index.md` et leurs miroirs template.
 - Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
 - Validation : gate ship relancée avant commit.
+
+## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
+- `template/.ai/OWNERSHIP.md.jinja` : `GEMINI.md` retiré de la liste des shims générés. Aucun changement du registre de scopes.
