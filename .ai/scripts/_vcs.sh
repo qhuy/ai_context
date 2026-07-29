@@ -218,20 +218,53 @@ _vcs_tf_status_output() {
     || "$tf_cmd" status 2>/dev/null
 }
 
+# Extraction des pending changes depuis `tf status /format:detailed`.
+#
+# Décision STRUCTURELLE et non lexicale : on n'exige plus un libellé anglais
+# (`Local item:`…). Le client TEE est traduit selon la locale — un client FR
+# émet des libellés français, et matcher l'anglais renverrait alors ZÉRO chemin,
+# donc un gate de fraîcheur qui ne bloque jamais (fail-open silencieux).
+# Règle retenue, indépendante de la langue : une ligne compte si la valeur après
+# le premier `:` est un chemin absolu local QUI SE RELATIVISE sous la racine du
+# workspace. Cela exclut mécaniquement les chemins serveur (`$/Projet/...`), les
+# valeurs non-chemin (`Change: edit`, `Verrou : aucun`) et tout ce qui est hors
+# workspace, sans avoir à énumérer les locales.
 _vcs_tfvc_pending_paths() {
-  local root line value rel
+  local root line value value_norm rel
   root="$(vcs_root)"
   _vcs_tf_status_output 2>/dev/null | while IFS= read -r line; do
     line="${line%$'\r'}"
     case "$line" in
-      *"Local item"*:*|*"Local path"*:*|*"Source local item"*:*|*"Target local item"*:*|*"local item"*:*|*"local path"*:*)
-        value="${line#*:}"
-        value="$(_vcs_trim "$value")"
-        [[ -z "$value" || "$value" == "<null>" || "$value" == "(null)" ]] && continue
-        rel="$(_vcs_relativize_path "$root" "$value")"
-        [[ -n "$rel" ]] && printf '%s\n' "$rel"
-        ;;
+      *:*) ;;
+      *) continue ;;
     esac
+
+    value="${line#*:}"
+    value="$(_vcs_trim "$value")"
+    [[ -z "$value" || "$value" == "<null>" || "$value" == "(null)" ]] && continue
+
+    # Chemin serveur TFVC : jamais un chemin local.
+    case "$value" in
+      '$/'*) continue ;;
+    esac
+
+    # La valeur doit ressembler à un chemin absolu local (Unix ou lettre de lecteur
+    # Windows). `Change: edit` ou `État : modifié` sont écartés ici.
+    value_norm="$(_vcs_normalize_path "$value")"
+    case "$value_norm" in
+      /*) ;;
+      [A-Za-z]:/*) ;;
+      *) continue ;;
+    esac
+
+    # N'accepter que ce qui est réellement SOUS la racine : hors workspace,
+    # _vcs_relativize_path rend le chemin inchangé (donc encore absolu).
+    rel="$(_vcs_relativize_path "$root" "$value")"
+    [[ -z "$rel" ]] && continue
+    case "$rel" in
+      /*|[A-Za-z]:/*) continue ;;
+    esac
+    printf '%s\n' "$rel"
   done | sort -u
 }
 

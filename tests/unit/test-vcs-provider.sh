@@ -102,6 +102,62 @@ else
   fail "provider none devrait etre silencieux"
 fi
 
+# ─── Locale : le parseur ne doit PAS dépendre de libellés anglais ───
+# Le client TEE est traduit selon la locale (celui du mainteneur est en FR).
+# Matcher `Local item:` renverrait zéro chemin sur un client FR -> aucun touches:
+# ne matcherait -> gate de fraîcheur PASSANT au lieu de bloquant (fail-open).
+# La détection est donc structurelle : chemin absolu se relativisant sous la racine.
+loc_ws="$tmp_dir/locale-ws"
+mkdir -p "$loc_ws/src"
+loc_tf="$tmp_dir/locale-bin"
+mkdir -p "$loc_tf"
+
+make_fake_tf() {
+  cat > "$loc_tf/tf" <<EOF
+#!/bin/sh
+[ "\$1" = status ] || exit 1
+cat <<'TFOUT'
+$1
+TFOUT
+EOF
+  chmod +x "$loc_tf/tf"
+}
+
+run_pending() {
+  ( cd "$loc_ws" && PATH="$loc_tf:$PATH" AI_CONTEXT_REPO_ROOT="$loc_ws" \
+      AI_CONTEXT_VCS_PROVIDER=tfvc bash -c ". '$repo_root/.ai/scripts/_vcs.sh'; vcs_pending_paths" )
+}
+
+make_fake_tf "\$/Projet/src/app.cs
+  Change: edit
+  Local item: $loc_ws/src/app.cs"
+if [[ "$(run_pending)" == "src/app.cs" ]]; then
+  pass "pending changes détectés avec libellés EN"
+else
+  fail "libellés EN : attendu src/app.cs, obtenu '$(run_pending)'"
+fi
+
+make_fake_tf "\$/Projet/src/app.cs
+  Modification : modifier
+  Élément local : $loc_ws/src/app.cs
+  Verrou : aucun"
+if [[ "$(run_pending)" == "src/app.cs" ]]; then
+  pass "pending changes détectés avec libellés FR (locale-agnostique)"
+else
+  fail "libellés FR : attendu src/app.cs, obtenu '$(run_pending)' — fail-open sur client traduit"
+fi
+
+make_fake_tf "\$/Projet/autre/x.cs
+  Local item: /ailleurs/hors-workspace/x.cs
+  Utilisateur : Huy
+  Verrou : aucun
+  Date : 2026-07-28"
+if [[ -z "$(run_pending)" ]]; then
+  pass "aucun faux positif (hors workspace, valeurs non-chemin, chemin serveur)"
+else
+  fail "faux positif : '$(run_pending)' ne devrait rien produire"
+fi
+
 # ─── Régression : normalisation des chemins (fail-open TFVC, trouvé par l'E2E) ───
 # `_vcs_normalize_path` collapsait les slashes répétés via une substitution bash
 # qui INSÉRAIT un backslash littéral (`/a/b//c` -> `/a/b\/c`). Conséquence : la

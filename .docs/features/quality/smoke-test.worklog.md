@@ -368,3 +368,7 @@
 
 ## 2026-07-24 — étape [0s2b/28] : E2E TFVC (v1.0, B4)
 - Nouveau test `tests/unit/test-tfvc-e2e.sh` branché dans le prélude : scaffold Copier `vcs_provider=tfvc` réel + faux `tf`, 5 assertions dont la chaîne d'enforcement complète (freshness strict bloquant puis passant). Ce test a trouvé un fail-open réel du gate de fraîcheur en TFVC (détail dans `core/vcs-provider-abstraction`).
+
+## 2026-07-28 17:57 — auto
+- Fichiers modifiés :
+  - tests/smoke-test.sh
