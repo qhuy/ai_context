@@ -204,3 +204,11 @@
 ## 2026-07-28 15:51 — auto
 - Fichiers modifiés :
   - .docs/pilots/2026-07-23-analyse-fonctionnelle-generale.md
+
+## 2026-07-24 — checklist de sortie v1.0 : 13/14 items livrés
+- Bloc A (3/3) : P4 tranché, classification CLI en 4 niveaux, `type` requis.
+- Bloc B (8/8) : E2E TFVC + fail-open corrigé, chemin d'upgrade workspace TFVC prouvé et documenté, fiche index + politique de bump réconciliées, clés config placeholder implémentées, test d'upgrade v0.14→candidate v1.0, MIGRATION § v1.0 + CHANGELOG structuré.
+- Bloc C (2/3) : manifeste de surface (8 dimensions, 2 invariants) gaté en CI et smoke, CONTRIBUTING « Moratoire de surface ». Reste C14 = décision datée + tag, à l'utilisateur.
+- **3 bugs réels trouvés par les tests écrits pour le gel**, chacun verrouillé par un test vérifié discriminant : fail-open du gate de fraîcheur en TFVC (normalisation de chemin) ; même fail-open par la locale du client `tf` ; réinitialisation silencieuse de la réponse `agents` quand une valeur quitte `choices` (a fait passer P4 de retrait à dépréciation).
+- Méta : sur ce lot, écrire le test a été plus rentable que relire le code — les 3 bugs étaient invisibles à la lecture et tous dans des chemins « déjà validés ».
+- Restent 2 actions structurellement hors portée agent : validation TFVC serveur réel (credentials) et tag.
