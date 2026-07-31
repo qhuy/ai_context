@@ -13,7 +13,7 @@ Cette page distingue deux familles :
 | `project_description` | str | "" | Description 1 ligne dans l'index |
 | `scope_profile` | choice | `fullstack` | Détermine la liste `scopes` (voir profils) |
 | `adoption_mode` | choice | `standard` | Module l'enforcement scaffoldé : `lite`, `standard` ou `strict` |
-| `vcs_provider` | choice | `git` | Provider source-control pour les checks de delta/freshness : `git`, `tfvc` (best-effort, non testé end-to-end), `auto` ou `none` |
+| `vcs_provider` | choice | `git` | Provider source-control pour les checks de delta/freshness : `git`, `tfvc`, `auto` ou `none`. TFVC est couvert end-to-end en test (scaffold + gate de fraîcheur sur pending changes, `tests/unit/test-tfvc-e2e.sh`) ; la validation sur un serveur TFS réel reste une étape mainteneur — voir `docs/upgrading.md` pour l'update d'un workspace TFVC |
 | `tech_profile` | choice | `generic` | Ajoute des règles stack optionnelles (`dotnet-clean-cqrs`, `react-next`, `fullstack-dotnet-react`) |
 | `commit_language` | choice | `fr` | Langue des commits imposée par les règles |
 | `docs_root` | str | `.docs` | Dossier racine de la doc métier (`.docs` ou `docs`) |
@@ -74,9 +74,11 @@ Les variables `AI_CONTEXT_DOCS_ROOT`, `AI_CONTEXT_FEATURES_DIR` et `AI_CONTEXT_S
 | `cursor` | `.cursor/rules/back.mdc` / `front.mdc` scopés par globs, si les scopes existent (sinon rien — AGENTS.md est lu nativement) |
 | `copilot` | `.github/copilot-instructions.md` seulement si `enable_copilot_shim=true` (sinon rien — AGENTS.md est lu nativement par le coding agent) |
 
-`gemini` a été retiré des choix en v1.0 (aucun usage constaté ; Gemini CLI grand
-public arrêté par Google le 2026-06-18). Un projet scaffoldé avant garde son
-`GEMINI.md` résiduel — voir `MIGRATION.md` § v1.0 pour le retirer proprement.
+`gemini` est **déprécié** en v1.0 : aucun usage constaté (Gemini CLI grand public
+arrêté par Google le 2026-06-18) et plus aucun artefact généré. La valeur reste
+volontairement dans `choices` — la retirer ferait réinitialiser la réponse `agents`
+entière au défaut chez un consommateur existant (vérifié). Retrait prévu en v2.
+Après `copier update`, un `GEMINI.md` pré-v1.0 est supprimé automatiquement.
 
 `AGENTS.md` est toujours généré : c'est l'entrée canonique cross-agent (standard émergent).
 

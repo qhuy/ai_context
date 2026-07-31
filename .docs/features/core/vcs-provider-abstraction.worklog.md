@@ -133,3 +133,6 @@
 - 3 fixtures ajoutées à `test-vcs-provider.sh` (EN, FR, faux-positifs), et **vérifié que l'implémentation EN-only fait échouer le cas FR** (exit 1) — sans quoi le test ne discriminerait rien.
 - Non observable ici : la sortie FR réelle (collection protégée par credentials interactifs). Le risque est neutralisé par construction plutôt que par observation.
 - Validation : test-vcs-provider PASS, test-tfvc-e2e PASS, miroir template aligné, dogfood-drift PASS.
+
+## 2026-07-24 — couverture incidente (v1.0, requalification TFVC en doc)
+- `README_AI_CONTEXT.md` (+ miroir), `copier.yml` (choix + help `vcs_provider`), `docs/variables.md` : l'aveu « best-effort, non testé end-to-end » est remplacé par l'état réel — couvert e2e en test, détection indépendante de la locale, validation serveur réel côté mainteneur, renvoi vers la procédure d'update workspace TFVC.

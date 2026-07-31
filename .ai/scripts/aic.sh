@@ -176,9 +176,9 @@ infer_agents_yaml() {
   [[ -f "$repo_root/.claude/settings.json" || -f "$repo_root/CLAUDE.md" ]] && { echo "  - claude"; found=1; }
   [[ -f "$repo_root/AGENTS.md" ]] && { echo "  - codex"; found=1; }
   [[ -d "$repo_root/.cursor" ]] && { echo "  - cursor"; found=1; }
-  # `gemini` n'est plus inféré depuis un GEMINI.md résiduel : la valeur a été
-  # retirée des choix copier.yml en v1.0, et l'écrire ici ferait échouer le
-  # `copier update` suivant (multiselect validé contre choices).
+  # `gemini` n'est plus inféré depuis un GEMINI.md résiduel : l'agent est déprécié
+  # en v1.0 (aucun artefact rendu), donc reconstruire une réponse qui le
+  # sélectionne n'a plus de sens pour un projet réparé.
   [[ -f "$repo_root/.github/copilot-instructions.md" ]] && { echo "  - copilot"; found=1; }
   [[ "$found" -eq 0 ]] && printf '%s\n%s\n' "  - claude" "  - codex"
 }

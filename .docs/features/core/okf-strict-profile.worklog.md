@@ -144,3 +144,6 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, B8)
 - `build-feature-index.sh` (+ miroir) : commentaire `schema_version` reformulé pour énoncer les deux branches de la politique SemVer (breaking → MAJOR + bump ; ajout compatible → MINOR sans bump). Aucun changement de l'émission du champ `type` ni du profil OKF.
+
+## 2026-07-24 — couverture incidente (v1.0, MIGRATION)
+- `MIGRATION.md` § v0.14 → v1.0, cas 2 : documente `type` devenu requis et la commande de backfill `aic migrate okf-type --apply`, avec la mention que le message d'erreur de `check-features` rappelle la commande. Aucun changement du profil OKF lui-même.

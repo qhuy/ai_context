@@ -2,6 +2,50 @@
 
 ## [Unreleased]
 
+> Candidate **v1.0** : gel du contrat public. Voir `MIGRATION.md` § « v0.14 → v1.0 ».
+
+### Contrat public gelé (8 éléments)
+
+- Questions Copier (identifiants, types, `multiselect`, choix, défauts, `when`, validateurs) et leurs effets de rendu ; cycle d'update (`_skip_if_exists`, `_migrations` read-only, `.copier-answers.yml`) ; surface CLI classée en 4 niveaux ; schéma fiche (champs requis, 11 enums, 5 patterns) ; enveloppe typée de `.ai/.feature-index.json` ; clés `.ai/config.yml` réellement lues ; modèle de shims ; matrice de capacités et d'enforcement par profil.
+- Règle SemVer : retrait/renommage/resserrement d'un élément gelé = MAJOR ; ajout rétro-compatible à défaut sûr = MINOR.
+
+### Nouveau
+
+- `aic init` — parcours guidé post-scaffold (diagnostic, activation idempotente des git hooks, prochaine étape). Successeur du `first-run` retiré en v0.13 sans remplacement.
+- Routes `aic onboard` et `aic dev-plan` (orientation vers les skills correspondants) : les 10 intentions ont désormais toutes une route CLI.
+- `aic.sh --help` classe chaque route en `stable` / `stable-maintenance` / `deprecated` / `interne`, avec la garantie SemVer de chaque niveau.
+- `check-skills-parity.sh` — parité bloquante entre `.claude/skills` et `.agents/skills`.
+- `GLOSSARY.md` livré aux consommateurs (Pack A, shim, mesh, touches, freshness, HANDOFF, frame, OKF, dogfood).
+- `aic-release.sh` et `check-release-coherence.sh` (source-only) : checklist de release automatisée et cohérence CHANGELOG↔PROJECT_STATE↔`copier.yml`↔`docs/variables.md`.
+- Migration Copier native branchée sur le tag v0.14.0 : `copier update` surface le plan `aic migrate plan` en lecture seule, sans jamais écrire.
+- `context.show_statuses` et `context.default_focus` de `.ai/config.yml` sont désormais réellement consommées (précédence : env var > config > défaut).
+
+### Changé — breaking documenté
+
+- **`type` requis** dans le frontmatter des fiches (`feature | contract | workflow | reference`). Rollout annoncé `warn → fail` tenu : warning en v0.14, échec en v1.0. Backfill : `aic migrate okf-type --apply`.
+- **`agents: gemini` déprécié** : plus aucun artefact généré (`GEMINI.md` retiré du template), mais la valeur reste acceptée dans `choices` — la retirer ferait réinitialiser la réponse `agents` entière au défaut chez un consommateur existant (vérifié). Retrait en v2.
+- **`aic frame-bootstrap` / `frame-context` / `knowledge` dépréciés** : fonctionnent, sortent de la surface recommandée, retrait possible en v2. `knowledge` suit l'arrêt de l'initiative (`decision_state: cut`).
+- `PROJECT_STATE.md` dégraissé (146 → 91 lignes) ; enum `status` durci de warning à échec.
+
+### Corrigé
+
+- **Fail-open du gate de fraîcheur en TFVC** : `_vcs_normalize_path` collapsait les slashes répétés via une substitution bash qui insérait un backslash littéral. La relativisation échouait, les pending changes remontaient en chemins absolus, aucun `touches:` ne matchait et `check-feature-freshness --staged --strict` **passait au lieu de bloquer**.
+- **Parseur `tf status` dépendant de la locale** : seuls les libellés anglais étaient reconnus, donc zéro pending change détecté sur un client traduit (même fail-open). La détection est désormais structurelle, indépendante de la langue.
+- `aic.sh repair-copier-metadata` n'infère plus un agent déprécié depuis un shim résiduel.
+- Fiche `core/feature-index-cache` réconciliée avec la sortie réelle (enveloppe et non tableau, champ `title` jamais émis, idempotence bornée au fichier écrit) ; politique de bump du `schema_version` énoncée dans les deux sens.
+- `RELEASE.md` §2 : syntaxe `--data 'agents=[codex]'` (un multiselect refuse un scalaire).
+
+### Tests
+
+- `test-tfvc-e2e.sh` — scaffold `vcs_provider=tfvc` réel, `tf` simulé, chaîne d'enforcement complète (absence de `.githooks`, `doctor`, `review`, freshness strict bloquant puis passant). C'est ce test qui a révélé le fail-open ci-dessus.
+- `test-vcs-provider.sh` étendu : fixtures EN/FR/faux-positifs et cas de normalisation de chemins, chacun vérifié discriminant (le test échoue bien sur le code buggé).
+- `test-check-features-type-required.sh`, `test-context-config-keys.sh`, `test-check-skills-parity.sh`, `test-check-features-status-enum-strict.sh`.
+- Profil `tfvc` ajouté à la matrice de rendus de `RELEASE.md` §2.
+
+### Migration
+
+- Voir `MIGRATION.md` § « v0.14 → v1.0 » : `type` requis (backfill outillé), `gemini` déprécié (aucune action requise), commandes dépréciées, clés de config devenues actives, et procédure d'update d'un workspace TFVC (`docs/upgrading.md`).
+
 ## [0.14.0] — 2026-07-24
 
 > Cockpit de migrations post-Copier, index Markdown progressifs, overlay registre de

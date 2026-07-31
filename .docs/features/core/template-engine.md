@@ -63,7 +63,7 @@ Industrialiser la génération du contexte AI dans n'importe quel projet via `co
 
 - `project_name` requis ; validateur bloque si vide.
 - `scope_profile` ∈ {minimal, backend, fullstack, custom} → dérive `scopes` (variable calculée).
-- `agents` multiselect ∈ {claude, codex, cursor, copilot} → conditionne shims. `gemini` retiré en v1.0 (aucun usage) ; tolérance legacy conservée dans `check-shims`.
+- `agents` multiselect ∈ {claude, codex, cursor, copilot, gemini} → conditionne shims. `gemini` est **déprécié** en v1.0 (aucun artefact rendu) mais reste dans `choices` : le retirer réinitialiserait la réponse `agents` entière au défaut chez un consommateur existant. Retrait en v2.
 - `docs_root` (default `.docs`) configure le dossier feature mesh.
 - `tech_profile` ∈ {generic, dotnet-clean-cqrs, react-next, fullstack-dotnet-react} → génère des règles stack optionnelles sans modifier les scopes métier.
 - `.ai/context-ignore.md` est rendu systématiquement pour guider la récupération de contexte Codex/on-demand.

@@ -4,7 +4,7 @@ scope: core
 title: Shims dérivés d'AGENTS.md (base canonique + imports)
 status: done
 type: feature
-description: "AGENTS.md est la base de shim unique. CLAUDE.md reste un import @AGENTS.md (lecture native non confirmée) ; les shims Copilot/Cursor sont élagués et GEMINI.md retiré en v1.0 — opt-out gouverné par le registre natif, compat via enable_copilot_shim."
+description: "AGENTS.md est la base de shim unique. CLAUDE.md reste un import @AGENTS.md (lecture native non confirmée) ; les shims Copilot/Cursor sont élagués et gemini déprécié en v1.0 (valeur conservée, aucun artefact) — opt-out gouverné par le registre natif, compat via enable_copilot_shim."
 depends_on:
   - core/aic-surface-canonical
   - core/template-engine
@@ -102,7 +102,7 @@ Une fiche pour le **modèle de shim multi-agent**, distincte de `aic-surface-can
 ## Contrats
 
 - **Entrée de shim canonique** : `AGENTS.md` (toujours rendue).
-- **Shims dérivés** : `CLAUDE.md` = `@AGENTS.md` + lignes agent, OU tailored minimal en fallback ; `copilot-instructions.md` = shim compat opt-in (`enable_copilot_shim`, défaut false). `GEMINI.md` n'est plus rendu depuis v1.0 (choix `gemini` retiré) — `check-shims` conserve une tolérance legacy pour les projets scaffoldés avant.
+- **Shims dérivés** : `CLAUDE.md` = `@AGENTS.md` + lignes agent, OU tailored minimal en fallback ; `copilot-instructions.md` = shim compat opt-in (`enable_copilot_shim`, défaut false). `GEMINI.md` n'est plus rendu depuis v1.0 : `gemini` est **déprécié** — la valeur reste dans `choices` (la retirer réinitialiserait la réponse `agents` entière au défaut chez un consommateur existant) mais ne génère plus aucun artefact. `check-shims` n'exige donc pas ce shim, tout en validant normalement un `GEMINI.md` résiduel pré-v1.0. Retrait de la valeur en v2.
 - **`check-shims`** : valide base + dérivés pour tous les agents de `.copier-answers.yml` ; un shim absent échoue SAUF si l'agent est `confirmed` au registre natif (skip explicite) ; un shim présent est validé normalement (lean, impératif, référence l'index).
 - **Downstream** : transition par phase — warning/migration documentée avant changement de défaut.
 
@@ -154,6 +154,7 @@ Non requis (`doc.requires.observability: false`). Preuves attendues : sorties de
 
 ## Historique / décisions
 
+- 2026-07-24 (v1.0, correction de trajectoire sur P4) : **`gemini` passe de « retiré » à « déprécié »** après un test d'upgrade qui a révélé le coût réel du retrait. Constat vérifié en trois manipulations (dont un contrôle avec réponses 100 % valides) : quand une réponse stockée sort de `choices`, Copier jette la réponse **entière** et applique le défaut. Un projet en `agents: [cursor, gemini]` devenait `[claude, codex]` — `cursor` silencieusement perdu, `claude` imposé, `.cursor/` supprimé. Le retrait de la valeur était donc une régression silencieuse pour tout consommateur concerné, pas une simple simplification. Nouvelle implémentation : la valeur reste dans `choices`, aucun artefact n'est rendu (`template/GEMINI.md.jinja` reste supprimé), `check-shims` n'exige plus le shim mais valide un résiduel, et le retrait est reporté à v2 — cohérent avec le niveau `deprecated` du contrat CLI défini le même jour. Re-vérifié après correction : réponse conservée, `.cursor` préservé, aucun `CLAUDE.md` imposé, `GEMINI.md` supprimé, zéro `.rej`.
 - 2026-07-24 (v1.0, pilotage P16 Bloc A) : **`gemini` retiré des choix `agents`** sur décision utilisateur (« on n'utilise pas Gemini » ; Gemini CLI grand public arrêté par Google le 2026-06-18, seules les licences Enterprise/API payantes survivent). `template/GEMINI.md.jinja` supprimé, `_exclude` allégé, path triggers CI nettoyés. **Tolérance legacy conservée** dans `check-shims` (enum, détection, `shim_for_agent`) : un projet scaffoldé avant v1.0 garde `gemini` dans ses answers et son `GEMINI.md` doit rester validé, pas rejeté comme agent inconnu — `tests/unit/test-check-shims-dynamic-agents.sh` verrouille désormais explicitement ce comportement. Correctif de fond trouvé au passage : `aic.sh infer_agents_yaml` inférait `gemini` depuis un `GEMINI.md` résiduel et l'écrivait dans le `.copier-answers.yml` reconstruit par `repair-copier-metadata` — ce qui aurait fait échouer le `copier update` suivant (multiselect validé contre `choices`). Inférence retirée.
 - 2026-07-06 : **shim Copilot opt-out** (chantier P2 d'ANALYSE.md). Le registre natif ayant confirmé la lecture d'AGENTS.md par le coding agent Copilot (`core/agents-md-native-collapse-path`), `.github/copilot-instructions.md` n'est plus généré par défaut — nouvelle question `enable_copilot_shim` (défaut `false`, compat pour Copilot Chat/review IDE qui lisent encore ce fichier). `check-shims.sh` consulte désormais `.ai/native-context-support.tsv` : un shim dédié absent est accepté seulement si l'agent est `confirmed` au registre (pending = requis, comportement historique) ; un shim présent reste validé normalement. CLAUDE.md/GEMINI.md inchangés (claude pending).
 

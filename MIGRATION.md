@@ -14,6 +14,73 @@ Guide pour adopter le template sur un projet déjà mature (code, docs, éventue
 
 ---
 
+## v0.14 → v1.0 (gel du contrat public)
+
+v1.0 gèle le contrat public (surface CLI, schéma fiche, questions Copier, index
+JSON, clés de config, modèle de shims, matrice de capacités). Rien n'exige d'action
+avant `copier update` **sauf** si ton `.copier-answers.yml` contient `gemini`
+(cas 1) ou si une fiche n'a pas de champ `type` (cas 2).
+
+### 1. `agents: gemini` — déprécié, aucune action requise
+
+`gemini` reste une valeur **acceptée** mais ne génère plus aucun artefact. Après
+`copier update` :
+
+- ta réponse `agents` est **conservée telle quelle** (les autres agents ne sont pas
+  perdus) ;
+- un `GEMINI.md` pré-v1.0 est **supprimé** par l'update, ce qui est l'effet voulu ;
+- `check-shims` ne réclame plus ce shim.
+
+Tu peux retirer `gemini` de ta réponse quand tu veux (`copier update` interactif, ou
+édition de `.copier-answers.yml`) — ce n'est pas urgent : la valeur sera retirée des
+choix en v2.
+
+> Pourquoi la valeur n'a pas été retirée dès v1.0 : vérifié empiriquement que Copier,
+> face à une réponse stockée hors `choices`, jette la réponse **entière** et applique
+> le défaut. Un projet en `agents: [cursor, gemini]` se retrouvait alors en
+> `[claude, codex]` — perte silencieuse de `cursor` et ajout non demandé de `claude`.
+> La dépréciation évite ce piège.
+
+### 2. Champ `type` désormais requis dans les fiches
+
+`type` (`feature | contract | workflow | reference`) était optionnel avec warning
+depuis v0.14 ; il devient **requis** en v1.0 et `check-features` échoue s'il manque.
+Backfill outillé, idempotent :
+
+```bash
+bash .ai/scripts/aic.sh migrate okf-type            # dry-run : liste les fiches
+bash .ai/scripts/aic.sh migrate okf-type --apply    # applique
+```
+
+Le message d'erreur de `check-features` rappelle cette commande.
+
+### 3. Commandes CLI dépréciées (fonctionnent encore)
+
+- `aic frame-bootstrap` / `aic frame-context` → utiliser `aic frame` (ce sont des
+  alias stricts).
+- `aic knowledge` → l'initiative knowledge est arrêtée (`decision_state: cut`, faute
+  de signal d'adoption). Le code reste fonctionnel et livré ; il sort simplement de
+  la surface recommandée.
+
+Retrait possible en v2. `bash .ai/scripts/aic.sh --help` classe désormais chaque
+route en `stable` / `stable-maintenance` / `deprecated` / `interne`.
+
+### 4. Clés `.ai/config.yml` : deux placeholders devenus réels
+
+`context.show_statuses` et `context.default_focus` étaient scaffoldées sans être
+lues. Elles sont maintenant **effectivement consommées** par le reminder. Si tu les
+avais modifiées en pensant qu'elles agissaient, elles agissent désormais — vérifie
+que leur valeur correspond bien à ce que tu veux. Précédence inchangée côté env :
+`AI_CONTEXT_SHOW_ALL_STATUS` / `AI_CONTEXT_FOCUS` gardent la priorité sur la config.
+
+### 5. Workspace TFVC : `copier update` demande un détour
+
+`copier update` refuse un projet non git-tracké. Procédure supportée (copie Git
+jetable hors du workspace, puis application contrôlée) : voir
+`docs/upgrading.md` § « Mettre à jour un workspace TFVC ».
+
+---
+
 ## Shims Copilot / Cursor — élagage AGENTS.md natif
 
 Copilot (coding agent) et Cursor lisent `AGENTS.md` nativement (registre

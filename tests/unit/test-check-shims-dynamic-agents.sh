@@ -4,10 +4,11 @@
 # Verrouille le contrat: check-shims lit les agents actives depuis
 # .copier-answers.yml et echoue si un shim active manque.
 #
-# Les fixtures utilisent volontairement `gemini`, retire des choix copier.yml en
-# v1.0 : ce test verrouille desormais aussi la TOLERANCE LEGACY — un consommateur
-# scaffolde avant v1.0 garde `gemini` dans ses answers, et son GEMINI.md doit
-# rester valide par check-shims au lieu d'etre rejete comme agent inconnu.
+# Les fixtures utilisent volontairement `gemini`, DEPRECIE en v1.0 : ce test
+# verrouille les deux moities du contrat de deprecation —
+#   - un GEMINI.md residuel (projet pre-v1.0) reste VALIDE normalement ;
+#   - un GEMINI.md ABSENT ne fait PAS echouer le check (aucun artefact n'est plus
+#     rendu pour cet agent), contrairement a un agent actif non deprecie.
 
 set -euo pipefail
 
@@ -127,7 +128,9 @@ YAML
     || { echo "$out"; fail "agents actives doivent verifier AGENTS/CLAUDE/GEMINI/Copilot"; }
 )
 
-rm "$repo_multi/GEMINI.md"
+# Shim d'un agent ACTIF et non deprecie absent => echec (contrat principal).
+# On utilise claude : `pending` au registre natif, donc son shim reste requis.
+rm "$repo_multi/CLAUDE.md"
 (
   cd "$repo_multi"
   set +e
@@ -135,9 +138,23 @@ rm "$repo_multi/GEMINI.md"
   rc=$?
   set -e
   [[ "$rc" -ne 0 ]] \
-    || { echo "$out"; fail "GEMINI.md manquant devrait faire echouer check-shims"; }
-  echo "$out" | grep -q "GEMINI.md manquant" \
-    || { echo "$out"; fail "message attendu pour le shim Gemini manquant"; }
+    || { echo "$out"; fail "CLAUDE.md manquant devrait faire echouer check-shims"; }
+  echo "$out" | grep -q "CLAUDE.md manquant" \
+    || { echo "$out"; fail "message attendu pour le shim Claude manquant"; }
+)
+write_claude "$repo_multi"
+
+# Shim d'un agent DEPRECIE absent => PAS d'echec (contrat v1.0). `gemini` reste une
+# valeur acceptee pour ne pas faire reinitialiser la reponse `agents` entiere au
+# defaut chez un consommateur existant, mais aucun artefact n'est plus rendu :
+# exiger GEMINI.md casserait tout projet mis a jour vers v1.0.
+rm "$repo_multi/GEMINI.md"
+(
+  cd "$repo_multi"
+  out="$(bash .ai/scripts/check-shims.sh 2>&1)" \
+    || { echo "$out"; fail "GEMINI.md absent ne doit PAS echouer : gemini est deprecie en v1.0"; }
+  echo "$out" | grep -q "gemini : agent déprécié" \
+    || { echo "$out"; fail "check-shims doit annoncer explicitement que gemini est deprecie"; }
 )
 
 repo_flow="$tmp/flow"

@@ -372,3 +372,8 @@
 ## 2026-07-28 17:57 — auto
 - Fichiers modifiés :
   - tests/smoke-test.sh
+
+## 2026-07-24 — étape [0s2c/28] : upgrade v0.14.0 -> candidate v1.0 (B10)
+- Nouveau `tests/unit/test-upgrade-v014-to-v1.sh` branché dans le prélude : 2 scénarios (défaut git, réponse `gemini` legacy) vérifiant réponse `agents` conservée, fichier user préservé, zéro `.rej`, surfaces v1.0 livrées, aide classifiée présente et `check-shims` PASS après update.
+- Vérifié discriminant : en retirant `gemini` des `choices`, le test échoue en nommant la réinitialisation (`cursor,gemini` -> `claude,codex`).
+- `test-check-shims-dynamic-agents.sh` corrigé au passage (il verrouillait l'ancien contrat « GEMINI.md manquant => échec »).

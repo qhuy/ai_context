@@ -190,10 +190,10 @@ vcs_provider:
   default: git
   choices:
     git (repo Git local ou Git hébergé par TFS/Azure DevOps): git
-    tfvc (TFS/TFVC avec pending changes — best-effort, non testé end-to-end): tfvc
+    tfvc (TFS/TFVC avec pending changes — couvert e2e en test, validation serveur réel côté mainteneur): tfvc
     auto (détection locale best-effort): auto
     none (checks manuels sans VCS): none
-  help: "Provider source-control utilisé par les checks de delta/freshness. tfvc est best-effort : la couche _vcs.sh est testée en isolation (tf mocké), mais aucun scaffold Copier complet n'est exercé de bout en bout — remonte un bug si le comportement diverge."
+  help: "Provider source-control utilisé par les checks de delta/freshness. tfvc est couvert end-to-end en test (scaffold Copier réel + gate de fraîcheur sur pending changes, avec tf simulé) ; la détection des chemins est indépendante de la locale du client. Reste hors test : la validation contre un serveur TFS réel, qui exige des credentials. Pour l'update d'un workspace TFVC (copier update exige un dépôt git), voir docs/upgrading.md."
 
 tech_profile:
   type: str
@@ -222,12 +222,20 @@ agents:
   default:
     - claude
     - codex
-  # gemini retiré des choix en v1.0 (décision P16 Bloc A : aucun usage — Gemini CLI
-  # grand public arrêté par Google le 2026-06-18). Les consommateurs existants avec
-  # `gemini` dans .copier-answers.yml gardent leur GEMINI.md résiduel ; retirer la
-  # valeur de la réponse avant `copier update` — voir MIGRATION.md § v1.0.
-  choices: [claude, codex, cursor, copilot]
-  help: Agents dont les shims / hooks seront générés
+  # `gemini` est DÉPRÉCIÉ en v1.0, pas retiré des choix — et c'est délibéré.
+  # Décision P16 Bloc A : aucun usage (Gemini CLI grand public arrêté par Google le
+  # 2026-06-18), donc plus aucun artefact n'est rendu pour lui (GEMINI.md supprimé
+  # du template). Mais retirer la VALEUR de `choices` s'est révélé dangereux :
+  # vérifié empiriquement que Copier, face à une réponse stockée hors `choices`,
+  # jette la réponse ENTIÈRE et applique le défaut. Un consommateur en
+  # `agents: [cursor, gemini]` se retrouvait donc en `[claude, codex]` : perte
+  # silencieuse de cursor ET ajout non demandé de claude. La valeur reste donc
+  # valide (elle ne génère rien) et sera retirée en v2. Voir MIGRATION.md § v1.0.
+  choices: [claude, codex, cursor, copilot, gemini]
+  help: >-
+    Agents dont les shims / hooks seront générés.
+    `gemini` est déprécié (aucun artefact généré, retrait prévu en v2) — ne pas le
+    sélectionner pour un nouveau projet.
 
 enable_codex_hooks:
   type: bool

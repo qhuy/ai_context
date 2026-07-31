@@ -26,3 +26,6 @@
 ## 2026-07-28 15:51 — auto
 - Fichiers modifiés :
   - copier.yml
+
+## 2026-07-24 — couverture incidente (v1.0, gemini déprécié + TFVC)
+- `copier.yml` : `gemini` remis dans `choices` mais déprécié (help explicite) ; help de `vcs_provider` requalifié (couvert e2e, renvoi vers la procédure d'update workspace TFVC). Aucun changement de `aic-release.sh` ni de l'entrée `_migrations`.

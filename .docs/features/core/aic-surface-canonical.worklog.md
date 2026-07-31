@@ -271,3 +271,6 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, B9 clés context.*)
 - `PROJECT_STATE.md` : item roadmap « Consommer context.show_statuses / default_focus » passé de 🚧 à ✅ (livré en v1.0). Aucun changement de la surface `aic`.
+
+## 2026-07-24 — couverture incidente (v1.0, TFVC + gemini déprécié)
+- `README_AI_CONTEXT.md` (+ miroir template) : mention TFVC requalifiée (couvert e2e, détection indépendante de la locale, renvoi vers la procédure d'update workspace). Runtime réaligné sur le rendu template après un drift détecté par la gate. Aucun changement de la surface `aic`.

@@ -252,3 +252,6 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
 - `template/.github/workflows/ai-context-check.yml.jinja` : path trigger `GEMINI.md` retiré (le fichier n'est plus rendu). Aucun changement du contrat read-only des checks.
+
+## 2026-07-24 — couverture incidente (v1.0, MIGRATION)
+- `MIGRATION.md` : nouvelle section « v0.14 → v1.0 » (gel du contrat public, `type` requis avec backfill outillé, `gemini` déprécié, commandes dépréciées, clés de config devenues actives, procédure workspace TFVC). Aucun changement du contrat read-only des checks.
