@@ -110,13 +110,15 @@ else
     echo "  ✓ $name"
   }
 
-  # Miroir exact des 7 invocations documentées dans RELEASE.md §2.
+  # Miroir exact des invocations documentées dans RELEASE.md §2 — garder les deux
+  # listes synchronisées (le profil tfvc a été ajouté au gel v1.0).
   render_profile "standard"
   render_profile "lite" "adoption_mode=lite"
   render_profile "strict" "adoption_mode=strict"
   render_profile "docs" "docs_root=docs"
   render_profile "en" "commit_language=en"
   render_profile "codex" "agents=[codex]"
+  render_profile "tfvc" "vcs_provider=tfvc"
   render_profile "fullstack" "scope_profile=fullstack" "tech_profile=fullstack-dotnet-react"
 
   rm -rf "$render_root"
