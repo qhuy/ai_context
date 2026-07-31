@@ -212,3 +212,8 @@
 - **3 bugs réels trouvés par les tests écrits pour le gel**, chacun verrouillé par un test vérifié discriminant : fail-open du gate de fraîcheur en TFVC (normalisation de chemin) ; même fail-open par la locale du client `tf` ; réinitialisation silencieuse de la réponse `agents` quand une valeur quitte `choices` (a fait passer P4 de retrait à dépréciation).
 - Méta : sur ce lot, écrire le test a été plus rentable que relire le code — les 3 bugs étaient invisibles à la lecture et tous dans des chemins « déjà validés ».
 - Restent 2 actions structurellement hors portée agent : validation TFVC serveur réel (credentials) et tag.
+
+## 2026-07-28 — PILOTAGE CLOS : v1.0.0 releasée
+- `chore(release): v1.0.0` (`d00aed5`) + tag poussé. Sanity RELEASE.md §7 exécuté **depuis le tag publié sur GitHub** (pas depuis le working tree) : rendu OK, `check-shims` PASS, `doctor` PASS sans avertissement, surfaces v1.0 livrées au consommateur, et outillage source-only vérifié ABSENT du rendu (`aic-release.sh`, `check-release-coherence.sh`, `GEMINI.md`) — la frontière source-only/templaté tient en conditions réelles.
+- Bilan du pilotage : 18/18 items traités depuis l'analyse fonctionnelle du 2026-07-23. 4 reviews Codex (dont 3 bloquantes) intégrées, chacune re-vérifiée dans le dépôt avant application ; 2 rounds de convergence autonome pour le texte du gel.
+- Registre passé `done`. Résiduels rendus à leurs fiches propriétaires plutôt que gardés ici : validation TFVC réelle (`core/vcs-provider-abstraction`), repo tiers pour le benchmark (`product/agent-efficacy-benchmark`, décision au 2026-10-01), retrait de `gemini` et des routes `deprecated` en v2.
