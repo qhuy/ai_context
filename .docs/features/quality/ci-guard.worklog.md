@@ -71,3 +71,8 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
 - Path trigger `GEMINI.md` retiré des deux workflows (runtime `.github/workflows/ai-context-check.yml` + miroir template) : le fichier n'est plus rendu depuis le retrait du choix `gemini`. Aucun changement des étapes de check ni du contrat CI.
+
+## 2026-07-24 — v1.0 / C12 : manifeste de surface gaté en CI
+- Nouvelle étape `test-surface-manifest (contrat public v1.0)` dans `.github/workflows/ai-context-check.yml` : fait échouer la CI sur tout écart au contrat gelé (routes par niveau, questions Copier, cycle d'update, schéma, index typé, clés config lues, shims, matrice de capacités).
+- Source-only, non mirrorée dans le template : un consommateur n'a ni `copier.yml` ni `template/` à snapshoter — même raison que `check-release-coherence`.
+- Le workflow runtime étant déjà exempté du drift dogfood (source-only), aucun miroir à synchroniser.

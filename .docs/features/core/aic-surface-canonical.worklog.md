@@ -274,3 +274,11 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, TFVC + gemini déprécié)
 - `README_AI_CONTEXT.md` (+ miroir template) : mention TFVC requalifiée (couvert e2e, détection indépendante de la locale, renvoi vers la procédure d'update workspace). Runtime réaligné sur le rendu template après un drift détecté par la gate. Aucun changement de la surface `aic`.
+
+## 2026-07-24 — v1.0 / C12+C13 : manifeste de surface + moratoire gaté
+- `tests/unit/test-surface-manifest.sh` : snapshot des 8 éléments du contrat public. Choix d'implémentation : `yq`/`jq` uniquement, fichier dans `tests/` — aucune logique de parsing ajoutée au moteur bash (hors moratoire bash, contrairement à ce qu'un manifeste écrit en bash pur aurait coûté).
+- Au-delà du snapshot, 2 invariants encodés : aucune migration native ne contient `--apply` (Copier n'écrit jamais dans le mesh d'un consommateur) ; aucune route du dispatch absente de l'aide (anti-route-fantôme).
+- **Vérifié discriminant sur 4 dérives réelles** avant de le déclarer utile : ajout d'une valeur de choix Copier, migration native passée en `--apply`, retrait d'un champ requis du schéma, renommage d'une route stable. Chacune fait échouer le manifeste avec un message actionnable (valeur gelée vs observée + rappel de la décision de bump).
+- 2 défauts de mon propre test corrigés en cours de route : `jq -rS` ne trie pas un tableau `to_entries` (l'assertion de types comparait un ordre d'insertion — remplacé par `sort_by(.key)`), et un `sed 's/dev-plan,//'` qui masquait une route au lieu de l'inclure dans la valeur gelée.
+- Câblé CI (`ai-context-check.yml`, source-only) + smoke `[0q4/28]`. Pas de miroir template : un consommateur n'a ni `copier.yml` ni `template/`, donc rien à snapshoter — même raison que `check-release-coherence.sh`.
+- C13 : CONTRIBUTING § « Moratoire de surface (v1.0+) ». Différence assumée avec le moratoire bash : celui-ci est **gaté automatiquement** car les surfaces sont énumérables (le moratoire bash reste une règle de revue, la « trivialité » n'étant pas mesurable). Table SemVer explicite + le piège vérifié de la valeur de choix Copier documenté comme justification du niveau `deprecated`.

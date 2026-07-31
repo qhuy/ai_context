@@ -139,6 +139,12 @@ jobs:
       - name: check-release-coherence
         run: bash .ai/scripts/check-release-coherence.sh
 
+      # Manifeste de surface : fait échouer la CI sur tout écart au contrat public
+      # gelé en v1.0, pour qu'un changement de contrat soit une décision consciente
+      # (MAJ du manifeste + bump SemVer) et jamais un effet de bord.
+      - name: test-surface-manifest (contrat public v1.0)
+        run: bash tests/unit/test-surface-manifest.sh
+
       - name: check-runtime-template-mirror (advisory, diff PR)
         if: github.event_name == 'pull_request'
         run: bash .ai/scripts/check-runtime-template-mirror.sh --base="origin/${{ github.base_ref }}" --head=HEAD

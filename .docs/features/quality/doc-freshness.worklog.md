@@ -141,3 +141,6 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
 - `template/.github/workflows/ai-context-check.yml.jinja` : path trigger `GEMINI.md` retiré (le fichier n'est plus rendu). Aucun changement du contrat de fraîcheur documentaire.
+
+## 2026-07-24 — couverture incidente (v1.0, C12 manifeste de surface)
+- `.github/workflows/ai-context-check.yml` : étape `test-surface-manifest` ajoutée. Aucun changement du contrat de fraîcheur documentaire.

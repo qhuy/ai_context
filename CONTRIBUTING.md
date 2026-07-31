@@ -76,6 +76,56 @@ pas de réécriture. Mais la croissance doit être **gelée** :
   peut mesurer la « trivialité » d'un ajout. Une PR qui grossit sensiblement le
   moteur bash sans justification écrite doit être refusée en review.
 
+### Moratoire de surface (v1.0+)
+
+À partir de v1.0, le **contrat public est gelé**. Contrairement au moratoire bash
+ci-dessus, celui-ci est **gaté automatiquement** : les surfaces sont énumérables,
+donc snapshotées dans `tests/unit/test-surface-manifest.sh` (lancé en CI et dans
+le smoke). Ce qui est gelé :
+
+1. **Questions Copier** — identifiants, ordre, types, `multiselect`, valeurs de
+   choix, défauts, conditions `when`, validateurs, et leurs effets de rendu.
+2. **Cycle d'update** — `_answers_file`, `_skip_if_exists` (l'overlay projet n'est
+   jamais réécrit), `_migrations` en **lecture seule** (Copier n'écrit jamais dans
+   le mesh d'un consommateur).
+3. **Surface CLI classée en 4 niveaux** — `stable`, `stable-maintenance`,
+   `deprecated`, `interne` (voir `bash .ai/scripts/aic.sh --help`).
+4. **Schéma fiche** — champs requis, enums fermés, patterns.
+5. **Contrat machine de l'index** — enveloppe, clés, types, nullabilités,
+   `schema_version`.
+6. **Clés `.ai/config.yml` réellement lues** (une clé scaffoldée que rien ne lit
+   n'a pas sa place dans le contrat : soit on l'implémente, soit on la retire).
+7. **Modèle de shims** — `AGENTS.md` toujours rendu et auto-suffisant, dérivés
+   conditionnels, agents dépréciés sans artefact.
+8. **Matrice de capacités et d'enforcement** par profil (`agents`,
+   `adoption_mode`, `vcs_provider`, `enable_*`, `scope_profile`). C'est la matrice
+   qui est gelée, **pas** le câblage par agent : Claude, Codex, les git hooks et
+   la CI portent chacun un sous-ensemble différent des garanties, et ce
+   sous-ensemble peut évoluer.
+
+Règle SemVer :
+
+| Changement | Bump |
+|---|---|
+| Retrait, renommage ou resserrement d'un élément gelé | MAJOR + section `MIGRATION.md` |
+| Ajout rétro-compatible à défaut sûr | MINOR + justification écrite (fiche, section Décisions) |
+| Correction sans effet sur le contrat | PATCH |
+
+Quand le manifeste échoue, il ne dit pas quel bump appliquer — il force la
+décision. Mets à jour le snapshot **et** tranche explicitement le bump.
+
+**Piège vérifié à connaître** : retirer une *valeur de choix* Copier n'est pas
+équivalent à retirer une question. Face à une réponse stockée hors `choices`,
+Copier jette la réponse **entière** et applique le défaut — un consommateur en
+`agents: [cursor, gemini]` se retrouve en `[claude, codex]`, donc perd `cursor` et
+gagne `claude` sans l'avoir demandé. Pour retirer une valeur, préfère la
+**déprécier** (valeur conservée, plus aucun artefact rendu) et ne la retirer qu'au
+MAJOR suivant. C'est la raison d'être du niveau `deprecated`.
+
+Enfin, même quand le manifeste est à jour, une PR qui grossit le contrat public
+sans justification écrite doit être refusée en review : le gate empêche
+l'accident, pas la dérive volontaire.
+
 ## Ajouter un skill Claude
 
 1. Crée le squelette `template/.claude/skills/<verb>/SKILL.md.jinja` + `workflow.md.jinja`.

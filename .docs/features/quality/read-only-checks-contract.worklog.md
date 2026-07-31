@@ -255,3 +255,6 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, MIGRATION)
 - `MIGRATION.md` : nouvelle section « v0.14 → v1.0 » (gel du contrat public, `type` requis avec backfill outillé, `gemini` déprécié, commandes dépréciées, clés de config devenues actives, procédure workspace TFVC). Aucun changement du contrat read-only des checks.
+
+## 2026-07-24 — couverture incidente (v1.0, C12 manifeste de surface)
+- `.github/workflows/ai-context-check.yml` : nouvelle étape `test-surface-manifest` (source-only, non mirrorée — un consommateur n'a ni `copier.yml` ni `template/`). Check read-only comme les autres ; aucun changement du contrat read-only lui-même.

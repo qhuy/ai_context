@@ -114,3 +114,6 @@ Source session : automation veille-techno
 
 ## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
 - `template/.github/workflows/ai-context-check.yml.jinja` : path trigger `GEMINI.md` retiré. Aucun changement de la validation de config agent.
+
+## 2026-07-24 — couverture incidente (v1.0, C12 manifeste de surface)
+- `.github/workflows/ai-context-check.yml` : étape `test-surface-manifest` ajoutée. Aucun changement de la validation de config agent.
