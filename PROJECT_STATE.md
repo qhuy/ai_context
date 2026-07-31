@@ -3,7 +3,7 @@
 **But** : template `copier` qui industrialise le setup AI context (multi-agent : Claude / Codex / Cursor / Copilot) d'un nouveau projet.
 **Remote** : [github.com/qhuy/ai_context](https://github.com/qhuy/ai_context) (public)
 **Local** : chemin de développement local, non versionné.
-**Dernière version publiée** : v0.14.0 — « Migrations post-Copier, index progressifs, overlay registre de scopes & discipline de preuve » (voir [CHANGELOG.md](CHANGELOG.md))
+**Dernière version publiée** : v1.0.0 — « Gel du contrat public : surface CLI classée, schéma durci, manifeste de surface gaté en CI » (voir [CHANGELOG.md](CHANGELOG.md))
 
 > Ce fichier est un **point d'entrée rapide** — pas l'historique détaillé (→ [CHANGELOG.md](CHANGELOG.md)), pas l'architecture du code (→ le code et [README.md](README.md)), pas la migration (→ [MIGRATION.md](MIGRATION.md)). Pour les audits historiques clos, [docs/archive/](docs/archive/).
 
@@ -24,21 +24,42 @@
    - apply : `bash .ai/scripts/dogfood-update.sh --apply`
    - drift : `bash .ai/scripts/check-dogfood-drift.sh`
 
-## État actuel (v0.14.0)
+## État actuel (v1.0.0)
 
-- **Cockpit de migrations post-Copier** — `aic migrate plan/all --apply` orchestre `okf-type` puis `okf-indexes` avec préflight (`.rej`, `.copier-answers.yml` manquant) ; la migration legacy `aic migrate` reste hors batch.
-- **Index Markdown progressifs** — `<docs_root>/features/index.md` + `index.md` par scope, générés déterministes et versionnables ; check warn-only vN / `--strict` prêt pour vN+1.
-- **Overlay registre de scopes + `aic-onboard`** — `.ai/project/<scope>/index.md` par app/couche, skill `aic-onboard` (modes init/sync/migrate auto-détectés).
-- **Discipline de preuve transverse** (`workflow/evidence-discipline`) — toute affirmation prouvée ou étiquetée Hypothèse ; câblée dans `aic-review`/`aic-diagnose`/`aic-pilot`/`aic-frame`.
-- **Hooks Codex natifs opt-in** (`enable_codex_hooks`) — reminder par tour + gate Stop de fraîcheur, parité documentée avec Claude.
-- **Provider VCS configurable** (`vcs_provider`) — `git`/`tfvc`/`auto`/`none` ; TFVC best-effort, non testé end-to-end.
-- **Gate Stop de fraîcheur documentaire** (`workflow/stop-turn-doc-gate`) — bloque la fin de tour si du code couvert change sans mise à jour de fiche/worklog ; échappatoire `AIC_DOC_GATE=off`.
-- **Profil strict OKF Phase 0** — champ `type` optionnel (warn-only), backfill via `aic migrate okf-type --apply`.
-- **Élagage des shims commoditisés par AGENTS.md** — Copilot/Cursor confirmés natifs ; kill criterion vérifiable (`check-agent-native-context.sh --require-confirmed`).
-- **Reprise de cadence de tags** — `copier update` sans `--vcs-ref` cible de nouveau un tag à jour.
-- **Tags versionnés** : `v0.7.2` → `v0.14.0`.
+**Le contrat public est gelé.** Ce qui est gelé, et la règle SemVer associée :
+`CONTRIBUTING.md` § « Moratoire de surface (v1.0+) ». Le contrat est **gaté en
+CI** par `tests/unit/test-surface-manifest.sh` : tout écart fait échouer la CI et
+impose une décision de bump explicite.
 
-Historique complet des versions précédentes (v0.7 → v0.13) : [CHANGELOG.md](CHANGELOG.md).
+- **Contrat public en 8 éléments** — questions Copier (identifiants, types,
+  `multiselect`, choix, défauts, `when`, validateurs), cycle d'update
+  (`_skip_if_exists`, `_migrations` read-only, `.copier-answers.yml`), surface CLI
+  classée en 4 niveaux, schéma fiche (requis + 11 enums + 5 patterns), enveloppe
+  typée de l'index JSON, clés `.ai/config.yml` réellement lues, modèle de shims,
+  matrice de capacités par profil.
+- **Surface CLI classée** — `stable` (10 intentions), `stable-maintenance` (17),
+  `deprecated` (`frame-bootstrap`, `frame-context`, `knowledge`), `interne`
+  (`reminder`). Voir `bash .ai/scripts/aic.sh --help`.
+- **`aic init`** — parcours guidé post-scaffold (successeur du `first-run` retiré
+  en v0.13) : diagnostic, activation idempotente des git hooks, prochaine étape.
+- **Champ `type` requis** — rollout `warn → fail` tenu (warn v0.14, fail v1.0) ;
+  backfill outillé `aic migrate okf-type --apply`.
+- **TFVC couvert end-to-end** — scaffold réel + gate de fraîcheur sur pending
+  changes (`tests/unit/test-tfvc-e2e.sh`), détection **indépendante de la locale**
+  du client `tf`. Procédure d'update d'un workspace TFVC dans
+  `docs/upgrading.md` (`copier update` exige un dépôt git). Reste hors test : la
+  validation contre un serveur TFS réel, qui exige des credentials.
+- **`agents: gemini` déprécié** — plus aucun artefact rendu, valeur conservée dans
+  `choices` (la retirer réinitialiserait la réponse `agents` au défaut chez un
+  consommateur existant). Retrait en v2.
+- **Clés `context.*` réellement consommées** — `show_statuses` et `default_focus`
+  ne sont plus des placeholders ; précédence env var > config > défaut.
+- **Release outillée** — `aic-release.sh` (source-only) exécute les étapes
+  mécaniques de `RELEASE.md` ; `check-release-coherence.sh` garde
+  CHANGELOG↔PROJECT_STATE↔`copier.yml`↔`docs/variables.md`.
+- **Tags versionnés** : `v0.7.2` → `v1.0.0`.
+
+Historique complet des versions précédentes (v0.7 → v0.14) : [CHANGELOG.md](CHANGELOG.md).
 
 ## Roadmap — pistes ouvertes
 

@@ -2,7 +2,11 @@
 
 ## [Unreleased]
 
-> Candidate **v1.0** : gel du contrat public. Voir `MIGRATION.md` § « v0.14 → v1.0 ».
+## [1.0.0] — 2026-07-28
+
+> **Gel du contrat public.** Voir `MIGRATION.md` § « v0.14 → v1.0 » pour la
+> migration (rien d'obligatoire sauf le champ `type` des fiches, dont le backfill
+> est outillé).
 
 ### Contrat public gelé (8 éléments)
 

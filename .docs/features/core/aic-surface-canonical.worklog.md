@@ -282,3 +282,7 @@
 - 2 défauts de mon propre test corrigés en cours de route : `jq -rS` ne trie pas un tableau `to_entries` (l'assertion de types comparait un ordre d'insertion — remplacé par `sort_by(.key)`), et un `sed 's/dev-plan,//'` qui masquait une route au lieu de l'inclure dans la valeur gelée.
 - Câblé CI (`ai-context-check.yml`, source-only) + smoke `[0q4/28]`. Pas de miroir template : un consommateur n'a ni `copier.yml` ni `template/`, donc rien à snapshoter — même raison que `check-release-coherence.sh`.
 - C13 : CONTRIBUTING § « Moratoire de surface (v1.0+) ». Différence assumée avec le moratoire bash : celui-ci est **gaté automatiquement** car les surfaces sont énumérables (le moratoire bash reste une règle de revue, la « trivialité » n'étant pas mesurable). Table SemVer explicite + le piège vérifié de la valeur de choix Copier documenté comme justification du niveau `deprecated`.
+
+## 2026-07-28 — release v1.0.0 : PROJECT_STATE réécrit sur le contrat gelé
+- `PROJECT_STATE.md` : section « État actuel » passée de v0.14.0 à v1.0.0, réorganisée autour du contrat public gelé (8 éléments, surface CLI classée en 4 niveaux, `type` requis, TFVC couvert e2e, `gemini` déprécié, clés `context.*` réellement lues, release outillée) et pointant vers CONTRIBUTING § Moratoire de surface pour la règle SemVer. Version publiée mise à jour.
+- Mention TFVC « best-effort, non testé end-to-end » retirée de l'état projet : elle était devenue fausse après le chantier B4.
