@@ -101,3 +101,12 @@
 ## 2026-07-24 — v1.0 / type requis dans le contrat frontmatter (pilotage P16 Bloc A)
 - `.ai/schema/feature.schema.json` (+ miroir template, livré en `.json` brut sans Jinja) : `type` ajouté à `.required`. Le contrat frontmatter du mesh passe donc de 6 à 7 clés obligatoires (`id`, `scope`, `title`, `status`, `type`, `depends_on`, `touches`).
 - `FEATURE_TEMPLATE.md` (+ miroir) aligné. Détail complet (rollout warn→fail tenu, non-doublon de diagnostic, vérification 67/67 fiches) dans `core/okf-strict-profile`.
+
+## 2026-08-06 — couverture incidente (reliquat de la bascule type warn → fail)
+- `check-features.sh` (+ miroir template) : commentaire du bloc `type` seul. Il annonçait encore « Phase 0 : optionnel + warn ; deviendra requis en vN+1 » et « Jamais bloquant ici » juste au-dessus du `ko` bloquant depuis v1.0 — reformulé sur le régime réel. Aucun changement du contrat frontmatter ni de la sévérité (les 7 clés obligatoires restent celles du 2026-07-24).
+- Détail complet de l'arbitrage (test `test-okf-type.sh` périmé recentré plutôt que gate desserré, trou de mesh du test de contrat, mutation testing) dans `core/okf-strict-profile`.
+
+## 2026-08-06 20:16 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-features.sh
+  - template/.ai/scripts/check-features.sh.jinja

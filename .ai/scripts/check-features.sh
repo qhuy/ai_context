@@ -186,11 +186,12 @@ for f in "${files[@]}"; do
     warn "$f : progress.phase='$declared_phase' hors enum ($PHASE_ENUM)"
   fi
 
-  # Profil strict OKF — champ `type` (Phase 0 : optionnel + warn ; deviendra requis en vN+1).
-  # Jamais bloquant ici : un consommateur qui vient de faire `copier update` ne doit pas
-  # voir sa CI casser tant qu'il n'a pas lancé `aic migrate okf-type --apply`.
-  # Guard `grep -q` (en condition `if`, exempté de set -e) : le champ est souvent absent
-  # et `set -o pipefail` ferait échouer une extraction directe — le warn deviendrait un abort.
+  # Profil strict OKF — champ `type` (Phase 1 / v1.0 : requis, bloquant). Le rollout
+  # annoncé warn → fail est tenu : warn en v0.14, ✗ + exit 1 depuis v1.0 ; le hint de
+  # backfill (`aic migrate okf-type --apply`) est porté par le message d'erreur pour un
+  # consommateur qui vient de faire `copier update`.
+  # Guard `grep -q` (en condition `if`, exempté de set -e) : le champ peut être absent
+  # et `set -o pipefail` ferait échouer une extraction directe — le ✗ deviendrait un abort.
   if echo "$fm" | grep -qE '^type:'; then
     declared_type=$(echo "$fm" | grep -E '^type:' | sed -E 's/^type:[[:space:]]*//; s/["'"'"']//g' | tr -d '[:space:]')
     if ! is_valid_type "$declared_type"; then
