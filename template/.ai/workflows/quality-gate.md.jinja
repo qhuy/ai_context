@@ -43,7 +43,7 @@ Format markdown, même structure à chaque fois :
 | Check | Status | Détails |
 |---|---|---|
 | check-shims | ✅ / ❌ | <sortie courte> |
-| check-skills-parity | ✅ / ❌ | <divergences .claude/skills ↔ .agents/skills, hors exception documentée> |
+| check-skills-parity | ✅ / ❌ | <divergences .claude/skills ↔ .agents/skills sur le namespace `aic`/`aic-*`, hors exception documentée ; skills project-owned comptés mais hors contrat> |
 | check-agent-config | ✅ / ⚠️ / ❌ | <configs agents et scripts référencés> |
 | check-ai-references | ✅ / ❌ | <sortie> |
 | check-features --no-write | ✅ / ❌ | <sortie> |

@@ -258,3 +258,10 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, C12 manifeste de surface)
 - `.github/workflows/ai-context-check.yml` : nouvelle étape `test-surface-manifest` (source-only, non mirrorée — un consommateur n'a ni `copier.yml` ni `template/`). Check read-only comme les autres ; aucun changement du contrat read-only lui-même.
+
+## 2026-08-06 — couverture incidente
+- `.ai/workflows/quality-gate.md` (+ miroir template) : même précision de périmètre sur la ligne `check-skills-parity`. Les checks concernés restent read-only — `check-product-links` et `check-skills-parity` n'écrivent toujours rien (le fix du séparateur TSV ne touche que la lecture des lignes jq).
+
+## 2026-08-06 19:05 — auto
+- Fichiers modifiés :
+  - .ai/workflows/quality-gate.md

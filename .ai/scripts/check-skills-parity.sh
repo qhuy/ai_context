@@ -15,6 +15,13 @@
 # Si un seul des deux arbres est présent (agent non sélectionné), le check
 # passe silencieusement : rien à comparer.
 #
+# PÉRIMÈTRE — namespace réservé `aic` / `aic-*` uniquement. Le contrat de parité
+# porte sur les skills *publics livrés par le template*, pas sur ceux qu'un
+# consommateur ajoute dans son propre repo : un skill project-owned n'a aucune
+# raison d'avoir un pair Codex, et l'exiger transformait le gate en générateur de
+# faux échecs (mesuré : 311 divergences sur un repo sain de 50 skills projet).
+# Les dossiers hors namespace sont comptés et affichés, jamais bloquants.
+#
 # Usage : bash .ai/scripts/check-skills-parity.sh
 
 set -uo pipefail
@@ -43,8 +50,30 @@ normalize() {
   grep -v '^disable-model-invocation:[[:space:]]*true[[:space:]]*$' "$1" 2>/dev/null
 }
 
+# Le chemin appartient-il au namespace réservé du template ? Le premier segment
+# ($1 est relatif à la racine d'un arbre de skills) doit être `aic` ou `aic-*`.
+is_template_skill() {
+  case "${1%%/*}" in
+    aic|aic-*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+# Dossiers project-owned : hors contrat, comptés pour rester visibles.
+project_owned() {
+  local root="$1" name
+  for name in "$root"/*; do
+    [[ -d "$name" ]] || continue
+    is_template_skill "$(basename "$name")" || printf '%s\n' "$(basename "$name")"
+  done
+}
+project_count=$(
+  { project_owned "$CLAUDE_DIR"; project_owned "$AGENTS_DIR"; } | sort -u | grep -c . || true
+)
+
 diff_count=0
 while IFS= read -r rel; do
+  is_template_skill "$rel" || continue
   claude_file="$CLAUDE_DIR/$rel"
   agents_file="$AGENTS_DIR/$rel"
   if [[ ! -f "$agents_file" ]]; then
@@ -59,11 +88,16 @@ while IFS= read -r rel; do
 done < <(cd "$CLAUDE_DIR" && find . -type f | sed 's#^\./##' | sort)
 
 while IFS= read -r rel; do
+  is_template_skill "$rel" || continue
   [[ -f "$CLAUDE_DIR/$rel" ]] || { ko "$rel présent côté Codex, absent côté Claude ($CLAUDE_DIR/$rel)"; diff_count=$((diff_count + 1)); }
 done < <(cd "$AGENTS_DIR" && find . -type f | sed 's#^\./##' | sort)
 
+if [[ "$project_count" -gt 0 ]]; then
+  ok "$project_count skill(s) project-owned hors namespace aic/aic-* : hors contrat de parité"
+fi
+
 if [[ "$diff_count" -eq 0 ]]; then
-  ok "les deux arbres de skills sont en parité (hors exception documentée)"
+  ok "les skills aic/aic-* sont en parité (hors exception documentée)"
   echo "✅ PASS"
   exit 0
 else

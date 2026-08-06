@@ -108,3 +108,7 @@
 - Re-vérifié après correction : réponse `agents` conservée, `.cursor` préservé, pas de `CLAUDE.md` imposé, `GEMINI.md` supprimé par l'update (effet voulu), 0 `.rej`, `check-shims` PASS.
 - `test-check-shims-dynamic-agents.sh` corrigé : l'assertion « shim manquant => échec » utilise désormais `claude` (agent actif non déprécié) ; une assertion inverse a été ajoutée pour `gemini` (absence tolérée + message de dépréciation attendu). Sans ça, le test verrouillait l'ancien contrat et échouait.
 - Docs alignées : `copier.yml` (choix + help), `docs/variables.md`, `MIGRATION.md` § v0.14→v1.0 cas 1, CHANGELOG.
+
+## 2026-08-06 19:05 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-shims.sh

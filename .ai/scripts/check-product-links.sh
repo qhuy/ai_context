@@ -38,6 +38,20 @@ fi
 warns=()
 add_warn() { warns+=("$1"); }
 
+# Séparateur de champs : \x1f (US), PAS le tab.
+#
+# Le tab est un caractère blanc d'IFS : `read` y fusionne les délimiteurs
+# consécutifs et rogne ceux de tête et de queue. Sur une ligne dont un champ
+# intermédiaire est vide, toutes les valeurs suivantes remontent d'un cran et le
+# dernier champ finit vide — ici, un `product.bet` absent faisait glisser
+# `linked_count` hors de sa variable, et `[[ "" -eq 0 ]]` étant vrai, chaque
+# initiative aux champs produit vides était signalée « sans feature dev liée »
+# alors qu'elle en avait. \x1f n'est pas un blanc : chaque champ garde sa
+# position, vide compris. `@tsv` échappe déjà les tabs et retours ligne présents
+# dans les valeurs, donc les seuls TAB réels de la ligne sont les séparateurs :
+# côté jq, `@tsv | gsub("\t"; "\u001f")` ne fait que traduire le séparateur.
+US=$'\x1f'
+
 product_count=$(jq '[.features[] | select(.scope == "product")] | length' "$index_file")
 active_product_count=$(jq '[.features[] | select(.scope == "product" and (.status == "active" or .status == "draft"))] | length' "$index_file")
 
@@ -45,7 +59,7 @@ if [[ "$active_product_count" -gt 3 ]]; then
   add_warn "plus de 3 initiatives product draft/active ($active_product_count) : risque de focus dilué"
 fi
 
-while IFS=$'\t' read -r key status type bet metric decision next_date linked_count; do
+while IFS="$US" read -r key status type bet metric decision next_date linked_count; do
   [[ -n "$key" ]] || continue
   if [[ "$type" != "initiative" ]]; then
     add_warn "$key : scope product sans product.type=initiative"
@@ -73,10 +87,10 @@ done < <(jq -r '
       (.product.decision_state // ""),
       (.product.next_decision_date // ""),
       ([ $features[] | select((.product.initiative // "") == $key) ] | length | tostring)
-    ] | @tsv
+    ] | @tsv | gsub("\t"; "\u001f")
 ' "$index_file")
 
-while IFS=$'\t' read -r key field value; do
+while IFS="$US" read -r key field value; do
   [[ -n "$key" && -n "$value" ]] || continue
   case "$field" in
     decision_state)
@@ -101,10 +115,10 @@ done < <(jq -r '
       ["strategic_fit", (.product.portfolio.strategic_fit // "")]
     ][]
   | select(.[1] != "")
-  | [$key, .[0], .[1]] | @tsv
+  | [$key, .[0], .[1]] | @tsv | gsub("\t"; "\u001f")
 ' "$index_file")
 
-while IFS=$'\t' read -r feature_key initiative initiative_status; do
+while IFS="$US" read -r feature_key initiative initiative_status; do
   [[ -n "$feature_key" && -n "$initiative" ]] || continue
   if [[ "$initiative_status" == "__missing__" ]]; then
     add_warn "$feature_key : product.initiative '$initiative' introuvable"
@@ -117,7 +131,7 @@ done < <(jq -r '
   | select(.scope != "product" and ((.product.initiative // "") != ""))
   | (.product.initiative // "") as $initiative
   | ([ $features[] | select((.scope + "/" + .id) == $initiative and .scope == "product") ][0].status // "__missing__") as $status
-  | [(.scope + "/" + .id), $initiative, $status] | @tsv
+  | [(.scope + "/" + .id), $initiative, $status] | @tsv | gsub("\t"; "\u001f")
 ' "$index_file")
 
 echo "═══ check-product-links ═══"

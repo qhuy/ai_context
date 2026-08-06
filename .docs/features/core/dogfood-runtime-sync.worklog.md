@@ -552,3 +552,14 @@
   - .ai/scripts/aic.sh
   - .ai/scripts/check-dogfood-drift.sh
   - .ai/scripts/check-shims.sh
+
+## 2026-08-06 19:05 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-product-links.sh
+  - .ai/scripts/check-shims.sh
+  - .ai/scripts/check-skills-parity.sh
+  - .ai/workflows/quality-gate.md
+
+## 2026-08-06 20:16 — auto
+- Fichiers modifiés :
+  - .ai/scripts/check-features.sh

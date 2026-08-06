@@ -117,3 +117,10 @@ Source session : automation veille-techno
 
 ## 2026-07-24 — couverture incidente (v1.0, C12 manifeste de surface)
 - `.github/workflows/ai-context-check.yml` : étape `test-surface-manifest` ajoutée. Aucun changement de la validation de config agent.
+
+## 2026-08-06 — couverture incidente
+- `.ai/workflows/quality-gate.md` (+ miroir template) : la ligne de rapport de `check-skills-parity` précise son périmètre (namespace `aic`/`aic-*`, skills project-owned hors contrat). Aucun changement du contrat de validation des configs agents.
+
+## 2026-08-06 19:05 — auto
+- Fichiers modifiés :
+  - .ai/workflows/quality-gate.md

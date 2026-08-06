@@ -7,8 +7,10 @@
 #    et restent minces (≤ MAX_LINES).
 # 3. Les cibles canoniques référencées existent.
 # 4. Le Pack A reste lean et ne réintroduit pas les charges coûteuses.
-# 5. Les skills publics restent complets et, si Claude+Codex sont générés,
-#    pairés entre surfaces avec leurs workflows.
+# 5. Les skills publics du template (namespace réservé `aic` / `aic-*`) restent
+#    complets et, si Claude+Codex sont générés, pairés entre surfaces avec leurs
+#    workflows. Les skills project-owned d'un consommateur sont hors contrat :
+#    ni pair Codex ni workflow.md attendus (voir is_template_skill).
 #
 # Usage : bash .ai/scripts/check-shims.sh
 
@@ -72,6 +74,17 @@ add_shim() {
     [[ "$existing" == "$candidate" ]] && return 0
   done
   SHIMS+=("$candidate")
+}
+
+# Namespace réservé du template : `aic` et `aic-*` (cf. core/aic-surface-canonical).
+# Un consommateur peut ajouter ses propres skills Claude — ils ne sont ni livrés
+# ni maintenus par le template, donc n'ont pas à être pairés côté Codex ni à
+# porter un workflow.md. Les exiger rendait `doctor` rouge sur un repo sain.
+is_template_skill() {
+  case "$1" in
+    aic|aic-*) return 0 ;;
+    *) return 1 ;;
+  esac
 }
 
 NATIVE_SUPPORT_FILE=".ai/native-context-support.tsv"
@@ -293,6 +306,7 @@ else
   if agent_selected "codex" && agent_selected "claude"; then
     require_skill_pairs=1
   fi
+  project_owned_skipped=0
   for skill_root in ${skill_roots[@]+"${skill_roots[@]}"}; do
     peer_root=".claude/skills"
     root_agent="codex"
@@ -310,6 +324,11 @@ else
     for skill_dir in "$skill_root"/*; do
       [[ -d "$skill_dir" ]] || continue
       skill_name="$(basename "$skill_dir")"
+      # Skill project-owned : propriété du consommateur, hors contrat template.
+      if ! is_template_skill "$skill_name"; then
+        project_owned_skipped=$((project_owned_skipped + 1))
+        continue
+      fi
       peer_dir="$peer_root/$skill_name"
       if [[ "$require_skill_pairs" -eq 1 ]]; then
         [[ -d "$peer_dir" ]] && ok "$skill_root/$skill_name pairé" || ko "$skill_root/$skill_name sans pair $peer_root"
@@ -324,6 +343,9 @@ else
       done < <(grep -RohE '\.ai/workflows/[A-Za-z0-9_.-]+\.md' "$skill_dir" 2>/dev/null | sort -u || true)
     done
   done
+  if [[ "$project_owned_skipped" -gt 0 ]]; then
+    ok "$project_owned_skipped dossier(s) de skills project-owned ignoré(s) (hors namespace aic/aic-*)"
+  fi
 fi
 
 echo

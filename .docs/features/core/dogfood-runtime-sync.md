@@ -20,6 +20,7 @@ touches:
   - tests/unit/test-dogfood-drift-extra.sh
   - tests/unit/test-dogfood-update-preserves-frames.sh
   - tests/unit/test-template-jinja-raw-braces.sh
+  - tests/unit/test-check-skills-parity.sh
   - AGENTS.md
   - CLAUDE.md
   - .docs/FEATURE_TEMPLATE.md
@@ -137,3 +138,4 @@ Faire consommer au repo source `ai_context` la même couche runtime que celle g�
 - 2026-07-03 : ajout de `tests/unit/test-template-jinja-raw-braces.sh`, branché dans le smoke, pour bloquer toute expansion Bash `${#...}` non protégée par `{% raw %}` dans `template/**/*.jinja`.
 - 2026-07-03 : A12 — ajout de `dogfood-runtime-lib.sh` comme source unique des exclusions dogfood ; `check-dogfood-drift.sh` compare le profil dogfood minimal et rend aussi `fullstack-cursor` pour couvrir les templates conditionnels.
 - 2026-07-03 : fiche clôturée en `done` après validation du drift dogfood multi-profil, des gardes raw Jinja, des exclusions source-only et de la gate documentaire. Doc Impact Decision : C — fiche feature et worklog mis à jour.
+- 2026-08-06 (fix) : `check-skills-parity.sh` resserré au namespace réservé `aic`/`aic-*` — même correction de périmètre que `check-shims [5/5]` (voir `core/agents-md-shim-canonical`). Les skills project-owned d'un consommateur sont hors contrat de parité : comptés dans la sortie, jamais bloquants. `tests/unit/test-check-skills-parity.sh` entre dans `touches` (il n'était couvert par aucune fiche) ; ses fixtures passent de `foo`/`bar` à `aic-foo`/`aic-bar` et 3 cas project-owned sont ajoutés. Miroirs template régénérés depuis le runtime : seules les divergences Jinja connues subsistent (`{% raw %}` sur `${#warns[@]}`, `project_name`, boucle `scopes`).

@@ -243,6 +243,36 @@ passer le kill criterion :
 bash .ai/scripts/check-agent-native-context.sh --require-confirmed claude
 ```
 
+## Tes propres skills Claude (namespace projet)
+
+Le template livre 10 skills dans le namespace réservé **`aic` / `aic-*`**, en
+double : `.claude/skills/` (Claude) et `.agents/skills/` (Codex). `check-shims`
+et `check-skills-parity` exigent que ces deux arbres restent identiques **sur ce
+namespace uniquement**.
+
+Tes propres skills (tout dossier hors `aic`/`aic-*`) sont **hors contrat** :
+
+- aucun pair Codex n'est attendu — un skill Claude-only est normal ;
+- aucun `workflow.md` n'est exigé — c'est une convention interne au template ;
+- une divergence entre tes deux arbres, si tu en maintiens deux, ne concerne pas
+  le gate.
+
+Ils sont comptés dans la sortie (`N skill(s) project-owned … hors contrat`) pour
+rester visibles, jamais bloquants. Tu n'as donc **rien** à dupliquer, à exclure à
+la main, ni à désélectionner :
+
+```bash
+bash .ai/scripts/check-skills-parity.sh   # doit passer avec tes skills projet
+```
+
+> Depuis v1.0.1. En v1.0.0, ces deux checks parcouraient les arbres entiers : un
+> repo avec 50 skills projet sortait `❌ FAIL` et `doctor` concluait « corriger
+> les shims » sans que rien ne soit cassé. Si tu as contourné en dupliquant tes
+> skills vers `.agents/skills/`, tu peux retirer les copies.
+
+Corollaire : si tu nommes un skill projet `aic-<quelque-chose>`, il entre dans le
+namespace réservé et sera exigé en parité. Choisis un autre préfixe.
+
 ## Mettre à jour un workspace TFVC (sans `.git`)
 
 `copier update` **refuse** de tourner hors d'un sous-projet git-tracké — vérifié :

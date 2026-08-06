@@ -74,3 +74,10 @@
 ## 2026-07-24 — v1.0 / B6 : chemin d'upgrade TFVC documenté
 - `docs/upgrading.md` : nouvelle section « Mettre à jour un workspace TFVC (sans `.git`) ». Comble un trou réel du parcours de migration — `copier update` refuse un workspace non-git (vérifié), et aucun chemin alternatif n'était documenté pour le provider principal de l'organisation utilisatrice.
 - Chemin documenté prouvé end-to-end (copie Git jetable hors workspace → update → `tf checkout` → application) : `_commit` avance, code métier préservé, 0 `.rej`, aucun `.git` dans le workspace, checks verts. Détail dans `core/vcs-provider-abstraction`.
+
+## 2026-08-06 — couverture incidente
+- `docs/upgrading.md` : nouvelle section « Tes propres skills Claude (namespace projet) ». Explique qu'un consommateur n'a ni à dupliquer ses skills vers `.agents/skills`, ni à maintenir une liste d'exclusion, et qu'un skill nommé `aic-*` entre dans le namespace réservé. Chemin de migration pour les repos ayant contourné le FAIL de v1.0.0.
+
+## 2026-08-06 19:05 — auto
+- Fichiers modifiés :
+  - docs/upgrading.md

@@ -20,6 +20,7 @@ touches:
   - template/.ai/scripts/product-portfolio.sh.jinja
   - template/.ai/scripts/product-review.sh.jinja
   - tests/unit/test-product-reports-read-only.sh
+  - tests/unit/test-check-product-links-empty-fields.sh
   - .docs/FEATURE_TEMPLATE.md
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
 touches_shared:
@@ -149,3 +150,4 @@ initiative product -> refs externes -> features dev liées -> evidence -> décis
 - 2026-05-04 : le nouveau template feature documente explicitement les décisions produit/fonctionnelles dans `Décisions`, `Périmètre`, `Validation` et les modules conditionnels. `external_refs` et les initiatives product restent des liens de traceability, pas des duplications de specs externes.
 - 2026-05-14 : alignement effectif du contrat read-only. `check-product-links`, `product-status`, `product-portfolio` et `product-review` consomment un index temporaire ou un cache existant, mais ne reconstruisent plus `.ai/.feature-index.json` implicitement.
 - 2026-06-28 : **clôture (done)**. La boucle de traceability (frontmatter product, `external_refs`, rapports `product-status`/`product-portfolio`/`product-review` read-only, testés) est livrée et stable. Le durcissement du scoring portfolio et le WARN CI sur `next_decision_date` dépassée pour les initiatives `active` (bac B5 du frame 2026-06-28) repartent en feature dédiée si priorisés — pas en ré-ouverture de cette fiche.
+- 2026-08-06 (fix, remontée consommateur `ticketing.apps`) : `check-product-links.sh` produisait des faux positifs `active/<state> sans feature dev liée` sur toute initiative aux champs produit vides. Les trois boucles lisaient du TSV via `IFS=$'\t' read` ; le tab étant un blanc d'IFS, les champs vides consécutifs fusionnaient et `linked_count` sortait de sa variable (`[[ "" -eq 0 ]]` vrai). Séparateur passé à `\x1f` (non blanc) côté jq et côté `read`. Effet de second ordre corrigé : remplir un champ ne masque plus les warnings d'un autre champ vide, donc le compteur de warnings redevient interprétable. Test discriminant : `tests/unit/test-check-product-links-empty-fields.sh` (vérifié en échec sur v1.0.0). Les deux autres boucles étaient latentes (`select` jq garantissait des champs non vides) et sont durcies pareillement. Classement : PATCH — contrat public inchangé (`test-surface-manifest` passe sans mise à jour du snapshot).

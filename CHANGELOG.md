@@ -2,6 +2,23 @@
 
 ## [Unreleased]
 
+> Cible **v1.0.1 — PATCH**. Les deux entrées ci-dessous sont des corrections sans
+> effet sur le contrat public gelé en v1.0 : `tests/unit/test-surface-manifest.sh`
+> passe sans mise à jour du snapshot (0 écart sur les 8 dimensions), aucune clé
+> `.ai/config.yml` ni route CLI n'est ajoutée. La seconde relâche un gate trop
+> large : elle ne peut pas casser un consommateur qui passait déjà.
+
+### Corrigé
+
+- **Faux positifs de `check-product-links.sh` par fusion des champs vides** : les trois boucles lisaient les lignes jq en TSV via `IFS=$'\t' read`. Le tab étant un caractère blanc d'IFS, `read` fusionne les délimiteurs consécutifs et rogne ceux de tête et de queue : sur une initiative dont les champs produit sont vides, chaque valeur remontait d'un cran et `linked_count` finissait vide, donc `[[ "" -eq 0 ]]` était vrai et l'initiative était signalée `active/<state> sans feature dev liée via product.initiative` alors qu'elle avait des features rattachées (mesuré chez un consommateur : 9, 1 et 42 features liées, les trois signalées — signal indiscernable du bruit). Effet de second ordre corrigé du même coup : remplir un champ décalait le collapsing d'un cran et faisait disparaître les warnings d'un *autre* champ resté vide, donc une baisse du compteur de warnings ne prouvait rien. Le séparateur est désormais `\x1f` (US), qui n'est pas un blanc : chaque champ garde sa position, vide compris. Les deux autres boucles (`key/field/value` et `feature_key/initiative/initiative_status`) étaient latentes — leurs `select` jq garantissaient des champs non vides — et sont durcies pareillement.
+- **`check-skills-parity` et `check-shims [5/5]` rendaient `doctor` rouge sur un repo sain** : les deux checks parcouraient l'intégralité de `.claude/skills` et `.agents/skills` en exigeant de chaque dossier un pair sur l'autre arbre (plus un `workflow.md` pour `check-shims`). Un consommateur ayant ses propres skills Claude — 50 dossiers project-owned sans équivalent Codex voulu — sortait `❌ FAIL — 311 divergences` et `doctor` concluait « corriger les shims ». Le périmètre est resserré au **namespace réservé du template (`aic` / `aic-*`)**, qui est ce que le contrat `workflow/intentional-skills` a toujours visé (« skills publics intentionnels Claude/Codex »). Les dossiers project-owned sont comptés et affichés (`N skill(s) project-owned … hors contrat`), jamais bloquants ; la parité reste **strictement bloquante** sur `aic`/`aic-*`. Aucune liste d'exclusion à maintenir, aucune duplication de skills, aucun agent à désélectionner.
+
+### Tests
+
+- `test-check-product-links-empty-fields.sh` — initiative `active` aux champs produit vides **avec** feature dev liée : aucun warning « sans feature dev liée » ; les warnings des champs réellement vides restent émis ; une seconde initiative de forme identique **sans** lien reste signalée avec son `decision_state` réel. Vérifié discriminant (échoue sur le code v1.0.0).
+- `test-check-shims-project-owned-skills.sh` — `check-shims` passe sur un repo dont les skills projet ne sont ni pairés ni porteurs de `workflow.md`, et reste bloquant sur un `aic-*` non pairé ou sans `workflow.md`. Vérifié discriminant.
+- `test-check-skills-parity.sh` — fixtures renommées dans le namespace `aic-*` (le périmètre du check) et 3 cas ajoutés : project-owned non pairés → PASS avec décompte, project-owned divergents → PASS, `aic-*` non pairé → toujours FAIL (garde-fou anti-désarmement).
+
 ## [1.0.0] — 2026-07-28
 
 > **Gel du contrat public.** Voir `MIGRATION.md` § « v0.14 → v1.0 » pour la
