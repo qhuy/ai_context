@@ -2,11 +2,17 @@
 
 ## [Unreleased]
 
-> Cible **v1.0.1 — PATCH**. Les deux entrées ci-dessous sont des corrections sans
-> effet sur le contrat public gelé en v1.0 : `tests/unit/test-surface-manifest.sh`
-> passe sans mise à jour du snapshot (0 écart sur les 8 dimensions), aucune clé
-> `.ai/config.yml` ni route CLI n'est ajoutée. La seconde relâche un gate trop
-> large : elle ne peut pas casser un consommateur qui passait déjà.
+## [1.0.1] — 2026-08-06
+
+> **PATCH.** Aucune entrée ci-dessous ne touche le contrat public gelé en v1.0 :
+> `tests/unit/test-surface-manifest.sh` passe sans mise à jour du snapshot (0 écart
+> sur les 8 dimensions), aucune clé `.ai/config.yml` ni route CLI n'est ajoutée. Le
+> resserrement de périmètre de la parité skills est un **relâchement d'enforcement**
+> — il ne peut pas casser un consommateur qui passait déjà.
+>
+> Rien à faire pour mettre à jour : `copier update`. Si tu avais contourné le FAIL
+> de la parité skills en dupliquant tes skills projet vers `.agents/skills/`, tu peux
+> retirer les copies — voir `docs/upgrading.md` § « Tes propres skills Claude ».
 
 ### Corrigé
 
@@ -18,6 +24,7 @@
 - `test-check-product-links-empty-fields.sh` — initiative `active` aux champs produit vides **avec** feature dev liée : aucun warning « sans feature dev liée » ; les warnings des champs réellement vides restent émis ; une seconde initiative de forme identique **sans** lien reste signalée avec son `decision_state` réel. Vérifié discriminant (échoue sur le code v1.0.0).
 - `test-check-shims-project-owned-skills.sh` — `check-shims` passe sur un repo dont les skills projet ne sont ni pairés ni porteurs de `workflow.md`, et reste bloquant sur un `aic-*` non pairé ou sans `workflow.md`. Vérifié discriminant.
 - `test-check-skills-parity.sh` — fixtures renommées dans le namespace `aic-*` (le périmètre du check) et 3 cas ajoutés : project-owned non pairés → PASS avec décompte, project-owned divergents → PASS, `aic-*` non pairé → toujours FAIL (garde-fou anti-désarmement).
+- `test-okf-type.sh` recentré sur le contrat v1.0. Il attendait encore `exit 0` sur une fiche sans `type` — la moitié v0.14 du rollout `warn → fail` — et échouait donc depuis le gel. Verdict : c'était le test qui était périmé, pas le gate (desserrer `check-features` aurait retiré un élément gelé, donc MAJOR). Il garde ce que `test-check-features-type-required.sh` ne couvre pas : absence de court-circuit sur deux fiches à défauts distincts dans une même passe, effectivité bout-en-bout du hint de backfill, idempotence et garde-fou enum de `migrate okf-type`. Reliquats de la même bascule corrigés : commentaire de `check-features.sh` (+ miroir) qui annonçait encore « Phase 0 : optionnel + warn » au-dessus du `✗` bloquant (commentaire seul, aucun changement de comportement) et déclaration mesh manquante de `test-check-features-type-required.sh`. **La suite unitaire repasse à 55/55.**
 
 ## [1.0.0] — 2026-07-28
 

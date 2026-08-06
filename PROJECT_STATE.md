@@ -3,7 +3,7 @@
 **But** : template `copier` qui industrialise le setup AI context (multi-agent : Claude / Codex / Cursor / Copilot) d'un nouveau projet.
 **Remote** : [github.com/qhuy/ai_context](https://github.com/qhuy/ai_context) (public)
 **Local** : chemin de développement local, non versionné.
-**Dernière version publiée** : v1.0.0 — « Gel du contrat public : surface CLI classée, schéma durci, manifeste de surface gaté en CI » (voir [CHANGELOG.md](CHANGELOG.md))
+**Dernière version publiée** : v1.0.1 — « Faux positifs de `check-product-links` (fusion des champs vides en TSV) et parité skills resserrée au namespace `aic`/`aic-*` » (voir [CHANGELOG.md](CHANGELOG.md))
 
 > Ce fichier est un **point d'entrée rapide** — pas l'historique détaillé (→ [CHANGELOG.md](CHANGELOG.md)), pas l'architecture du code (→ le code et [README.md](README.md)), pas la migration (→ [MIGRATION.md](MIGRATION.md)). Pour les audits historiques clos, [docs/archive/](docs/archive/).
 

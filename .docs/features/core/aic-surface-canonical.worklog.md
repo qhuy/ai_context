@@ -286,3 +286,6 @@
 ## 2026-07-28 — release v1.0.0 : PROJECT_STATE réécrit sur le contrat gelé
 - `PROJECT_STATE.md` : section « État actuel » passée de v0.14.0 à v1.0.0, réorganisée autour du contrat public gelé (8 éléments, surface CLI classée en 4 niveaux, `type` requis, TFVC couvert e2e, `gemini` déprécié, clés `context.*` réellement lues, release outillée) et pointant vers CONTRIBUTING § Moratoire de surface pour la règle SemVer. Version publiée mise à jour.
 - Mention TFVC « best-effort, non testé end-to-end » retirée de l'état projet : elle était devenue fausse après le chantier B4.
+
+## 2026-08-06 — release v1.0.1 : ligne de version
+- `PROJECT_STATE.md` : « Dernière version publiée » passée à v1.0.1. Aucun changement de la surface `aic` elle-même — le contenu de la release est un fix de `check-product-links` et un resserrement du périmètre de la parité skills au namespace réservé `aic`/`aic-*`, dont cette fiche reste propriétaire côté nommage.
