@@ -4,7 +4,7 @@
 
 ## Actions
 
-1. Lire `.ai/index.md`, `.ai/quality/QUALITY_GATE.md` et, si un verdict détaillé est nécessaire, `.ai/workflows/quality-gate.md`.
+1. Lire `.ai/index.md`, `.ai/quality/QUALITY_GATE.md`, `.ai/agent/response-style.md` (la restitution du verdict suit son contrat) et, si un verdict détaillé est nécessaire, `.ai/workflows/quality-gate.md`.
 2. Exécuter :
    ```bash
    bash .ai/scripts/check-feature-freshness.sh --staged --strict

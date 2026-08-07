@@ -6,8 +6,8 @@ scope_primary: "workflow"
 created_at: "2026-08-07"
 updated_at: "2026-08-07"
 active_item: "R1"
-active_question: "GO sur le plan d'exécution chantier A (2 lots : workflow puis core, HANDOFF au milieu) ?"
-next_hint: "Plan produit le 2026-08-07 (aic-dev-plan, voir conversation + section Design). Si GO : étape 0 (isoler worklog dirty) puis lot 1 scope workflow (fiche agent-behavior contrat-first → response-style condensé → output style → skills ship/review → contrat parity R5). Ensuite HANDOFF core (AGENTS.md, reminder, settings outputStyle, copier.yml défaut R5, smoke-test 28d). R3 → aic-diagnose après."
+active_question: "Confirmer le HANDOFF workflow → core pour le lot 2 (AGENTS.md, reminder, settings outputStyle, copier.yml défaut R5 + contrat parity, smoke-test 28d) ?"
+next_hint: "Lot 1 (scope workflow) livré le 2026-08-07 : fiche agent-behavior révisée, condensé canonique balisé dans response-style.md (+ précision technique + exemple), output style .claude/output-styles/aic-restitution.md créé (inactif tant que settings ne le référence pas), aic-ship/aic-review chargent le contrat à la clôture (8 surfaces). Étape 5 (texte contrat codex-hooks-parity) décalée au lot 2 pour rester atomique avec le flip copier.yml. Reste : lot 2 core, preuve avant/après, puis R3 → aic-diagnose."
 ---
 
 # Pilot 2026-08-07-retour-ux-restitution — Réactiver le contrat de restitution

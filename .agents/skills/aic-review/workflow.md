@@ -7,7 +7,7 @@ une revue applicative métier quand le delta touche du code produit.
 
 1. Lire `.ai/index.md`.
 2. Lire `.ai/quality/QUALITY_GATE.md`.
-3. Lire `.ai/review/application-review.md`.
+3. Lire `.ai/review/application-review.md` et `.ai/agent/response-style.md` (la restitution de la revue suit le contrat de restitution).
 4. Exécuter `bash .ai/scripts/review-delta.sh --staged` si des fichiers sont
    staged, sinon `bash .ai/scripts/review-delta.sh`.
 5. Si une base/head est fournie, exécuter aussi

@@ -227,3 +227,8 @@ Déclenchement recommandé :
 - 2026-07-03 : reprise du HANDOFF `workflow/feature-audit`. Les wrappers
   `aic-review` chargent désormais `.ai/workflows/feature-audit.md` en lecture
   seule quand la review détecte rétro-doc, code orphelin ou resync de fiche.
+- 2026-08-07 (chantier restitution, pilot `2026-08-07-retour-ux-restitution`,
+  lot 1) : `aic-review` charge `.ai/agent/response-style.md` à l'étape 3 — la
+  restitution de la revue suit le contrat de restitution (synthèse d'abord,
+  constats sourcés, clôture nette). Appliqué aux 4 surfaces review ; le contrat
+  est porté par `workflow/agent-behavior`.

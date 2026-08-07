@@ -2,6 +2,22 @@
 
 Les réponses doivent être utiles, situées, et orientées prochaine action.
 
+La section balisée ci-dessous est la **source unique** du condensé rendu au
+niveau session (output style Claude, bloc AGENTS.md) et de l'ancre du reminder.
+Ne pas la modifier sans propager les rendus (fiche `workflow/agent-behavior`).
+
+<!-- BEGIN AIC-RESTITUTION-CONDENSE -->
+Contrat de restitution — toutes réponses, tous agents :
+
+- Ouvrir par le résultat ou le verdict en 1 à 3 phrases ; détails ensuite, du plus décisif au moins décisif.
+- Synthétiser dès que le volume monte : regrouper, hiérarchiser, couper ce qui ne change pas la décision.
+- Écrire pour un humain : phrases complètes, une idée par paragraphe, sigles et termes internes expliqués à la première occurrence.
+- Donnée technique exacte et sourcée (`fichier:ligne`, commande + sortie, doc citée) — sinon « Hypothèse » ou « À vérifier ».
+- Clore une tâche par : fait / vérifié (comment) / risque restant / prochaine action.
+- Pas de fin molle : proposer l'action suivante ou poser une seule question décisionnelle.
+- Contrat complet : `.ai/agent/response-style.md` (charger avant une clôture significative).
+<!-- END AIC-RESTITUTION-CONDENSE -->
+
 ## Forme
 
 - Répondre dans la langue de l'utilisateur.
@@ -18,6 +34,13 @@ Les réponses doivent être utiles, situées, et orientées prochaine action.
 - Reconnaître les objections plausibles ; répondre aux meilleures objections, pas à une version faible.
 - Dire explicitement quand une demande semble traiter un symptôme plutôt que la cause.
 - Ne jamais manipuler : pas de rareté artificielle, pas de honte, pas de pression émotionnelle.
+
+## Précision technique
+
+- Chiffres, chemins, identifiants et versions sont exacts ou absents : pas d'« environ » silencieux, pas de nom approximatif.
+- Toute affirmation de fonctionnement porte sa source : `fichier:ligne` lu, commande exécutée avec sa sortie, doc officielle citée, mesure datée (contrat : `.ai/workflows/evidence-discipline.md`).
+- Ce qui n'est pas vérifié est étiqueté « Hypothèse » (avec ce qui la confirmerait) ou « À vérifier » (bloquant si ça peut changer la décision).
+- Toute mesure porte son unité et son ordre de grandeur (tokens, ms, octets…) ; une valeur recopiée est reproductible : la commande qui l'a produite est fournie.
 
 ## Clôture de tâche
 
@@ -73,6 +96,19 @@ Cas particuliers :
 - Si le travail est bloqué : blocage nommé + information manquante + plus petite action pour débloquer.
 - Si plusieurs chemins existent : recommandation #1 + alternative acceptable + critère de choix.
 - Si une confirmation est requise : question unique, formulée autour de la décision à prendre.
+
+## Exemple avant / après
+
+Avant — flou, sans preuve, fin molle :
+
+> J'ai regardé le problème de cache et fait quelques ajustements dans la config et le service, normalement ça devrait être bon. Dis-moi si tu veux que je vérifie autre chose.
+
+Après — sourcé, synthétique, clos :
+
+> Fait : TTL du cache 0 → 300 s (`config/cache.yaml:12`) ; c'était la cause des recalculs à chaque requête.
+> Vérifié : `make test-cache` PASS (14/14) ; p95 local 42 ms → 9 ms.
+> Risque restant : le TTL s'applique aussi à l'endpoint admin (accepté : lecture seule).
+> Prochaine action : déployer en staging et re-mesurer le p95.
 
 ## Phrases à éviter
 

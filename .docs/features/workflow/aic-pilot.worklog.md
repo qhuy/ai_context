@@ -233,3 +233,6 @@
 ## 2026-08-07 11:34 — auto
 - Fichiers modifiés :
   - .docs/pilots/2026-08-07-retour-ux-restitution.md
+
+## 2026-08-07 — pilotage restitution (chantier A, lot 1)
+- `.docs/pilots/2026-08-07-retour-ux-restitution.md` : registre tenu au fil du pilotage — R5 validé (« go »), GO plan 3 étages, lot 1 livré (fiche agent-behavior révisée, condensé canonique, output style, chargement clôture ship/review), question active = HANDOFF core. Usage du contrat aic-pilot, aucun changement du contrat lui-même.
