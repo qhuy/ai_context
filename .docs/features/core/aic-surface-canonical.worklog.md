@@ -289,3 +289,7 @@
 
 ## 2026-08-06 — release v1.0.1 : ligne de version
 - `PROJECT_STATE.md` : « Dernière version publiée » passée à v1.0.1. Aucun changement de la surface `aic` elle-même — le contenu de la release est un fix de `check-product-links` et un resserrement du périmètre de la parité skills au namespace réservé `aic`/`aic-*`, dont cette fiche reste propriétaire côté nommage.
+
+## 2026-08-06 22:27 — auto
+- Fichiers modifiés :
+  - PROJECT_STATE.md

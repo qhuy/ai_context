@@ -217,3 +217,19 @@
 - `chore(release): v1.0.0` (`d00aed5`) + tag poussé. Sanity RELEASE.md §7 exécuté **depuis le tag publié sur GitHub** (pas depuis le working tree) : rendu OK, `check-shims` PASS, `doctor` PASS sans avertissement, surfaces v1.0 livrées au consommateur, et outillage source-only vérifié ABSENT du rendu (`aic-release.sh`, `check-release-coherence.sh`, `GEMINI.md`) — la frontière source-only/templaté tient en conditions réelles.
 - Bilan du pilotage : 18/18 items traités depuis l'analyse fonctionnelle du 2026-07-23. 4 reviews Codex (dont 3 bloquantes) intégrées, chacune re-vérifiée dans le dépôt avant application ; 2 rounds de convergence autonome pour le texte du gel.
 - Registre passé `done`. Résiduels rendus à leurs fiches propriétaires plutôt que gardés ici : validation TFVC réelle (`core/vcs-provider-abstraction`), repo tiers pour le benchmark (`product/agent-efficacy-benchmark`, décision au 2026-10-01), retrait de `gemini` et des routes `deprecated` en v2.
+
+## 2026-08-07 10:59 — auto
+- Fichiers modifiés :
+  - .docs/pilots/2026-08-07-retour-ux-restitution.md
+
+## 2026-08-07 11:03 — auto
+- Fichiers modifiés :
+  - .docs/pilots/2026-08-07-retour-ux-restitution.md
+
+## 2026-08-07 11:11 — auto
+- Fichiers modifiés :
+  - .docs/pilots/2026-08-07-retour-ux-restitution.md
+
+## 2026-08-07 11:34 — auto
+- Fichiers modifiés :
+  - .docs/pilots/2026-08-07-retour-ux-restitution.md
