@@ -5,8 +5,8 @@ source: "Retour UX utilisateur multi-projets (session 2026-08-07)"
 scope_primary: "workflow"
 created_at: "2026-08-07"
 updated_at: "2026-08-07"
-active_item: "R1"
-active_question: "Preuve avant/après (même prompt, Claude + Codex, scaffold frais) à consigner ici pour clore R1/R4"
+active_item: "R3"
+active_question: "Lancer le diagnostic R3 (aic-diagnose) ? Preuve avant/après R1/R4 à consigner en parallèle (côté Claude : ancre observée live en session le 2026-08-07, commits a154772/408193a)"
 next_hint: "Lots 1 (a154772) et 2 livrés le 2026-08-07 : condensé canonique (response-style source unique → output style Claude + AGENTS.md), ancre reminder fr/en, aic-ship/aic-review chargent le contrat, enable_codex_hooks default:true (smoke 28d inversé), MAX_LINES check-shims 15→30, docs alignées. Reste : preuve avant/après consignée ici, activation sur les projets utilisateur (copier update, répondre true à enable_codex_hooks), puis R3 → aic-diagnose (piste : projets consommateurs Codex sans reminder avant ce chantier)."
 ---
 
@@ -42,11 +42,11 @@ persistantes, et divergence de style entre Claude et Codex.
 | ID | Sujet | Statut | Scope probable | Route | Preuve attendue |
 |---|---|---|---|---|---|
 | R0 | Points forts : mesh, cadrage, qualité livrée | done | — | — | acté (retour utilisateur) |
-| R1 | Réponses confuses, sans synthèse, parfois incompréhensibles | validated | workflow | fix (chantier A : réactiver le contrat) | contrat chargé en flux normal + avant/après sur un même prompt |
-| R2 | Données techniques imprécises (forme et fond) | validated | workflow | fusionné chantier A : volet « précision technique » du contrat | règle explicite (fichier:ligne, valeurs exactes, sorties datées) |
-| R3 | Suppositions persistantes malgré la règle injectée | triage | workflow/quality | diagnose | causes classées avec evidence par agent et par projet |
-| R4 | Claude et Codex ne formulent pas pareil | validated | workflow | fusionné chantier A : injection agent-agnostique | sorties comparables sur un même prompt dans les deux outils |
-| R5 | Défaut `enable_codex_hooks=false` : Codex tourne sans reminder par tour ni gate Stop | validated | workflow | décision actée (intégrée chantier A) | copier.yml + contrat `codex-hooks-parity` mis à jour |
+| R1 | Réponses confuses, sans synthèse, parfois incompréhensibles | review | workflow | fix livré (`a154772` + `408193a`) | ancre observée live en session Claude le 2026-08-07 ; avant/après 2 outils restant |
+| R2 | Données techniques imprécises (forme et fond) | done | workflow | livré : volet précision technique du contrat (`a154772`) | section « Précision technique » + exemple avant/après dans response-style.md |
+| R3 | Suppositions persistantes malgré la règle injectée | triage | workflow/quality | diagnose (prochain item actif) | causes classées avec evidence par agent et par projet |
+| R4 | Claude et Codex ne formulent pas pareil | review | workflow | fix livré : même condensé aux 3 étages des deux côtés | avant/après même prompt dans les deux outils, à consigner ici |
+| R5 | Défaut `enable_codex_hooks=false` : Codex tourne sans reminder par tour ni gate Stop | done | workflow | livré (`408193a`) : default true, opt-out conservé | smoke [28d/28] inversé PASS ; manifeste de surface MAJ, bump MINOR acté |
 
 ## Design proposé (chantier A) — en validation
 

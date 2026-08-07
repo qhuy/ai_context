@@ -239,3 +239,6 @@
 
 ## 2026-08-07 — pilotage restitution (chantier A, lot 2)
 - `.docs/pilots/2026-08-07-retour-ux-restitution.md` : HANDOFF core confirmé et lot 2 livré (AGENTS.md condensé, ancre reminder, outputStyle settings, enable_codex_hooks default:true, smoke 28d inversé, MAX_LINES 15→30). Question active = preuve avant/après à consigner. Toujours de l'usage du contrat aic-pilot, pas un changement de contrat.
+
+## 2026-08-07 — pilotage restitution (clôture chantier A)
+- `.docs/pilots/2026-08-07-retour-ux-restitution.md` : statuts actés après les commits `a154772` (lot 1) et `408193a` (lot 2) — R2/R5 done, R1/R4 review (preuve avant/après 2 outils restante ; ancre observée live côté Claude), item actif = R3 (diagnose). Usage du contrat, pas de changement de contrat. Friction notée : l'auto-worklog ne trace pas `.docs/pilots/**`, chaque édition de registre exige une entrée manuelle pour passer le gate freshness.
