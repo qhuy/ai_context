@@ -39,3 +39,8 @@ Source session : automation veille-techno
 - Décision : statut `done`; le contrat reste on-demand et ne gonfle pas Pack A.
 - Validation : `bash .ai/scripts/check-feature-docs.sh --strict workflow/subagent-contract`; `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/check-features.sh --no-write`; `bash .ai/scripts/measure-context-size.sh`; `bash tests/smoke-test.sh`.
 - Next : aucune action immédiate.
+
+## 2026-08-07 14:27 — auto
+- Fichiers modifiés :
+  - .ai/rules/workflow.md
+  - template/.ai/rules/workflow.md.jinja

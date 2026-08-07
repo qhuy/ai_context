@@ -23,3 +23,8 @@
 - Propriété directe du nudge et de son test conservée ; la feature d'index progressifs devient consommatrice partagée.
 - Le nudge refuse les index/logs/worklogs et compare des chemins physiques cohérents sur macOS.
 - Validation : `test-fiche-consolidation-nudge.sh` et scénario index dédié PASS.
+
+## 2026-08-07 14:27 — auto
+- Fichiers modifiés :
+  - .claude/settings.json
+  - template/.claude/settings.json.jinja

@@ -2253,48 +2253,45 @@ EOF
   echo "  ✓ copier update v0.11.0 → HEAD : fichiers project-owned préservés + migration okf-indexes opt-in + migration native v0.14.0 jouée"
 
 echo
-echo "[28d/28] hooks Codex natifs : .codex/hooks.json opt-in via enable_codex_hooks"
-# Défaut (enable_codex_hooks=false) : pas de .codex/ même si codex est sélectionné
-if [[ -d "$OUT/.codex" ]]; then
-  echo "  ✗ .codex/ généré par défaut alors que enable_codex_hooks=false"
+echo "[28d/28] hooks Codex natifs : .codex/hooks.json généré par défaut, opt-out via enable_codex_hooks=false"
+# Défaut (codex sélectionné, enable_codex_hooks=true par défaut depuis 2026-08-07) :
+# hooks générés, valides et conformes au contrat sur le scaffold par défaut
+if [[ ! -f "$OUT/.codex/hooks.json" ]]; then
+  echo "  ✗ .codex/hooks.json absent du scaffold par défaut (codex sélectionné ⇒ hooks générés)"
   exit 1
 fi
-
-# codex + enable_codex_hooks=true : hooks.json généré, valide et conforme au contrat
-combo_codexhooks="/tmp/ai-context-smoke-codexhooks-$$"
-copier copy --defaults --trust \
-  --data project_name=smoke-codexhooks \
-  --data enable_codex_hooks=true \
-  "$SRC" "$combo_codexhooks" >/dev/null
-if [[ ! -f "$combo_codexhooks/.codex/hooks.json" ]]; then
-  echo "  ✗ .codex/hooks.json absent (codex + enable_codex_hooks=true)"
-  rm -rf "$combo_codexhooks"
-  exit 1
-fi
-if ! jq empty "$combo_codexhooks/.codex/hooks.json" >/dev/null 2>&1; then
+if ! jq empty "$OUT/.codex/hooks.json" >/dev/null 2>&1; then
   echo "  ✗ .codex/hooks.json n'est pas un JSON valide"
-  rm -rf "$combo_codexhooks"
   exit 1
 fi
 for ev in UserPromptSubmit Stop; do
   if ! jq -e --arg ev "$ev" '.hooks[$ev] | type == "array" and length > 0' \
-      "$combo_codexhooks/.codex/hooks.json" >/dev/null 2>&1; then
+      "$OUT/.codex/hooks.json" >/dev/null 2>&1; then
     echo "  ✗ .codex/hooks.json : événement $ev absent ou vide"
-    rm -rf "$combo_codexhooks"
     exit 1
   fi
 done
 # Chaque hook command doit porter un timeout explicite (contrat codex-hooks-parity)
 if jq -e '[.. | objects | select(.type? == "command") | select((.timeout? // 0) <= 0)] | length > 0' \
-    "$combo_codexhooks/.codex/hooks.json" >/dev/null 2>&1; then
+    "$OUT/.codex/hooks.json" >/dev/null 2>&1; then
   echo "  ✗ .codex/hooks.json : hook command sans timeout explicite"
-  rm -rf "$combo_codexhooks"
   exit 1
 fi
-# Validation officielle du contrat sur le scaffold généré
-if ! ( cd "$combo_codexhooks" && bash .ai/scripts/check-agent-config.sh ) >/dev/null 2>&1; then
-  echo "  ✗ check-agent-config fail sur le scaffold avec hooks Codex"
-  ( cd "$combo_codexhooks" && bash .ai/scripts/check-agent-config.sh ) || true
+# Validation officielle du contrat sur le scaffold par défaut
+if ! ( cd "$OUT" && bash .ai/scripts/check-agent-config.sh ) >/dev/null 2>&1; then
+  echo "  ✗ check-agent-config fail sur le scaffold par défaut avec hooks Codex"
+  ( cd "$OUT" && bash .ai/scripts/check-agent-config.sh ) || true
+  exit 1
+fi
+
+# Opt-out explicite (enable_codex_hooks=false) : pas de .codex/
+combo_codexhooks="/tmp/ai-context-smoke-codexhooks-$$"
+copier copy --defaults --trust \
+  --data project_name=smoke-codexhooks \
+  --data enable_codex_hooks=false \
+  "$SRC" "$combo_codexhooks" >/dev/null
+if [[ -d "$combo_codexhooks/.codex" ]]; then
+  echo "  ✗ .codex/ généré malgré enable_codex_hooks=false (opt-out cassé)"
   rm -rf "$combo_codexhooks"
   exit 1
 fi

@@ -18,7 +18,7 @@ Cette page distingue deux familles :
 | `commit_language` | choice | `fr` | Langue des commits imposée par les règles |
 | `docs_root` | str | `.docs` | Dossier racine de la doc métier (`.docs` ou `docs`) |
 | `agents` | multiselect | `[claude, codex]` | Shims / hooks générés |
-| `enable_codex_hooks` | bool | `false` | Si `codex` sélectionné : génère `.codex/hooks.json` (hooks Codex natifs opt-in — reminder par tour + gate de fraîcheur fin de turn) |
+| `enable_codex_hooks` | bool | `true` | Si `codex` sélectionné : génère `.codex/hooks.json` (hooks Codex natifs — reminder par tour + gate de fraîcheur fin de turn). Par défaut depuis 2026-08-07 (parité restitution Claude/Codex) ; `false` pour l'exclure |
 | `enable_copilot_shim` | bool | `false` | Si `copilot` sélectionné : génère `.github/copilot-instructions.md` en plus d'`AGENTS.md` (compat Copilot Chat/review IDE) |
 | `enable_ci_guard` | bool | `true` | Ajoute `.github/workflows/ai-context-check.yml` |
 

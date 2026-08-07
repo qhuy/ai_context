@@ -146,7 +146,7 @@ mon-projet/
 ├── .agents/skills/aic-*          # skills Codex locaux si codex est sélectionné
 ├── .claude/skills/aic-*          # skills Claude si claude est sélectionné
 ├── .claude/settings.json         # hooks Claude Code
-├── .codex/hooks.json             # hooks Codex natifs si enable_codex_hooks=true
+├── .codex/hooks.json             # hooks Codex natifs (défaut si codex ; opt-out enable_codex_hooks=false)
 ├── .githooks/                    # commit-msg, pre-commit, post-checkout
 ├── .github/workflows/            # CI optionnelle
 └── .docs/
@@ -189,19 +189,20 @@ Tous les agents ne reçoivent pas le même niveau d'automatisation.
 | Entrée racine (AGENTS.md ou shim dédié) | `CLAUDE.md` (@AGENTS.md) | `AGENTS.md` natif | `AGENTS.md` natif | `AGENTS.md` natif (coding agent) ; shim opt-in pour Chat/review |
 | Git hooks et checks au commit | Oui | Oui | Oui | Oui |
 | Skills `aic-*` locaux | Oui | Oui, si `codex` sélectionné | Non | Non |
-| Injection automatique au début du tour | Oui | Opt-in (`enable_codex_hooks`) | Non | Non |
+| Injection automatique au début du tour | Oui | Oui par défaut (opt-out `enable_codex_hooks=false`) | Non | Non |
 | Injection feature avant édition | Oui | Manuel via `aic.sh document-feature` | Partiel via `.mdc` scopés (back/front) | Non |
-| Gate de fraîcheur doc en fin de tour | Oui | Opt-in (`enable_codex_hooks`) | Non | Non |
+| Gate de fraîcheur doc en fin de tour | Oui | Oui par défaut (opt-out `enable_codex_hooks=false`) | Non | Non |
 | Auto-worklog en fin de tour | Oui | Non | Non | Non |
 | Auto-progression `spec -> implement` au commit | Oui | Oui | Oui | Oui |
 
 Conclusion pragmatique :
 
 - Claude Code a l'expérience la plus automatisée.
-- Codex s'en rapproche avec `enable_codex_hooks=true` : reminder injecté à chaque
-  tour et gate de fraîcheur en fin de turn via `.codex/hooks.json` (hooks natifs,
-  trust de la couche projet demandé au premier lancement). L'auto-worklog reste
-  Claude-only. Sans hooks : skills locaux, `.ai/index.md` et `aic.sh`.
+- Codex s'en rapproche par défaut : reminder injecté à chaque tour et gate de
+  fraîcheur en fin de turn via `.codex/hooks.json`, généré dès que `codex` est
+  sélectionné (opt-out `enable_codex_hooks=false` ; trust de la couche projet
+  demandé au premier lancement). L'auto-worklog reste Claude-only. Sans hooks :
+  skills locaux, `.ai/index.md` et `aic.sh`.
 - Cursor et Copilot lisent `AGENTS.md` nativement : leurs shims dédiés ne sont
   plus générés par défaut (registre `.ai/native-context-support.tsv`) ; Cursor
   garde les `.mdc` scopés par globs, Copilot un shim compat opt-in
@@ -213,7 +214,7 @@ Conclusion pragmatique :
 Les capacités avancées restent opt-in et gouvernées par `.ai/rules/workflow.md` :
 
 - Subagents : déléguer seulement avec rôle clair (`explorer` lecture seule, `worker` avec write-set explicite), sortie structurée et aucun cross-scope sans HANDOFF.
-- Hooks Codex : pilote déterministe opt-in — `.codex/hooks.json` généré si `enable_codex_hooks=true` (reminder par tour + gate de fraîcheur, contrat `.ai/workflows/codex-hooks-parity.md`) ; les hooks Git et checks `.ai/scripts/*` restent la garantie stable.
+- Hooks Codex : pilote déterministe généré par défaut quand `codex` est sélectionné (opt-out `enable_codex_hooks=false` ; reminder par tour + gate de fraîcheur, contrat `.ai/workflows/codex-hooks-parity.md`) ; les hooks Git et checks `.ai/scripts/*` restent la garantie stable.
 - MCP : aucun serveur par défaut ; allowlist explicite, pas de secrets, source des données annoncée et fallback sans MCP.
 
 ## Feature mesh
@@ -356,9 +357,10 @@ projet.
 
 **Est-ce que ça marche sans Claude ?**
 
-Oui. Codex peut recevoir le reminder par tour et le gate de fraîcheur en fin de
-turn via `enable_codex_hooks=true` (hooks natifs `.codex/hooks.json`, trust de la
-couche projet au premier lancement). Les autres agents ont les shims, règles,
+Oui. Codex reçoit par défaut le reminder par tour et le gate de fraîcheur en fin
+de turn (hooks natifs `.codex/hooks.json` générés dès que `codex` est sélectionné,
+opt-out `enable_codex_hooks=false`, trust de la couche projet au premier
+lancement). Les autres agents ont les shims, règles,
 git hooks, checks et scripts `aic.sh`. Claude ajoute l'injection feature avant
 édition et l'auto-worklog.
 

@@ -23,3 +23,8 @@
 - Décision : statut `done`; teardown manuel conservé, automatisation hors périmètre.
 - Validation : `bash .ai/scripts/check-dogfood-drift.sh`; `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/check-feature-docs.sh --strict workflow/worktree-isolation`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
 - Next : aucune action immédiate.
+
+## 2026-08-07 14:27 — auto
+- Fichiers modifiés :
+  - .ai/rules/workflow.md
+  - template/.ai/rules/workflow.md.jinja

@@ -1,12 +1,12 @@
 # Procédure interne — codex-hooks-parity
 
-**Goal** : cadrer les hooks Codex comme garde-fous opt-in, déterministes et non LLM, sans remplacer les hooks Git ni les checks du mesh.
+**Goal** : cadrer les hooks Codex comme garde-fous générés par défaut (opt-out), déterministes et non LLM, sans remplacer les hooks Git ni les checks du mesh.
 
 **Role** : Contrat de pilote. À utiliser avant d'ajouter ou modifier une configuration `.codex/`.
 
 ## Principes
 
-- Les hooks Codex sont optionnels.
+- Les hooks Codex sont générés par défaut dès que `codex` est sélectionné (révision restitution 2026-08-07) ; opt-out par `enable_codex_hooks=false`. Le consentement réel est le trust prompt Codex sur la couche projet au premier lancement.
 - Les hooks Git restent la convergence universelle entre Claude, Codex, autres agents et humains.
 - Un hook Codex doit appeler une commande versionnée, testable et non interactive.
 - Aucun hook Codex ne doit injecter du contexte lourd ou non borné par défaut.
@@ -28,14 +28,14 @@
 - Mutation hors repo.
 - Injection de contexte par édition (équivalent `features-for-path.sh` en `PreToolUse`) : la sortie documentée de PreToolUse côté Codex ne prévoit aucun canal `additionalContext`, et l'outil d'édition Codex est `apply_patch`. Seule l'injection bornée du reminder par tour est autorisée.
 
-## Config générée (`.codex/hooks.json`, opt-in)
+## Config générée (`.codex/hooks.json`, par défaut — opt-out)
 
-Depuis 2026-07-06, le template génère `.codex/hooks.json` si `codex` est sélectionné ET `enable_codex_hooks=true` (défaut : `false` — jamais par défaut) :
+Le template génère `.codex/hooks.json` si `codex` est sélectionné et `enable_codex_hooks=true` — **défaut `true` depuis le 2026-08-07** (chantier restitution ; opt-in défaut `false` du 2026-07-06 au 2026-08-07). Motif de la révision : l'opt-in non découvert privait Codex du reminder par tour (règle « aucune supposition », ancre restitution) et du gate Stop — parité silencieusement cassée chez les consommateurs réels, symétrie rompue avec `.claude/settings.json` généré, lui, dès que `claude` est sélectionné :
 
 - `UserPromptSubmit` → `bash .ai/scripts/pre-turn-reminder.sh --format=text`, timeout 5 s. Même contenu borné que le hook Claude, en texte brut.
 - `Stop` → `bash .ai/scripts/stop-doc-gate.sh`, timeout 20 s. Même gate que Claude (échappatoire `AIC_DOC_GATE=off` et anti-boucle `stop_hook_active` inclus).
 
-Trust model (doc officielle) : Codex ne charge les hooks projet que si la couche `.codex/` du repo est trustée — chaque utilisateur approuve au premier lancement. Fallback si Codex n'exécute pas les hooks : `commit-msg` (`check-feature-freshness.sh --staged --strict`) + CI, inchangés.
+Trust model (doc officielle) : Codex ne charge les hooks projet que si la couche `.codex/` du repo est trustée — chaque utilisateur approuve au premier lancement ; c'est là que se joue le consentement, pas dans la question copier. Fallback si Codex n'exécute pas les hooks : `commit-msg` (`check-feature-freshness.sh --staged --strict`) + CI, inchangés.
 
 Toute config `.codex/` (générée ou locale) doit :
 
@@ -46,11 +46,11 @@ Toute config `.codex/` (générée ou locale) doit :
 
 ## Parité fraîcheur fin de turn (workflow/stop-turn-doc-gate)
 
-Le gate Stop `stop-doc-gate.sh` parle le protocole `decision:block` + `stop_hook_active`, partagé par Claude Code et Codex (vérifié le 2026-07-06 sur la doc officielle). Il est câblé pour Claude via `stop-sequence.sh` dans `.claude/settings.json`, et pour Codex, opt-in, via la config générée `.codex/hooks.json`. Pour un agent sans hooks, la parité se fait à deux niveaux.
+Le gate Stop `stop-doc-gate.sh` parle le protocole `decision:block` + `stop_hook_active`, partagé par Claude Code et Codex (vérifié le 2026-07-06 sur la doc officielle). Il est câblé pour Claude via `stop-sequence.sh` dans `.claude/settings.json`, et pour Codex via la config générée `.codex/hooks.json` (par défaut depuis le 2026-08-07). Pour un agent sans hooks, la parité se fait à deux niveaux.
 
 **1. Toujours actif, universel (aucune config Codex).** Le hook git `commit-msg` (`.githooks/commit-msg` → `check-feature-freshness.sh --staged --strict`) bloque tout commit de code couvert sans sa fiche/worklog, quel que soit l'agent. C'est la garantie stable. Activation par clone : `git config core.hooksPath .githooks`.
 
-**2. Opt-in, plus tôt (signal working-tree avant le commit).** La config générée `.codex/hooks.json` branche `stop-doc-gate.sh` sur l'événement `Stop`. Vérifié le 2026-07-06 (doc officielle `https://developers.openai.com/codex/hooks`) : l'événement `Stop` de Codex reproduit le contrat de Claude — `stop_hook_active` dans le JSON d'entrée, `{"decision":"block","reason":...}` sur stdout pour bloquer — donc le gate est réutilisé tel quel, sans wrapper. Limite connue : le chemin **warn orphelins** du gate émet un `hookSpecificOutput`/`additionalContext` propre à Claude ; côté Codex ce warn est ignoré (champ inconnu) — seul le blocage `decision:block` est en parité.
+**2. Généré par défaut (opt-out), plus tôt (signal working-tree avant le commit).** La config générée `.codex/hooks.json` branche `stop-doc-gate.sh` sur l'événement `Stop`. Vérifié le 2026-07-06 (doc officielle `https://developers.openai.com/codex/hooks`) : l'événement `Stop` de Codex reproduit le contrat de Claude — `stop_hook_active` dans le JSON d'entrée, `{"decision":"block","reason":...}` sur stdout pour bloquer — donc le gate est réutilisé tel quel, sans wrapper. Limite connue : le chemin **warn orphelins** du gate émet un `hookSpecificOutput`/`additionalContext` propre à Claude ; côté Codex ce warn est ignoré (champ inconnu) — seul le blocage `decision:block` est en parité.
 
 Le **primitive agnostique** sous-jacent reste l'outil pour la CI, les scripts et les agents sans protocole de hook :
 
@@ -70,7 +70,7 @@ bash .ai/scripts/check-feature-freshness.sh --worktree --strict   # exit 1 = éc
 
 ANTI-EXEMPLE (même sémantique en TOML `[hooks]`) : sur `Stop`, un code retour non nul est traité comme une erreur de hook signalée puis ignorée (Codex continue) ; le blocage passe par le JSON `decision:block`, que seul `stop-doc-gate.sh` émet.
 
-Contraintes : opt-in ; hooks projet chargés seulement si la couche `.codex/` est trustée ; `AIC_DOC_GATE=off` reste l'échappatoire ; fallback documenté (commit-msg + CI) si Codex n'exécute pas le hook ; la config doit passer `check-agent-config.sh`.
+Contraintes : opt-out possible (`enable_codex_hooks=false`) ; hooks projet chargés seulement si la couche `.codex/` est trustée ; `AIC_DOC_GATE=off` reste l'échappatoire ; fallback documenté (commit-msg + CI) si Codex n'exécute pas le hook ; la config doit passer `check-agent-config.sh`.
 
 ## Validation
 
@@ -82,11 +82,11 @@ bash .ai/scripts/check-commit-features.sh
 bash .ai/scripts/check-features.sh
 bash .ai/scripts/check-feature-freshness.sh --worktree --warn   # parité fraîcheur (read-only)
 bash tests/unit/test-check-agent-config.sh                      # cas hooks.json Codex
-bash tests/smoke-test.sh                                        # étape génération opt-in .codex/
+bash tests/smoke-test.sh                                        # étape génération par défaut + opt-out .codex/
 ```
 
 Le résultat reste un pilote : la génération et sa validation statique sont testées, mais aucune exécution live par le CLI Codex n'est intégrée à la CI. Les hooks Git et la CI restent la garantie de non-régression.
 
 ## Asymétrie live assumée
 
-Claude `Stop` exécute `stop-sequence.sh`, qui sérialise gate de fraîcheur, flush worklog et auto-progress. Codex `Stop` opt-in exécute seulement le gate de fraîcheur (`stop-doc-gate.sh`) : pas d'auto-worklog ni d'auto-progress live tant que le payload `apply_patch` PostToolUse n'est pas validé. La convergence multi-agent se fait au commit via `.githooks/pre-commit` et `commit-msg`.
+Claude `Stop` exécute `stop-sequence.sh`, qui sérialise gate de fraîcheur, flush worklog et auto-progress. Codex `Stop` (généré par défaut, opt-out) exécute seulement le gate de fraîcheur (`stop-doc-gate.sh`) : pas d'auto-worklog ni d'auto-progress live tant que le payload `apply_patch` PostToolUse n'est pas validé. La convergence multi-agent se fait au commit via `.githooks/pre-commit` et `commit-msg`.

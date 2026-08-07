@@ -35,7 +35,7 @@ Attendre confirmation utilisateur avant de changer de scope primaire.
 
 ## Hooks Codex
 
-- Opt-in uniquement ; les hooks Git et checks `.ai/scripts/*` restent la garantie stable.
+- Générés par défaut quand `codex` est sélectionné (opt-out `enable_codex_hooks=false`) ; les hooks Git et checks `.ai/scripts/*` restent la garantie stable.
 - Autorisé : commande déterministe, versionnée, timeout explicite, non interactive.
 - Interdit comme garantie : Auto-review, hook LLM, injection de contexte non bornée ou non testée.
 - Détail : `.ai/workflows/codex-hooks-parity.md`.

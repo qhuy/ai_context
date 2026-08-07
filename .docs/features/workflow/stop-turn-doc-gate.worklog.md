@@ -40,3 +40,8 @@
 ## 2026-07-06 — requalification Claude-only → protocole partagé (suite HANDOFF)
 - Corps de fiche + `QUALITY_GATE.md` (+ jinja) : le gate Stop n'est plus décrit « Claude-only » — protocole `decision:block` partagé, branché par défaut côté Claude et opt-in côté Codex via `.codex/hooks.json`. Warn orphelins : canal Claude, ignoré par Codex. Aucun changement de logique.
 - Validation portée par `workflow/codex-hooks-parity`.
+
+## 2026-08-07 14:27 — auto
+- Fichiers modifiés :
+  - .claude/settings.json
+  - template/.claude/settings.json.jinja

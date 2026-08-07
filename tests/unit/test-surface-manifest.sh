@@ -117,8 +117,10 @@ expect "questions validées (validator)" \
   "project_name" \
   "$(yq -r 'to_entries | .[] | select(.key | test("^_") | not) | select(.value | has("validator")) | .key' copier.yml | tr '\n' ' ' | sed 's/ $//')"
 
+# codex_hooks=true depuis le 2026-08-07 (chantier restitution, bump MINOR) :
+# hooks Codex générés par défaut, opt-out conservé — cf. workflow/codex-hooks-parity.
 expect "défauts booléens" \
-  "codex_hooks=false copilot_shim=false ci_guard=true" \
+  "codex_hooks=true copilot_shim=false ci_guard=true" \
   "codex_hooks=$(yq -r '.enable_codex_hooks.default' copier.yml) copilot_shim=$(yq -r '.enable_copilot_shim.default' copier.yml) ci_guard=$(yq -r '.enable_ci_guard.default' copier.yml)"
 
 # ─── 3. Cycle d'update Copier ───

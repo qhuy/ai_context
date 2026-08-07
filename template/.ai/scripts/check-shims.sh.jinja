@@ -18,7 +18,9 @@ set -euo pipefail
 
 cd "$(dirname "$0")/../.."
 
-MAX_LINES=15
+# 30 depuis le chantier restitution 2026-08-07 : les shims portent le bloc
+# condensé AIC-RESTITUTION-CONDENSE (~11 lignes) en plus des hard rules.
+MAX_LINES=30
 MAX_PACK_A_WORDS=520
 INDEX=".ai/index.md"
 ANSWERS_FILE=".copier-answers.yml"

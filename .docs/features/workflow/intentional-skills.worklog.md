@@ -214,3 +214,8 @@
 ## 2026-08-06 19:05 — auto
 - Fichiers modifiés :
   - .ai/workflows/quality-gate.md
+
+## 2026-08-07 14:27 — auto
+- Fichiers modifiés :
+  - .ai/workflows/codex-hooks-parity.md
+  - template/.ai/workflows/codex-hooks-parity.md.jinja

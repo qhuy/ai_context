@@ -99,3 +99,7 @@
 
 ## 2026-07-06 — couverture incidente (workflow/evidence-discipline)
 - `template/AGENTS.md.jinja` : hard rule anti-supposition + condensation « Shim lean » (15 lignes préservées). Aucun changement des skills conversationnels. Validation portée par `workflow/evidence-discipline`.
+
+## 2026-08-07 14:27 — auto
+- Fichiers modifiés :
+  - template/AGENTS.md.jinja

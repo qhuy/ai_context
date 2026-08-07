@@ -33,3 +33,7 @@
 ## 2026-07-24 — sync avec RELEASE.md §2 (profil tfvc)
 - Écart détecté en lançant `aic-release.sh` en fin de chantier : RELEASE.md §2 listait 8 profils depuis l'ajout du profil `tfvc` (B4), mais le script n'en rendait que 7 — le commentaire prétendait pourtant être un « miroir exact ». Le check `check-release-coherence` ne couvre pas ce type de drift (il compare CHANGELOG↔PROJECT_STATE et copier.yml↔variables.md).
 - Corrigé : `render_profile "tfvc" "vcs_provider=tfvc"` ajouté, commentaire reformulé en rappel de synchronisation explicite. Vérifié : les 8 profils rendent.
+
+## 2026-08-07 14:27 — auto
+- Fichiers modifiés :
+  - copier.yml

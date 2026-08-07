@@ -39,3 +39,8 @@ Source session : automation veille-techno
 - Décision : statut `done`; aucun MCP par défaut, réouverture seulement si le template ou la politique opt-in change.
 - Validation : `bash .ai/scripts/check-feature-docs.sh --strict workflow/mcp-policy`; `bash .ai/scripts/check-ai-references.sh`; `bash .ai/scripts/check-shims.sh`; `bash .ai/scripts/check-features.sh --no-write`; `bash tests/smoke-test.sh`.
 - Next : aucune action immédiate.
+
+## 2026-08-07 14:27 — auto
+- Fichiers modifiés :
+  - .ai/rules/workflow.md
+  - template/.ai/rules/workflow.md.jinja

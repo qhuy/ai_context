@@ -80,3 +80,10 @@
 - Changement : `touches:` ne prend plus tout `template/.ai/workflows/**`; les workflows internes réellement consommés par le catalogue `/aic*` sont listés en `touches_shared`.
 - Décision : un changement de procédure interne ne réouvre cette fiche que s'il change le catalogue ou le routage public des skills Claude.
 - Validation prévue : `check-features --no-write`, `check-feature-docs --strict workflow/claude-skills`, `check-feature-coverage --strict`, freshness finale du delta.
+
+## 2026-08-07 12:35 — auto
+- Fichiers modifiés :
+  - .claude/skills/aic-review/workflow.md
+  - .claude/skills/aic-ship/workflow.md
+  - template/.claude/skills/aic-review/workflow.md.jinja
+  - template/.claude/skills/aic-ship/workflow.md.jinja

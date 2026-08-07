@@ -10,6 +10,6 @@ agents:
   - claude
   - codex
   - cursor
-enable_codex_hooks: false
+enable_codex_hooks: true
 enable_copilot_shim: false
 enable_ci_guard: true

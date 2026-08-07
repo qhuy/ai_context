@@ -239,9 +239,9 @@ agents:
 
 enable_codex_hooks:
   type: bool
-  default: false
+  default: true
   when: "{{ 'codex' in agents }}"
-  help: Générer .codex/hooks.json (hooks Codex natifs opt-in — reminder par tour + gate de fraîcheur fin de turn). Codex demande de truster la couche projet au 1er lancement ; les git hooks restent la garantie universelle.
+  help: Générer .codex/hooks.json (hooks Codex natifs — reminder par tour + gate de fraîcheur fin de turn), généré par défaut depuis la révision restitution 2026-08-07 pour la parité Claude/Codex ; mettre false pour l'exclure. Le consentement réel reste le trust prompt Codex sur la couche projet au 1er lancement ; les git hooks restent la garantie universelle.
 
 enable_copilot_shim:
   type: bool

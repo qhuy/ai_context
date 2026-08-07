@@ -127,3 +127,8 @@
 - Changement : `context-relevance-log.sh` verrouille rotation+append JSONL via lock `mkdir` portable avec reprise de lock orphelin.
 - `features-for-path.sh` fige un snapshot d'index unique avant lookup/log inject pour éviter une lecture incohérente pendant rebuild.
 - Validation ciblée : `test-context-relevance`, `test-features-for-path-relevance-ranking`.
+
+## 2026-08-07 14:27 — auto
+- Fichiers modifiés :
+  - .claude/settings.json
+  - template/.claude/settings.json.jinja

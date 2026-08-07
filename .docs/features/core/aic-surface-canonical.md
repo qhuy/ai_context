@@ -19,6 +19,7 @@ touches:
   - template/.ai/scripts/product-portfolio.sh.jinja
   - template/.claude/skills/aic-*/**
   - template/.agents/skills/aic-*/**
+  - tests/unit/test-surface-manifest.sh
 touches_shared:
   - CHANGELOG.md
   - docs/upgrading.md
@@ -26,7 +27,6 @@ touches_shared:
   - README.md
   - copier.yml
   - tests/smoke-test.sh
-  - tests/unit/test-surface-manifest.sh
 product: {}
 external_refs: {}
 doc:
@@ -169,3 +169,4 @@ Aucune dependance frontmatter.
 - 2026-07-07 (P6, hygiène repo) : `AUDIT.md` et `AUDIT_2026-05-06.md` déplacés vers `docs/archive/` (0 et 1 référence mesh respectivement, vérifié par `rg` avant déplacement). `PROJECT_STATE.md` lie désormais vers `docs/archive/`. Les 60 fiches `status: done` restent en place : `build-feature-index.sh` scanne `-mindepth 2 -maxdepth 2` sous `.docs/features/` (non récursif) — les archiver casserait silencieusement `depends_on`/`touches` sans bénéfice fonctionnel (déjà masquées du reminder par défaut). Décision confirmée avec l'utilisateur plutôt que suivie à la lettre depuis ANALYSE.md.
 - 2026-07-24 (release v0.14.0) : `README_AI_CONTEXT.md` (+ miroir `template/README_AI_CONTEXT.md.jinja`) et `PROJECT_STATE.md` bascule la reco `copier update` de `--vcs-ref=HEAD` par défaut vers le comportement par défaut de Copier (dernier tag), suite à la reprise d'une cadence de tags (voir `RELEASE.md`). `--vcs-ref=HEAD` reste documenté comme option avancée. Aucun changement de la surface `aic` elle-même.
 - 2026-07-24 (pilotage P15, additive-only) : écart trouvé et corrigé — `aic-onboard` et `aic-dev-plan` faisaient déjà partie de la taxonomie canonique (skills existants, mentionnés dans l'Objectif depuis 2026-06-19) mais n'avaient **aucune route `aic.sh`** correspondante. Ajout de `onboard` et `dev-plan` au dispatch (message d'orientation vers le skill, même style que `pilot`, aucune logique dupliquée). Contrat § mis à jour : 10/10 intentions listées explicitement, plus la règle de dérivation `aic.sh <verbe>` = nom du skill sans le préfixe `aic-`. Tout renommage des routes existantes (`frame-bootstrap`/`frame-context` → retrait, `plan` vs `dev-plan`) reste hors périmètre et reporté au chantier v1.0 (`P16`) : additive-only, zéro breaking avant cette version.
+- 2026-08-07 (chantier restitution, gouvernance de surface) : le manifeste (`test-surface-manifest.sh`, dimension « défauts booléens ») est mis à jour en décision consciente — `codex_hooks=true` (flip du défaut `enable_codex_hooks`, décision et motif portés par `workflow/codex-hooks-parity`). Classement : **MINOR** (ajout rétro-compatible à défaut sûr : opt-out conservé, projets existants intacts, trust prompt Codex comme consentement). Verdict consigné dans l'en-tête `[Unreleased]` du CHANGELOG.

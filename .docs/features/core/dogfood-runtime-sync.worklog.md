@@ -563,3 +563,20 @@
 ## 2026-08-06 20:16 — auto
 - Fichiers modifiés :
   - .ai/scripts/check-features.sh
+
+## 2026-08-07 12:35 — auto
+- Fichiers modifiés :
+  - .agents/skills/aic-review/workflow.md
+  - .agents/skills/aic-ship/workflow.md
+  - .ai/agent/response-style.md
+  - .claude/skills/aic-review/workflow.md
+  - .claude/skills/aic-ship/workflow.md
+
+## 2026-08-07 14:27 — auto
+- Fichiers modifiés :
+  - .ai/reminder.md
+  - .ai/rules/workflow.md
+  - .ai/scripts/check-shims.sh
+  - .ai/workflows/codex-hooks-parity.md
+  - .claude/settings.json
+  - AGENTS.md

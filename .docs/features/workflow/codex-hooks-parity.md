@@ -34,7 +34,7 @@ doc:
     observability: false
 progress:
   phase: done
-  step: "hooks Codex natifs livrés opt-in : .codex/hooks.json généré, contrat vérifié sur la doc officielle, README/message aligné"
+  step: "hooks Codex natifs générés par défaut depuis 2026-08-07 (opt-out enable_codex_hooks=false) ; contrat vérifié sur la doc officielle, README/message alignés"
   blockers: []
   resume_hint: "aucune action immédiate ; rouvrir si l'API hooks Codex change, pour une validation live CLI, ou pour l'auto-worklog Codex (payload apply_patch à valider)"
   updated: 2026-07-06
@@ -45,7 +45,7 @@ type: feature
 
 ## Résumé
 
-Décrire comment ajouter des hooks Codex uniquement comme garde-fous opt-in, déterministes et non LLM, sans remplacer les hooks Git ni les checks existants.
+Décrire comment ajouter des hooks Codex comme garde-fous déterministes et non LLM, générés par défaut quand `codex` est sélectionné (opt-out `enable_codex_hooks=false` depuis la révision restitution 2026-08-07), sans remplacer les hooks Git ni les checks existants.
 
 ## Objectif
 
@@ -134,6 +134,7 @@ Preuve de clôture 2026-07-06 (génération opt-in livrée) :
 ## Historique / décisions
 
 - 2026-05-12 : création suite à la veille officielle OpenAI Codex hooks.
+- 2026-08-07 (chantier restitution, pilot `2026-08-07-retour-ux-restitution`, R5 validé utilisateur) : **`.codex/hooks.json` généré par défaut** dès que `codex` est sélectionné — `enable_codex_hooks` passe à `default: true` (opt-out conservé). Révision de la décision « jamais par défaut » du 2026-07-06, écrite quand le contrat était un pilote : le retour UX réel a prouvé que l'opt-in non découvert privait Codex du reminder par tour (règle « aucune supposition », ancre restitution) et du gate Stop, cassant silencieusement la parité — l'utilisateur n'avait jamais su que l'option existait. Le consentement reste au bon endroit : trust prompt Codex sur `.codex/` au premier lancement. Alignés : contrat parity (runtime + template), `.ai/rules/workflow.md` (×2), copier.yml (défaut + help), smoke `[28d/28]` inversé (défaut ⇒ hooks présents + conformes sur le scaffold principal ; opt-out ⇒ absents), docs/variables.md, README.md, README_AI_CONTEXT.md (×2), examples/fullstack-fr.yml. Projets existants : non affectés par le flip (réponses copier enregistrées) — activer via `copier update` en répondant `true` ou `--data enable_codex_hooks=true`.
 - 2026-07-06 : réouverture (chantier P1 d'ANALYSE.md). API hooks Codex vérifiée sur la doc officielle : repo-level `<repo>/.codex/hooks.json` supporté (trust model), événement `Stop` au contrat identique à Claude, stdout `UserPromptSubmit` injecté comme contexte, PAS de canal d'injection PreToolUse. Génération opt-in de `.codex/hooks.json` (reminder + gate), contrat corrigé (l'ancien exemple TOML `[hooks.Stop]` sur le primitive brut était non bloquant), `stop-doc-gate.sh` requalifié protocole partagé Claude/Codex, étape smoke `[28d/28]`. Validation stricte des configs portée par `quality/agent-config-validation`.
 - 2026-06-26 : ajout de la recette « Parité fraîcheur fin de turn » (workflow/stop-turn-doc-gate). Le gate Stop étant Claude-only, on documente la parité Codex à deux niveaux — `commit-msg --staged --strict` universel (toujours actif) + hook Codex opt-in appelant le primitive `check-feature-freshness.sh --worktree --strict`. Surface Codex `Stop` (config.toml `[hooks]`) notée « à valider » ; aucun `.codex/` livré par défaut (décision inchangée).
 - 2026-07-03 : DONE. Pilote documenté seulement ; aucune config `.codex/` livrée par défaut.

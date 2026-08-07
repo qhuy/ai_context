@@ -6,8 +6,8 @@ scope_primary: "workflow"
 created_at: "2026-08-07"
 updated_at: "2026-08-07"
 active_item: "R1"
-active_question: "Confirmer le HANDOFF workflow → core pour le lot 2 (AGENTS.md, reminder, settings outputStyle, copier.yml défaut R5 + contrat parity, smoke-test 28d) ?"
-next_hint: "Lot 1 (scope workflow) livré le 2026-08-07 : fiche agent-behavior révisée, condensé canonique balisé dans response-style.md (+ précision technique + exemple), output style .claude/output-styles/aic-restitution.md créé (inactif tant que settings ne le référence pas), aic-ship/aic-review chargent le contrat à la clôture (8 surfaces). Étape 5 (texte contrat codex-hooks-parity) décalée au lot 2 pour rester atomique avec le flip copier.yml. Reste : lot 2 core, preuve avant/après, puis R3 → aic-diagnose."
+active_question: "Preuve avant/après (même prompt, Claude + Codex, scaffold frais) à consigner ici pour clore R1/R4"
+next_hint: "Lots 1 (a154772) et 2 livrés le 2026-08-07 : condensé canonique (response-style source unique → output style Claude + AGENTS.md), ancre reminder fr/en, aic-ship/aic-review chargent le contrat, enable_codex_hooks default:true (smoke 28d inversé), MAX_LINES check-shims 15→30, docs alignées. Reste : preuve avant/après consignée ici, activation sur les projets utilisateur (copier update, répondre true à enable_codex_hooks), puis R3 → aic-diagnose (piste : projets consommateurs Codex sans reminder avant ce chantier)."
 ---
 
 # Pilot 2026-08-07-retour-ux-restitution — Réactiver le contrat de restitution

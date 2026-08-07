@@ -60,7 +60,7 @@ Origine de la révision : retour UX utilisateur multi-projets (registre `.docs/p
 
 - Les règles comportementales **complètes** vivent dans `.ai/agent/` ; les shims racine et le reminder ne portent jamais que le **condensé canonique** (ou son ancre 1 ligne), jamais le contrat complet ni posture/initiative.
 - Le condensé a une **source unique** : la section balisée `AIC-RESTITUTION-CONDENSE` de `response-style.md`. Tout rendu (output style, AGENTS.md, ancre) dérive de cette section ; un écart de fond entre rendus est un bug de parité.
-- Budget assumé (révision 2026-08-07) : condensé ≈ 120 tokens par canal session (caché), ancre ≤ 30 tokens par tour. `measure-context-size.sh` mesure ce budget ; il ne doit pas croître au-delà sans décision actée.
+- Budget assumé (révision 2026-08-07) : condensé ≈ 120-170 tokens par canal session (caché), ancre 1 ligne ≈ 146 chars ≈ 37-49 tokens par tour (mesure `measure-context-size.sh` du 2026-08-07 : static 560 → 706 chars). Ce budget ne doit pas croître sans décision actée.
 - `posture.md` et `initiative-contract.md` restent hors Pack A, hors shims, hors reminder — on-demand strict.
 - Parité Claude/Codex : même condensé au niveau session des deux côtés (output style / AGENTS.md), même ancre par tour (hook partagé), même contrat complet à la clôture (skills `.claude` et `.agents`).
 

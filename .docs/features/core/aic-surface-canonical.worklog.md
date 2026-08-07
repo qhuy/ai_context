@@ -293,3 +293,15 @@
 ## 2026-08-06 22:27 — auto
 - Fichiers modifiés :
   - PROJECT_STATE.md
+
+## 2026-08-07 12:35 — auto
+- Fichiers modifiés :
+  - template/.agents/skills/aic-review/workflow.md.jinja
+  - template/.agents/skills/aic-ship/workflow.md.jinja
+  - template/.claude/skills/aic-review/workflow.md.jinja
+  - template/.claude/skills/aic-ship/workflow.md.jinja
+
+## 2026-08-07 14:27 — auto
+- Fichiers modifiés :
+  - README_AI_CONTEXT.md
+  - template/README_AI_CONTEXT.md.jinja

@@ -197,3 +197,10 @@ feat(core): installer les skills Codex par défaut
 ## 2026-07-07 — couverture incidente (workflow/intentional-skills, P3)
 - Les 6 wrappers Codex procéduraux `aic-feature-{new,done,handoff,resume,update}` et `aic-quality-gate` (racine `.agents/skills/` + miroirs `template/.agents/skills/`) sont supprimés — surface skills réduite (chantier P3). Aucun canal externe ne les référençait ; zéro perte de capacité (`.ai/workflows/*` reste la source canonique). `copier.yml` (message après copy) et `tests/smoke-test.sh` (étape [19/28], assertion d'absence) alignés. Aucun changement du contrat propre de cette fiche.
 - Validation portée par `workflow/intentional-skills`.
+
+## 2026-08-07 12:35 — auto
+- Fichiers modifiés :
+  - .agents/skills/aic-review/workflow.md
+  - .agents/skills/aic-ship/workflow.md
+  - template/.agents/skills/aic-review/workflow.md.jinja
+  - template/.agents/skills/aic-ship/workflow.md.jinja

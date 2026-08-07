@@ -136,3 +136,9 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, requalification TFVC en doc)
 - `README_AI_CONTEXT.md` (+ miroir), `copier.yml` (choix + help `vcs_provider`), `docs/variables.md` : l'aveu « best-effort, non testé end-to-end » est remplacé par l'état réel — couvert e2e en test, détection indépendante de la locale, validation serveur réel côté mainteneur, renvoi vers la procédure d'update workspace TFVC.
+
+## 2026-08-07 14:27 — auto
+- Fichiers modifiés :
+  - README_AI_CONTEXT.md
+  - copier.yml
+  - template/README_AI_CONTEXT.md.jinja

@@ -236,3 +236,6 @@
 
 ## 2026-08-07 — pilotage restitution (chantier A, lot 1)
 - `.docs/pilots/2026-08-07-retour-ux-restitution.md` : registre tenu au fil du pilotage — R5 validé (« go »), GO plan 3 étages, lot 1 livré (fiche agent-behavior révisée, condensé canonique, output style, chargement clôture ship/review), question active = HANDOFF core. Usage du contrat aic-pilot, aucun changement du contrat lui-même.
+
+## 2026-08-07 — pilotage restitution (chantier A, lot 2)
+- `.docs/pilots/2026-08-07-retour-ux-restitution.md` : HANDOFF core confirmé et lot 2 livré (AGENTS.md condensé, ancre reminder, outputStyle settings, enable_codex_hooks default:true, smoke 28d inversé, MAX_LINES 15→30). Question active = preuve avant/après à consigner. Toujours de l'usage du contrat aic-pilot, pas un changement de contrat.

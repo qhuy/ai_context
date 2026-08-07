@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+> **Bump prévu : MINOR.** Le manifeste de surface (`tests/unit/test-surface-manifest.sh`)
+> détecte un écart voulu : le défaut `enable_codex_hooks` passe à `true`. Changement
+> rétro-compatible à défaut sûr — opt-out conservé, projets existants intacts (réponses
+> copier enregistrées), consentement au trust prompt Codex. Rien de retiré ni renommé.
+
+### Nouveau
+
+- **Contrat de restitution réactivé** (chantier UX, pilot `2026-08-07-retour-ux-restitution`) : le contrat de style, dormant depuis sa démotion hors Pack A (`ea1adac`, 2026-05-04), redevient opérant en trois étages sans regonfler le contexte — (1) condensé canonique ~10 lignes, source unique balisée `AIC-RESTITUTION-CONDENSE` dans `.ai/agent/response-style.md`, rendu au niveau session via un output style Claude (`.claude/output-styles/aic-restitution.md`, `keep-coding-instructions: true`, activé par `outputStyle` dans `.claude/settings.json`) et via un bloc dans `AGENTS.md` (Codex et tous agents) ; (2) ancre anti-dérive d'une ligne dans le reminder par tour (fr/en) ; (3) contrat complet chargé à la clôture par `aic-ship`/`aic-review` (8 surfaces), enrichi d'un volet précision technique et d'un exemple avant/après. Budget mesuré : ancre +146 chars/tour (static 560 → 706 chars), condensé prompt-caché au niveau session.
+
+### Modifié
+
+- **Hooks Codex générés par défaut** : `enable_codex_hooks` passe à `default: true` — `.codex/hooks.json` (reminder par tour + gate Stop) est rendu dès que `codex` est sélectionné, en symétrie avec `.claude/settings.json` pour Claude. Opt-out conservé (`enable_codex_hooks=false`) ; le consentement reste le trust prompt Codex sur la couche projet au premier lancement. **Projets existants non affectés** (copier réutilise les réponses enregistrées) : activer via `copier update` en répondant `true`, ou `copier update --data enable_codex_hooks=true`. Étape smoke `[28d/28]` inversée en conséquence (défaut ⇒ hooks présents et conformes ; opt-out ⇒ absents).
+- **`check-shims` : borne `MAX_LINES` 15 → 30** pour que les shims portent le bloc condensé (AGENTS.md : 15 → 28 lignes) ; `MAX_PACK_A_WORDS` et le guard anti-bloat du Pack A inchangés.
+
 ## [1.0.1] — 2026-08-06
 
 > **PATCH.** Aucune entrée ci-dessous ne touche le contrat public gelé en v1.0 :
