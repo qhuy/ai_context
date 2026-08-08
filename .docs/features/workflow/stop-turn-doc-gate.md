@@ -46,10 +46,10 @@ doc:
     observability: false
 progress:
   phase: done
-  step: "gate Stop livré : --worktree, stop-doc-gate, sequencer, contrat read-only, dogfood drift et smoke complet validés"
+  step: "gate Stop livré côté Claude/Codex ; Codex généré par défaut avec opt-out depuis le 2026-08-07"
   blockers: []
   resume_hint: "aucune action immédiate ; rouvrir seulement si le contrat Stop, la fraîcheur --worktree ou l'ordre gate->archivage change"
-  updated: 2026-07-03
+  updated: 2026-08-07
 ---
 
 # Forcer la fraîcheur documentaire en fin de tour (gate Stop)
@@ -75,7 +75,7 @@ Rendre déterministe la promesse « avant DONE, la doc de la feature impactée e
 
 ### Hors périmètre
 
-- La garantie **bloquante stable** reste `commit-msg` (`--staged --strict`) + CI, agent-agnostique. Ce gate Stop est une couche de forcing branchée par défaut côté Claude (`stop-sequence.sh`) et opt-in côté Codex (`.codex/hooks.json` généré, protocole `decision:block` partagé — voir `workflow/codex-hooks-parity`) ; le warn orphelins reste un canal Claude.
+- La garantie **bloquante stable** reste `commit-msg` (`--staged --strict`) + CI, agent-agnostique. Ce gate Stop est une couche de forcing branchée par défaut côté Claude (`stop-sequence.sh`) et, depuis le 2026-08-07, côté Codex quand cet agent est sélectionné (`.codex/hooks.json`, opt-out `enable_codex_hooks=false`, protocole `decision:block` partagé — voir `workflow/codex-hooks-parity`) ; le warn orphelins reste un canal Claude.
 - La refonte du modèle `touches:`/`touches_shared:` (ex. reclasser `_lib.sh` en partagé pour alléger l'obligation multi-features). Noté en Risques.
 - La factorisation du parseur de config `coverage` (dupliqué entre `check-feature-coverage.sh` et `_lib.sh`). Noté en Risques.
 - L'idempotence du Stop sur tour non structurel (`workflow/stop-hook-idempotence`, livrée).
@@ -100,7 +100,7 @@ Surface = wiring `Stop` + orchestrateur. Scope primaire `workflow` (famille `sto
 - **Parallélisme des hooks Stop** (doc officielle : « All matching hooks run in parallel ») ⇒ on ne peut pas garantir l'ordre par position dans le tableau. D'où `stop-sequence.sh` qui sérialise gate → archivage dans un seul process. Sans cela, `auto-worklog-flush` (qui auto-appende au worklog des features dont le code a changé) neutraliserait le gate.
 - **Anti-bruit (« substantiel »)** : réutilise `coverage.roots` + `coverage.extensions` (override `.ai/project/config.yml`). Zéro nouveau concept de config. Un chemin ne déclenche la fraîcheur que s'il est sous une racine de code avec une extension de code.
 - **Échappatoire** : `AIC_DOC_GATE=off` (WIP multi-tour, refactor pur), tracée et documentée.
-- **Parité non-Claude** : pas de réinvention. L'événement « fin de travail » d'un agent non-Claude est le commit, déjà couvert par `.githooks/commit-msg`. Le gate Stop est un confort Claude.
+- **Parité runtime** : Claude et Codex réutilisent `stop-doc-gate.sh` et son protocole `decision:block`; Claude l'orchestre dans `stop-sequence.sh`, Codex l'appelle depuis `.codex/hooks.json`. Pour tout agent sans hooks ou en opt-out, l'événement universel reste le commit couvert par `.githooks/commit-msg`.
 
 ## Comportement attendu
 
@@ -161,6 +161,7 @@ Preuve de clôture 2026-07-03 :
 
 ## Historique / décisions
 
+- 2026-08-07 : alignement post-review sur le nouveau défaut — `.codex/hooks.json` est généré quand `codex` est sélectionné, sauf opt-out `enable_codex_hooks=false`. Le protocole et le fallback git/CI ne changent pas.
 - 2026-07-06 : requalification — le protocole du gate (`stop_hook_active` + `decision:block`) est partagé Claude/Codex (doc officielle vérifiée) ; `.codex/hooks.json` généré opt-in le branche sur `Stop` côté Codex. Le warn orphelins (`hookSpecificOutput`) reste Claude-only. Livré par `workflow/codex-hooks-parity`.
 
 - 2026-06-26 : création. Cause racine corrigée (working-tree vs historique). Découverte du parallélisme des hooks Stop → design sequencer (confirmé avec l'utilisateur). 3 décisions de cadrage tranchées : cross-scope workflow+quality, blocage jusqu'à résolution, anti-bruit via `coverage`.

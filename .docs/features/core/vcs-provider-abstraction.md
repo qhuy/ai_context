@@ -33,6 +33,7 @@ touches:
   - tests/unit/test-features-for-path-relevance-ranking.sh
   - tests/unit/test-stop-hook-idempotence.sh
   - tests/unit/test-auto-progress-filter.sh
+  - tests/unit/test-tfvc-e2e.sh
   - .docs/features/core/vcs-provider-abstraction.md
   - .docs/features/core/vcs-provider-abstraction.worklog.md
 touches_shared:
@@ -61,7 +62,7 @@ progress:
   step: "provider VCS livré, testé et dogfoodé"
   blockers: []
   resume_hint: "aucune action immédiate ; rouvrir si un provider VCS supplémentaire ou une intégration TFVC plus stricte est demandée."
-  updated: "2026-07-03"
+  updated: "2026-08-07"
 ---
 
 # Abstraction VCS Git / TFVC
@@ -172,3 +173,4 @@ Aucune dependance feature declaree.
 - 2026-07-03 : provider `_vcs.sh` ajoute `git`, `tfvc` et `none`; le provider TFVC expose les pending changes comme alias du mode `--staged`.
 - 2026-07-07 (P5, assainissement matrice) : requalification honnête plutôt que suppression — `tfvc` reste une option de premier niveau (contrainte non-négociable : ne pas retirer), mais `copier.yml` et `README_AI_CONTEXT.md` (+ miroir) disent désormais explicitement « best-effort, non testé end-to-end » au lieu de laisser croire à une parité de test avec `git`. Aucun changement de comportement runtime.
 - 2026-07-24 (release v0.14.0) : `README_AI_CONTEXT.md` (+ miroir template) bascule la reco `copier update` de `--vcs-ref=HEAD` par défaut vers le comportement par défaut de Copier (dernier tag). Édition documentaire seule ; aucun changement du provider VCS.
+- 2026-08-07 (remédiation quality gate) : `tests/unit/test-tfvc-e2e.sh`, preuve end-to-end déjà décrite dans cette fiche, est ajouté à `touches:` ; aucun changement du test ni du provider.

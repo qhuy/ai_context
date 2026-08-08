@@ -144,3 +144,10 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, C12 manifeste de surface)
 - `.github/workflows/ai-context-check.yml` : étape `test-surface-manifest` ajoutée. Aucun changement du contrat de fraîcheur documentaire.
+
+## 2026-08-07 — HANDOFF restitution : wording du gate Stop Codex
+- Intent : aligner le contrat `QUALITY_GATE.md` sur le défaut `enable_codex_hooks=true` décidé dans `workflow/codex-hooks-parity`.
+- Fichiers/surfaces : `.ai/quality/QUALITY_GATE.md` et miroir Jinja ; fiche/worklog `quality/doc-freshness`.
+- Décision : correction documentaire seulement ; garantie stable git+CI et logique de fraîcheur inchangées.
+- Validation : `check-dogfood-drift`, checks documentaires et smoke complet PASS.
+- Next : aucune action quality immédiate.

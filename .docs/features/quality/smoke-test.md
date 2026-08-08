@@ -13,10 +13,10 @@ touches_shared:
   - tests/**
 progress:
   phase: done
-  step: "smoke complet validé deux fois avec prélude AGENTS, provider VCS, benchmark self-check et Jinja raw"
+  step: "smoke couvre l'output style AIC actif, la parité du condensé et le défaut/opt-out des hooks Codex"
   blockers: []
   resume_hint: "aucune action immédiate ; relancer après toute évolution Pack A, templates Jinja, check-shims, provider VCS ou runner benchmark"
-  updated: 2026-07-03
+  updated: 2026-08-07
 type: feature
 ---
 
@@ -37,7 +37,7 @@ Vérifier en un script que la chaîne complète tient : `copier copy` → check-
 - Le script orchestrateur `tests/smoke-test.sh` et ses 28 assertions end-to-end, plus les tests ciblés sur le matching `touches:` (`path_matches_touch` dans `_lib.sh`) et le rendu `docs_root=docs`.
 - Le lint Jinja raw (`tests/unit/test-template-jinja-raw-braces.sh`, étape `[0s/28]`) : empêche les expansions Bash `${#...}` non protégées dans les templates.
 - Le test AGENTS.md auto-suffisant (`tests/unit/test-agents-md-self-sufficient.sh`, étape `[0h1/28]`) : bloque la régression où `AGENTS.md` redeviendrait un simple pointeur sans hard rules inline.
-- Le test check-shims agents dynamiques (`tests/unit/test-check-shims-dynamic-agents.sh`, étape `[0h2/28]`) : vérifie que `.copier-answers.yml` pilote les shims requis et qu'un shim activé manquant fait échouer le guard.
+- Le test check-shims agents dynamiques (`tests/unit/test-check-shims-dynamic-agents.sh`, étape `[0h2/28]`) : vérifie que `.copier-answers.yml` pilote les shims requis, qu'un shim activé manquant échoue, que seule la borne d'`AGENTS.md` monte à 30 lignes et que le condensé reste identique entre source canonique, AGENTS et output style.
 - Le test support AGENTS.md natif par agent (`tests/unit/test-agent-native-context.sh`, étape `[0h3/28]`) : vérifie le registre de kill criterion et le blocage `--require-confirmed claude` tant que le statut est `pending`.
 - Le self-check du harnais benchmark (`tests/bench/run-bench.sh --self-check`, étape `[0t/28]`) : plumbing seulement, aucun agent invoqué ; la logique du runner reste portée par `product/agent-efficacy-benchmark`.
 - L'enchaînement réel des scripts générés sur un scaffold jetable dans `/tmp` : shims, mesh, reminder text+json, commit-msg, features-for-path, cycles, coverage, focus graph, i18n, auto-worklog.
@@ -130,3 +130,4 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 - 2026-07-03 : DONE documentaire. Le smoke complet passe deux fois consécutives après les ajouts AGENTS natif, check-shims dynamique, provider VCS, Jinja raw et benchmark self-check.
 - 2026-07-24 : étape [2/28] enrichie avec `aic.sh init` — vérifie l'activation `core.hooksPath` au premier passage puis l'idempotence (message « déjà configuré ») au second, avant le `rm -rf` du `.git` de test qui suit. Couvre la nouvelle commande `workflow/aic-init` (pilotage P12).
 - 2026-08-07 (chantier restitution, R5) : étape [28d/28] inversée — le scaffold par défaut (codex sélectionné) doit désormais contenir `.codex/hooks.json` valide et conforme (jq structure + timeouts + `check-agent-config` sur `$OUT`) ; le combo dédié teste l'opt-out (`--data enable_codex_hooks=false` ⇒ pas de `.codex/`). Suit le flip `default: true` de copier.yml (contrat `workflow/codex-hooks-parity`).
+- 2026-08-07 (correction post-review) : l'étape [2/28] exige l'output style `.claude/output-styles/aic-restitution.md` et son activation `outputStyle: AIC Restitution`; `check-shims` en vérifie le bloc canonique. Le libellé [28d/28] annonce désormais correctement « défaut + opt-out », plus l'ancien opt-in.

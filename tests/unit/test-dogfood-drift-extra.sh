@@ -61,6 +61,18 @@ fi
 
 cp "$tmp/pilot-template.bak" .docs/pilots/0000-template.md
 
+cp .claude/output-styles/aic-restitution.md "$tmp/output-style.bak"
+printf '\n# local drift\n' >> .claude/output-styles/aic-restitution.md
+out="$(bash .ai/scripts/check-dogfood-drift.sh 2>&1 || true)"
+
+if ! echo "$out" | grep -q "drift: .claude/output-styles/aic-restitution.md"; then
+  echo "✗ check-dogfood-drift should detect Claude output style drift"
+  echo "$out"
+  exit 1
+fi
+
+cp "$tmp/output-style.bak" .claude/output-styles/aic-restitution.md
+
 mkdir -p .docs/frames
 mkdir -p .docs/pilots
 printf '# Local frame\n' > .docs/frames/2026-05-14-local-frame.md

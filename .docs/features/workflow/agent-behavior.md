@@ -22,10 +22,10 @@ touches_shared:
   - copier.yml
   - README.md
 progress:
-  phase: in_progress
-  step: "chantier A restitution — lot 1 : contrat condensé canonique + output style + chargement clôture"
+  phase: review
+  step: "lots 1+2 livrés ; corrections post-review validées, preuve live R1/R4 et diagnostic R3 restants"
   blockers: []
-  resume_hint: "registre .docs/pilots/2026-08-07-retour-ux-restitution.md ; lot 1 scope workflow en cours, lot 2 (core : AGENTS.md, reminder, settings outputStyle, copier.yml) après HANDOFF"
+  resume_hint: "registre .docs/pilots/2026-08-07-retour-ux-restitution.md ; consigner la preuve avant/après R1/R4 et lancer le diagnostic R3"
   updated: 2026-08-07
 type: feature
 ---
@@ -34,7 +34,7 @@ type: feature
 
 ## Résumé
 
-Une couche de qualité comportementale (posture, contrat d'initiative, style de réponse) vit sous `.ai/agent/`. Depuis la révision 2026-08-07 (chantier restitution), le **contrat de restitution** existe en deux niveaux : un **condensé canonique** (~10 lignes, défini dans `response-style.md` entre marqueurs) rendu au niveau session pour tous les agents (output style Claude, bloc AGENTS.md côté shim) et ancré à chaque tour par une ligne du reminder ; et le **contrat complet** chargé on-demand (diagnostic, style) et systématiquement près de la clôture (`aic-ship`, `aic-review`). `posture.md` et `initiative-contract.md` restent purement on-demand.
+Une couche de qualité comportementale (posture, contrat d'initiative, style de réponse) vit sous `.ai/agent/`. Depuis la révision 2026-08-07 (chantier restitution), le **contrat de restitution** opère en trois étages : un **condensé canonique** (~10 lignes, défini dans `response-style.md` entre marqueurs) rendu au niveau session pour tous les agents (output style Claude, bloc AGENTS.md côté shim), une ancre d'une ligne à chaque tour, puis le **contrat complet** chargé on-demand (diagnostic, style) et systématiquement près de la clôture (`aic-ship`, `aic-review`). `posture.md` et `initiative-contract.md` restent purement on-demand.
 
 ## Objectif
 
@@ -59,8 +59,8 @@ Origine de la révision : retour UX utilisateur multi-projets (registre `.docs/p
 ## Invariants
 
 - Les règles comportementales **complètes** vivent dans `.ai/agent/` ; les shims racine et le reminder ne portent jamais que le **condensé canonique** (ou son ancre 1 ligne), jamais le contrat complet ni posture/initiative.
-- Le condensé a une **source unique** : la section balisée `AIC-RESTITUTION-CONDENSE` de `response-style.md`. Tout rendu (output style, AGENTS.md, ancre) dérive de cette section ; un écart de fond entre rendus est un bug de parité.
-- Budget assumé (révision 2026-08-07) : condensé ≈ 120-170 tokens par canal session (caché), ancre 1 ligne ≈ 146 chars ≈ 37-49 tokens par tour (mesure `measure-context-size.sh` du 2026-08-07 : static 560 → 706 chars). Ce budget ne doit pas croître sans décision actée.
+- Le condensé a une **source unique** : la section balisée `AIC-RESTITUTION-CONDENSE` de `response-style.md`. Les deux rendus session (`AGENTS.md`, output style Claude) doivent reprendre ce bloc à l'identique ; `check-shims.sh` bloque toute dérive. L'ancre du reminder est une projection sémantique volontairement plus courte, suivie par son budget propre.
+- Budget assumé (révision 2026-08-07) : condensé ≈ 120–170 tokens par canal session (caché), ancre 1 ligne = +146 caractères, soit ~37–49 tokens par tour (mesures du 2026-08-08 sur le repo source : `measure-context-size.sh` statique 560 → 706 ; `grep '^- Restitution' .ai/reminder.md | wc -c` → 146). Ce budget ne doit pas croître sans décision actée.
 - `posture.md` et `initiative-contract.md` restent hors Pack A, hors shims, hors reminder — on-demand strict.
 - Parité Claude/Codex : même condensé au niveau session des deux côtés (output style / AGENTS.md), même ancre par tour (hook partagé), même contrat complet à la clôture (skills `.claude` et `.agents`).
 
@@ -92,9 +92,10 @@ Origine de la révision : retour UX utilisateur multi-projets (registre `.docs/p
 
 ## Validation
 
+- `check-shims.sh` : blocs `AIC-RESTITUTION-CONDENSE` d'`AGENTS.md` et de l'output style strictement égaux à la source canonique.
 - `check-dogfood-drift.sh` : rendus runtime (`.ai/agent/*`, `.claude/output-styles/*`) alignés sur le template.
 - `check-skills-parity.sh` : surfaces `.claude/skills` / `.agents/skills` alignées (chargement clôture inclus).
-- `measure-context-size.sh` : budget condensé + ancre dans les bornes actées (~120 tokens/canal session, ≤ 30 tokens/tour).
+- `measure-context-size.sh` : budget condensé + ancre dans les bornes actées (~120 tokens/canal session, ~37–49 tokens/tour mesurés).
 - `check-feature-docs.sh --strict workflow/agent-behavior` : fiche cohérente.
 - `smoke-test.sh` / `copier copy` : rendu Jinja sans erreur, output style généré quand `claude` est sélectionné.
 - Preuve de bout en bout (registre pilot) : même prompt dans Claude et Codex, structure de réponse comparable (TL;DR, synthèse, sources, clôture) — consignée au registre avant clôture du chantier.
@@ -115,3 +116,4 @@ Origine de la révision : retour UX utilisateur multi-projets (registre `.docs/p
 - 2026-05-04 — Lean Codex : `.ai/agent/*` sort du Pack A (`ea1adac`), couche disponible on-demand uniquement.
 - 2026-07-03 — DONE. Couche confirmée on-demand ; aucune charge Pack A ni reminder.
 - 2026-08-07 — **Réouverture (chantier restitution, pilot `2026-08-07-retour-ux-restitution`)** : le retour UX multi-projets prouve que le contrat on-demand n'est jamais chargé en flux normal (réponses confuses, divergence Claude/Codex, imprécision technique). Révision actée : condensé canonique session (output style Claude + bloc AGENTS.md) + ancre 1 ligne par tour + contrat complet chargé à la clôture par `aic-ship`/`aic-review`. Invariants, périmètre, budget contexte et validation réécrits en conséquence ; `touches` += `.claude/output-styles/**` (×2). Les invariants de mai (« jamais dans les shims », « reminder inchangé ») sont remplacés par la distinction condensé/complet.
+- 2026-08-07 — **Correction post-review** : la source unique devient un invariant exécutable (`check-shims` compare les blocs balisés ; `check-dogfood-drift` couvre désormais `.claude/output-styles/**`). Budget corrigé depuis la mesure réelle du script sur le repo source : +146 caractères, statique 560 → 706, estimation ~37–49 tokens/tour. Phase normalisée à `review` ; lots 1+2 livrés, preuves R1/R4 et diagnostic R3 encore ouverts.

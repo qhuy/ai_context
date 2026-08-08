@@ -58,3 +58,11 @@
 - Surfaces couvertes touchées dans le delta d'audit strict : `.ai/index.md` et `template/.ai/index.md.jinja`.
 - Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
 - Validation : gate ship relancée avant commit.
+
+## 2026-08-07 — correction post-review du chantier restitution
+- Intent : rendre la « source unique » vérifiable, corriger les métriques de contexte et aligner l'état réel de la feature après livraison des lots 1+2.
+- Fichiers/surfaces : fiche `workflow/agent-behavior`, registre pilot, `CHANGELOG.md` ; HANDOFF confirmé vers les contrôles core/quality propriétaires.
+- Décision : `progress.phase: review` ; les blocs session AGENTS/output style sont égaux octet-à-octet au condensé canonique, tandis que l'ancre reminder reste une projection courte mesurée séparément.
+- Mesure (corrigée en review du 2026-08-08 — les valeurs initiales 535→674/+139 ne se reproduisaient pas sur le repo source) : `measure-context-size.sh` compte 560 → 706 caractères statiques, soit +146 (`grep '^- Restitution' .ai/reminder.md | wc -c` → 146) ; estimation du script ~37–49 tokens/tour.
+- Validation : `check-shims`, test dynamique, dogfood, smoke complet et quality gate documentaire PASS ; couverture stricte 114/114, 0 orphelin.
+- Next : preuve live R1/R4 sur un même prompt Claude/Codex, puis diagnostic R3.

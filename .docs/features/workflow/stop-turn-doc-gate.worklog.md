@@ -45,3 +45,10 @@
 - Fichiers modifiés :
   - .claude/settings.json
   - template/.claude/settings.json.jinja
+
+## 2026-08-07 — alignement du défaut hooks Codex
+- Intent : corriger les sections courantes restées sur l'ancien opt-in après la décision R5 du chantier restitution.
+- Fichiers/surfaces : fiche `workflow/stop-turn-doc-gate`, `QUALITY_GATE.md` runtime/template.
+- Décision : protocole partagé inchangé ; Claude et Codex sont hookés par défaut sur les nouveaux scaffolds quand leurs agents sont sélectionnés, avec opt-out Codex explicite et fallback git/CI universel.
+- Validation : cohérence croisée avec `workflow/codex-hooks-parity`, quality gate et smoke complet PASS.
+- Next : aucune action immédiate.

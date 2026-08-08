@@ -67,3 +67,10 @@ Source session : automation veille-techno
 - Surfaces couvertes touchées dans le delta d'audit strict : `.ai/workflows/codex-hooks-parity.md` et `template/.ai/workflows/codex-hooks-parity.md.jinja`.
 - Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
 - Validation : gate ship relancée avant commit.
+
+## 2026-08-07 — alignement post-review du défaut opt-out
+- Intent : supprimer les contradictions normatives restées formulées selon l'ancien `default: false` après la bascule du 2026-08-07.
+- Fichiers/surfaces : `.docs/features/workflow/codex-hooks-parity.md`, registre restitution, `tests/smoke-test.sh`, `examples/fullstack-fr.yml` (rattachement documentaire).
+- Décision : le contrat courant est « généré par défaut si codex est sélectionné, opt-out `enable_codex_hooks=false`, trust prompt obligatoire » ; les passages datés de juin/juillet restent historiques.
+- Validation : recherche ciblée des formulations contradictoires et smoke complet PASS après corrections.
+- Next : vérifier la valeur enregistrée sur chaque projet consommateur existant lors de la preuve R1/R4.

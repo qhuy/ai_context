@@ -381,3 +381,10 @@
 ## 2026-07-24 — étape [0q4/28] : manifeste de surface (v1.0, C12)
 - `tests/unit/test-surface-manifest.sh` branché dans le prélude : snapshot des 8 éléments du contrat public gelé, plus 2 invariants (aucune migration native en `--apply`, aucune route de dispatch absente de l'aide).
 - Vérifié discriminant sur 4 dérives réelles avant intégration (valeur de choix ajoutée, migration passée en écriture, champ requis retiré, route stable renommée).
+
+## 2026-08-07 — HANDOFF restitution : assertions output style et libellé hooks
+- Intent : rendre explicite dans le smoke la présence et l'activation de l'output style, puis corriger le libellé resté sur l'ancien opt-in Codex.
+- Fichiers/surfaces : `tests/smoke-test.sh`, `tests/unit/test-check-shims-dynamic-agents.sh`, `tests/unit/test-dogfood-drift-extra.sh`.
+- Décision : l'étape [2/28] exige le fichier `aic-restitution.md` et `outputStyle: AIC Restitution`; la parité de bloc reste centralisée dans `check-shims`.
+- Validation : syntaxe Bash, test dynamique et smoke complet PASS.
+- Next : aucune action quality immédiate.

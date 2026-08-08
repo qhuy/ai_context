@@ -163,6 +163,15 @@ copier copy --defaults --trust \
 echo
 echo "[2/28] check-shims"
 bash "$OUT/.ai/scripts/check-shims.sh"
+if [[ ! -f "$OUT/.claude/output-styles/aic-restitution.md" ]]; then
+  echo "  ✗ output style AIC Restitution absent du scaffold Claude par défaut"
+  exit 1
+fi
+if [[ "$(jq -r '.outputStyle // empty' "$OUT/.claude/settings.json")" != "AIC Restitution" ]]; then
+  echo "  ✗ .claude/settings.json n'active pas l'output style AIC Restitution"
+  exit 1
+fi
+echo "  ✓ output style AIC Restitution présent, actif et aligné par check-shims"
 if ! ( cd "$OUT" && bash .ai/scripts/check-skills-parity.sh ) >/dev/null 2>&1; then
   echo "  ✗ check-skills-parity échoue sur un scaffold sain (claude+codex par défaut)"
   exit 1
@@ -2310,7 +2319,7 @@ if [[ -d "$combo_nocodex/.codex" ]]; then
   exit 1
 fi
 rm -rf "$combo_nocodex"
-echo "  ✓ hooks Codex : opt-in respecté, hooks.json conforme (événements, timeouts, check-agent-config)"
+echo "  ✓ hooks Codex : défaut + opt-out respectés, hooks.json conforme (événements, timeouts, check-agent-config)"
 
 echo
 echo "[28e/28] shim Copilot opt-out : AGENTS.md natif par défaut, compat via enable_copilot_shim"

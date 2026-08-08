@@ -4,7 +4,7 @@
 # Vérifie :
 # 1. L'index .ai/index.md existe.
 # 2. Les shims activés existent, référencent .ai/index.md, sont impératifs,
-#    et restent minces (≤ MAX_LINES).
+#    et restent minces (borne propre à chaque shim).
 # 3. Les cibles canoniques référencées existent.
 # 4. Le Pack A reste lean et ne réintroduit pas les charges coûteuses.
 # 5. Les skills publics du template (namespace réservé `aic` / `aic-*`) restent
@@ -18,9 +18,11 @@ set -euo pipefail
 
 cd "$(dirname "$0")/../.."
 
-# 30 depuis le chantier restitution 2026-08-07 : les shims portent le bloc
-# condensé AIC-RESTITUTION-CONDENSE (~11 lignes) en plus des hard rules.
-MAX_LINES=30
+# Seul AGENTS.md porte le condensé AIC-RESTITUTION-CONDENSE. Les shims dérivés
+# gardent la borne historique afin qu'un relâchement nécessaire sur la base ne
+# désarme pas le garde-fou sur CLAUDE.md / GEMINI.md / Copilot.
+MAX_LINES_DEFAULT=15
+MAX_LINES_AGENTS=30
 MAX_PACK_A_WORDS=520
 INDEX=".ai/index.md"
 ANSWERS_FILE=".copier-answers.yml"
@@ -229,6 +231,73 @@ fail=0
 ok() { printf "  \033[32m✓\033[0m %s\n" "$1"; }
 ko() { printf "  \033[31m✗\033[0m %s\n" "$1"; fail=1; }
 
+extract_restitution_block() {
+  local file="$1"
+  awk '
+    /<!-- BEGIN AIC-RESTITUTION-CONDENSE -->/ { capture=1 }
+    capture { print }
+    capture && /<!-- END AIC-RESTITUTION-CONDENSE -->/ { found=1; exit }
+    END { if (!found) exit 1 }
+  ' "$file"
+}
+
+has_restitution_marker() {
+  local file="$1"
+  [[ -f "$file" ]] && grep -qE '<!-- (BEGIN|END) AIC-RESTITUTION-CONDENSE -->' "$file"
+}
+
+check_restitution_consumer() {
+  local consumer="$1"
+  local canonical_block="$2"
+  local consumer_block
+
+  if [[ ! -f "$consumer" ]]; then
+    ko "$consumer manquant pour le condensé de restitution"
+  elif ! consumer_block="$(extract_restitution_block "$consumer")"; then
+    ko "$consumer ne porte pas un bloc AIC-RESTITUTION-CONDENSE complet"
+  elif [[ "$consumer_block" != "$canonical_block" ]]; then
+    ko "$consumer diverge de la source unique .ai/agent/response-style.md"
+  else
+    ok "$consumer aligné sur le condensé canonique"
+  fi
+}
+
+check_restitution_parity() {
+  local canonical=".ai/agent/response-style.md"
+  local output_style=".claude/output-styles/aic-restitution.md"
+  local canonical_block
+  local consumer_has_marker=0
+
+  if has_restitution_marker "AGENTS.md" || has_restitution_marker "$output_style"; then
+    consumer_has_marker=1
+  fi
+
+  # Compatibilité avec les anciens scaffolds : seule la source canonique active
+  # le contrat. Un consommateur ne peut donc pas désactiver le contrôle en
+  # supprimant son propre bloc et ses deux marqueurs.
+  if [[ ! -f "$canonical" ]]; then
+    if [[ "$consumer_has_marker" -eq 1 ]]; then
+      ko "$canonical manquant alors qu'un consommateur active le condensé de restitution"
+    fi
+    return 0
+  fi
+  if ! has_restitution_marker "$canonical"; then
+    if [[ "$consumer_has_marker" -eq 1 ]]; then
+      ko "$canonical ne porte pas le condensé activé par un consommateur"
+    fi
+    return 0
+  fi
+  if ! canonical_block="$(extract_restitution_block "$canonical")"; then
+    ko "$canonical ne porte pas un bloc AIC-RESTITUTION-CONDENSE complet"
+    return 0
+  fi
+
+  check_restitution_consumer "AGENTS.md" "$canonical_block"
+  if agent_selected "claude" || [[ -f "$output_style" ]]; then
+    check_restitution_consumer "$output_style" "$canonical_block"
+  fi
+}
+
 echo "═══ check-shims ═══"
 
 echo "[1/5] Index $INDEX"
@@ -242,9 +311,11 @@ for shim in ${SHIMS[@]+"${SHIMS[@]}"}; do
   fi
   grep -q "\.ai/index\.md" "$shim" || ko "$shim ne référence pas .ai/index.md"
   grep -qE "DOIS|MUST|MANDATORY" "$shim" || ko "$shim n'a pas de langage impératif"
+  max_lines="$MAX_LINES_DEFAULT"
+  [[ "$shim" == "AGENTS.md" ]] && max_lines="$MAX_LINES_AGENTS"
   lines=$(wc -l < "$shim" | tr -d ' ')
-  if [[ "$lines" -gt "$MAX_LINES" ]]; then
-    ko "$shim dépasse $MAX_LINES lignes ($lines)"
+  if [[ "$lines" -gt "$max_lines" ]]; then
+    ko "$shim dépasse $max_lines lignes ($lines)"
   else
     ok "$shim OK ($lines lignes)"
   fi
@@ -266,6 +337,7 @@ if [[ -f "AGENTS.md" ]]; then
     ko "AGENTS.md doit porter les hard rules inline (self-suffisance collapse-path, pas un simple pointeur)"
   fi
 fi
+check_restitution_parity
 
 echo "[3/5] Cibles canoniques"
 for target in "${CANONICAL[@]}"; do

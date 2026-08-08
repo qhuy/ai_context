@@ -487,3 +487,8 @@
 - Fichiers modifiés :
   - copier.yml
   - docs/variables.md
+
+## 2026-08-07 — remédiation couverture du test d'upgrade
+- `tests/unit/test-upgrade-v014-to-v1.sh` est ajouté au `touches:` de `core/template-engine`, conformément à son en-tête et au contrat d'upgrade déjà documenté ici.
+- Changement documentaire seulement ; le test reste inchangé.
+- Validation : `check-feature-coverage.sh --strict` PASS, 114/114 tests rattachés et 0 orphelin.

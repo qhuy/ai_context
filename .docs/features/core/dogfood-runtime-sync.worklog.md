@@ -363,6 +363,13 @@
 - Fichiers modifiés :
   - .docs/frames/2026-06-28-audit-strategique-remediation.md
   - AGENTS.md
+
+## 2026-08-07 — HANDOFF restitution : output styles dans le dogfood
+- Intent : fermer le trou où `.claude/output-styles/**` était rendu par Copier mais absent de `dogfood-update` et de `check-dogfood-drift`.
+- Fichiers/surfaces : `.ai/scripts/dogfood-update.sh`, `.ai/scripts/check-dogfood-drift.sh`, `tests/unit/test-dogfood-drift-extra.sh`, fiche `core/dogfood-runtime-sync`.
+- Décision : synchronisation avec `rsync --delete` comme les autres arbres runtime ; comparaison destination/source complète dans le drift.
+- Validation : test négatif ajouté (dérive volontaire de `aic-restitution.md`) et PASS ; `check-dogfood-drift` et smoke complet PASS.
+- Next : aucune action core immédiate.
   - CLAUDE.md
 
 ## 2026-06-29 — couverture incidente (frame remediation : C2c livre)

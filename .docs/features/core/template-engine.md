@@ -7,6 +7,7 @@ depends_on: []
 touches:
   - copier.yml
   - docs/variables.md
+  - tests/unit/test-upgrade-v014-to-v1.sh
 touches_shared:
   - docs/upgrading.md
   - README.md
@@ -18,7 +19,7 @@ progress:
   step: "commandes de maintenance Copier et smoke complet validés"
   blockers: []
   resume_hint: "aucune action immédiate ; rouvrir si une nouvelle variable Copier, un nouveau rendu conditionnel ou un contrat install/update change"
-  updated: 2026-07-03
+  updated: 2026-08-07
 type: feature
 ---
 
@@ -132,3 +133,4 @@ Ce moteur produit le squelette consommé par `feature-mesh`, `feature-index-cach
 - 2026-05-04 : le template rend `check-feature-docs.sh`, expose `ai-context.sh check-docs`, enrichit le schema `doc.*` et met à jour le template de fiche feature. Le mode strict est ciblable par `scope/id` pour préserver les projets legacy.
 - 2026-07-03 : clôture DONE après validation non destructive de `repair-copier-metadata`, `template-diff --src-path . --vcs-ref HEAD` et `tests/smoke-test.sh`.
 - 2026-08-07 (chantier restitution, R5) : `enable_codex_hooks` passe à `default: true` (copier.yml, question conservée pour l'opt-out ; help réécrit). Décision et motif portés par `workflow/codex-hooks-parity` ; `docs/variables.md` et `examples/fullstack-fr.yml` alignés. Le template rend aussi le nouvel output style `.claude/output-styles/aic-restitution.md` (contrat `workflow/agent-behavior`) et la clé `outputStyle` dans `.claude/settings.json`.
+- 2026-08-07 (remédiation quality gate) : `tests/unit/test-upgrade-v014-to-v1.sh`, déjà identifié par son en-tête comme test du moteur de template, entre dans `touches:` afin de fermer son statut d'orphelin sans changer son comportement.

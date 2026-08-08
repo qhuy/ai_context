@@ -37,3 +37,8 @@
 ## 2026-08-07 14:27 — auto
 - Fichiers modifiés :
   - copier.yml
+
+## 2026-08-07 — remédiation quality gate documentaire
+- Intent : supprimer le faux placeholder détecté par `check-feature-docs --strict` dans une fiche `done`.
+- Correction : l'exemple inline `copier update <chemin>` est remis sur une seule ligne ; le check retire désormais correctement le code entre backticks avant de chercher les placeholders.
+- Validation : `check-feature-docs.sh --strict workflow/aic-release` PASS ; aucun changement runtime.

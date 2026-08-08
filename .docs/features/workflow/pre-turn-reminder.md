@@ -1,7 +1,7 @@
 ---
 id: pre-turn-reminder
 scope: workflow
-title: Injection contextuelle au début de chaque tour Claude
+title: Injection contextuelle au début de chaque tour Claude/Codex
 status: done
 depends_on:
   - core/feature-index-cache
@@ -10,14 +10,15 @@ touches:
   - .ai/scripts/pre-turn-reminder.sh
   - template/.ai/scripts/pre-turn-reminder.sh.jinja
   - template/.ai/reminder.md.jinja
+  - tests/unit/test-context-config-keys.sh
 touches_shared:
   - template/.ai/scripts/features-for-path.sh.jinja
 progress:
   phase: done
-  step: "R1 livré : reverse_deps=0 et JIT depends_on couvert"
+  step: "reminder partagé Claude/Codex ; ancre restitution mesurée à +146 caractères (~37–49 tokens)"
   blockers: []
   resume_hint: "aucune action immédiate ; prochaine route validée hors scope : R2 ranking tracker des features jamais touchées"
-  updated: 2026-07-03
+  updated: 2026-08-07
 type: feature
 ---
 
@@ -25,11 +26,11 @@ type: feature
 
 ## Résumé
 
-Hook `UserPromptSubmit` qui injecte automatiquement le contexte juste-à-temps avant chaque prompt (règles, inventaire des features actives, `reminder.md`), complété par `features-for-path.sh` en `PreToolUse` qui pousse les fiches concernées par le path édité et leurs `depends_on`. Objectif : que l'agent reçoive le bon contexte sans le deviner ni le recharger manuellement, sans charger tout le graphe à chaque tour.
+Hook `UserPromptSubmit` partagé par Claude et Codex qui injecte automatiquement le contexte juste-à-temps avant chaque prompt (règles, inventaire des features actives, `reminder.md`), complété côté Claude par `features-for-path.sh` en `PreToolUse` qui pousse les fiches concernées par le path édité et leurs `depends_on`. Objectif : que l'agent reçoive le bon contexte sans le deviner ni le recharger manuellement, sans charger tout le graphe à chaque tour.
 
 ## Objectif
 
-À chaque prompt utilisateur, injecter automatiquement (hook `UserPromptSubmit`) le contexte global strictement utile : règles + inventaire des features actives + `reminder.md`. Le graphe détaillé reste juste-à-temps via `features-for-path.sh` quand un path est connu.
+À chaque prompt utilisateur Claude ou Codex doté des hooks projet, injecter automatiquement (`UserPromptSubmit`) le contexte global strictement utile : règles + inventaire des features actives + `reminder.md`. Le graphe détaillé reste juste-à-temps via `features-for-path.sh` côté Claude quand un path est connu.
 
 ## Périmètre
 
@@ -103,4 +104,4 @@ Première brique du flux invisible. Complétée par `features-for-path` en `PreT
 - 2026-05-03 : `features-for-path.sh` passe de rappel de liste à injection juste-à-temps bornée des fiches concernées et de leurs dépendances. Le reminder reste inchangé pour préserver le coût tokens par prompt.
 - 2026-07-02 : R1 tokens — sortie des dépendances inverses du hook `UserPromptSubmit`. Le reminder global reste limité à règles + inventaire ; `features-for-path.sh --with-docs` conserve l'injection JIT des fiches directes et de leurs `depends_on`.
 - 2026-07-03 : clôture DONE R1 ; `measure-context-size.sh` confirme `reverse_deps chars=0` et un budget estimé sous la cible.
-- 2026-08-07 (chantier restitution, pilot `2026-08-07-retour-ux-restitution`) : le reminder gagne **une ligne d'ancre restitution** (fr + en dans le miroir template) — résultat d'abord, synthèse, données sourcées, clôture fait/vérifié/risques/suite, pointeur `.ai/agent/response-style.md`. Coût mesuré ≤ 30 tokens/tour, assumé par la révision du budget dans `workflow/agent-behavior` ; c'est la première extension du reminder depuis la décision « reminder inchangé » de 2026-05-03, révisée par ce chantier.
+- 2026-08-07 (chantier restitution, pilot `2026-08-07-retour-ux-restitution`) : le reminder gagne **une ligne d'ancre restitution** (fr + en dans le miroir template) — résultat d'abord, synthèse, données sourcées, clôture fait/vérifié/risques/suite, pointeur `.ai/agent/response-style.md`. Coût mesuré : +146 caractères statiques (`measure-context-size.sh` : 560 → 706), soit ~37–49 tokens/tour ; c'est la première extension du reminder depuis la décision « reminder inchangé » de 2026-05-03, révisée par ce chantier.

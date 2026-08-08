@@ -40,10 +40,10 @@ doc:
     observability: false
 progress:
   phase: done
-  step: "shim Copilot opt-out livré (enable_copilot_shim, défaut false) ; check-shims consulte le registre natif avant d'exiger un shim dédié"
+  step: "parité du condensé activée par la source canonique ; disparition complète d'un bloc consommateur bloquée"
   blockers: []
   resume_hint: "aucune action core immédiate ; rouvrir seulement si le modèle de shims, .copier-answers.yml ou le registre natif évolue."
-  updated: 2026-07-06
+  updated: 2026-08-08
 ---
 
 # Shims dérivés d'AGENTS.md (base canonique + imports)
@@ -82,7 +82,7 @@ Une fiche pour le **modèle de shim multi-agent**, distincte de `aic-surface-can
 - `AGENTS.md` reste **toujours** présent (base universelle, jamais exclue).
 - `.ai/index.md` reste la source de **contenu** ; les shims sont des **entrées**, pas du contenu dupliqué.
 - Aucun shim livré ne doit être **non fonctionnel** : si un agent ne supporte pas l'import, fallback tailored minimal.
-- Les shims restent **lean** (`check-shims` : `MAX_LINES`, `MAX_PACK_A_WORDS`).
+- Les shims restent **lean** (`check-shims` : 30 lignes maximum pour `AGENTS.md`, 15 pour chaque shim dérivé, `MAX_PACK_A_WORDS` inchangé).
 - Parité runtime/template tenue (dogfood drift).
 
 ## Décisions
@@ -104,7 +104,7 @@ Une fiche pour le **modèle de shim multi-agent**, distincte de `aic-surface-can
 
 - **Entrée de shim canonique** : `AGENTS.md` (toujours rendue).
 - **Shims dérivés** : `CLAUDE.md` = `@AGENTS.md` + lignes agent, OU tailored minimal en fallback ; `copilot-instructions.md` = shim compat opt-in (`enable_copilot_shim`, défaut false). `GEMINI.md` n'est plus rendu depuis v1.0 : `gemini` est **déprécié** — la valeur reste dans `choices` (la retirer réinitialiserait la réponse `agents` entière au défaut chez un consommateur existant) mais ne génère plus aucun artefact. `check-shims` n'exige donc pas ce shim, tout en validant normalement un `GEMINI.md` résiduel pré-v1.0. Retrait de la valeur en v2.
-- **`check-shims`** : valide base + dérivés pour tous les agents de `.copier-answers.yml` ; un shim absent échoue SAUF si l'agent est `confirmed` au registre natif (skip explicite) ; un shim présent est validé normalement (lean, impératif, référence l'index).
+- **`check-shims`** : valide base + dérivés pour tous les agents de `.copier-answers.yml` ; un shim absent échoue SAUF si l'agent est `confirmed` au registre natif (skip explicite) ; un shim présent est validé normalement (lean, impératif, référence l'index). Dès que la source `.ai/agent/response-style.md` porte `AIC-RESTITUTION-CONDENSE`, le bloc devient obligatoire dans `AGENTS.md` et, pour Claude, dans l'output style ; les trois blocs doivent être strictement égaux. Les anciens scaffolds dont la source canonique ne porte aucun marqueur restent compatibles.
 - **Downstream** : transition par phase — warning/migration documentée avant changement de défaut.
 
 ## Validation
@@ -165,5 +165,6 @@ Non requis (`doc.requires.observability: false`). Preuves attendues : sorties de
 - 2026-06-29 : **gate `@import` PASSÉ** (vérification 4 plateformes, sources docs officielles). Verdict par agent : **Claude Code** = `@path` import OK (récursif ≤5 hops), mais lecture native d'AGENTS.md non confirmée ; **Gemini CLI** = `@path` import OK (Memory Import Processor) ; **Cursor** = `@file` en `.mdc` non fiable MAIS lit AGENTS.md nativement (racine+nested) ; **Copilot** = pas d'import inline (lien Markdown only) MAIS lit AGENTS.md nativement (depuis 2025-08). Modèle retenu : AGENTS.md = **base neutre** ; `CLAUDE.md`/`GEMINI.md` = `@AGENTS.md` + lignes agent ; Cursor/Copilot = **pas de shim requis** (lecture native) ou tailored minimal. La décision future `CLAUDE.md` optionnel est transférée au registre natif.
 - 2026-07-03 : **check-shims dynamique livré**. Le runtime et le template lisent `agents` depuis `.copier-answers.yml` quand il existe, puis exigent les shims dérivés correspondants (`CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`) en plus d'`AGENTS.md`. Sans answers file (repo source dogfood ou anciens scaffolds), fallback sur les shims présents. Test ciblé : `tests/unit/test-check-shims-dynamic-agents.sh` couvre fallback, liste YAML bloc/inline, et échec si `gemini` est actif mais `GEMINI.md` manque.
 - 2026-07-03 : **DONE** — follow-up #34235 transféré au registre natif de `core/agents-md-native-collapse-path`, docs migration déjà livrées, smoke et dogfood verts. Cette fiche reste propriétaire du modèle de shims et de `check-shims`.
-- 2026-08-07 (chantier restitution, pilot `2026-08-07-retour-ux-restitution`, lot 2) : **AGENTS.md porte le bloc condensé `AIC-RESTITUTION-CONDENSE`** (7 règles + marqueurs, source unique `.ai/agent/response-style.md`, contrat `workflow/agent-behavior`). Le shim reste la base canonique et garde les hard rules inline ; la borne lean `MAX_LINES` de `check-shims` passe de 15 à 30 (AGENTS.md : 15 → 28 lignes mesurées), `MAX_PACK_A_WORDS` inchangé. Révision assumée de l'usage « shim = protocole seul » : le condensé est du contrat de restitution session-level, pas du contenu on-demand dupliqué.
+- 2026-08-07 (chantier restitution, pilot `2026-08-07-retour-ux-restitution`, lot 2 + correction post-review) : **AGENTS.md porte le bloc condensé `AIC-RESTITUTION-CONDENSE`** (7 règles + marqueurs, source unique `.ai/agent/response-style.md`, contrat `workflow/agent-behavior`). La borne passe de 15 à 30 uniquement pour `AGENTS.md` (15 → 27 lignes mesurées) ; CLAUDE/GEMINI/Copilot restent à 15 et `MAX_PACK_A_WORDS` reste inchangé. `check-shims` compare mécaniquement les blocs d'AGENTS et de l'output style à la source canonique ; la compatibilité legacy dépend de l'absence de marqueur dans la source canonique, pas dans ses consommateurs.
+- 2026-08-08 (fix post-review) : l'activation de la parité dépend désormais du marqueur dans la source canonique, jamais de sa présence dans `AGENTS.md`. Supprimer entièrement le bloc consommateur ne désactive plus le guard ; un test discriminant couvre la disparition simultanée du contenu et des deux marqueurs. Une source canonique legacy sans marqueur reste acceptée.
 - 2026-08-06 (fix, remontée consommateur `ticketing.apps`) : `check-shims [5/5]` exigeait un pair sur l'autre arbre **et** un `workflow.md` pour *chaque* dossier de `.claude/skills`/`.agents/skills`. Sur un repo ayant 50 skills project-owned (`bmad-*`, `bobv3-*`) sans équivalent Codex voulu, le check échouait et `doctor` concluait « corriger les shims » alors que rien n'était cassé. Le périmètre est resserré au namespace réservé du template (`aic` / `aic-*`, cf. `core/aic-surface-canonical`) via `is_template_skill` ; les dossiers project-owned sont comptés et affichés, jamais bloquants. La parité et l'exigence `workflow.md` restent strictement bloquantes sur `aic`/`aic-*` (garde-fous : cas 3 et 4 de `tests/unit/test-check-shims-project-owned-skills.sh`, vérifié discriminant). Classement : PATCH.

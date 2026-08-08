@@ -4,9 +4,11 @@
 
 Fiches canoniques de ce scope.
 
-- [Couche comportementale agent légère](agent-behavior.md) — `agent-behavior` · `done` · `feature`
+- [Couche comportementale agent légère](agent-behavior.md) — `agent-behavior` · `active` · `feature`
 - [Rendre aic-frame exploitable comme cadrage durable référençable](aic-frame-external-reference.md) — `aic-frame-external-reference` · `done` · `feature`
+- [Parcours guidé post-scaffold (aic init)](aic-init.md) — `aic-init` · `done` · `feature`
 - [Skill aic-pilot pour pilotage transverse et suivi d'audit](aic-pilot.md) — `aic-pilot` · `done` · `feature`
+- [Automatisation de la checklist RELEASE.md + migration native v0.14.0](aic-release.md) — `aic-release` · `done` · `feature`
 - [Filtrer la transition spec→implement par type de fichier édité](auto-progress-file-filter.md) — `auto-progress-file-filter` · `done` · `feature`
 - [Auto-logging silencieux des éditions vers worklog feature](auto-worklog.md) — `auto-worklog` · `done` · `feature`
 - [Skills /aic* publics + procédures internes](claude-skills.md) — `claude-skills` · `done` · `feature`
@@ -22,7 +24,7 @@ Fiches canoniques de ce scope.
 - [Skills intentionnels pour cadrage, documentation, status, review et ship](intentional-skills.md) — `intentional-skills` · `done` · `feature`
 - [Flux knowledge publish/search/link/import](knowledge-publish-search-link.md) — `knowledge-publish-search-link` · `done` · `workflow`
 - [Politique MCP minimale](mcp-policy.md) — `mcp-policy` · `done` · `feature`
-- [Injection contextuelle au début de chaque tour Claude](pre-turn-reminder.md) — `pre-turn-reminder` · `done` · `feature`
+- [Injection contextuelle au début de chaque tour Claude/Codex](pre-turn-reminder.md) — `pre-turn-reminder` · `done` · `feature`
 - [Procédure project-guardrails — non-goals + glossaire métier pour orienter l'agent](project-guardrails.md) — `project-guardrails` · `done` · `feature`
 - [Skill aic-onboard — init/sync/migrate de l'overlay projet](project-overlay-onboarding.md) — `project-overlay-onboarding` · `done` · `feature`
 - [Rendre le hook Stop idempotent sur tour sans édit structurel](stop-hook-idempotence.md) — `stop-hook-idempotence` · `done` · `feature`

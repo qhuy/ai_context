@@ -22,7 +22,7 @@ progress:
   step: "freshness livré : staged/worktree strict, coverer primaire, warn historique et gate Pack A lean validés"
   blockers: []
   resume_hint: "aucune action immédiate ; traiter les warnings historiques au cas par cas quand les fiches concernées sont rouvertes"
-  updated: 2026-07-03
+  updated: 2026-08-07
 type: feature
 ---
 
@@ -105,3 +105,4 @@ Aucune dependance de feature declaree.
 - 2026-05-04 : quality gate reformulée pour ne plus impliquer le chargement initial de `QUALITY_GATE.md`; elle reste bloquante avant DONE, en cohérence avec Pack A lean.
 - 2026-05-04 : ajout de `check-feature-docs.sh` pour compléter le filet sémantique côté fiche : sections noyau, modules conditionnels via `doc.requires.*`, warnings par défaut et strict avant DONE.
 - 2026-07-03 : DONE documentaire. Les contrats staged/worktree/read-only/provider VCS sont livrés ; les warnings historiques restent volontairement en `--warn` et ne bloquent pas la clôture.
+- 2026-08-07 : correction documentaire de `QUALITY_GATE.md` (+ miroir) après la bascule des hooks Codex : le gate Stop est désormais décrit comme généré par défaut quand `codex` est sélectionné, avec opt-out `enable_codex_hooks=false`. Le moteur de fraîcheur et la garantie git/CI ne changent pas.

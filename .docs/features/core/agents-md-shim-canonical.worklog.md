@@ -70,6 +70,13 @@
 ## 2026-07-06 15:08 — auto
 - Fichiers modifiés :
   - .ai/scripts/check-shims.sh
+
+## 2026-08-07 — HANDOFF restitution : bornes par shim et parité canonique
+- Intent : éviter que l'augmentation nécessaire pour AGENTS.md désarme la borne de tous les shims, et outiller la source unique du condensé.
+- Fichiers/surfaces : `.ai/scripts/check-shims.sh` + miroir Jinja, `tests/unit/test-check-shims-dynamic-agents.sh`, fiche `core/agents-md-shim-canonical`.
+- Décision : AGENTS.md ≤ 30 lignes ; CLAUDE/GEMINI/Copilot ≤ 15. Si AGENTS active le marqueur restitution, son bloc et celui de l'output style Claude doivent être strictement égaux à `.ai/agent/response-style.md`; les anciens scaffolds sans marqueur restent compatibles.
+- Validation : `bash -n` PASS ; `check-shims` PASS (AGENTS 27, CLAUDE 7, deux parités vertes) ; test dynamique PASS, dont divergence volontaire, marqueur isolé et CLAUDE 16 lignes bloqués.
+- Next : aucune action core immédiate ; smoke Copier complet PASS.
   - tests/unit/test-check-shims-dynamic-agents.sh
 
 ## 2026-07-06 — fix post-review BLOQUANT : miroir check-shims dé-templatisé
@@ -112,3 +119,11 @@
 ## 2026-08-06 19:05 — auto
 - Fichiers modifiés :
   - .ai/scripts/check-shims.sh
+
+## 2026-08-08 — fix post-review : activation de parité pilotée par la source
+- Intent : fermer le contournement où la suppression intégrale du bloc `AIC-RESTITUTION-CONDENSE`, marqueurs compris, désactivait silencieusement le contrôle de parité d'un consommateur.
+- Fichiers/surfaces : `.ai/scripts/check-shims.sh` et son miroir Jinja, `tests/unit/test-check-shims-dynamic-agents.sh`, fiche `core/agents-md-shim-canonical`.
+- Décision : la présence du marqueur dans la source canonique `.ai/agent/response-style.md` active le contrat ; `AGENTS.md` et l'output style Claude applicable doivent alors porter un bloc complet et strictement identique. Une source canonique legacy sans marqueur conserve le skip de compatibilité.
+- Validation : `bash -n` PASS ; `shellcheck -S error` PASS ; test dynamique PASS, dont suppression complète du bloc ; `check-shims` PASS ; `check-dogfood-drift` PASS ; `tests/smoke-test.sh` PASS.
+- Risques : aucun breaking change pour les anciens scaffolds dont la source canonique ne porte pas les marqueurs ; aucun impact données, sécurité, authentification ou tenancy.
+- Next : aucune action core immédiate ; delta prêt pour les gates documentaires puis commit.

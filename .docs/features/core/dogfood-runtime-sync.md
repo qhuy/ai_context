@@ -14,6 +14,7 @@ touches:
   - .ai/**
   - .agents/skills/**
   - .claude/settings.json
+  - .claude/output-styles/**
   - .claude/skills/**
   - .githooks/**
   - .docs/frames/**
@@ -29,10 +30,10 @@ touches_shared:
   - tests/smoke-test.sh
 progress:
   phase: done
-  step: "runtime dogfood synchronisé ; exclusions centralisées et drift multi-profil validés"
+  step: "runtime dogfood synchronisé ; output styles inclus dans update/drift et drift négatif couvert"
   blockers: []
   resume_hint: "aucune action immédiate ; rouvrir si le contrat dogfood-update/check-dogfood-drift ou le miroir template change"
-  updated: 2026-07-03
+  updated: 2026-08-07
 type: feature
 ---
 
@@ -68,17 +69,20 @@ Faire consommer au repo source `ai_context` la même couche runtime que celle g�
 - Les fichiers source-only explicitement exclus ne doivent pas être supprimés.
 - Les caches `.ai/.feature-index.json`, `.ai/.progress-history.jsonl`, `.ai/.session-edits*` restent jetables et hors synchronisation.
 - Claude et Codex doivent exposer les mêmes skills intentionnels quand `agents=["claude","codex"]`.
+- Les output styles Claude générés font partie du runtime dogfoodé : `dogfood-update` les synchronise et `check-dogfood-drift` détecte contenu manquant, divergent ou résiduel.
 
 ## Décisions
 
 - Utiliser `rsync --delete` sur les dossiers runtime synchronisés pour détecter aussi les fichiers obsolètes.
 - Exclure seulement les caches et scripts source-only du miroir `.ai/**`.
 - Synchroniser `.agents/**` au même titre que `.claude/skills/**` pour éviter les écarts de dogfooding Codex.
+- Synchroniser `.claude/output-styles/**` comme une surface distincte de `.claude/skills/**` ; un nouveau canal Claude ne doit pas rester hors du drift par omission.
 
 ## Comportement attendu
 
 - Le repo source dispose des mêmes fichiers `.ai/agent/*`, scripts runtime, skills Claude et shims racine qu'un projet scaffoldé en profil `minimal`.
 - Le repo source dispose aussi des mêmes skills Codex `.agents/skills/*` qu'un projet scaffoldé avec `codex`.
+- Le repo source dispose du même output style `.claude/output-styles/aic-restitution.md` que le rendu minimal Claude.
 - Le repo source dogfoode `.ai/context-ignore.md` et le Pack A lean rendu par Copier.
 - Les caches locaux (`.ai/.feature-index.json`, `.ai/.progress-history.jsonl`) restent hors versioning.
 - Les adaptations spécifiques au repo source restent possibles quand elles sont plus strictes que le rendu downstream, notamment les workflows CI source.
@@ -139,3 +143,4 @@ Faire consommer au repo source `ai_context` la même couche runtime que celle g�
 - 2026-07-03 : A12 — ajout de `dogfood-runtime-lib.sh` comme source unique des exclusions dogfood ; `check-dogfood-drift.sh` compare le profil dogfood minimal et rend aussi `fullstack-cursor` pour couvrir les templates conditionnels.
 - 2026-07-03 : fiche clôturée en `done` après validation du drift dogfood multi-profil, des gardes raw Jinja, des exclusions source-only et de la gate documentaire. Doc Impact Decision : C — fiche feature et worklog mis à jour.
 - 2026-08-06 (fix) : `check-skills-parity.sh` resserré au namespace réservé `aic`/`aic-*` — même correction de périmètre que `check-shims [5/5]` (voir `core/agents-md-shim-canonical`). Les skills project-owned d'un consommateur sont hors contrat de parité : comptés dans la sortie, jamais bloquants. `tests/unit/test-check-skills-parity.sh` entre dans `touches` (il n'était couvert par aucune fiche) ; ses fixtures passent de `foo`/`bar` à `aic-foo`/`aic-bar` et 3 cas project-owned sont ajoutés. Miroirs template régénérés depuis le runtime : seules les divergences Jinja connues subsistent (`{% raw %}` sur `${#warns[@]}`, `project_name`, boucle `scopes`).
+- 2026-08-07 (correction post-review restitution) : `.claude/output-styles/**` entre explicitement dans la synchronisation `dogfood-update` et la comparaison `check-dogfood-drift`. `test-dogfood-drift-extra.sh` provoque une divergence de l'output style et exige le diagnostic ciblé avant de restaurer la fixture.

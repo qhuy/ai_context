@@ -51,8 +51,8 @@ Deux livrables distincts mais couplés, issus du même item de pilotage (P12 →
 
 `RELEASE.md` documentait une checklist en 7 étapes, entièrement manuelle. Deux
 bugs latents y dormaient (§2 `--data agents=codex` rejeté par Copier 9.14.3 —
-`ValueError: Not a YAML list` — et §3 documentant un faux positional `copier
-update <chemin>` qui n'existe pas). Par ailleurs, les migrations project-owned
+`ValueError: Not a YAML list` — et §3 documentant un faux positional
+`copier update <chemin>` qui n'existe pas). Par ailleurs, les migrations project-owned
 (`aic migrate plan/all`) livrées par `core/migration-orchestrator` restaient une
 démarche que le consommateur devait se rappeler de lancer lui-même après
 `copier update` — rien ne le lui rappelait au moment précis où ça devient

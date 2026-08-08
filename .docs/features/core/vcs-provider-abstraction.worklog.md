@@ -142,3 +142,8 @@
   - README_AI_CONTEXT.md
   - copier.yml
   - template/README_AI_CONTEXT.md.jinja
+
+## 2026-08-07 — remédiation couverture du test TFVC E2E
+- `tests/unit/test-tfvc-e2e.sh` est ajouté au `touches:` de `core/vcs-provider-abstraction`, sa fiche propriétaire déjà citée dans le test et dans l'historique B4.
+- Changement documentaire seulement ; aucune modification du provider ni du test.
+- Validation : `check-feature-coverage.sh --strict` PASS, 114/114 tests rattachés et 0 orphelin.

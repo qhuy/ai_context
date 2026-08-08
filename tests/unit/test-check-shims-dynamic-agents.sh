@@ -287,4 +287,101 @@ YAML
   fi
 )
 
+# Restitution : AGENTS.md peut dépasser la borne historique de 15 lignes, mais
+# les shims dérivés la conservent. Le bloc balisé doit rester strictement égal à
+# la source canonique dans AGENTS.md et dans l'output style Claude.
+repo_restitution="$tmp/restitution"
+make_repo "$repo_restitution"
+mkdir -p "$repo_restitution/.ai/agent" "$repo_restitution/.claude/output-styles"
+cp "$repo_root/AGENTS.md" "$repo_restitution/AGENTS.md"
+cp "$repo_root/.ai/agent/response-style.md" "$repo_restitution/.ai/agent/response-style.md"
+cp "$repo_root/.claude/output-styles/aic-restitution.md" "$repo_restitution/.claude/output-styles/aic-restitution.md"
+write_claude "$repo_restitution"
+cat > "$repo_restitution/.copier-answers.yml" <<'YAML'
+agents: ["claude", "codex"]
+YAML
+(
+  cd "$repo_restitution"
+  agents_lines="$(wc -l < AGENTS.md | tr -d ' ')"
+  [[ "$agents_lines" -gt 15 ]] \
+    || fail "la fixture AGENTS.md doit exercer la borne spéciale supérieure à 15 lignes"
+  out="$(bash .ai/scripts/check-shims.sh 2>&1)" \
+    || { echo "$out"; fail "AGENTS.md avec condensé canonique devrait passer sous sa borne dédiée"; }
+  echo "$out" | grep -q "AGENTS.md aligné sur le condensé canonique" \
+    || { echo "$out"; fail "parité du condensé AGENTS.md non vérifiée"; }
+  echo "$out" | grep -q ".claude/output-styles/aic-restitution.md aligné sur le condensé canonique" \
+    || { echo "$out"; fail "parité du condensé output style non vérifiée"; }
+)
+
+cp "$repo_restitution/.claude/output-styles/aic-restitution.md" "$tmp/output-style.bak"
+awk '
+  /<!-- END AIC-RESTITUTION-CONDENSE -->/ { print "- Dérive volontaire." }
+  { print }
+' "$repo_restitution/.claude/output-styles/aic-restitution.md" > "$tmp/output-style-drift.md"
+mv "$tmp/output-style-drift.md" "$repo_restitution/.claude/output-styles/aic-restitution.md"
+(
+  cd "$repo_restitution"
+  set +e
+  out="$(bash .ai/scripts/check-shims.sh 2>&1)"
+  rc=$?
+  set -e
+  [[ "$rc" -ne 0 ]] \
+    || { echo "$out"; fail "un output style divergent devrait faire échouer check-shims"; }
+  echo "$out" | grep -q "output-styles/aic-restitution.md diverge de la source unique" \
+    || { echo "$out"; fail "message de dérive du condensé output style attendu"; }
+)
+cp "$tmp/output-style.bak" "$repo_restitution/.claude/output-styles/aic-restitution.md"
+
+cp "$repo_restitution/AGENTS.md" "$tmp/agents-restitution.bak"
+awk '
+  !/<!-- BEGIN AIC-RESTITUTION-CONDENSE -->/ { print }
+' "$repo_restitution/AGENTS.md" > "$tmp/agents-incomplete.md"
+mv "$tmp/agents-incomplete.md" "$repo_restitution/AGENTS.md"
+(
+  cd "$repo_restitution"
+  set +e
+  out="$(bash .ai/scripts/check-shims.sh 2>&1)"
+  rc=$?
+  set -e
+  [[ "$rc" -ne 0 ]] \
+    || { echo "$out"; fail "un marqueur de fin isolé dans AGENTS.md devrait faire échouer check-shims"; }
+  echo "$out" | grep -q "AGENTS.md ne porte pas un bloc AIC-RESTITUTION-CONDENSE complet" \
+    || { echo "$out"; fail "message de bloc AGENTS.md incomplet attendu"; }
+)
+cp "$tmp/agents-restitution.bak" "$repo_restitution/AGENTS.md"
+
+awk '
+  /<!-- BEGIN AIC-RESTITUTION-CONDENSE -->/ { skip=1; next }
+  skip && /<!-- END AIC-RESTITUTION-CONDENSE -->/ { skip=0; next }
+  !skip { print }
+' "$repo_restitution/AGENTS.md" > "$tmp/agents-without-restitution.md"
+mv "$tmp/agents-without-restitution.md" "$repo_restitution/AGENTS.md"
+(
+  cd "$repo_restitution"
+  set +e
+  out="$(bash .ai/scripts/check-shims.sh 2>&1)"
+  rc=$?
+  set -e
+  [[ "$rc" -ne 0 ]] \
+    || { echo "$out"; fail "l'absence complète du bloc AGENTS.md devrait faire échouer check-shims"; }
+  echo "$out" | grep -q "AGENTS.md ne porte pas un bloc AIC-RESTITUTION-CONDENSE complet" \
+    || { echo "$out"; fail "message de bloc AGENTS.md entièrement absent attendu"; }
+)
+cp "$tmp/agents-restitution.bak" "$repo_restitution/AGENTS.md"
+
+for n in 1 2 3 4 5 6 7 8 9 10 11 12; do
+  printf '# extra %s\n' "$n" >> "$repo_restitution/CLAUDE.md"
+done
+(
+  cd "$repo_restitution"
+  set +e
+  out="$(bash .ai/scripts/check-shims.sh 2>&1)"
+  rc=$?
+  set -e
+  [[ "$rc" -ne 0 ]] \
+    || { echo "$out"; fail "CLAUDE.md à 16 lignes devrait dépasser sa borne historique"; }
+  echo "$out" | grep -q "CLAUDE.md dépasse 15 lignes (16)" \
+    || { echo "$out"; fail "borne spécifique de 15 lignes attendue pour CLAUDE.md"; }
+)
+
 echo "PASS test-check-shims-dynamic-agents"

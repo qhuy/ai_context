@@ -78,6 +78,7 @@ run_rsync() {
 run_rsync "$out/.ai/" ".ai/" \
   "${DOGFOOD_AI_RUNTIME_RSYNC_EXCLUDES[@]}"
 run_rsync "$out/.claude/settings.json" ".claude/settings.json"
+run_rsync "$out/.claude/output-styles/" ".claude/output-styles/"
 run_rsync "$out/.claude/skills/" ".claude/skills/"
 run_rsync "$out/.agents/" ".agents/"
 run_rsync "$out/.githooks/" ".githooks/"

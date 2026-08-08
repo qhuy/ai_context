@@ -12,6 +12,7 @@ touches:
   - .ai/workflows/codex-hooks-parity.md
   - template/.ai/workflows/codex-hooks-parity.md.jinja
   - template/.codex/hooks.json.jinja
+  - examples/fullstack-fr.yml
 touches_shared:
   - README.md
   - README_AI_CONTEXT.md
@@ -37,7 +38,7 @@ progress:
   step: "hooks Codex natifs générés par défaut depuis 2026-08-07 (opt-out enable_codex_hooks=false) ; contrat vérifié sur la doc officielle, README/message alignés"
   blockers: []
   resume_hint: "aucune action immédiate ; rouvrir si l'API hooks Codex change, pour une validation live CLI, ou pour l'auto-worklog Codex (payload apply_patch à valider)"
-  updated: 2026-07-06
+  updated: 2026-08-07
 type: feature
 ---
 
@@ -58,7 +59,7 @@ Codex expose une surface de hooks en évolution. ai_context doit pouvoir l'explo
 - Cadrer les hooks Codex autorisés pour un projet ai_context.
 - Limiter le pilote au reminder borné par tour, au gate de fraîcheur fin de turn, aux commandes destructives, au commit et aux checks feature mesh.
 - Documenter que les hooks Git restent la garantie stable cross-agent.
-- Générer opt-in la configuration `.codex/hooks.json` conforme au contrat (`enable_codex_hooks`, défaut false).
+- Générer par défaut la configuration `.codex/hooks.json` conforme au contrat quand `codex` est sélectionné, avec opt-out explicite (`enable_codex_hooks=false`).
 
 ### Hors périmètre
 
@@ -74,14 +75,14 @@ Cette fiche couvre la parité de garde-fous Codex. Les scripts quality qui valid
 
 ## Invariants
 
-- Les hooks Codex sont opt-in.
+- Les hooks Codex sont générés par défaut quand `codex` est sélectionné ; l'opt-out `enable_codex_hooks=false` et le trust prompt Codex restent les deux contrôles explicites.
 - Les hooks Codex ne sont pas la source de vérité de non-régression.
 - Aucun hook Codex ne doit charger de contexte lourd par défaut.
 - Tout hook doit être déterministe, testable et non interactif.
 
 ## Décisions
 
-- La config `.codex/hooks.json` est générée opt-in (`enable_codex_hooks`, défaut `false`) — jamais par défaut (décision « pas de `.codex/` par défaut » maintenue pour le défaut).
+- Depuis le 2026-08-07, la config `.codex/hooks.json` est générée par défaut (`enable_codex_hooks: true`) quand `codex` est sélectionné ; `false` l'exclut. Cette décision remplace l'opt-in introduit le 2026-07-06, sans modifier les réponses Copier déjà enregistrées dans les projets existants.
 - Format retenu : `hooks.json` (sidecar JSON) plutôt que `[hooks]` dans `config.toml` — validable par le `jq` déjà requis, schéma quasi identique à `.claude/settings.json`, pas de collision avec un éventuel `config.toml` du consommateur.
 - `stop-doc-gate.sh` est réutilisé tel quel sur l'événement `Stop` : contrat vérifié identique à Claude (doc officielle 2026-07-06, `stop_hook_active` + `decision:block`). Le primitive brut `check-feature-freshness.sh --worktree --strict` ne doit PAS être branché sur `Stop` (exit 1 = non bloquant côté Codex).
 - L'injection bornée du reminder par tour est adoptée (`pre-turn-reminder.sh --format=text` sur `UserPromptSubmit`, stdout = contexte documenté) ; l'injection par édition reste rejetée (aucun canal documenté).
@@ -89,7 +90,7 @@ Cette fiche couvre la parité de garde-fous Codex. Les scripts quality qui valid
 
 ## Comportement attendu
 
-Un projet scaffoldé avec `codex` + `enable_codex_hooks=true` reçoit `.codex/hooks.json` : reminder borné injecté à chaque tour (`UserPromptSubmit`) et gate de fraîcheur documentaire en fin de turn (`Stop`, bloquant via `decision:block`, échappatoire `AIC_DOC_GATE=off`). Codex ne charge ces hooks qu'après trust de la couche projet ; si le hook ne s'exécute pas, les hooks Git (`commit-msg`) et la CI restent les protections principales. Un projet peut aussi ajouter des hooks locaux (commande dangereuse, commit) dans le cadre du contrat.
+Un projet scaffoldé avec `codex` reçoit par défaut `.codex/hooks.json` : reminder borné injecté à chaque tour (`UserPromptSubmit`) et gate de fraîcheur documentaire en fin de turn (`Stop`, bloquant via `decision:block`, échappatoire `AIC_DOC_GATE=off`). `enable_codex_hooks=false` exclut cette couche. Codex ne charge les hooks qu'après trust de la couche projet ; s'ils ne s'exécutent pas, les hooks Git (`commit-msg`) et la CI restent les protections principales. Un projet peut aussi ajouter des hooks locaux (commande dangereuse, commit) dans le cadre du contrat.
 
 ## Contrats
 
@@ -129,12 +130,13 @@ Preuve de clôture 2026-07-06 (génération opt-in livrée) :
 
 `workflow/git-hooks` reste le point de convergence universel. `workflow/subagent-contract` fixe les règles quand un hook ou une tâche déclenche du travail délégué.
 
-`workflow/stop-turn-doc-gate` : le gate Stop de fraîcheur (`stop-doc-gate.sh`) parle le protocole `decision:block` partagé Claude/Codex ; il est câblé par défaut côté Claude (`stop-sequence.sh`) et opt-in côté Codex via `.codex/hooks.json` généré (`enable_codex_hooks=true`). Le warn orphelins reste un canal Claude (ignoré par Codex). Garantie universelle = `commit-msg --staged --strict` ; le primitive agnostique `check-feature-freshness.sh --worktree --strict` sert à la CI et aux agents sans protocole de hook — jamais branché brut sur `Stop` (non bloquant). Pas de `.codex/` livré par défaut (opt-in).
+`workflow/stop-turn-doc-gate` : le gate Stop de fraîcheur (`stop-doc-gate.sh`) parle le protocole `decision:block` partagé Claude/Codex ; il est câblé par défaut côté Claude (`stop-sequence.sh`) et, depuis le 2026-08-07, côté Codex via `.codex/hooks.json` (`enable_codex_hooks=false` pour l'opt-out). Le warn orphelins reste un canal Claude (ignoré par Codex). Garantie universelle = `commit-msg --staged --strict` ; le primitive agnostique `check-feature-freshness.sh --worktree --strict` sert à la CI et aux agents sans protocole de hook — jamais branché brut sur `Stop` (non bloquant).
 
 ## Historique / décisions
 
 - 2026-05-12 : création suite à la veille officielle OpenAI Codex hooks.
 - 2026-08-07 (chantier restitution, pilot `2026-08-07-retour-ux-restitution`, R5 validé utilisateur) : **`.codex/hooks.json` généré par défaut** dès que `codex` est sélectionné — `enable_codex_hooks` passe à `default: true` (opt-out conservé). Révision de la décision « jamais par défaut » du 2026-07-06, écrite quand le contrat était un pilote : le retour UX réel a prouvé que l'opt-in non découvert privait Codex du reminder par tour (règle « aucune supposition », ancre restitution) et du gate Stop, cassant silencieusement la parité — l'utilisateur n'avait jamais su que l'option existait. Le consentement reste au bon endroit : trust prompt Codex sur `.codex/` au premier lancement. Alignés : contrat parity (runtime + template), `.ai/rules/workflow.md` (×2), copier.yml (défaut + help), smoke `[28d/28]` inversé (défaut ⇒ hooks présents + conformes sur le scaffold principal ; opt-out ⇒ absents), docs/variables.md, README.md, README_AI_CONTEXT.md (×2), examples/fullstack-fr.yml. Projets existants : non affectés par le flip (réponses copier enregistrées) — activer via `copier update` en répondant `true` ou `--data enable_codex_hooks=true`.
+- 2026-08-07 (correction post-review) : les sections normatives encore formulées selon l'ancien opt-in sont alignées sur le défaut `true` ; les passages datés de 2026-06/07 restent historiques. `examples/fullstack-fr.yml` est ajouté à `touches_shared` pour que son propriétaire soit résolu par `features-for-path.sh`.
 - 2026-07-06 : réouverture (chantier P1 d'ANALYSE.md). API hooks Codex vérifiée sur la doc officielle : repo-level `<repo>/.codex/hooks.json` supporté (trust model), événement `Stop` au contrat identique à Claude, stdout `UserPromptSubmit` injecté comme contexte, PAS de canal d'injection PreToolUse. Génération opt-in de `.codex/hooks.json` (reminder + gate), contrat corrigé (l'ancien exemple TOML `[hooks.Stop]` sur le primitive brut était non bloquant), `stop-doc-gate.sh` requalifié protocole partagé Claude/Codex, étape smoke `[28d/28]`. Validation stricte des configs portée par `quality/agent-config-validation`.
 - 2026-06-26 : ajout de la recette « Parité fraîcheur fin de turn » (workflow/stop-turn-doc-gate). Le gate Stop étant Claude-only, on documente la parité Codex à deux niveaux — `commit-msg --staged --strict` universel (toujours actif) + hook Codex opt-in appelant le primitive `check-feature-freshness.sh --worktree --strict`. Surface Codex `Stop` (config.toml `[hooks]`) notée « à valider » ; aucun `.codex/` livré par défaut (décision inchangée).
 - 2026-07-03 : DONE. Pilote documenté seulement ; aucune config `.codex/` livrée par défaut.

@@ -9,4 +9,4 @@ Navigation progressive du feature mesh.
 - [`core`](core/index.md) — 20 features
 - [`product`](product/index.md) — 5 features
 - [`quality`](quality/index.md) — 15 features
-- [`workflow`](workflow/index.md) — 25 features
+- [`workflow`](workflow/index.md) — 27 features

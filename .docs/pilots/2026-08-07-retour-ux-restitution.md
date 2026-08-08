@@ -6,8 +6,8 @@ scope_primary: "workflow"
 created_at: "2026-08-07"
 updated_at: "2026-08-07"
 active_item: "R3"
-active_question: "Lancer le diagnostic R3 (aic-diagnose) ? Preuve avant/après R1/R4 à consigner en parallèle (côté Claude : ancre observée live en session le 2026-08-07, commits a154772/408193a)"
-next_hint: "Lots 1 (a154772) et 2 livrés le 2026-08-07 : condensé canonique (response-style source unique → output style Claude + AGENTS.md), ancre reminder fr/en, aic-ship/aic-review chargent le contrat, enable_codex_hooks default:true (smoke 28d inversé), MAX_LINES check-shims 15→30, docs alignées. Reste : preuve avant/après consignée ici, activation sur les projets utilisateur (copier update, répondre true à enable_codex_hooks), puis R3 → aic-diagnose (piste : projets consommateurs Codex sans reminder avant ce chantier)."
+active_question: "Lancer le diagnostic R3 (aic-diagnose) ? La preuve avant/après R1/R4 reste à consigner en parallèle ; côté Claude, l'ancre a été observée live en session le 2026-08-07."
+next_hint: "Chantier A livré (a154772/408193a) et corrections post-review intégrées : parité mécanique du condensé, dogfood de l'output style, limites de shims ciblées, métriques exactes et docs cohérentes. Reprise : R3 → aic-diagnose ; en parallèle, comparer le même prompt dans Claude/Codex sur un projet mis à jour et consigner la preuve R1/R4."
 ---
 
 # Pilot 2026-08-07-retour-ux-restitution — Réactiver le contrat de restitution
@@ -25,16 +25,16 @@ persistantes, et divergence de style entre Claude et Codex.
 - Les causes de la persistance des suppositions identifiées et traitées.
 - Preuve : avant/après sur un même prompt dans les deux outils.
 
-## Contexte prouvé (2026-08-07)
+## Contexte initial prouvé (avant livraison, 2026-08-07)
 
-- Le contrat existe : `.ai/agent/response-style.md` (510 mots ≈ 770 tokens) — couvre synthèse, séparation constat/décision/action/evidence, récap adaptatif, phrases interdites.
-- Démoté du Pack A par `ea1adac` (2026-05-04, « perf(core): alléger le contexte initial des agents »). Depuis : « `.ai/agent/*` optionnel, jamais Pack A » (`.ai/index.md`). Seuls `aic-diagnose` (toujours) et `aic-frame` (si style explicite) le chargent ; `aic-ship`/`aic-review` ne le chargent pas (rg 2026-08-07).
-- Le reminder par tour (`.ai/reminder.md`, 86 mots ≈ 130 tokens, hooks UserPromptSubmit Claude + Codex) ne contient aucune règle de restitution.
+- Au démarrage du chantier, le contrat existait dans `.ai/agent/response-style.md` (510 mots ≈ 770 tokens) — synthèse, séparation constat/décision/action/evidence, récap adaptatif, phrases interdites.
+- Il avait été démoté du Pack A par `ea1adac` (2026-05-04, « perf(core): alléger le contexte initial des agents »). À l'ouverture du pilotage, seuls `aic-diagnose` (toujours) et `aic-frame` (si style explicite) le chargeaient ; `aic-ship`/`aic-review` ne le chargeaient pas (`rg`, 2026-08-07).
+- Le reminder initial (`.ai/reminder.md`, 86 mots ≈ 130 tokens, hooks UserPromptSubmit Claude + Codex) ne contenait aucune règle de restitution.
 - Mécanismes vérifiés (docs officielles, 2026-08-07) :
   - Output styles Claude Code : actifs (commande standalone retirée v2.1.91, feature via `/config` ou `outputStyle` dans settings ; fichiers `.claude/output-styles/*.md`, frontmatter `keep-coding-instructions`). Canal officiellement recommandé pour le format de réponse. System prompt, une fois par session, prompt-caché. <https://code.claude.com/docs/en/output-styles.md>
   - CLAUDE.md/AGENTS.md : chargés une fois par session, prompt-cachés. <https://code.claude.com/docs/en/memory.md>
   - `additionalContext` (UserPromptSubmit) : coût par tour ; interaction cache non documentée explicitement.
-- `enable_codex_hooks` : `default: false`, question posée seulement si `codex` sélectionné (copier.yml:240-243) ; option introduite le 2026-07-06 (`1be149e`). Projets utilisateur : aucune activation explicite dont il se souvienne ⇒ hooks Codex absents ⇒ Codex y tourne **sans** le rappel par tour (dont la règle « aucune supposition ») et **sans** le gate Stop, que Claude a — candidat causal fort pour R3 et R4.
+- À l'ouverture du pilotage, `enable_codex_hooks` avait `default: false` (option introduite le 2026-07-06, `1be149e`). L'absence d'activation explicite mémorisée sur les projets utilisateur impliquait probablement des hooks Codex absents — candidat causal fort pour R3 et R4. Le défaut a depuis été basculé à `true` pour les nouveaux scaffolds ; les réponses Copier déjà enregistrées restent inchangées.
 - Update consommateur documenté : `copier update --conflict=rej` (docs/upgrading.md:9) ; la question est re-posée avec l'ancienne réponse en défaut, ou forçable via `--data enable_codex_hooks=true`.
 
 ## Carte des sujets
@@ -48,46 +48,46 @@ persistantes, et divergence de style entre Claude et Codex.
 | R4 | Claude et Codex ne formulent pas pareil | review | workflow | fix livré : même condensé aux 3 étages des deux côtés | avant/après même prompt dans les deux outils, à consigner ici |
 | R5 | Défaut `enable_codex_hooks=false` : Codex tourne sans reminder par tour ni gate Stop | done | workflow | livré (`408193a`) : default true, opt-out conservé | smoke [28d/28] inversé PASS ; manifeste de surface MAJ, bump MINOR acté |
 
-## Design proposé (chantier A) — en validation
+## Design retenu et livré (chantier A)
 
 | Étage | Canal Claude | Canal Codex | Coût estimé | Rôle |
 |---|---|---|---|---|
 | 1. Contrat condensé (~10 lignes) | Output style `.claude/output-styles/` + `outputStyle` settings | Bloc dans AGENTS.md (shim) | ~0 / tour (session, caché) | Le « à quoi ressemble une bonne réponse » |
-| 2. Ancre anti-dérive (1 ligne) | `.ai/reminder.md` (hook existant) | idem (hook partagé) | ~25-30 tokens / tour | Combattre la dérive en session longue |
+| 2. Ancre anti-dérive (1 ligne) | `.ai/reminder.md` (hook existant) | idem (hook partagé) | +146 caractères, ~37–49 tokens / tour | Combattre la dérive en session longue |
 | 3. Contrat complet + exemple avant/après | `response-style.md` chargé par aic-ship/aic-review/aic-diagnose | idem (`.agents/skills`) | on-demand | Profondeur près de la clôture |
 
-Contraintes : source unique du condensé dans `response-style.md` (rendus vérifiés par les checks de parité — à cadrer) ; étage 2 débrayable si le coût par tour se révèle inutile après test avant/après.
+Contraintes : source unique du condensé dans `response-style.md` ; égalité stricte des blocs AGENTS/output style vérifiée par `check-shims`, alignement runtime/template couvert par `check-dogfood-drift`. L'étage 2 reste débrayable si le coût par tour se révèle inutile après test avant/après.
 
 Écarté : LLM-judge hooks (interdits — `codex-hooks-parity`), fine-tuning, gros reminder par tour.
 
 ### Compatibilité Codex (vérifiée 2026-08-07)
 
 - Étage 1 : AGENTS.md est l'entrée **native** de Codex — c'est déjà le canal des hard rules actuelles. Pas d'équivalent output style → le contrat vit en contexte projet, pas en system prompt (asymétrie de position assumée, compensée par l'étage 2). Inversion notable : c'est Claude qui ne lit AGENTS.md que via l'import CLAUDE.md (`.ai/native-context-support.tsv` : claude=pending, issue #6235).
-- Étage 2 : contrat UserPromptSubmit Codex **vérifié** (`codex-hooks-parity`, doc officielle OpenAI 2026-07-06 : stdout ajouté comme contexte développeur ; même script `pre-turn-reminder.sh --format=text`). **Contrainte : opt-in** — `.codex/hooks.json` généré seulement si `enable_codex_hooks=true` (défaut `false`) et couche `.codex/` trustée au premier lancement. Sans opt-in, Codex n'a que les étages 1+3.
+- Étage 2 : contrat UserPromptSubmit Codex **vérifié** (`codex-hooks-parity`, doc officielle OpenAI 2026-07-06 : stdout ajouté comme contexte développeur ; même script `pre-turn-reminder.sh --format=text`). `.codex/hooks.json` est généré par défaut quand `codex` est sélectionné depuis le 2026-08-07 ; `enable_codex_hooks=false` l'exclut et la couche `.codex/` doit toujours être trustée au premier lancement. Les projets existants conservent leur réponse Copier enregistrée.
 - Étage 3 : skills Codex générés sous `.agents/skills/aic-*` si `codex` sélectionné (copier.yml:115) ; parité tenue par `check-skills-parity.sh` (resserrée en v1.0.1).
 
-Hypothèses restantes : `keep-coding-instructions: true` préserve le comportement code par défaut (à tester) ; portage de l'output style dans le template copier ; état de `enable_codex_hooks` sur les projets de l'utilisateur (à demander).
+À vérifier : effet live de `keep-coding-instructions: true` sur une session Claude réelle ; état de `enable_codex_hooks` dans chaque projet utilisateur existant. Le portage Copier et les validations statiques de l'output style sont livrés.
 
 ## Question active
 
 Contexte affiché :
 
-- R3 (suppositions) attend son diagnostic — route `aic-diagnose`, après cadrage du chantier A.
+- Le chantier A est livré et durci après review ; R3 (suppositions) attend son diagnostic, route `aic-diagnose`.
 
 Question à traiter maintenant :
 
-- Valider le design 3 étages ci-dessus pour cadrer le chantier A (fiche `workflow/agent-behavior`).
+- Lancer le diagnostic R3 ; recueillir en parallèle la preuve avant/après R1/R4 sur le même prompt dans Claude et Codex.
 
 ## Décisions actées
 
 | Date | Item | Décision | Raison | Suite |
 |---|---|---|---|---|
 | 2026-08-07 | R0 | Acté, aucun suivi | Retour positif utilisateur | — |
-| 2026-08-07 | R1+R2+R4 | Fusion en chantier A « réactiver + durcir le contrat de restitution » | Même cause racine (contrat démoté par `ea1adac`), même surface (fiche workflow/agent-behavior) | Design 3 étages en validation |
-| 2026-08-07 | R1 | Réactivation validée par l'utilisateur (« réactiver oui ») | Contrainte : ne pas (trop) alourdir le contexte | Design d'injection à valider |
-| 2026-08-07 | R3 | Séparé du chantier A, route diagnose | La règle existe et est injectée : problème d'efficacité, pas d'absence | Lancer aic-diagnose après cadrage chantier A |
-| 2026-08-07 | R1+R2+R4 | **GO utilisateur sur le design 3 étages** | Coût quasi nul vérifié (étage 1 caché, étage 2 ~30 tokens/tour débrayable) | HANDOFF workflow + cadrage chantier A |
-| 2026-08-07 | R5 | Recommandation agent : générer `.codex/hooks.json` dès que codex est sélectionné (symétrie avec `.claude/settings.json`) | Le consentement réel est le trust prompt Codex au premier lancement ; le défaut actuel casse la parité silencieusement (prouvé par le retour UX) | Arbitrage utilisateur en cours |
+| 2026-08-07 | R1+R2+R4 | Fusion en chantier A « réactiver + durcir le contrat de restitution » | Même cause racine (contrat démoté par `ea1adac`), même surface (fiche workflow/agent-behavior) | Livré ; R1/R4 restent en review pour la preuve live |
+| 2026-08-07 | R1 | Réactivation validée par l'utilisateur (« réactiver oui ») | Contrainte : ne pas (trop) alourdir le contexte | Injection 3 étages livrée |
+| 2026-08-07 | R3 | Séparé du chantier A, route diagnose | La règle existe et est injectée : problème d'efficacité, pas d'absence | Lancer aic-diagnose après livraison du chantier A |
+| 2026-08-07 | R1+R2+R4 | **GO utilisateur sur le design 3 étages** | Étage 1 session ; étage 2 mesuré à +146 caractères (~37–49 tokens/tour), débrayable | HANDOFF workflow/core exécuté ; implémentation livrée |
+| 2026-08-07 | R5 | Recommandation agent : générer `.codex/hooks.json` dès que codex est sélectionné (symétrie avec `.claude/settings.json`) | Le consentement réel est le trust prompt Codex au premier lancement ; l'ancien défaut cassait la parité silencieusement | Arbitrage obtenu puis implémenté |
 | 2026-08-07 | R5 | **Validé utilisateur** (« go ») : bascule du défaut actée, question copier conservée pour l'opt-out | Alignement sur la politique hooks Claude | Intégré au cadrage chantier A |
 
 ## Handoffs
@@ -96,18 +96,18 @@ Question à traiter maintenant :
 HANDOFF (confirmé par le GO utilisateur du 2026-08-07)
   from_scope: pilotage (session)
   to_scope: workflow
-  status: prêt — cadrage à lancer après arbitrage R5
-  files_touched: [.docs/pilots/2026-08-07-retour-ux-restitution.md]
-  pending: [cadrage chantier A sur .docs/features/workflow/agent-behavior.md — étages 1-3 + décision R5]
-  risks: [drift interne entre les 3 rendus du condensé si la source unique n'est pas outillée ; surfaces multi-scope probables (AGENTS.md shim, reminder, copier.yml) à trancher au cadrage]
+  status: terminé — cadrage et lots workflow/core livrés (a154772, 408193a)
+  files_touched: [.docs/pilots/2026-08-07-retour-ux-restitution.md, .docs/features/workflow/agent-behavior.md]
+  pending: [aucun sur ce handoff ; preuves live R1/R4 et diagnostic R3 restent au registre]
+  risks: [activation à vérifier sur les projets consommateurs ayant conservé enable_codex_hooks=false]
 ```
 
 ## Suivi d'exécution
 
 | Item | Action liée | Owner | Statut | Validation |
 |---|---|---|---|---|
-| R1+R2+R4 | Chantier A — design injection 3 étages | agent + utilisateur | design en validation | avant/après sur même prompt, 2 outils |
-| R3 | aic-diagnose sur l'inefficacité de la règle evidence | agent | en attente | matrice causes → evidence |
+| R1+R2+R4 | Chantier A — injection 3 étages | agent + utilisateur | implémentation livrée ; R1/R4 en review | avant/après sur même prompt, 2 outils |
+| R3 | aic-diagnose sur l'inefficacité de la règle evidence | agent | item actif | matrice causes → evidence |
 
 ## Validation de clôture
 
@@ -117,4 +117,4 @@ HANDOFF (confirmé par le GO utilisateur du 2026-08-07)
 
 ## Next hint
 
-Reprise : lire ce registre, puis — si design validé — HANDOFF scope workflow et cadrage du chantier A sur `.docs/features/workflow/agent-behavior.md` (étages 1-3, source unique du condensé, checks de parité). Ensuite router R3 vers `aic-diagnose`.
+Reprise : lancer R3 via `aic-diagnose`. En parallèle, mettre à jour un projet consommateur Claude+Codex, vérifier/activer `enable_codex_hooks`, exécuter le même prompt dans les deux outils et consigner la preuve R1/R4 ici.

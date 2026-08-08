@@ -74,3 +74,10 @@
 - `_lib.sh:visible_statuses_jq()` (+ miroir) lit `context.show_statuses` ; `pre-turn-reminder.sh` (+ miroir) lit `context.default_focus`. Précédence : env var > config > défaut. Garde : une liste vide retombe sur le défaut au lieu de masquer tout le mesh.
 - Commentaires de `.ai/config.yml` (+ miroir) documentent la précédence pour le consommateur. Roadmap `PROJECT_STATE` passée de 🚧 à ✅.
 - Validation : 7 assertions dans `tests/unit/test-context-config-keys.sh` (config appliquée, env var prioritaire, config absente, liste vide, clé absente, default_focus lu, env var focus prioritaire) — la lecture de `default_focus` est prouvée par le warn « focus ignoré » sur un scope inexistant, preuve discriminante. dogfood-drift + smoke complet PASS.
+
+## 2026-08-07 — correction de mesure de l'ancre restitution
+- Intent : remplacer l'estimation annoncée à ≤30 tokens par la mesure reproductible du delta réel.
+- Fichiers/surfaces : fiche/worklog `workflow/pre-turn-reminder`; runtime reminder inchangé ; `tests/unit/test-context-config-keys.sh` rattaché à `touches:` (preuve B9 déjà documentée, auparavant orpheline).
+- Décision : budget documenté à +146 caractères (`measure-context-size.sh` sur le repo source : statique 560 → 706), soit ~37–49 tokens/tour selon la formule du script. Le titre et le résumé reflètent le partage UserPromptSubmit Claude/Codex. (Valeurs 535→674/+139 de la première passe corrigées en review du 2026-08-08 : non reproductibles sur le repo source.)
+- Validation (re-run review 2026-08-08) : `bash .ai/scripts/measure-context-size.sh` → statique 706, reverse_deps 0 ; `grep '^- Restitution' .ai/reminder.md | wc -c` → 146 ; smoke complet PASS.
+- Next : réévaluer l'ancre seulement avec une preuve avant/après R1/R4.
