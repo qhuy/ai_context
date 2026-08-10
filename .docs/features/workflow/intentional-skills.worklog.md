@@ -219,3 +219,8 @@
 - Fichiers modifiés :
   - .ai/workflows/codex-hooks-parity.md
   - template/.ai/workflows/codex-hooks-parity.md.jinja
+
+## 2026-08-10 10:38 — auto
+- Fichiers modifiés :
+  - .ai/workflows/evidence-discipline.md
+  - template/.ai/workflows/evidence-discipline.md.jinja

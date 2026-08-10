@@ -48,10 +48,10 @@ doc:
     observability: false
 progress:
   phase: done
-  step: "discipline de preuve livrée : contrat + hard rule Pack A (FR/EN) + wiring des 4 skills d'analyse"
+  step: "discipline de preuve livrée : contrat (dont § Chiffres publiés) + hard rule Pack A (FR/EN) + wiring des 4 skills d'analyse"
   blockers: []
   resume_hint: "aucune action immédiate ; phase 2 éventuelle = evidence des analyses dans QUALITY_GATE.md"
-  updated: 2026-07-06
+  updated: 2026-08-08
 ---
 
 # Discipline de preuve — aucune affirmation sans source ni étiquette
@@ -94,7 +94,7 @@ restent portés par les fiches des skills (`workflow/intentional-skills`,
 
 ## Invariants
 
-- Le Pack A reste lean : la hard rule tient en une ligne dans le reminder (~90 caractères) et `AGENTS.md` reste ≤ 15 lignes (limite `check-shims`).
+- Le Pack A reste lean : la hard rule tient en une ligne dans le reminder et `AGENTS.md` reste sous sa borne `check-shims` (30 lignes depuis le chantier restitution du 2026-08-07 ; 15 pour les shims dérivés).
 - La règle est identique pour tous les agents ; seul le canal diffère (reminder par tour pour Claude/Codex, `AGENTS.md` pour tous).
 - L'étiquette Hypothèse est une soupape, pas une échappatoire : une hypothèse qui peut changer la décision, la route ou le DONE devient bloquante (règle héritée d'`aic-frame`).
 - Aucune promesse de garantie mécanique : l'enforcement est comportemental et structurel, et documenté comme tel.
@@ -117,14 +117,14 @@ explicites. Un agent sans injection par tour (Gemini) reçoit la règle via
 
 ## Contrats
 
-- Contrat canonique : `.ai/workflows/evidence-discipline.md` (+ miroir template).
+- Contrat canonique : `.ai/workflows/evidence-discipline.md` (+ miroir template), § « Chiffres publiés » inclus (fraîcheur, contexte, provenance).
 - Hard rule (reminder FR) : « Aucune supposition : tout fonctionnement affirmé est prouvé (code lu, commande exécutée, doc citée) ou marqué “Hypothèse — à vérifier”. »
 - Hard rule (reminder EN) : « No assumptions: any claimed behavior is proven (code read, command run, doc cited) or flagged “Hypothesis — to verify”. »
 - Skills d'analyse : une règle non négociable référençant le contrat.
 
 ## Validation
 
-- `bash .ai/scripts/check-shims.sh` — AGENTS.md ≤ 15 lignes, auto-suffisant, Pack A lean.
+- `bash .ai/scripts/check-shims.sh` — AGENTS.md sous sa borne (30 lignes), auto-suffisant, Pack A lean.
 - `bash .ai/scripts/check-feature-docs.sh --strict workflow/evidence-discipline`.
 - `bash tests/unit/test-agents-md-self-sufficient.sh` — hard rules inline préservées.
 - `bash tests/smoke-test.sh` — étapes reminder ([3/28], i18n [23/28]) avec la nouvelle ligne FR/EN.
@@ -148,4 +148,5 @@ explicites. Un agent sans injection par tour (Gemini) reçoit la règle via
 
 - 2026-07-06 (clôture) : livré en 4 commits — contrat, hard rule Pack A (AGENTS.md maintenu à 15 lignes par condensation, reminder 560 chars mesurés), wiring des 4 skills (16 fichiers, parité Claude/Codex vérifiée par diff), docs. Preuves : check-shims PASS, test-agents-md-self-sufficient PASS, check-feature-docs --strict PASS, check-dogfood-drift PASS, smoke complet PASS (étapes [3/28] et i18n [23/28] incluses), measure-context-size exécuté.
 
+- 2026-08-08 (**diagnostic R3**, pilot `2026-08-07-retour-ux-restitution`) : le contrat gagne un § **« Chiffres publiés »** (fraîcheur / contexte / provenance) et la hard rule du reminder est étendue de 50 caractères (« un chiffre publié est re-mesuré, jamais recopié », FR + EN). Cause diagnostiquée : la règle interdisait l'affirmation nue mais n'exigeait ni de **re-mesurer** après la dernière édition, ni de publier le **contexte** d'exécution, ni de re-exécuter un chiffre **hérité** — trois trous par lesquels les deux agents sont passés le même jour. Exhibits : Codex a publié « mesure reproductible : 535 → 674, +139 » (non reproductible sur le repo source, réel 560 → 706, +146) ; Claude a publié « AGENTS.md : 28 lignes » par arithmétique mentale sur une mesure périmée (réel : 27). Aucun des deux n'enfreignait la lettre de la règle d'alors. Volet correspondant ajouté à `response-style.md` § Précision technique (+ miroir). L'enforcement reste comportemental — limite déjà documentée, inchangée.
 - 2026-07-06 : création après cadrage `aic-frame` (niveau high, demande utilisateur « primordiale » : éliminer les suppositions). Décisions clés : hard rule dans le Pack A plutôt que posture on-demand ; AGENTS.md condensé plutôt que limite montée ; trois étiquettes orientées action ; enforcement honnêtement décrit comme comportemental + structurel, jamais mécanique.

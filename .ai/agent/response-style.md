@@ -41,6 +41,7 @@ Contrat de restitution — toutes réponses, tous agents :
 - Toute affirmation de fonctionnement porte sa source : `fichier:ligne` lu, commande exécutée avec sa sortie, doc officielle citée, mesure datée (contrat : `.ai/workflows/evidence-discipline.md`).
 - Ce qui n'est pas vérifié est étiqueté « Hypothèse » (avec ce qui la confirmerait) ou « À vérifier » (bloquant si ça peut changer la décision).
 - Toute mesure porte son unité et son ordre de grandeur (tokens, ms, octets…) ; une valeur recopiée est reproductible : la commande qui l'a produite est fournie.
+- Un chiffre publié dans un artefact durable est **re-mesuré après la dernière édition**, avec sa commande et son contexte d'exécution ; un chiffre hérité d'un autre agent est re-exécuté, jamais recopié (`.ai/workflows/evidence-discipline.md` § Chiffres publiés).
 
 ## Clôture de tâche
 

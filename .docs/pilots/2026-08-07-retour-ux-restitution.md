@@ -5,8 +5,8 @@ source: "Retour UX utilisateur multi-projets (session 2026-08-07)"
 scope_primary: "workflow"
 created_at: "2026-08-07"
 updated_at: "2026-08-07"
-active_item: "R3"
-active_question: "Lancer le diagnostic R3 (aic-diagnose) ? La preuve avant/après R1/R4 reste à consigner en parallèle ; côté Claude, l'ancre a été observée live en session le 2026-08-07."
+active_item: "R1"
+active_question: "Preuve avant/après R1/R4 (même prompt, Claude + Codex, projet à jour) — dernier item ouvert du pilotage."
 next_hint: "Chantier A livré (a154772/408193a) et corrections post-review intégrées : parité mécanique du condensé, dogfood de l'output style, limites de shims ciblées, métriques exactes et docs cohérentes. Reprise : R3 → aic-diagnose ; en parallèle, comparer le même prompt dans Claude/Codex sur un projet mis à jour et consigner la preuve R1/R4."
 ---
 
@@ -44,7 +44,7 @@ persistantes, et divergence de style entre Claude et Codex.
 | R0 | Points forts : mesh, cadrage, qualité livrée | done | — | — | acté (retour utilisateur) |
 | R1 | Réponses confuses, sans synthèse, parfois incompréhensibles | review | workflow | fix livré (`a154772` + `408193a`) | ancre observée live en session Claude le 2026-08-07 ; avant/après 2 outils restant |
 | R2 | Données techniques imprécises (forme et fond) | done | workflow | livré : volet précision technique du contrat (`a154772`) | section « Précision technique » + exemple avant/après dans response-style.md |
-| R3 | Suppositions persistantes malgré la règle injectée | triage | workflow/quality | diagnose (prochain item actif) | causes classées avec evidence par agent et par projet |
+| R3 | Suppositions persistantes malgré la règle injectée | done | workflow | diagnostiqué + fix livré (§ Chiffres publiés, dogfood `.codex/`) | causes classées avec exhibits ; contrat étendu, checks PASS |
 | R4 | Claude et Codex ne formulent pas pareil | review | workflow | fix livré : même condensé aux 3 étages des deux côtés | avant/après même prompt dans les deux outils, à consigner ici |
 | R5 | Défaut `enable_codex_hooks=false` : Codex tourne sans reminder par tour ni gate Stop | done | workflow | livré (`408193a`) : default true, opt-out conservé | smoke [28d/28] inversé PASS ; manifeste de surface MAJ, bump MINOR acté |
 
@@ -86,6 +86,7 @@ Question à traiter maintenant :
 | 2026-08-07 | R1+R2+R4 | Fusion en chantier A « réactiver + durcir le contrat de restitution » | Même cause racine (contrat démoté par `ea1adac`), même surface (fiche workflow/agent-behavior) | Livré ; R1/R4 restent en review pour la preuve live |
 | 2026-08-07 | R1 | Réactivation validée par l'utilisateur (« réactiver oui ») | Contrainte : ne pas (trop) alourdir le contexte | Injection 3 étages livrée |
 | 2026-08-07 | R3 | Séparé du chantier A, route diagnose | La règle existe et est injectée : problème d'efficacité, pas d'absence | Lancer aic-diagnose après livraison du chantier A |
+| 2026-08-08 | R3 | **Diagnostiqué (bottleneck : qualité) et corrigé.** Cause racine : la règle n'exigeait ni re-mesure après la dernière édition, ni contexte d'exécution publié, ni re-exécution d'un chiffre hérité — les deux exhibits du jour passaient par ces trous sans en enfreindre la lettre. Amplificateur prouvé : `.codex/` n'avait jamais existé sur ce repo (`ls` + `git log --all -- .codex/` vides) ⇒ Codex y travaillait sans reminder par tour, contrairement à Claude. | Fix A (contrat § Chiffres publiés + hard rule reminder FR/EN + response-style) et Fix B (dogfood `.codex/`, `compare_tree` ajouté au drift-check) | R3 clos ; reste R1/R4 (preuve live) |
 | 2026-08-07 | R1+R2+R4 | **GO utilisateur sur le design 3 étages** | Étage 1 session ; étage 2 mesuré à +146 caractères (~37–49 tokens/tour), débrayable | HANDOFF workflow/core exécuté ; implémentation livrée |
 | 2026-08-07 | R5 | Recommandation agent : générer `.codex/hooks.json` dès que codex est sélectionné (symétrie avec `.claude/settings.json`) | Le consentement réel est le trust prompt Codex au premier lancement ; l'ancien défaut cassait la parité silencieusement | Arbitrage obtenu puis implémenté |
 | 2026-08-07 | R5 | **Validé utilisateur** (« go ») : bascule du défaut actée, question copier conservée pour l'opt-out | Alignement sur la politique hooks Claude | Intégré au cadrage chantier A |

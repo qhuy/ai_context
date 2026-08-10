@@ -27,3 +27,12 @@
 - Validation (exécutée ce jour) : `check-shims` PASS (AGENTS.md 15 lignes, auto-suffisant, Pack A 87 mots) ; `test-agents-md-self-sufficient` PASS ; `check-feature-docs --strict workflow/evidence-discipline` PASS ; `check-features` PASS ; `check-dogfood-drift` PASS ; smoke complet PASS ×3 (un par commit) ; `measure-context-size` : reminder statique 560 chars.
 - Limite assumée (documentée au contrat) : discipline outillée, pas garantie machine — aucun gate de véracité possible.
 - Next : phase 2 éventuelle — exiger l'evidence des analyses dans QUALITY_GATE.md avant review.
+
+## 2026-08-08 — diagnostic R3 : § « Chiffres publiés » (Fix A)
+- Intent : traiter la persistance des suppositions malgré la règle injectée à chaque tour (item R3 du pilot `2026-08-07-retour-ux-restitution`).
+- Diagnostic : la règle interdisait l'affirmation nue mais laissait trois trous — pas d'exigence de **re-mesure** après la dernière édition, pas de **contexte** d'exécution publié, pas de re-exécution d'un chiffre **hérité**. Les deux exhibits du 2026-08-08 passaient par ces trous sans enfreindre la lettre : Codex a publié « mesure reproductible : 535 → 674, +139 » (irreproductible sur le repo source) ; Claude a publié « AGENTS.md : 28 lignes » depuis une mesure périmée (réel : 27).
+- Surfaces : `.ai/workflows/evidence-discipline.md` (+ miroir) § Chiffres publiés ; `.ai/reminder.md` (+ miroir FR/EN) hard rule étendue de 50 caractères ; `.ai/agent/response-style.md` (+ miroir) § Précision technique. Aucun impact sur le bloc `AIC-RESTITUTION-CONDENSE` (section distincte) — parité des trois rendus intacte.
+- Mesure, re-exécutée APRÈS la dernière édition (règle appliquée à elle-même), sur le repo source : `bash .ai/scripts/measure-context-size.sh` → statique **759** caractères (contre 706 avant ce fix, soit +53) ; `grep '^- Aucune supposition' .ai/reminder.md | wc -c` → **206** ; `wc -c .ai/reminder.md` → **760**.
+- Validation : `check-shims`, `check-dogfood-drift`, `check-agent-config`, `check-features`, `test-dogfood-drift-extra`, `test-agents-md-self-sufficient`, `check-feature-docs --strict` (×3 fiches), freshness worktree — PASS ; smoke complet PASS.
+- Limite inchangée : enforcement comportemental, aucun gate de véracité possible (hooks LLM-juges interdits par `workflow/codex-hooks-parity`).
+- Next : observer si la classe « chiffre faux » réapparaît ; le cas échéant, envisager un nudge à l'écriture des artefacts durables (précédent : `fiche-consolidation-nudge`).

@@ -185,6 +185,11 @@ check_rendered_file_sanity "codex-hooks" "$out_codex_hooks" ".codex/hooks.json"
 compare_tree ".ai" "$out/.ai" ".ai"
 compare_file ".claude/settings.json" "$out/.claude/settings.json" ".claude/settings.json"
 compare_tree ".claude/output-styles" "$out/.claude/output-styles" ".claude/output-styles"
+# .codex/ est dogfoodé depuis le 2026-08-08 : le profil minimal le rend par
+# défaut (enable_codex_hooks=true) et le repo source consomme donc ses propres
+# hooks Codex. Sans cette comparaison, l'absence du fichier runtime passait
+# inaperçue (le sanity check du profil conditionnel ne regarde que le rendu).
+compare_tree ".codex" "$out/.codex" ".codex"
 compare_tree ".claude/skills" "$out/.claude/skills" ".claude/skills"
 compare_tree ".agents" "$out/.agents" ".agents"
 compare_tree ".githooks" "$out/.githooks" ".githooks"

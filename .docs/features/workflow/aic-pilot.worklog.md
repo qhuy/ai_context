@@ -247,3 +247,10 @@
 - `.docs/pilots/2026-08-07-retour-ux-restitution.md` : contexte initial désormais explicitement historique, design et HANDOFF marqués livrés, unique question active réalignée sur R3 ; R1/R4 restent en review pour la preuve live.
 - Les métriques sont corrigées (+146 caractères, ~37–49 tokens/tour — valeurs re-mesurées en review du 2026-08-08 sur le repo source) et le défaut hooks Codex est décrit selon l'état courant (`true`, opt-out).
 - Usage du contrat `aic-pilot` uniquement ; aucun changement de son fonctionnement.
+
+## 2026-08-08 — pilotage restitution : R3 diagnostiqué et clos
+- `.docs/pilots/2026-08-07-retour-ux-restitution.md` : R3 passe en `done` (diagnostic + Fix A/Fix B livrés), item actif ramené à R1 (preuve avant/après, dernier point ouvert). Usage du contrat aic-pilot, pas un changement de contrat.
+
+## 2026-08-10 10:38 — auto
+- Fichiers modifiés :
+  - .docs/pilots/2026-08-07-retour-ux-restitution.md

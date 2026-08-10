@@ -16,6 +16,18 @@ Une affirmation de fonctionnement (« X fait Y », « le hook bloque », « cett
 
 Interdit : l'affirmation nue — un fonctionnement énoncé comme un fait sans source ni étiquette.
 
+## Chiffres publiés
+
+Un chiffre écrit dans un artefact durable (CHANGELOG, fiche, worklog, message de commit, rapport) est une affirmation comme une autre — et la plus facile à recopier sans la vérifier. Trois exigences s'ajoutent :
+
+| Exigence | Règle |
+|---|---|
+| **Fraîcheur** | re-mesurer APRÈS la dernière édition susceptible de changer la valeur. Une valeur recalculée de tête depuis une mesure antérieure n'est pas une mesure. |
+| **Contexte** | publier la commande exacte et l'endroit où elle a tourné (repo source, scaffold rendu, worktree). Deux contextes donnent deux valeurs différentes, toutes deux « vraies ». |
+| **Provenance** | un chiffre hérité d'un autre agent ou d'une session antérieure est re-exécuté avant publication, ou cité avec sa commande et sa date. Jamais recopié tel quel. |
+
+Corollaire : « mesure reproductible » n'est pas une formule de style, c'est un engagement — si la commande n'est pas dans le texte, le chiffre n'est pas reproductible.
+
 ## Application
 
 - Le niveau de preuve suit l'enjeu : une exploration tolère des hypothèses étiquetées ; une décision d'architecture, un contrat ou un DONE exigent du **Prouvé**.
