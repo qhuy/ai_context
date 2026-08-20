@@ -16,3 +16,9 @@
 - **Dogfood** : `.ai/.session-injected-docs` déclaré volatile dans `dogfood-runtime-lib.sh` (tableau `DOGFOOD_VOLATILE_AI_FILES` + `dogfood_is_ai_runtime_extra_ignored`), sinon `check-dogfood-drift.sh` remontait les marqueurs en `extra-runtime`. `check-dogfood-drift.sh` repasse ✅.
 - **Risque restant** : après une compaction de contexte, le marqueur survit alors que le corps a disparu du contexte. Mitigé par un rappel actionnable (chemin + « relis-la si la décision en dépend »), pas supprimé — le hook ne reçoit aucun signal de compaction. Pas de TTL ajouté : ce serait un seuil arbitraire non mesuré.
 - **Phase** : review. Prochaine étape : observer le comportement sur une vraie session longue et multi-paths, le gain publié étant mesuré sur des appels répétés sur un seul path.
+
+## 2026-08-20 — échéance de relecture posée (2026-09-03)
+
+- La feature reste en `phase: review` volontairement : le gain publié (−82,7 % en régime stable) est mesuré sur des appels répétés sur un **seul** path, pas sur une session longue multi-paths.
+- Échéance adossée au mécanisme existant plutôt qu'à un rappel externe : `resume-features.sh` fait ressortir la fiche en `STALE` dès que `progress.updated` dépasse `stale_after_days` (défaut 14) — soit le **2026-09-03**. Aucun nouveau dispositif de suivi créé.
+- Critère de passage `review` → `done` écrit dans `resume_hint` et dans la section Risques : (1) re-mesurer défaut contre `AI_CONTEXT_FEATURE_DOC_SESSION_DEDUP=0` sur une session longue multi-paths ; (2) `done` si le gain tient et si aucune perte de corps après compaction n'a gêné ; (3) sinon documenter le cas et arbitrer un TTL de réinjection.

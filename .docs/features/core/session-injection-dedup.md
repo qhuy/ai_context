@@ -33,7 +33,7 @@ progress:
   phase: review
   step: "dédup livrée, 9 cas unitaires verts, gain mesuré -82,7 % en régime stable"
   blockers: []
-  resume_hint: "observer sur une vraie session longue ; rouvrir si la perte de corps après compaction devient gênante"
+  resume_hint: "échéance de relecture 2026-09-03 (STALE à 14 j) : re-mesurer le régime stable sur une session longue multi-paths (défaut vs AI_CONTEXT_FEATURE_DOC_SESSION_DEDUP=0), puis passer done si le gain tient et si aucune perte de corps après compaction n'a gêné ; sinon documenter le cas observé et arbitrer un TTL de réinjection."
   updated: 2026-08-20
 ---
 
@@ -135,7 +135,13 @@ Latence du hook (le câblage `.claude/settings.json` impose un `timeout: 3` seco
 - **Compaction de contexte** : si le contexte est compacté après l'injection du corps, le marqueur survit alors que le corps a disparu ; l'agent ne reçoit plus qu'un rappel. Mitigé par un rappel actionnable (chemin + consigne de relecture), pas supprimé. Le hook ne reçoit aucun signal de compaction.
 - **Transitoire de 3 appels** : le budget libéré est d'abord consommé par les fiches `depends_on` profondes avant que la sortie ne s'effondre. Comportement mesuré et borné, pas un état permanent.
 - **Sémantique du tracker de pertinence** : une fiche « injectée » peut désormais n'être qu'un rappel. Les évènements `inject` sont volontairement inchangés pour ne pas déplacer le ranking ; à revoir si les pénalités deviennent bruitées.
-- À revalider sur une vraie session longue : le gain publié ici est mesuré sur des appels répétés sur un seul path.
+- À revalider sur une vraie session longue : le gain publié ici est mesuré sur des appels répétés sur un seul path. Sur une session multi-paths, chaque nouveau path apporte ses propres fiches de tête, donc la convergence sera plus lente que les 3 appels mesurés.
+
+**Échéance de relecture : 2026-09-03** (la fiche ressort en `STALE` d'elle-même via `resume-features.sh`, seuil `stale_after_days` par défaut à 14 jours). Critère de passage `review` → `done` :
+
+1. re-mesurer le régime stable sur une session longue multi-paths, défaut contre `AI_CONTEXT_FEATURE_DOC_SESSION_DEDUP=0` ;
+2. si le gain tient et qu'aucune perte de corps après compaction n'a gêné le travail → `done` ;
+3. sinon documenter le cas observé dans le worklog et arbitrer un TTL de réinjection (explicitement écarté à la livraison faute de seuil mesuré).
 
 ## Cross-refs
 
