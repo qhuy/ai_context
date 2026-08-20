@@ -19,6 +19,8 @@
 #   AI_CONTEXT_INJECT_FEATURE_DOCS=0       désactive les extraits docs en hook.
 #   AI_CONTEXT_FEATURE_DOC_MAX_CHARS=10000 budget total des extraits.
 #   AI_CONTEXT_FEATURE_DOC_PER_DOC_CHARS=3000 budget par fiche.
+#   AI_CONTEXT_FEATURE_DOC_SESSION_DEDUP=0 désactive la dédup par session
+#                                          (corps de fiche réinjecté à chaque appel).
 
 set -euo pipefail
 
@@ -129,6 +131,40 @@ add_feature_key() {
   ' "$index_file" 2>/dev/null || true)
 }
 
+# ─── Dédup d'injection par session ───
+# En hook, chaque édition d'un path couvert réinjecte le corps entier des mêmes
+# fiches. On pose un marqueur par (session, fiche, mtime) : le corps part une
+# seule fois par session, les appels suivants n'ont qu'un rappel court.
+# Clé mtime incluse ⇒ une fiche modifiée est réinjectée.
+# Hook uniquement (session_id requis) : le mode CLI garde le corps complet.
+dedup_session_dir=""
+
+sanitize_state_token() {
+  printf '%s' "$1" | tr -c '[:alnum:]._-' '_' | LC_ALL=C cut -c1-120
+}
+
+init_doc_dedup_state() {
+  dedup_session_dir=""
+  [[ "${AI_CONTEXT_FEATURE_DOC_SESSION_DEDUP:-1}" == "0" ]] && return 0
+  [[ -n "${hook_session_id:-}" ]] || return 0
+
+  local base dir
+  base="$repo_root/.ai/.session-injected-docs"
+  dir="$base/$(sanitize_state_token "$hook_session_id")"
+  if [[ ! -d "$dir" ]]; then
+    mkdir -p "$dir" 2>/dev/null || return 0
+    # Premier appel de la session : purge best-effort des sessions mortes.
+    find "$base" -mindepth 1 -maxdepth 1 -type d -mtime +2 -exec rm -rf {} + 2>/dev/null || true
+  fi
+  [[ -w "$dir" ]] || return 0
+  dedup_session_dir="$dir"
+}
+
+feature_doc_marker_path() {
+  local key="$1" mtime="$2"
+  printf '%s/%s.%s' "$dedup_session_dir" "$(sanitize_state_token "$key")" "$(sanitize_state_token "$mtime")"
+}
+
 load_feature_context() {
   feature_context=""
   feature_context_truncated=0
@@ -139,7 +175,10 @@ load_feature_context() {
   [[ "$feature_doc_per_doc_chars" =~ ^[0-9]+$ ]] || feature_doc_per_doc_chars=3000
   [[ "$feature_doc_max_chars" -gt 0 && "$feature_doc_per_doc_chars" -gt 0 ]] || return 0
 
+  init_doc_dedup_state
+
   local key path abs_path header excerpt remaining doc_budget excerpt_len current_len
+  local doc_mtime marker
   while IFS= read -r key; do
     [[ -n "$key" ]] || continue
     current_len=$(printf '%s' "$feature_context" | wc -c | tr -d ' ')
@@ -161,6 +200,17 @@ load_feature_context() {
     abs_path="$repo_root/$path"
     [[ -f "$abs_path" ]] || continue
 
+    # Corps déjà injecté dans cette session (et fiche inchangée) ⇒ rappel court.
+    marker=""
+    if [[ -n "$dedup_session_dir" ]]; then
+      doc_mtime=$(stat -f %m "$abs_path" 2>/dev/null || stat -c %Y "$abs_path" 2>/dev/null || echo 0)
+      marker="$(feature_doc_marker_path "$key" "$doc_mtime")"
+      if [[ -f "$marker" ]]; then
+        feature_context+=$'\n''--- '"$key"' ('"$path"') — fiche déjà injectée plus haut dans cette session ; relis-la si la décision en dépend ---'$'\n'
+        continue
+      fi
+    fi
+
     header=$'\n''--- '"$key"' ('"$path"$') ---\n'
     doc_budget="$feature_doc_per_doc_chars"
     if [[ "$doc_budget" -gt "$remaining" ]]; then
@@ -170,6 +220,7 @@ load_feature_context() {
     excerpt_len=$(printf '%s' "$excerpt" | wc -c | tr -d ' ')
     if [[ -n "$excerpt" ]]; then
       feature_context+="$header$excerpt"$'\n'
+      [[ -n "$marker" ]] && { : > "$marker" 2>/dev/null || true; }
       if [[ "$excerpt_len" -ge "$doc_budget" ]]; then
         feature_context+=$'[... extrait tronqué ...]\n'
         feature_context_truncated=1
@@ -190,6 +241,7 @@ target_path=""
 mode="cli"
 with_docs=0
 strict_flag=0
+hook_session_id=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --with-docs|--docs)
@@ -232,6 +284,8 @@ elif [[ ! -t 0 ]]; then
     *) exit 0 ;;
   esac
   target_path=$(echo "$payload" | jq -r '.tool_input.file_path // .tool_input.path // ""')
+  # Identité de session : clé de la dédup d'injection (absente en CLI ⇒ dédup off).
+  hook_session_id=$(echo "$payload" | jq -r '.session_id // ""')
 fi
 
 if [[ -z "$target_path" ]]; then

@@ -12,6 +12,7 @@ DOGFOOD_VOLATILE_AI_FILES=(
   ".session-docs.log"
   ".context-relevance.jsonl"
   ".context-relevance.jsonl.old"
+  ".session-injected-docs"
 )
 
 DOGFOOD_SOURCE_COPY_RSYNC_EXCLUDES=(
@@ -55,7 +56,7 @@ dogfood_is_dated_project_doc() {
 dogfood_is_ai_runtime_extra_ignored() {
   local rel="$1"
   case "$rel" in
-    .feature-index.json|.progress-history.jsonl|.session-edits.log|.session-edits.flushed|.session-docs.log|.context-relevance.jsonl|.context-relevance.jsonl.old|guardrails.md|project|project/*|scripts/dogfood-update.sh|scripts/check-dogfood-drift.sh|scripts/dogfood-runtime-lib.sh|scripts/check-release-coherence.sh|scripts/check-runtime-template-mirror.sh|scripts/aic-release.sh)
+    .feature-index.json|.progress-history.jsonl|.session-edits.log|.session-edits.flushed|.session-docs.log|.context-relevance.jsonl|.context-relevance.jsonl.old|.session-injected-docs|.session-injected-docs/*|guardrails.md|project|project/*|scripts/dogfood-update.sh|scripts/check-dogfood-drift.sh|scripts/dogfood-runtime-lib.sh|scripts/check-release-coherence.sh|scripts/check-runtime-template-mirror.sh|scripts/aic-release.sh)
       return 0
       ;;
   esac

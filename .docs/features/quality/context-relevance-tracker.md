@@ -5,16 +5,16 @@ title: Tracker minimal de pertinence du contexte injecté (sans MCP)
 status: done
 depends_on: []
 touches:
-  - .ai/.gitignore
   - .claude/settings.json
   - .ai/scripts/context-relevance-log.sh
   - .ai/scripts/context-relevance-report.sh
-  - template/.ai/.gitignore
   - template/.ai/scripts/context-relevance-log.sh.jinja
   - template/.ai/scripts/context-relevance-report.sh.jinja
   - template/.claude/settings.json.jinja
   - tests/unit/test-context-relevance.sh
 touches_shared:
+  - .ai/.gitignore
+  - template/.ai/.gitignore
   - .ai/scripts/features-for-path.sh
   - template/.ai/scripts/features-for-path.sh.jinja
   - .ai/scripts/auto-worklog-log.sh

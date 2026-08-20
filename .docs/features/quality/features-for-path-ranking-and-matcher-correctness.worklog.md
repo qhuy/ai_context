@@ -200,3 +200,13 @@
 - Propriété directe de `features-for-path.sh` conservée ; `_lib.sh` est reclassé en dépendance partagée.
 - Le rebuild on-demand ne considère plus les index/logs générés comme des fiches plus récentes.
 - Validation : contrat discriminant de `feature_docs_newer_than`, tests ranking/matcher et suite complète PASS.
+
+## 2026-08-20 — surface modifiée par core/session-injection-dedup (contrat ranking inchangé)
+
+- `.ai/scripts/features-for-path.sh` (+ miroir jinja) modifié pour la dédup d'injection par session : lecture de `session_id`, marqueurs `(session, fiche, mtime)`, rappel court au lieu du corps. Voir `.docs/features/core/session-injection-dedup.md`.
+- **Contrat de cette fiche non touché** : ranking par spécificité, top-K, pénalité tracker et matcher globstar sont inchangés ; la dédup n'intervient qu'après le ranking, dans `load_feature_context`.
+- Non-régression vérifiée : `bash tests/unit/test-features-for-path-relevance-ranking.sh` PASS.
+
+## 2026-08-20 12:27 — auto
+- Fichiers modifiés :
+  - .ai/scripts/features-for-path.sh

@@ -16,3 +16,6 @@
 # Tracker de pertinence du contexte injecté (logger best-effort + rotation)
 .context-relevance.jsonl
 .context-relevance.jsonl.old
+
+# Marqueurs volatils de dédup d'injection de fiches (une session = un dossier)
+.session-injected-docs/

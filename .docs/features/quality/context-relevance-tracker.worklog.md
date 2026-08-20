@@ -132,3 +132,10 @@
 - Fichiers modifiés :
   - .claude/settings.json
   - template/.claude/settings.json.jinja
+
+## 2026-08-20 — reclassement de `.ai/.gitignore` en touches_shared
+
+- Constat en livrant `core/session-injection-dedup` : ajouter une ligne à `.ai/.gitignore` pour un nouvel état volatile déclenchait `check-feature-freshness --staged` contre cette fiche, qui n'a rien à voir avec le changement. `.ai/.gitignore` et `template/.ai/.gitignore` sont un registre partagé (3 features les revendiquaient), pas la surface d'implémentation du tracker.
+- Fix : `.ai/.gitignore` et `template/.ai/.gitignore` déplacés de `touches:` vers `touches_shared:`. Ils restent visibles dans les rapports et `review-delta`, mais ne déclenchent plus l'obligation fiche/worklog. Le contrat du tracker (logger, report, hooks, rotation) est inchangé.
+- Même reclassement appliqué à `core/session-injection-dedup` pour ne pas rejouer le blocage à la prochaine feature qui ajoute un état volatile.
+- Validation : `bash .ai/scripts/check-features.sh --no-write` ✅, `bash tests/unit/test-context-relevance.sh` PASS, `bash .ai/scripts/check-feature-freshness.sh --staged` ✅.

@@ -587,3 +587,15 @@
   - .ai/workflows/codex-hooks-parity.md
   - .claude/settings.json
   - AGENTS.md
+
+## 2026-08-20 — nouvel état volatile `.ai/.session-injected-docs`
+
+- `core/session-injection-dedup` introduit `.ai/.session-injected-docs/<session>/` (marqueurs de dédup d'injection, gitignoré).
+- `dogfood-runtime-lib.sh` mis à jour : entrée dans `DOGFOOD_VOLATILE_AI_FILES` + motif dans `dogfood_is_ai_runtime_extra_ignored`. Sans ça, `check-dogfood-drift.sh` remontait les marqueurs en `extra-runtime`.
+- Miroirs alignés : `template/.ai/scripts/features-for-path.sh.jinja` (byte-identique au runtime) et `template/.ai/.gitignore`.
+- Validation : `bash .ai/scripts/check-dogfood-drift.sh` ✅ ; `bash tests/unit/test-dogfood-drift-extra.sh` PASS.
+
+## 2026-08-20 12:27 — auto
+- Fichiers modifiés :
+  - .ai/scripts/dogfood-runtime-lib.sh
+  - .ai/scripts/features-for-path.sh
