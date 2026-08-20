@@ -1,0 +1,186 @@
+#!/bin/bash
+# features-search.sh — Retrouve une fiche feature à partir de mots d'intention ({{ project_name }}).
+#
+# Pendant `intent` de features-for-path.sh, qui couvre le déclencheur `paths`.
+# Le contrat .ai/index.md annonce les deux ; ce script outille le premier.
+#
+# Recherche lexicale déterministe sur id, title, keywords et scope, lus dans
+# .ai/.feature-index.json (compilé par build-feature-index.sh). Pas d'embedding,
+# pas de recherche sémantique : le rappel dépend du titre et des `keywords:`
+# rédigés dans le frontmatter de la fiche.
+#
+# Tous les statuts sont cherchés par défaut, y compris `done` : la connaissance
+# capitalisée vit surtout dans les fiches closes, et les masquer reproduirait
+# exactement le trou que ce script comble.
+#
+# Usage :
+#   features-search.sh <mots...>                # texte brut sur stdout
+#   features-search.sh --json <mots...>         # JSON pour consommation outillée
+#   features-search.sh --status active,draft <mots...>
+#   features-search.sh --limit 5 <mots...>
+#
+# Sortie : code 0 si au moins une fiche matche, 1 sinon (utilisable en garde).
+#
+# Debug : AI_CONTEXT_DEBUG=1 bash features-search.sh <mots...>
+
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=_lib.sh
+. "$script_dir/_lib.sh"
+
+require_cmd jq
+
+json=0
+limit=5
+status_filter=""
+query=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --json) json=1; shift ;;
+    --limit) limit="${2:?--limit requiert un entier}"; shift 2 ;;
+    --limit=*) limit="${1#--limit=}"; shift ;;
+    --status) status_filter="${2:?--status requiert une liste}"; shift 2 ;;
+    --status=*) status_filter="${1#--status=}"; shift ;;
+    -h|--help)
+      sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'
+      exit 0
+      ;;
+    --*)
+      echo "Argument inconnu : $1" >&2
+      echo "Usage : $0 [--json] [--limit N] [--status a,b] <mots...>" >&2
+      exit 2
+      ;;
+    *)
+      if [[ -z "$query" ]]; then query="$1"; else query="$query $1"; fi
+      shift
+      ;;
+  esac
+done
+
+if [[ -z "$query" ]]; then
+  echo "Usage : $0 [--json] [--limit N] [--status a,b] <mots...>" >&2
+  exit 2
+fi
+
+if [[ ! "$limit" =~ ^[0-9]+$ ]] || [[ "$limit" -eq 0 ]]; then
+  echo "--limit attend un entier strictement positif (reçu : $limit)" >&2
+  exit 2
+fi
+
+repo_root="$(cd "$script_dir/../.." && pwd)"
+features_dir="$repo_root/$AI_CONTEXT_FEATURES_DIR"
+index_file="$repo_root/.ai/.feature-index.json"
+
+# Même politique de fraîcheur que pre-turn-reminder.sh : rebuild si l'index
+# manque ou si une fiche est plus récente que lui.
+if [[ ! -f "$index_file" ]]; then
+  bash "$script_dir/build-feature-index.sh" --write 2>/dev/null || true
+elif [[ -d "$features_dir" ]] && feature_docs_newer_than "$features_dir" "$index_file"; then
+  bash "$script_dir/build-feature-index.sh" --write 2>/dev/null || true
+fi
+
+if [[ ! -f "$index_file" ]]; then
+  echo "Index introuvable et non reconstructible : $index_file" >&2
+  exit 1
+fi
+
+status_json="[]"
+if [[ -n "$status_filter" ]]; then
+  status_json=$(printf '%s' "$status_filter" | jq -R 'split(",") | map(select(length > 0))')
+fi
+
+log_debug "features-search : query='$query' limit=$limit status='${status_filter:-*}'"
+
+results=$(jq --arg q "$query" --argjson statuses "$status_json" --argjson limit "$limit" '
+  # fold : minuscules + repli des diacritiques latin-1 courants, pour que
+  # "récupération" et "recuperation" matchent le même haystack.
+  def fold:
+    gsub("[àâä]"; "a"; "i") | gsub("[éèêë]"; "e"; "i") | gsub("[îï]"; "i"; "i")
+    | gsub("[ôö]"; "o"; "i") | gsub("[ùûü]"; "u"; "i") | gsub("[ç]"; "c"; "i")
+    | ascii_downcase;
+
+  # Les termes courts sont des acronymes métier légitimes (UI, UX, RH, IA,
+  # IT, BI, QA). Ils doivent matcher un mot entier : un contains("ui") ferait
+  # aussi remonter "guidé" ou "audit". Les termes plus longs gardent le
+  # contains historique, utile pour les variantes lexicales simples.
+  def words: [splits("[^a-z0-9]+")] | map(select(length > 0));
+  def has_term($text; $text_words; $term):
+    if ($term | length) <= 2
+    then ($text_words | index($term)) != null
+    else ($text | contains($term))
+    end;
+
+  # Mots vides et fragments de mots elides ("j", "d", "le", "sur") matcheraient
+  # tout haystack par substring et domineraient le classement. On les ecarte,
+  # mais on conserve les acronymes courts quand la requete contient aussi des
+  # mots longs ("probleme UI"). Repli progressif pour ne jamais renvoyer zero
+  # terme sur une requete entierement composee de mots vides. (Commentaire sans
+  # apostrophe : ce bloc jq est passe entre quotes simples au shell.)
+  ["le","la","les","un","une","des","du","de","au","aux","et","ou","ne","pas",
+   "que","qui","quoi","dont","est","sont","ete","son","sa","ses","mon","ma","mes",
+   "ce","cet","cette","dans","sur","sous","pour","par","avec","sans","plus","moins",
+   "mais","donc","car","the","and","for","with","that","this","from","not","was",
+   "are","have","has","how","why","when","what","ai"] as $stop
+  | ($q | fold | [splits("[^a-z0-9]+")] | map(select(length > 0))) as $all_terms
+  | ($all_terms | map(select(length > 1))) as $usable
+  | ($usable | map(select(. as $w | $stop | index($w) | not))) as $meaningful
+  | (if ($meaningful | length) > 0 then $meaningful
+     elif ($usable | length) > 0 then $usable
+     else $all_terms
+     end) as $terms
+  | [ .features[]
+      | select($statuses == [] or (.status as $s | $statuses | index($s)))
+      | . as $f
+      | (($f.title // "") | fold) as $title
+      # Défense en profondeur : un index ancien ou construit hors checker peut
+      # encore contenir un keywords scalaire. La fiche fautive perd seulement
+      # ses mots-clés au lieu de neutraliser toute la recherche.
+      | (($f.keywords // [])
+         | if type == "array"
+           then [ .[] | select(type == "string") | select(length > 0) | fold ]
+           else []
+           end
+         | join(" ")) as $kw
+      | (($f.id // "") | fold | gsub("-"; " ")) as $id
+      | ($id + " " + $title + " " + $kw + " " + (($f.scope // "") | fold)) as $hay
+      | ($hay | words) as $hay_words
+      | (($title + " " + $kw) | words) as $human_words
+      # Score : un point par terme trouvé, plus un bonus si le terme apparaît
+      # dans le titre ou les keywords (vocabulaire humain) plutôt que dans l id
+      # seul. Départage ensuite sur le nombre de termes couverts.
+      | ([$terms[] | . as $t | select(has_term($hay; $hay_words; $t))] | length) as $hits
+      | ([$terms[] | . as $t | select(has_term(($title + " " + $kw); $human_words; $t))] | length) as $human
+      | select($hits > 0)
+      | {
+          id: $f.id, scope: $f.scope, title: $f.title, status: $f.status,
+          path: $f.path, matched: $hits, terms: ($terms | length),
+          score: ($hits * 2 + $human)
+        }
+    ]
+  | sort_by(-.score, -.matched, .scope, .id)
+  | .[0:$limit]
+' "$index_file")
+
+count=$(printf '%s' "$results" | jq 'length')
+
+if [[ "$json" -eq 1 ]]; then
+  printf '%s\n' "$results"
+  [[ "$count" -gt 0 ]]
+  exit $?
+fi
+
+if [[ "$count" -eq 0 ]]; then
+  echo "Aucune fiche ne matche « $query »."
+  echo "Pistes : élargir les mots, ou ajouter des \`keywords:\` métier au frontmatter de la fiche concernée."
+  exit 1
+fi
+
+echo "Fiches correspondant à « $query » :"
+printf '%s' "$results" | jq -r '
+  .[] | "  • " + .scope + "/" + .id + " — " + (.title // "(sans titre)")
+        + " [" + .status + "] (" + (.matched|tostring) + "/" + (.terms|tostring) + " termes)"
+        + "\n    " + .path
+'
+exit 0

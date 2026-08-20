@@ -81,3 +81,13 @@
 - Décision : budget documenté à +146 caractères (`measure-context-size.sh` sur le repo source : statique 560 → 706), soit ~37–49 tokens/tour selon la formule du script. Le titre et le résumé reflètent le partage UserPromptSubmit Claude/Codex. (Valeurs 535→674/+139 de la première passe corrigées en review du 2026-08-08 : non reproductibles sur le repo source.)
 - Validation (re-run review 2026-08-08) : `bash .ai/scripts/measure-context-size.sh` → statique 706, reverse_deps 0 ; `grep '^- Restitution' .ai/reminder.md | wc -c` → 146 ; smoke complet PASS.
 - Next : réévaluer l'ancre seulement avec une preuve avant/après R1/R4.
+
+## 2026-08-20 — impact core/feature-intent-retrieval
+
+- L'inventaire affiche le titre de chaque feature visible (`- <id> (<status>) — <titre>`) au lieu
+  du seul `id(status)` : la reconnaissance ne repose plus sur la proximité lexicale d'un id.
+- La ligne de features masquées pointe vers `features-search.sh`, seul moyen d'atteindre les
+  fiches `done` qui portent la connaissance capitalisée.
+- Coût re-mesuré (`jq` sur `.ai/.feature-index.json`, 67 fiches) : inventaire 88 → 192 caractères
+  pour les 2 features visibles ; 1989 → 6116 avec `AI_CONTEXT_SHOW_ALL_STATUS=1`, soit ~62
+  caractères par feature affichée. `measure-context-size` total : 1368 caractères.

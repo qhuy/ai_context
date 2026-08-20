@@ -167,3 +167,11 @@
 ## 2026-08-06 19:05 — auto
 - Fichiers modifiés :
   - .ai/scripts/check-product-links.sh
+
+## 2026-08-20 — handoff core vers product / propriété documentaire
+
+- Intent : corriger la propriété des schémas génériques du feature mesh sans rouvrir l'initiative produit.
+- Fichiers/surfaces : `.ai/schema/feature.schema.json`, `template/.ai/schema/feature.schema.json` et frontmatter de `product/product-portfolio-loop`.
+- Décision : déplacer les deux schémas de `touches` vers `touches_shared` ; un changement générique comme le contrat optionnel `keywords` ne modifie ni la boucle de traceability produit ni ses rapports.
+- Validation : `check-feature-freshness.sh --staged --strict` et wrapper de commit à relancer après reconstruction de l'index.
+- Next : aucun travail produit ; la validation et la clôture reviennent au scope primaire `core/feature-intent-retrieval`.

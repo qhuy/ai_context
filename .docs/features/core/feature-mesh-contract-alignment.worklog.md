@@ -79,3 +79,10 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, B8)
 - `build-feature-index.sh` (+ miroir) : commentaire `schema_version` reformulé (politique de bump énoncée dans les deux sens). Aucun changement du parsing ni de l'alignement de contrat.
+
+## 2026-08-20 — impact core/feature-intent-retrieval
+
+- Le fallback sans `yq` lit désormais `title` et `keywords` comme le chemin `yq`, apostrophes
+  comprises. Parité vérifiée par `tests/unit/test-features-search.sh` (cas 6, `PATH` restreint).
+- Le chemin `yq` lit 9 scalaires par ligne au lieu de 8 ; la convention mono-ligne du schéma reste
+  la limite connue, documentée dans le script.

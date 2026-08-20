@@ -103,3 +103,12 @@
 ## 2026-07-24 — v1.0 / B8 : politique de bump clarifiée dans le snapshot test
 - Le commentaire et les 3 messages d'échec du snapshot de clés prescrivaient « bumper la version » pour tout changement, contredisant la politique du builder (ajout rétro-compatible = pas de bump). Reformulés : le test force la décision consciente, l'issue dépend de la nature du changement (ajout compatible → MAJ snapshot seule ; retrait/renommage/sémantique → MAJ snapshot + bump).
 - `schema_version` reste à 1 et le jeu de clés est inchangé — aucune rupture de contrat, seule la guidance était fausse. Snapshot test PASS.
+
+## 2026-08-20 — impact core/feature-intent-retrieval
+
+- L'index émet deux champs de plus : `title` (scalaire) et `keywords` (array), pour outiller la
+  récupération des fiches par intention. Ajout rétro-compatible ⇒ **MINOR sans bump** de
+  `schema_version`, conformément à la politique documentée en tête de `build-feature-index.sh`.
+- Snapshot de clés de `tests/unit/test-build-feature-index-contract.sh` mis à jour en conséquence
+  (13 clés au lieu de 11). Test PASS.
+- Aucun consommateur downstream ne perd de champ ; le contrat reste additif.

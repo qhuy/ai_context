@@ -156,3 +156,10 @@
 - Trou de mesh corrigé : `features-for-path.sh tests/unit/test-check-features-type-required.sh` → « Aucune feature ne référence » ; le test qui verrouille le contrat v1.0 n'était couvert par aucun `touches:` depuis sa création (le worklog du 2026-07-24 le disait « branché en [0q2/28] » côté CI seulement). Ajouté aux `touches:` de cette fiche.
 - Validation : mutation testing sur les deux tests — 6 mutations, chacune détectée par le test qui en porte la responsabilité. M1 (missing-type `ko`→`warn`) et M2 (hors-enum `ko`→`warn`) : détectées par les deux (le marqueur ✗ dans les motifs de `test-okf-type.sh` distingue `ko` de `warn`, textes identiques) ; M3 (hint retiré) : test propriétaire ; M4 (guard `grep -q` retiré → abort pipefail historique), M5 (ligne de verdict final absente), M6 (`migrate` écrit `type` dans le corps au lieu du frontmatter — invisible au `grep '^type: feature'` seul) : `test-okf-type.sh` uniquement. `check-features.sh` restauré bit-à-bit après chaque mutation (`diff -q` vérifié).
 - Evidence : suite `tests/unit/*.sh` 55/55 PASS ; `check-dogfood-drift.sh` PASS (parité runtime/template après le miroir) ; `test-surface-manifest.sh` PASS ; `check-features.sh --no-write` PASS sur le mesh réel.
+
+## 2026-08-20 — impact core/feature-intent-retrieval
+
+- `keywords` ajouté au schema comme champ **optionnel** (array de strings) : mots-clés métier
+  servant la récupération par intention quand la fiche est nommée d'après le code.
+- Aucune fiche existante à migrer, aucun champ requis ajouté ; `additionalProperties: true` rend
+  le rollback non cassant pour les fiches déjà rédigées.

@@ -1102,7 +1102,7 @@ touches:
 FEAT
 ( cd "$OUT" && bash .ai/scripts/build-feature-index.sh --write )
 default_out=$( cd "$OUT" && bash .ai/scripts/pre-turn-reminder.sh )
-if echo "$default_out" | grep -q "legacy(done)"; then
+if echo "$default_out" | grep -qE "legacy \(done\)"; then
   echo "  ✗ feature done visible par défaut"
   exit 1
 fi
@@ -1111,7 +1111,7 @@ if ! echo "$default_out" | grep -q "masquée"; then
   exit 1
 fi
 override_out=$( cd "$OUT" && AI_CONTEXT_SHOW_ALL_STATUS=1 bash .ai/scripts/pre-turn-reminder.sh )
-if ! echo "$override_out" | grep -q "legacy(done)"; then
+if ! echo "$override_out" | grep -qE "legacy \(done\)"; then
   echo "  ✗ feature done absente avec override"
   exit 1
 fi
@@ -1661,15 +1661,15 @@ if ! echo "$focus_out" | grep -q "focus=back"; then
   echo "$focus_out"
   exit 1
 fi
-if ! echo "$focus_out" | grep -q "api(active)"; then
+if ! echo "$focus_out" | grep -qE "api \(active\)"; then
   echo "  ✗ feature focus absente"
   exit 1
 fi
-if ! echo "$focus_out" | grep -q "ui(active)"; then
+if ! echo "$focus_out" | grep -qE "ui \(active\)"; then
   echo "  ✗ voisin 1-hop front/ui absent"
   exit 1
 fi
-if echo "$focus_out" | grep -q "unrelated(active)"; then
+if echo "$focus_out" | grep -qE "unrelated \(active\)"; then
   echo "  ✗ architecture/unrelated présent malgré focus=back"
   exit 1
 fi

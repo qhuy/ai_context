@@ -106,7 +106,10 @@ if [[ -d "$features_dir" ]]; then
          end)
       | group_by(.scope)[]
       | "  • " + (.[0].scope) + "/ :"
-        + ([.[] | " " + .id + "(" + .status + ")"] | join(""))
+        + ([.[]
+             | "\n      - " + .id + " (" + .status + ")"
+               + (if ((.title // "") | length) > 0 then " — " + .title else "" end)
+           ] | join(""))
     ' "$index_file")
 
     total=$(jq '.features | length' "$index_file")
@@ -142,6 +145,7 @@ if [[ -d "$features_dir" ]]; then
       feature_section+="$feature_lines"$'\n'
       if [[ $hidden -gt 0 ]]; then
         feature_section+="  ($hidden masquée(s) — status done/deprecated/archived. AI_CONTEXT_SHOW_ALL_STATUS=1 pour voir)"$'\n'
+        feature_section+="  Retrouver une fiche masquée par intention : bash .ai/scripts/features-search.sh <mots>"$'\n'
       fi
       if [[ -n "$focus" ]]; then
         feature_section+="  (AI_CONTEXT_FOCUS vide pour voir tout le mesh)"$'\n'

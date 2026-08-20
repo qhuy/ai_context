@@ -110,3 +110,12 @@
 - Fichiers modifiés :
   - .ai/scripts/check-features.sh
   - template/.ai/scripts/check-features.sh.jinja
+
+## 2026-08-20 — validation ciblée du champ keywords
+
+- `keywords` reste optionnel mais, s'il est présent, `check-features.sh` exige un tableau de chaînes
+  non vides conformément au schéma. Le chemin yq+jq vérifie le type et les items ; le fallback sans
+  yq rejette au minimum un scalaire inline évident.
+- La fiche canonique expose désormais ce champ optionnel et son contrat.
+- Validation ciblée : la fixture `keywords: billet` fait échouer le checker tout en laissant
+  `build-feature-index` et la recherche disponibles pour les autres fiches.

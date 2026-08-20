@@ -106,6 +106,9 @@ Surface classifiée (contrat public v1.0) — 4 niveaux :
                faute de signal d'adoption). Le code reste fonctionnel.
 
 ── interne ──
+  search "<mots>"
+               route expérimentale vers features-search.sh ; non contractuelle
+               tant que le rappel sur corpus consommateur n'est pas mesuré
   reminder     pre-turn-reminder.sh (sortie text ou json) — invoqué par les hooks
 
 Help : --help, -h, help
@@ -948,6 +951,7 @@ EOF
   status)     run_status "$@" ;;
   diagnose)   run_diagnose "$@" ;;
   document-feature) run_document_feature "$@" ;;
+  search)     exec bash "$script_dir/features-search.sh" "$@" ;;
   repair)     run_repair "$@" ;;
   repair-copier-metadata) run_repair_copier_metadata "$@" ;;
   template-diff) run_template_diff "$@" ;;

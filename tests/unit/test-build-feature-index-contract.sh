@@ -110,7 +110,7 @@ MD
     1)
       [[ "$top_keys" == "features,generated_at,project_id,schema_version" ]] \
         || fail "schema_version=1 mais clés top-level modifiées ($top_keys) — MAJ ce snapshot ; bumper schema_version SEULEMENT si retrait/renommage/sémantique (un ajout compatible reste MINOR sans bump)"
-      [[ "$feat_keys" == "depends_on,external_refs,id,path,product,progress,scope,status,touches,touches_shared,type" ]] \
+      [[ "$feat_keys" == "depends_on,external_refs,id,keywords,path,product,progress,scope,status,title,touches,touches_shared,type" ]] \
         || fail "schema_version=1 mais clés feature modifiées ($feat_keys) — MAJ ce snapshot ; bumper schema_version SEULEMENT si retrait/renommage/sémantique (un ajout compatible reste MINOR sans bump)"
       [[ "$prog_keys" == "blockers,phase,resume_hint,step,updated" ]] \
         || fail "schema_version=1 mais clés progress modifiées ($prog_keys) — MAJ ce snapshot ; bumper schema_version SEULEMENT si retrait/renommage/sémantique (un ajout compatible reste MINOR sans bump)"

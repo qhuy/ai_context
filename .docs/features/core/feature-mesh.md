@@ -67,7 +67,7 @@ Inclus : contrat frontmatter, structure documentaire, dépendances cross-scope, 
 ## Comportement attendu
 
 - Chaque feature vit sous `docs_root/features/scope/id.md`.
-- Le frontmatter expose `id`, `scope`, `title`, `status`, `depends_on`, `touches` (+ `touches_shared` et `progress` optionnels).
+- Le frontmatter expose `id`, `scope`, `title`, `status`, `depends_on`, `touches` (+ `keywords`, `touches_shared` et `progress` optionnels).
 - `depends_on` autorise les arêtes cross-scope (`back/x` peut dépendre de `security/y`).
 - `touches` accepte les globs ; consommé par `features-for-path.sh` pour injecter le bon contexte à l'édition.
 - `doc.level` et `doc.requires.*` pilotent les modules documentaires nécessaires pour transformer la fiche en source de vérité sans imposer une fiche exhaustive par défaut.
@@ -77,6 +77,7 @@ Inclus : contrat frontmatter, structure documentaire, dépendances cross-scope, 
 - `status` ∈ {draft, active, done, deprecated, archived}.
 - `id` kebab-case, unique dans le scope.
 - `scope` doit matcher le dossier parent.
+- `keywords`, si présent, est un tableau de chaînes non vides ; `check-features.sh` bloque un type invalide.
 - Cycles dans `depends_on` interdits (cf. `cycle-detection`).
 - `check-feature-docs.sh` vérifie les sections "bible feature" en warning par défaut et devient bloquant avec `--strict` ou sur une fiche `status: done`.
 

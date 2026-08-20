@@ -20,6 +20,11 @@
       "type": "string",
       "minLength": 1
     },
+    "keywords": {
+      "type": "array",
+      "description": "Mots-clés métier optionnels servant la récupération par intention (features-search.sh). Complètent le titre quand la fiche est nommée d'après le code.",
+      "items": { "type": "string", "minLength": 1 }
+    },
     "status": {
       "type": "string",
       "enum": ["draft", "active", "done", "deprecated", "archived"]

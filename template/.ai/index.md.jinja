@@ -85,7 +85,11 @@ Si `.ai/project/index.md` existe, le lire maintenant. Ne pas précharger le rest
 
 ## On Demand
 
-- Feature docs : charger seulement si l'intent ou les paths matchent une feature ; si un path est connu, préférer `bash .ai/scripts/features-for-path.sh <path> --with-docs` avant tout listing de dossiers.
+- Feature docs : charger seulement si l'intent ou les paths matchent une feature. Deux points d'entrée, jamais de listing de dossiers ni de `rg` à l'aveugle sur les fiches :
+  - par intention, quand le sujet est formulé en mots et qu'aucun chemin n'est connu : `bash .ai/scripts/features-search.sh <mots>` ;
+  - par chemin, dès qu'un fichier est identifié : `bash .ai/scripts/features-for-path.sh <path> --with-docs`.
+- Avant d'investiguer un sujet susceptible d'être déjà documenté (diagnostic, cadrage, revue, question métier), lancer la recherche par intention : les fiches `done` portent la connaissance capitalisée et sont masquées de l'inventaire pre-turn. Si la fiche trouvée répond, ne pas refaire l'investigation.
+- Fiche rédigée, sujet destiné à être redemandé en vocabulaire métier : renseigner `keywords:` dans le frontmatter. Le titre et l'id ne suffisent pas quand la fiche est nommée d'après le code.
 - `depends_on` : suivre seulement les dépendances nécessaires à la décision ou à l'édition.
 - Quality gate : charger `.ai/quality/QUALITY_GATE.md` ou `.ai/workflows/quality-gate.md` près de DONE, ou tôt pour tâches risquées (contrat, doc canonique, sécurité, DB).
 - Agent guidance : `.ai/agent/*` est optionnel, jamais Pack A.

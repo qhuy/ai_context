@@ -305,3 +305,19 @@
 - Fichiers modifiés :
   - README_AI_CONTEXT.md
   - template/README_AI_CONTEXT.md.jinja
+
+## 2026-08-20 — impact core/feature-intent-retrieval
+
+- Nouvelle route publique `aic.sh search "<mots>"` → `features-search.sh` : point d'entrée par
+  intention, pendant de `document-feature <path>` pour le déclencheur `paths`.
+- L'alias `features-search` a été retiré du dispatch : une seule route publique par capacité,
+  conformément au manifeste qui exige que toute route du dispatch soit listée dans l'aide.
+- `tests/unit/test-surface-manifest.sh` : routes gelées mises à jour (ajout compatible = MINOR).
+
+## 2026-08-20 — correction post-review de l'engagement public
+
+- La preuve disponible valide le fonctionnement du moteur, pas encore sa pertinence sur un corpus
+  indépendant. La route `search` reste dans le dispatch mais passe de `stable` à `interne`.
+- Le script direct demeure le point d'entrée prescrit ; aucun contrat public n'est figé avant mesure
+  du rappel consommateur.
+- Validation ciblée : `bash tests/unit/test-surface-manifest.sh` PASS.

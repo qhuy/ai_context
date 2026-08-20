@@ -39,7 +39,7 @@ type: feature
 
 ### Inclus
 
-- L'agrégation des frontmatter (`id`, `scope`, `status`, `type`, `depends_on`, `touches`, `touches_shared`, `product`, `external_refs`, `progress`, `path`) dans une **enveloppe** JSON `{schema_version, project_id, generated_at, features[]}`. `title` n'est **pas** émis : il n'est utile qu'à la lecture humaine de la fiche, jamais aux consommateurs de l'index.
+- L'agrégation des frontmatter (`id`, `scope`, `title`, `keywords`, `status`, `type`, `depends_on`, `touches`, `touches_shared`, `product`, `external_refs`, `progress`, `path`) dans une **enveloppe** JSON `{schema_version, project_id, generated_at, features[]}`. `title` et `keywords` servent au consommateur de récupération par intention.
 - Le parsing YAML (`yq v4` si dispo, fallback awk/sed bash 3.2) et l'échappement JSON sûr via `jq -nc --arg`.
 - Le verrou atomique `mkdir` autour de l'écriture du cache et le rebuild on-demand (hook + reminder si fichier manquant).
 - Les deux variantes maintenues en parallèle : runtime dogfoodé (`.ai/scripts/build-feature-index.sh`) et gabarit Copier (`.jinja`), plus les helpers de matching partagés dans `_lib.sh`.
@@ -61,6 +61,7 @@ type: feature
 
 - Deux builds successifs sans changement de source **ne réécrivent pas le fichier** `.ai/.feature-index.json` (mtime stable) : l'ordre des features est déterministe et le contrat est comparé hors `generated_at`. La sortie **stdout**, elle, diffère d'un run à l'autre par `generated_at` — l'idempotence porte sur le fichier écrit, pas sur le flux.
 - Une fiche au frontmatter invalide est exclue avec warning mais n'arrête jamais le build (cache toujours produit).
+- Un `keywords` bien formé en YAML mais contraire au schéma est normalisé en tableau sûr avec warning ; la fiche reste indexée et les autres consommateurs restent disponibles.
 - Les paths contenant quotes/backslashes sont échappés sûrement (`jq -nc --arg`), jamais concaténés à la main.
 - Le cache reste gitignoré et reconstructible : aucune source de vérité ne vit dans `.feature-index.json`.
 - Les helpers de matching `touches:` sont centralisés dans `_lib.sh` ; runtime et gabarit `.jinja` partagent la même sémantique.
@@ -77,11 +78,12 @@ type: feature
 
 - Sortie : enveloppe JSON typée
   - `schema_version` (string), `project_id` (string), `generated_at` (string ISO-8601 UTC), `features` (array) ;
-  - par feature : `id`, `scope`, `status`, `type`, `path` (string) ; `touches`, `touches_shared`, `depends_on` (array) ; `product`, `external_refs`, `progress` (object) ;
+  - par feature : `id`, `scope`, `title`, `status`, `type`, `path` (string) ; `keywords`, `touches`, `touches_shared`, `depends_on` (array) ; `product`, `external_refs`, `progress` (object) ;
   - `progress` : `phase`, `step`, `resume_hint`, `updated` (string), `blockers` (array).
-  Aucune clé n'est émise à `null` : les champs absents du frontmatter reçoivent leur valeur vide typée (`[]`, `{}`, `""`). Pas de clé `title`.
+  Aucune clé n'est émise à `null` : les champs absents du frontmatter reçoivent leur valeur vide typée (`[]`, `{}`, `""`).
 - Idempotent au niveau du fichier : deux `--write` successifs sans changement laissent `.ai/.feature-index.json` intact (comparaison hors `generated_at`). La sortie stdout varie par `generated_at`.
 - Tolérance : feature au frontmatter invalide → exclue + warning, pas d'arrêt.
+- Tolérance typée : `keywords` invalide → warning + normalisation locale, sans arrêt du build.
 
 ## Validation
 
@@ -98,6 +100,7 @@ type: feature
 
 ## Historique / décisions
 
+- 2026-08-20 : `core/feature-intent-retrieval` ajoute `title` et `keywords` au contrat d'index afin de permettre la recherche par vocabulaire humain. Cette décision remplace explicitement la conclusion historique du 2026-07-24 selon laquelle `title` n'avait aucun consommateur. Un `keywords` mal typé est normalisé avec warning pour préserver la disponibilité globale.
 - 2026-07-24 (v1.0, chantier B7 du gel P16) : **fiche réconciliée avec la sortie réelle**, sur les 4 points relevés par la review Codex round 3. (a) `title` était promis dans Périmètre et Contrats mais n'est **pas** émis par `build-feature-index.sh` — vérifié par `jq keys` sur l'index réel, 11 clés dont aucune `title` ; retiré et justifié (utile à la lecture humaine, inutile aux consommateurs). (b) « tableau JSON » remplacé par l'enveloppe réelle `{schema_version, project_id, generated_at, features[]}`. (c) L'invariant « JSON byte-identique, pas de timestamp » était faux dans les deux moitiés : il Y A un timestamp (`generated_at`) et l'idempotence porte sur le **fichier** (non réécrit quand le contrat est inchangé), pas sur stdout — vérifié empiriquement : deux runs stdout diffèrent d'une seconde sur `generated_at`, deux `--write` laissent le mtime stable. (d) Contrats enrichi des **types et nullabilités** par clé (exigence de l'élément 5 du contrat v1.0), dont le fait qu'aucune clé n'est émise à `null` (valeur vide typée à la place, constaté sur les 67 fiches).
 - v0.7.2 : fix bug silencieux d'escaping JSON (paths avec quotes corrompaient le JSONL).
 - 2026-04-24 : centralisation du matching `touches:` dans `_lib.sh` (`path_matches_touch` + `features_matching_path`). Les hooks/scripts consommateurs partagent désormais la même sémantique exact/dossier/glob/`/**`.

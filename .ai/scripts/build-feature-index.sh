@@ -43,7 +43,7 @@ extract_frontmatter() {
   awk '/^---$/{c++; next} c==1' "$1"
 }
 
-extract_list_awk() {
+extract_list_awk_raw() {
   local file="$1" key="$2"
   # Borné au 1er bloc frontmatter (---...---) : ne lit JAMAIS le corps markdown
   # (sinon un `key:` dans le body injecte de fausses valeurs). Gère block-style
@@ -68,8 +68,56 @@ extract_list_awk() {
     flag && /^  *-/ {print; next}
     flag && /^[^[:space:]]/ {flag=0}
   ' "$file" \
-    | sed -E 's/^[[:space:]]*-[[:space:]]*//; s/[[:space:]]+#.*$//; s/["'"'"']//g; s/[[:space:]]+$//' \
+    | sed -E 's/^[[:space:]]*-[[:space:]]*//' \
     | grep -vE '^$|^\[\]$' || true
+}
+
+extract_list_awk() {
+  # Variante historique : strip agressif des quotes, réservé aux valeurs
+  # techniques (touches/touches_shared/depends_on) sans quote légitime.
+  extract_list_awk_raw "$@" \
+    | sed -E 's/[[:space:]]+#.*$//; s/["'"'"']//g; s/[[:space:]]+$//' \
+    | grep -vE '^$' || true
+}
+
+_sanitize_text_value_awk() {
+  # Assainit une valeur de texte libre (title, keywords) issue du fallback awk.
+  # Contrairement à extract_scalar_awk/extract_list_awk, ne supprime PAS les
+  # quotes internes : « Conditions d'exposition » doit garder son apostrophe,
+  # sinon la recherche par intention perd le mot. Retire uniquement les quotes
+  # ENGLOBANTES ; le strip de commentaire inline (conforme YAML : espace + #)
+  # ne s'applique qu'aux valeurs non quotées.
+  # \047 = apostrophe, pour garder le script awk sans quote littérale.
+  # Limite connue, alignée sur le reste du fallback : une valeur non quotée
+  # contenant " #" est tronquée à cet endroit.
+  awk '{
+    line=$0
+    sub(/^[[:space:]]+/, "", line)
+    sub(/[[:space:]]+$/, "", line)
+    if (line ~ /^".*"$/) {
+      line = substr(line, 2, length(line) - 2)
+    } else if (line ~ /^\047.*\047$/) {
+      line = substr(line, 2, length(line) - 2)
+    } else {
+      sub(/[[:space:]]+#.*$/, "", line)
+      sub(/[[:space:]]+$/, "", line)
+    }
+    print line
+  }'
+}
+
+extract_text_scalar_awk() {
+  local file="$1" key="$2"
+  awk -v k="^${key}:" '
+    /^---$/ { fence++; next }
+    fence == 1 && $0 ~ k { sub(k, ""); print; exit }
+    fence >= 2 { exit }
+  ' "$file" | _sanitize_text_value_awk
+}
+
+extract_text_list_awk() {
+  local file="$1" key="$2"
+  extract_list_awk_raw "$file" "$key" | _sanitize_text_value_awk | grep -v '^$' || true
 }
 
 extract_scalar_awk() {
@@ -112,6 +160,7 @@ feature_to_json() {
   folder_scope=$(basename "$(dirname "$file")")
 
   local id scope status type touches_json touches_shared_json deps_json external_refs_json
+  local title="" keywords_json="[]"
   local phase="" step="" blockers_json="[]" resume_hint="" updated=""
   local product_json="{}"
   external_refs_json="{}"
@@ -119,8 +168,8 @@ feature_to_json() {
   if [[ $has_yq -eq 1 ]]; then
     local fm
     fm=$(extract_frontmatter "$file")
-    # Un seul yq (validation + les 14 champs en un objet combiné) au lieu de
-    # 14 forks séparés par fiche — mesuré : 1024 forks yq / 69 fiches, ~5s de
+    # Un seul yq (validation + les 16 champs en un objet combiné) au lieu de
+    # 16 forks séparés par fiche — mesuré : 1024 forks yq / 69 fiches, ~5s de
     # build (pilotage P11). L'échec de ce yq unique couvre aussi la validation
     # YAML : une fiche malformée est ignorée (warn + return 1) plutôt que de
     # faire planter tout l'index — et en cascade tous les hooks qui l'appellent.
@@ -128,6 +177,7 @@ feature_to_json() {
     if ! combined=$(printf '%s' "$fm" | yq -o=json -I=0 '{
         "id": (.id // ""),
         "scope": (.scope // ""),
+        "title": (.title // ""),
         "status": (.status // ""),
         "type": (.type // ""),
         "phase": (.progress.phase // ""),
@@ -137,6 +187,7 @@ feature_to_json() {
         "touches": (.touches // []),
         "touches_shared": (.touches_shared // []),
         "depends_on": (.depends_on // []),
+        "keywords": (.keywords // []),
         "product": (.product // {}),
         "external_refs": (.external_refs // {}),
         "blockers": (.progress.blockers // [])
@@ -144,16 +195,20 @@ feature_to_json() {
       echo "⚠️  build-feature-index : frontmatter YAML illisible, fiche ignorée : $rel" >&2
       return 1
     fi
-    # Un seul jq lit les 8 scalaires, un par ligne (`while read` Bash 3.2-safe,
-    # pas de mapfile). Volontairement pas de découpage par tabulation `@tsv` :
+    # Un seul jq lit les 9 scalaires et projette keywords validé/normalisé.
+    # Découpage par Record Separator (0x1e), non-blanc : contrairement à
+    # `IFS=$'\t'`, Bash ne collapse pas deux séparateurs consécutifs, donc les
+    # champs vides restent en place. `read -d` préserve aussi un saut de ligne
+    # éventuel dans un titre. Le séparateur est généré au runtime pour ne pas
+    # embarquer de caractère de contrôle littéral dans le fichier source.
+    # Volontairement pas de découpage par tabulation `@tsv` :
     # bash `read` avec `IFS=$'\t'` COLLAPSE les tabulations consécutives même
     # sur un champ vide isolé (bug réel rencontré ici, tab reste classé
     # IFS-whitespace même seul dans IFS) — un `step` vide décalait tous les
-    # champs suivants. Le découpage par ligne suppose ces 8 champs mono-ligne
-    # (convention du schéma ; vérifié qu'aucune fiche du mesh n'y déroge à ce
-    # jour) ; un saut de ligne littéral dans l'un d'eux romprait ce contrat.
-    local _lineno=0 _line
-    while IFS= read -r _line; do
+    # champs suivants.
+    local _lineno=0 _line _field_sep keywords_projection=""
+    _field_sep=$(printf '\036')
+    while IFS= read -r -d "$_field_sep" _line; do
       case "$_lineno" in
         0) id="$_line" ;;
         1) scope="$_line" ;;
@@ -163,26 +218,54 @@ feature_to_json() {
         5) step="$_line" ;;
         6) resume_hint="$_line" ;;
         7) updated="$_line" ;;
+        8) title="$_line" ;;
+        9) keywords_projection="$_line" ;;
       esac
       _lineno=$((_lineno + 1))
-    done < <(printf '%s' "$combined" | jq -r '.id, .scope, .status, .type, .phase, .step, .resume_hint, .updated')
+    done < <(printf '%s' "$combined" | jq -jr '
+      .id, "\u001e", .scope, "\u001e", .status, "\u001e", .type, "\u001e",
+      .phase, "\u001e", .step, "\u001e", .resume_hint, "\u001e",
+      .updated, "\u001e", .title, "\u001e",
+      (if ((.keywords | type) == "array"
+           and all(.keywords[]; if type == "string" then length > 0 else false end))
+       then "1" + (.keywords | tojson)
+       else "0" + ((
+         if (.keywords | type) == "array"
+         then [ .keywords[] | select(type == "string") | select(length > 0) ]
+         else []
+         end
+       ) | tojson)
+       end), "\u001e"
+    ')
     # Les blobs JSON restent des forks jq séparés, mais sur $combined déjà
     # parsé par yq (pas sur le YAML brut) : simple et correct, sans risque de
     # découpage fragile sur du contenu structuré imbriqué.
     touches_json=$(printf '%s' "$combined" | jq -c '.touches')
     touches_shared_json=$(printf '%s' "$combined" | jq -c '.touches_shared')
     deps_json=$(printf '%s' "$combined" | jq -c '.depends_on')
+    # Le premier caractère porte la validité, le reste le tableau JSON.
+    # La projection partage le jq des scalaires : aucun fork par fiche ajouté.
+    if [[ "${keywords_projection:0:1}" != "1" ]]; then
+      echo "⚠️  build-feature-index : keywords invalide (tableau de chaînes non vides attendu), normalisé : $rel" >&2
+    fi
+    keywords_json="${keywords_projection:1}"
     product_json=$(printf '%s' "$combined" | jq -c '.product')
     external_refs_json=$(printf '%s' "$combined" | jq -c '.external_refs')
     blockers_json=$(printf '%s' "$combined" | jq -c '.blockers')
   else
     id=$(extract_scalar_awk "$file" "id")
     scope=$(extract_scalar_awk "$file" "scope")
+    title=$(extract_text_scalar_awk "$file" "title")
     status=$(extract_scalar_awk "$file" "status")
     type=$(extract_scalar_awk "$file" "type")
     touches_json=$(extract_list_awk "$file" "touches" | jq -R . | jq -s .)
     touches_shared_json=$(extract_list_awk "$file" "touches_shared" | jq -R . | jq -s .)
     deps_json=$(extract_list_awk "$file" "depends_on" | jq -R . | jq -s .)
+    keywords_inline=$(extract_text_scalar_awk "$file" "keywords")
+    if [[ -n "$keywords_inline" && ! "$keywords_inline" =~ ^\[.*\]$ ]]; then
+      echo "⚠️  build-feature-index : keywords invalide (tableau de chaînes non vides attendu), normalisé : $rel" >&2
+    fi
+    keywords_json=$(extract_text_list_awk "$file" "keywords" | jq -R . | jq -s .)
     external_refs_raw=$(awk '
       /^---$/{fence++; next}
       fence!=1{next}
@@ -297,10 +380,12 @@ feature_to_json() {
     --arg scope "$scope" \
     --arg status "$status" \
     --arg type "$type" \
+    --arg title "$title" \
     --arg path "$rel" \
     --argjson touches "$touches_json" \
     --argjson touches_shared "$touches_shared_json" \
     --argjson depends_on "$deps_json" \
+    --argjson keywords "$keywords_json" \
     --argjson product "$product_json" \
     --argjson external_refs "$external_refs_json" \
     --arg phase "$phase" \
@@ -309,8 +394,9 @@ feature_to_json() {
     --arg resume_hint "$resume_hint" \
     --arg updated "$updated" \
     '{
-      id: $id, scope: $scope, status: $status, type: $type, path: $path,
+      id: $id, scope: $scope, title: $title, status: $status, type: $type, path: $path,
       touches: $touches, touches_shared: $touches_shared, depends_on: $depends_on,
+      keywords: $keywords,
       product: $product, external_refs: $external_refs,
       progress: {
         phase: $phase, step: $step, blockers: $blockers,

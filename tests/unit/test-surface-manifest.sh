@@ -73,7 +73,7 @@ expect "routes deprecated" \
   "$(routes_in_level '── deprecated ──' '── interne ──')"
 
 expect "routes interne" \
-  "reminder," \
+  "reminder,search," \
   "$(routes_in_level '── interne ──')"
 
 # Toute route du dispatch doit être listée dans l'aide (aucune route fantôme).
@@ -164,10 +164,10 @@ expect "enveloppe de l'index" "features,generated_at,project_id,schema_version" 
   "$(jq -rS 'keys | join(",")' "$idx_tmp")"
 expect "schema_version de l'index" "1" "$(jq -r '.schema_version' "$idx_tmp")"
 expect "clés d'une feature" \
-  "depends_on,external_refs,id,path,product,progress,scope,status,touches,touches_shared,type" \
+  "depends_on,external_refs,id,keywords,path,product,progress,scope,status,title,touches,touches_shared,type" \
   "$(jq -rS '.features[0] | keys | join(",")' "$idx_tmp")"
 expect "types des clés de feature" \
-  "depends_on=array,external_refs=object,id=string,path=string,product=object,progress=object,scope=string,status=string,touches=array,touches_shared=array,type=string" \
+  "depends_on=array,external_refs=object,id=string,keywords=array,path=string,product=object,progress=object,scope=string,status=string,title=string,touches=array,touches_shared=array,type=string" \
   "$(jq -r '.features[0] | to_entries | sort_by(.key) | map("\(.key)=\(.value|type)") | join(",")' "$idx_tmp")"
 expect "clés de progress" "blockers,phase,resume_hint,step,updated" \
   "$(jq -rS '.features[0].progress | keys | join(",")' "$idx_tmp")"

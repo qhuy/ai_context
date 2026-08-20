@@ -388,3 +388,9 @@
 - Décision : l'étape [2/28] exige le fichier `aic-restitution.md` et `outputStyle: AIC Restitution`; la parité de bloc reste centralisée dans `check-shims`.
 - Validation : syntaxe Bash, test dynamique et smoke complet PASS.
 - Next : aucune action quality immédiate.
+
+## 2026-08-20 — impact core/feature-intent-retrieval
+
+- Trois assertions d'inventaire réalignées sur le nouveau format du reminder : `legacy(done)`,
+  `api(active)`, `ui(active)` et `unrelated(active)` deviennent `<id> (<status>)` en `grep -qE`.
+- Le changement de format vient de l'affichage du titre par feature ; le smoke-test reste PASS.

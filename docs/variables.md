@@ -30,7 +30,7 @@ Ces variables ne sont pas des questions Copier. Elles peuvent être exportées p
 |---|---|---|---|
 | `AI_CONTEXT_AUTO_PROGRESS_FILTER_EXT` | vide | `.ai/scripts/_lib.sh` | Ajoute des extensions à exclure du filtre d'auto-progression structurelle, au format liste séparée par virgules, par exemple `.md,.txt`. |
 | `AI_CONTEXT_CONFIG_FILE` | `.ai/config.yml` | `.ai/scripts/_lib.sh` | Force le fichier de configuration lu par `read_config`. |
-| `AI_CONTEXT_DEBUG` | `0` | `_lib.sh`, `features-for-path.sh`, `pre-turn-reminder.sh`, `build-feature-index.sh`, `resume-features.sh` | Active les logs debug des scripts qui l'exposent. |
+| `AI_CONTEXT_DEBUG` | `0` | `_lib.sh`, `features-for-path.sh`, `features-search.sh`, `pre-turn-reminder.sh`, `build-feature-index.sh`, `resume-features.sh` | Active les logs debug des scripts qui l'exposent. |
 | `AI_CONTEXT_DOCS_ROOT` | valeur rendue de `docs_root` (`.docs` par défaut) | `.ai/scripts/_lib.sh`, `check-commit-features.sh` | Override runtime du dossier racine documentaire. Sert notamment à dériver `AI_CONTEXT_FEATURES_DIR`. |
 | `AI_CONTEXT_FEATURES_DIR` | `${AI_CONTEXT_DOCS_ROOT}/features` | scripts feature mesh | Override runtime du dossier contenant les fiches features. Utilisé par les checks, l'index, l'audit, la reprise et les rapports. |
 | `AI_CONTEXT_FEATURES_STRICT` | `0` | `features-for-path.sh` | Rend l'absence de feature correspondante bloquante sans passer `--strict`. |

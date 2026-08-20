@@ -492,3 +492,9 @@
 - `tests/unit/test-upgrade-v014-to-v1.sh` est ajouté au `touches:` de `core/template-engine`, conformément à son en-tête et au contrat d'upgrade déjà documenté ici.
 - Changement documentaire seulement ; le test reste inchangé.
 - Validation : `check-feature-coverage.sh --strict` PASS, 114/114 tests rattachés et 0 orphelin.
+
+## 2026-08-20 — couverture documentaire de keywords
+
+- `docs/variables.md`, surface directe du moteur de template, documente le nouveau champ optionnel
+  `keywords` rendu dans les fiches. Aucun changement de variable Copier ni de cycle d'upgrade.
+- Validation attendue : dogfood drift et smoke Copier dans la gate finale.

@@ -7,6 +7,7 @@
 #     (depends_on / touches peuvent valoir [] mais doivent être déclarées)
 #   - status ∈ {draft, active, done, deprecated, archived} (bloquant si hors enum)
 #   - progress.phase ∈ {spec, implement, test, review, done, blocked} (warn si hors enum)
+#   - keywords, si présent, est un tableau de chaînes non vides
 #   - scope == nom du dossier parent
 #   - chaque depends_on pointe vers un fichier existant
 #   - chaque touches / touches_shared pointe vers un chemin existant (fichier, dossier, ou glob)
@@ -129,6 +130,37 @@ for f in "${files[@]}"; do
     if ! printf '%s' "$fm" | yq -e -o=json '.' >/dev/null 2>&1; then
       ko "$f : frontmatter YAML invalide (illisible par yq) — la fiche serait exclue de l'index"
       continue
+    fi
+  fi
+
+  # `keywords` est optionnel, mais son type est contractuel : le consommateur
+  # de recherche doit pouvoir itérer sans qu'une seule fiche neutralise tout le
+  # rappel. Avec yq+jq, vérifier aussi le type des items ; sans yq, le fallback
+  # minimal rejette au moins un scalaire inline évident (`keywords: billet`).
+  if printf '%s\n' "$fm" | grep -qE '^keywords:'; then
+    keywords_valid=1
+    if command -v yq >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
+      if ! printf '%s' "$fm" | yq -o=json -I=0 '.' 2>/dev/null \
+        | jq -e '
+            if has("keywords")
+            then ((.keywords | type) == "array"
+                  and all(.keywords[]; if type == "string" then length > 0 else false end))
+            else true
+            end
+          ' >/dev/null; then
+        keywords_valid=0
+      fi
+    else
+      keywords_inline=$(printf '%s\n' "$fm" | awk '
+        /^keywords:/ { sub(/^keywords:[[:space:]]*/, ""); print; exit }
+      ')
+      if [[ -n "$keywords_inline" && ! "$keywords_inline" =~ ^\[.*\]$ ]]; then
+        keywords_valid=0
+      fi
+    fi
+    if [[ "$keywords_valid" -ne 1 ]]; then
+      ko "$f : keywords invalide (attendu : tableau de chaînes non vides)"
+      file_fail=1
     fi
   fi
 

@@ -9,8 +9,6 @@ depends_on:
 touches:
   - .ai/rules/product.md
   - template/.ai/rules/product.md.jinja
-  - .ai/schema/feature.schema.json
-  - template/.ai/schema/feature.schema.json
   - .ai/scripts/check-product-links.sh
   - .ai/scripts/product-status.sh
   - .ai/scripts/product-portfolio.sh
@@ -24,6 +22,8 @@ touches:
   - .docs/FEATURE_TEMPLATE.md
   - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
 touches_shared:
+  - .ai/schema/feature.schema.json
+  - template/.ai/schema/feature.schema.json
   - .ai/index.md
   - template/.ai/index.md.jinja
   - .ai/scripts/build-feature-index.sh

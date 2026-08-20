@@ -147,3 +147,8 @@
 - `tests/unit/test-tfvc-e2e.sh` est ajouté au `touches:` de `core/vcs-provider-abstraction`, sa fiche propriétaire déjà citée dans le test et dans l'historique B4.
 - Changement documentaire seulement ; aucune modification du provider ni du test.
 - Validation : `check-feature-coverage.sh --strict` PASS, 114/114 tests rattachés et 0 orphelin.
+
+## 2026-08-20 — impact core/feature-intent-retrieval
+
+- Touchée seulement par le snapshot de clés de `tests/unit/test-build-feature-index-contract.sh`
+  (ajout de `title` et `keywords` à l'index). Aucun impact sur l'abstraction VCS ; test PASS.

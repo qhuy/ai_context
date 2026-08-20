@@ -599,3 +599,21 @@
 - Fichiers modifiés :
   - .ai/scripts/dogfood-runtime-lib.sh
   - .ai/scripts/features-for-path.sh
+
+## 2026-08-20 — réduction de la sur-couverture freshness
+
+- Le glob `.ai/**` passe de `touches` à `touches_shared` : le dogfood reste lié à tout le runtime
+  pour les rapports, mais ne force plus un worklog à chaque changement métier d'un script `.ai`.
+- Les scripts propriétaires du dogfood (`dogfood-update`, `check-dogfood-drift`,
+  `dogfood-runtime-lib`) restent en `touches` directs et conservent la garantie de fraîcheur.
+- Validation attendue : `check-touches-breadth`, gate freshness staged et dogfood drift.
+
+## 2026-08-20 — correction après gate de couverture
+
+- Le reclassement précédent est annulé : `check-feature-coverage.sh --strict` ne considère que
+  `touches` pour établir une propriété et a révélé 8 scripts `.ai` orphelins (108/116 couverts).
+- Décision : conserver provisoirement `.ai/**` en `touches` direct. La taxe de freshness et
+  l'avertissement de largeur restent visibles, mais ils valent mieux qu'une couverture fictive.
+- Limite : retirer ce catch-all exige une tâche dédiée qui attribue d'abord chaque script
+  historique à une feature propriétaire ; ce refactor de gouvernance sort du présent intent.
+- Validation à relancer : couverture stricte, freshness staged/worktree et gate complète.
