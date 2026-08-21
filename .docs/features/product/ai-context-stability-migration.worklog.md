@@ -81,3 +81,23 @@
 ## 2026-08-06 19:05 — auto
 - Fichiers modifiés :
   - docs/upgrading.md
+
+## 2026-08-21 — remédiation pré-tag v1.1.0 / update Copier legacy
+
+- Reproduction sur scaffold jetable v0.13.0 : `.copier-answers.yml` n'est pas
+  matérialisé ; `aic.sh repair-copier-metadata --apply` le recrée avec exit 0.
+- Après commit de la métadonnée, `copier update --vcs-ref=HEAD
+  --conflict=rej` refuse la migration native avec exit 4 ; la même commande
+  avec `--trust --defaults` termine avec exit 0.
+- `docs/upgrading.md` relie donc la procédure standard à la réparation des
+  métadonnées, impose un dépôt propre, documente `--trust` pour franchir v0.14.0
+  et réserve `--defaults` aux environnements non interactifs.
+- La sémantique `--conflict=rej` est alignée sur la documentation officielle :
+  les différences non résolues vivent dans des `.rej` à réappliquer
+  manuellement, sans marqueurs inline dans les fichiers mis à jour.
+
+## 2026-08-21 — HANDOFF wording Copilot dans le guide d'upgrade
+
+- `docs/upgrading.md` reflète la preuve officielle du support `AGENTS.md` par Copilot Code Review annoncée le 2026-06-18.
+- Le parcours de migration ne change pas : le shim reste opt-in et n'est conservé que comme canal de consignes spécifiques à Copilot.
+- Décision technique et test de non-régression portés par `core/agents-md-native-collapse-path`.

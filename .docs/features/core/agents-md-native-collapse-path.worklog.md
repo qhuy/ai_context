@@ -51,3 +51,52 @@
 - Surfaces couvertes touchées dans le delta d'audit strict : `.ai/native-context-support.tsv` et `template/.ai/native-context-support.tsv`.
 - Rattachement documentaire pour le gate `check-feature-freshness --staged --strict`; aucun nouveau changement du contrat propre de cette fiche.
 - Validation : gate ship relancée avant commit.
+
+## 2026-08-21 — réouverture : Copilot Code Review lit AGENTS.md
+
+- Source officielle vérifiée le 2026-08-21 : GitHub Changelog du 2026-06-18,
+  `https://github.blog/changelog/2026-06-18-copilot-code-review-agents-md-support-and-ui-improvements/`,
+  annonce la disponibilité générale et la lecture automatique du `AGENTS.md` racine par Copilot
+  Code Review.
+- Source officielle complémentaire vérifiée le 2026-08-21 :
+  `https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions`
+  distingue les instructions repository-wide `.github/copilot-instructions.md` des instructions
+  agent `AGENTS.md`, et précise que Code Review lit les deux catégories depuis la branche de tête.
+- Décision : conserver `copilot=confirmed`, rafraîchir `checked_at`/`evidence` et remplacer la note
+  périmée par le contrat réel. Le shim opt-in garde une valeur comme canal de consignes spécifiques
+  Copilot ; il n'est plus présenté comme requis parce que la review ignorerait `AGENTS.md`.
+- HANDOFF `core/template-engine` / `core/agents-md-shim-canonical` : reformuler l'aide de
+  `enable_copilot_shim` sans modifier son défaut, son rendu ni le comportement d'upgrade.
+- Validation prévue : test du registre rendu discriminant sur date/preuve/note, test de surface,
+  rendu avec opt-in, drift dogfood.
+
+## 2026-08-21 — implémentation validée, passage en review
+
+- Registre runtime et miroir alignés : `copilot=confirmed`, preuve GitHub Changelog officielle et
+  `checked_at=2026-08-21` ; la note sépare explicitement `AGENTS.md` natif du canal Copilot dédié.
+- Aide et documentation alignées sans changer le défaut ni le rendu : `copier.yml`,
+  `docs/variables.md`, `MIGRATION.md` et `docs/upgrading.md`.
+- Tests ciblés : `test-agent-native-context.sh` PASS ; registre PASS ;
+  `--require-confirmed copilot` PASS ; `--require-confirmed claude` exit 2 attendu ;
+  `test-surface-manifest.sh` PASS ; parité TSV et `git diff --check` PASS.
+- Reste avant clôture : rendu Copier avec shim opt-in, drift dogfood et gate globale.
+
+## 2026-08-21 12:09 — DONE
+
+### Evidence
+
+- Build : rendu Copier multi-profils via `bash .ai/scripts/check-dogfood-drift.sh` ✅
+- Tests : `bash tests/unit/test-agent-native-context.sh` et `bash tests/smoke-test.sh` ✅
+- Contrats externes : Copilot confirmé ; `--require-confirmed claude` reste bloqué avec exit 2 attendu ✅
+- Gate : fraîcheur staged stricte, mesh, docs strictes et couverture 118/118 ✅
+
+### Résumé livré
+
+- La preuve officielle Copilot Code Review est datée et verrouillée par test.
+- `AGENTS.md` reste l'entrée native commune ; le shim opt-in devient un canal spécifique Copilot.
+- Aucune valeur par défaut, logique de rendu ou condition d'upgrade n'est modifiée.
+- Les guides de migration et l'aide Copier portent le même contrat.
+
+### Commit suggéré
+
+`docs(core): actualiser le support AGENTS.md de Copilot Code Review`

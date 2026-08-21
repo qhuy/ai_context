@@ -179,5 +179,7 @@ Déploiement via template Copier et dogfood runtime. Rollback : retirer le skill
 
 ## Historique / décisions
 
+- 2026-08-21 : le pilot transverse `2026-08-21-remediation-pre-tag-v1-1-0` suit les cinq constats de l'audit sans créer de feature globale ; aucun changement du workflow ou du skill `aic-pilot`. Sa validation finale est portée par la quality gate du lot.
+
 - 2026-06-29 — Création. Origine : besoin d'un copilote produit/tech pour audits larges, avec suivi des points validés sans créer une fiche feature globale.
 - 2026-07-03 — DONE. Skill, registres pilots et règles dogfood validés ; pilotage ZE SOLUTION déjà clos dans le worklog.

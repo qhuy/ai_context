@@ -4,22 +4,46 @@ Quand le template évolue sur GitHub (nouvelles règles, nouveaux checks, fixes)
 
 ## Update standard
 
+Avant l'update, le projet doit être versionné par Git, propre, et contenir un
+`.copier-answers.yml` valide. Les scaffolds historiques, notamment ceux créés en
+v0.13 ou avant, peuvent ne pas avoir matérialisé ce fichier : suis d'abord
+[Réparer `.copier-answers.yml`](#réparer-copier-answersyml), relis le résultat,
+puis committe cette métadonnée avant de continuer.
+
 ```bash
 cd mon-projet
 copier update --conflict=rej
 ```
 
-Copier lit `.copier-answers.yml` pour retrouver les réponses initiales et cible par défaut le dernier tag publié. Il te montre un **diff** pour chaque fichier modifié et te demande quoi faire :
+Une mise à jour qui part de v0.13 ou d'une version antérieure traverse la
+migration native v0.14.0. Autorise cette migration de diagnostic, qui exécute
+uniquement `aic migrate plan` en lecture seule :
 
-- `y` : appliquer le changement.
-- `n` : ignorer.
-- `d` : voir le diff en détail.
+```bash
+copier update --trust --conflict=rej
+```
+
+En CI ou dans tout environnement non interactif, ajoute aussi `--defaults` :
+
+```bash
+copier update --trust --defaults --conflict=rej
+```
+
+Copier lit `.copier-answers.yml` pour retrouver les réponses initiales, cible
+par défaut le dernier tag publié, puis fusionne le rendu historique, le nouveau
+rendu et les modifications locales. Il peut poser les nouvelles questions du
+template en mode interactif ; `--defaults` conserve les réponses connues et
+utilise les valeurs par défaut pour les nouvelles.
 
 Depuis la reprise d'une cadence de tags réguliers (voir `RELEASE.md`), le dernier tag reflète l'état courant du template : `copier update` sans `--vcs-ref` est la recommandation par défaut.
 
 `--vcs-ref=HEAD` reste disponible pour suivre `main` sans attendre le prochain tag, mais expose au risque inverse : si le dernier tag prend du retard sur `main` (ce qui s'est déjà produit), il peut appliquer des changements pas encore stabilisés en release. À utiliser en connaissance de cause, pas par défaut.
 
-Pourquoi `--conflict=rej` : en cas de merge difficile, Copier écrit des fichiers `.rej` à arbitrer au lieu d'insérer des marqueurs `<<<<<<<` directement dans les scripts. Inspecte puis supprime les `.rej` avant commit.
+Pourquoi `--conflict=rej` : Copier met à jour le fichier sans y insérer de
+marqueurs `<<<<<<<` et place chaque différence non résolue dans un fichier
+`.rej` séparé. Réapplique manuellement ces différences dans le fichier mis à
+jour, puis supprime tous les `.rej` avant commit. Ce comportement correspond à
+la [procédure officielle Copier](https://copier.readthedocs.io/en/stable/updating/).
 
 ## Profil OKF — backfill du champ `type`
 
@@ -92,6 +116,9 @@ bash .ai/scripts/aic.sh repair-copier-metadata
 bash .ai/scripts/aic.sh repair-copier-metadata --apply
 ```
 
+Relis ensuite `.copier-answers.yml`, ajoute-le au dépôt et committe-le :
+`copier update` exige un sous-projet Git propre avant de démarrer.
+
 Si le projet vient d'une source ou d'un tag précis :
 
 ```bash
@@ -102,7 +129,11 @@ La commande infère `project_name`, `docs_root`, le profil de scopes, les agents
 
 ## Si tu as personnalisé un fichier généré
 
-Copier détecte les modifications locales. Il propose un **merge à 3 voies** (template ancien / template nouveau / version locale). Tu arbitres conflit par conflit.
+Copier effectue un **merge à 3 voies** (template ancien / template nouveau /
+version locale). Avec `--conflict=rej`, il applique le nouveau rendu et écrit
+les différences qu'il n'a pas pu fusionner dans les fichiers `.rej`
+correspondants. Réapplique-les manuellement dans les fichiers mis à jour, puis
+supprime les `.rej` ; il n'y a pas d'arbitrage inline.
 
 ## Migration vers les checks read-only
 
@@ -219,10 +250,10 @@ bash .ai/scripts/check-feature-docs.sh
 Les shims deviennent plus stricts et moins dupliqués :
 
 - `AGENTS.md` reste toujours présent et porte les hard rules minimales inline.
-- `CLAUDE.md` peut importer `@AGENTS.md` ; le shim Copilot est devenu opt-in (`enable_copilot_shim`, défaut false — le coding agent lit `AGENTS.md` nativement).
+- `CLAUDE.md` peut importer `@AGENTS.md` ; le shim Copilot est devenu opt-in (`enable_copilot_shim`, défaut false). Le coding agent et Copilot Code Review lisent `AGENTS.md` nativement ; GitHub a annoncé ce support pour Code Review le 2026-06-18 ([GitHub Changelog](https://github.blog/changelog/2026-06-18-copilot-code-review-agents-md-support-and-ui-improvements/)).
 - `check-shims.sh` lit `agents` dans `.copier-answers.yml` quand ce fichier existe, et consulte le registre `.ai/native-context-support.tsv` : un shim dédié absent est accepté si l'agent y est `confirmed` (copilot, cursor) ; sinon (`pending` — claude) il doit exister et rester lean. Un shim présent est toujours validé.
 - Sans `.copier-answers.yml`, le check garde un fallback compatible avec les anciens scaffolds et valide les shims présents.
-- `copier update` ne supprime pas automatiquement les fichiers retirés du template. Après l'élagage, `.cursor/rules/protocol-reminder.mdc` et `.github/copilot-instructions.md` peuvent donc rester dans un projet ancien comme fichiers utilisateur. Supprime-les manuellement si tu veux adopter le modèle lean, sauf si tu utilises encore Copilot Chat/review IDE et que tu as choisi `enable_copilot_shim=true`.
+- `copier update` ne supprime pas automatiquement les fichiers retirés du template. Après l'élagage, `.cursor/rules/protocol-reminder.mdc` et `.github/copilot-instructions.md` peuvent donc rester dans un projet ancien comme fichiers utilisateur. Supprime-les manuellement si tu veux adopter le modèle lean ; garde `enable_copilot_shim=true` seulement si tu veux conserver un canal de consignes spécifiques à Copilot en complément d'`AGENTS.md`.
 
 Après `copier update`, accepte en priorité les changements sur `AGENTS.md`,
 `CLAUDE.md`, `.github/copilot-instructions.md` et

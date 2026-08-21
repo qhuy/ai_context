@@ -498,3 +498,9 @@
 - `docs/variables.md`, surface directe du moteur de template, documente le nouveau champ optionnel
   `keywords` rendu dans les fiches. Aucun changement de variable Copier ni de cycle d'upgrade.
 - Validation attendue : dogfood drift et smoke Copier dans la gate finale.
+
+## 2026-08-21 — HANDOFF aide Copier pour Code Review
+
+- `copier.yml` et `docs/variables.md` conservent `enable_copilot_shim=false` et son rendu inchangés.
+- L'aide ne présente plus `.github/copilot-instructions.md` comme une compatibilité nécessaire à la review : le coding agent et Code Review lisent `AGENTS.md` nativement ; l'opt-in reste un canal de consignes spécifiques à Copilot.
+- Décision et preuve externe portées par `core/agents-md-native-collapse-path` ; validation du rendu et du cycle Copier incluse dans sa gate.

@@ -19,7 +19,7 @@ Cette page distingue deux familles :
 | `docs_root` | str | `.docs` | Dossier racine de la doc métier (`.docs` ou `docs`) |
 | `agents` | multiselect | `[claude, codex]` | Shims / hooks générés |
 | `enable_codex_hooks` | bool | `true` | Si `codex` sélectionné : génère `.codex/hooks.json` (hooks Codex natifs — reminder par tour + gate de fraîcheur fin de turn). Par défaut depuis 2026-08-07 (parité restitution Claude/Codex) ; `false` pour l'exclure |
-| `enable_copilot_shim` | bool | `false` | Si `copilot` sélectionné : génère `.github/copilot-instructions.md` en plus d'`AGENTS.md` (compat Copilot Chat/review IDE) |
+| `enable_copilot_shim` | bool | `false` | Si `copilot` sélectionné : génère `.github/copilot-instructions.md` en plus d'`AGENTS.md` (canal optionnel de consignes spécifiques à Copilot ; les règles communes restent lues nativement depuis `AGENTS.md`) |
 | `enable_ci_guard` | bool | `true` | Ajoute `.github/workflows/ai-context-check.yml` |
 
 ## Variables runtime `AI_CONTEXT_*`
@@ -72,7 +72,7 @@ Les variables `AI_CONTEXT_DOCS_ROOT`, `AI_CONTEXT_FEATURES_DIR` et `AI_CONTEXT_S
 | `claude` | `CLAUDE.md`, `.claude/settings.json`, `.claude/skills/aic-*` |
 | `codex` | `AGENTS.md` (toujours généré) + `.agents/skills/aic-*` si `codex` est sélectionné |
 | `cursor` | `.cursor/rules/back.mdc` / `front.mdc` scopés par globs, si les scopes existent (sinon rien — AGENTS.md est lu nativement) |
-| `copilot` | `.github/copilot-instructions.md` seulement si `enable_copilot_shim=true` (sinon rien — AGENTS.md est lu nativement par le coding agent) |
+| `copilot` | `.github/copilot-instructions.md` seulement si `enable_copilot_shim=true` (sinon rien — le coding agent et Code Review lisent `AGENTS.md` nativement ; le fichier opt-in ajoute des consignes spécifiques à Copilot) |
 
 `gemini` est **déprécié** en v1.0 : aucun usage constaté (Gemini CLI grand public
 arrêté par Google le 2026-06-18) et plus aucun artefact généré. La valeur reste

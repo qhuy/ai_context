@@ -76,3 +76,9 @@
 - Nouvelle étape `test-surface-manifest (contrat public v1.0)` dans `.github/workflows/ai-context-check.yml` : fait échouer la CI sur tout écart au contrat gelé (routes par niveau, questions Copier, cycle d'update, schéma, index typé, clés config lues, shims, matrice de capacités).
 - Source-only, non mirrorée dans le template : un consommateur n'a ni `copier.yml` ni `template/` à snapshoter — même raison que `check-release-coherence`.
 - Le workflow runtime étant déjà exempté du drift dogfood (source-only), aucun miroir à synchroniser.
+
+## 2026-08-21 — PATH Copier portable dans le smoke multi-OS
+
+- Constat CI pré-release : sur le runner macOS, `python3 -m pip install --user` a installé `copier` sous le répertoire utilisateur de Python 3.14, absent du `PATH`; l'étape dogfood échouait avant même le smoke. Le chemin codé en dur dans l'étape suivante ne couvrait que Python 3.12/3.9 et arrivait trop tard.
+- Correction : après installation, le workflow calcule le répertoire `scripts` du schéma utilisateur de l'interpréteur réellement employé et l'ajoute à `GITHUB_PATH`. Toutes les étapes suivantes, y compris dogfood, utilisent ainsi le même binaire sur Linux, macOS et Windows best-effort.
+- Le `PATH` statique de l'étape smoke est supprimé. Validation attendue : YAML chargé localement puis matrice GitHub Actions Linux/macOS verte.

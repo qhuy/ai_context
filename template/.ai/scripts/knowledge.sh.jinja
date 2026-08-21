@@ -196,17 +196,17 @@ emit_candidate_markdown() {
   printf '%s\n' "$publish_summary"
 }
 
-validate_candidate_file() {
+validate_candidate_file() (
   local candidate="$1"
   local tmp_hub
   tmp_hub="$(mktemp -d "${TMPDIR:-/tmp}/aic-knowledge-publish.XXXXXX")"
-  trap 'rm -rf "$tmp_hub"' RETURN
+  trap 'rm -rf "$tmp_hub"' EXIT
   mkdir -p "$tmp_hub/knowledge/$publish_source_project"
   cp "$candidate" "$tmp_hub/knowledge/$publish_source_project/$publish_id.md"
   bash "$script_dir/check-knowledge.sh" "$tmp_hub" >/dev/null
-}
+)
 
-run_publish() {
+run_publish() (
   local hub apply candidate target
   hub="$(default_hub_root)"
   apply=0
@@ -274,7 +274,7 @@ HELP
 
   hub="$(resolve_hub_root "$hub")"
   candidate="$(mktemp "${TMPDIR:-/tmp}/aic-knowledge-candidate.XXXXXX")"
-  trap 'rm -f "$candidate"' RETURN
+  trap 'rm -f "$candidate"' EXIT
   emit_candidate_markdown > "$candidate"
   validate_candidate_file "$candidate" || die "candidate invalide"
 
@@ -294,7 +294,7 @@ HELP
   echo "knowledge ecrite: ${target#$hub/}"
   bash "$script_dir/check-knowledge.sh" "$hub"
   bash "$script_dir/build-knowledge-index.sh" --write "$hub"
-}
+)
 
 feature_path_for_ref() {
   local feature_ref="$1"

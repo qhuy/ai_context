@@ -16,6 +16,22 @@ out="$(cd "$repo_root" && bash "$script")"
 echo "$out" | grep -q "claude: pending" \
   || { echo "$out"; fail "registre par defaut: statut claude pending attendu"; }
 
+copilot_line="$(awk -F '\t' '$1 == "copilot" { print; exit }' "$repo_root/.ai/native-context-support.tsv")"
+IFS=$'\t' read -r copilot_agent copilot_entrypoint copilot_status copilot_checked copilot_evidence copilot_note <<< "$copilot_line"
+[[ "$copilot_status" == "confirmed" && "$copilot_checked" == "2026-08-21" ]] \
+  || fail "registre Copilot: statut confirmed et preuve reverifiee le 2026-08-21 attendus"
+[[ "$copilot_evidence" == "https://github.blog/changelog/2026-06-18-copilot-code-review-agents-md-support-and-ui-improvements/" ]] \
+  || fail "registre Copilot: preuve officielle Code Review inattendue"
+[[ "$copilot_note" == *"Code Review lit AGENTS.md"* && "$copilot_note" == *"canal distinct"* ]] \
+  || fail "registre Copilot: la note doit distinguer AGENTS.md natif et shim specifique"
+grep -qF "Copilot coding agent et Copilot Code Review lisent AGENTS.md nativement" "$repo_root/copier.yml" \
+  || fail "aide Copier: support AGENTS.md natif du coding agent et de Code Review absent"
+grep -qF "consignes spécifiques à Copilot" "$repo_root/copier.yml" \
+  || fail "aide Copier: valeur residuelle du shim Copilot non expliquee"
+if grep -qF "Chat/review IDE qui lisent encore ce fichier" "$repo_root/copier.yml"; then
+  fail "aide Copier: ancienne affirmation perimee encore presente"
+fi
+
 set +e
 out="$(cd "$repo_root" && bash "$script" --require-confirmed claude 2>&1)"
 rc=$?

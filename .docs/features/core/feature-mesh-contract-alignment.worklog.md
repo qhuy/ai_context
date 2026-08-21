@@ -93,3 +93,8 @@
   le normaliser en `[]` ; aucun champ d'index ajouté ou retiré.
 - La portée du fallback est explicitement documentée comme bornée, sans promesse de parseur YAML
   complet. Test ciblé `test-features-search.sh` PASS.
+
+## 2026-08-21 — HANDOFF témoin de fraîcheur pré-tag
+
+- `build-feature-index.sh` et son miroir publient désormais un témoin séparé après un scan réussi ; le parsing du frontmatter et le contrat `product.portfolio` de cette feature ne changent pas.
+- Validation commune : tests de contrat/fallback et smoke complet PASS ; le JSON projeté reste inchangé lorsque seul le corps d'une fiche évolue.

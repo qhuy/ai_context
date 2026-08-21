@@ -52,3 +52,12 @@
 ### Commit suggéré
 
 `fix(workflow): rafraîchir l'index avant la reprise`
+
+## 2026-08-21 — HANDOFF core/feature-index-cache
+
+- La fixture de cache ancien backdate désormais ensemble `.feature-index.json` et le témoin
+  `.feature-index.checked`, afin de représenter un même scan historique.
+- Aucun comportement propre à `resume-features` ne change : le script continue d'utiliser
+  `feature_docs_newer_than`. Le nouveau témoin et sa sémantique restent portés par
+  `core/feature-index-cache`.
+- Validation attendue : test ciblé puis smoke complet.

@@ -401,3 +401,13 @@
 - La régression reproduit un cache présent en phase `implement` et une fiche plus récente en phase `review`; elle exige que la reprise et le cache reconstruit exposent `review`.
 - Aucun changement de la numérotation globale, du scaffold Copier ni des 28 assertions end-to-end.
 - Validation portée par `workflow/resume-index-freshness` puis par le smoke complet.
+
+## 2026-08-21 — dépôt d'upgrade autonome en CI
+
+- Constat reproduit sur le runner Ubuntu de la PR : l'étape `[28c/28]` initialise puis committe un
+  scaffold jetable sans définir d'identité Git locale ; sur un runner vierge, `git commit` échoue
+  avec `Author identity unknown` avant d'exercer `copier update`.
+- Correction : le dépôt jetable reçoit `user.name` et `user.email` dans sa configuration locale
+  avant le commit. Aucune configuration globale ni aucun dépôt utilisateur ne sont modifiés.
+- Validation : `bash -n tests/smoke-test.sh`, `shellcheck -S error tests/smoke-test.sh` et
+  `bash tests/smoke-test.sh` passent ; l'étape `[28c/28]` atteint et valide l'update Copier.

@@ -247,7 +247,7 @@ enable_copilot_shim:
   type: bool
   default: false
   when: "{{ 'copilot' in agents }}"
-  help: Générer .github/copilot-instructions.md en plus d'AGENTS.md (compat — le coding agent Copilot lit AGENTS.md nativement ; utile si tu utilises Copilot Chat/review IDE qui lisent encore ce fichier)
+  help: Générer .github/copilot-instructions.md en plus d'AGENTS.md (optionnel — Copilot coding agent et Copilot Code Review lisent AGENTS.md nativement ; conserve un canal de consignes spécifiques à Copilot, notamment pour Chat/review)
 
 enable_ci_guard:
   type: bool

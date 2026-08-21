@@ -87,6 +87,15 @@ assert_reminder_only() {
   echo "PASS: $desc"
 }
 
+assert_no_marker() {
+  local desc="$1" dir="$2"
+  if find "$dir" -maxdepth 1 -type f -name 'quality_solo.*' -print 2>/dev/null | grep -q .; then
+    echo "FAIL: $desc -- un marqueur est sorti du sous-dossier de session" >&2
+    exit 1
+  fi
+  echo "PASS: $desc"
+}
+
 # 1-2. Coeur du contrat : premier appel = corps, second appel = rappel court.
 assert_body "premier appel de la session injecte le corps" "$(hook_ctx sess-A env)"
 assert_reminder_only "second appel de la meme session n'injecte qu'un rappel" "$(hook_ctx sess-A env)"
@@ -116,5 +125,18 @@ chmod 500 "$tmp/.ai/.session-injected-docs"
 ro_out=$(hook_ctx sess-C env)
 chmod 700 "$tmp/.ai/.session-injected-docs"
 assert_body "etat non inscriptible => fallback injection complete sans erreur" "$ro_out"
+
+# 8. Les composants réservés ne doivent ni fusionner avec la racine d'état (`.`),
+# ni remonter dans `.ai/` (`..`). Ils restent deux sessions distinctes.
+assert_body "session point reste isolee au premier appel" "$(hook_ctx . env)"
+assert_body "session point-point reste isolee au premier appel" "$(hook_ctx .. env)"
+assert_reminder_only "session point se deduplique dans son sous-dossier" "$(hook_ctx . env)"
+assert_reminder_only "session point-point se deduplique dans son sous-dossier" "$(hook_ctx .. env)"
+[[ -d "$tmp/.ai/.session-injected-docs/_." ]] \
+  || { echo "FAIL: sous-dossier attendu pour la session . absent" >&2; exit 1; }
+[[ -d "$tmp/.ai/.session-injected-docs/_.." ]] \
+  || { echo "FAIL: sous-dossier attendu pour la session .. absent" >&2; exit 1; }
+assert_no_marker "aucun marqueur a la racine de session-injected-docs" "$tmp/.ai/.session-injected-docs"
+assert_no_marker "aucun marqueur remonte dans .ai" "$tmp/.ai"
 
 echo "✅ test-features-for-path-session-dedup PASS"

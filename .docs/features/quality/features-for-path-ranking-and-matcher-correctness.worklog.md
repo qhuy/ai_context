@@ -210,3 +210,8 @@
 ## 2026-08-20 12:27 — auto
 - Fichiers modifiés :
   - .ai/scripts/features-for-path.sh
+
+## 2026-08-21 — HANDOFF depuis core/session-injection-dedup
+
+- `features-for-path.sh` et son miroir inversent l'ordre des variantes GNU/BSD de `stat` pour que l'invalidation des marqueurs fonctionne sous Linux.
+- Le ranking, le top-K, le matcher et leurs seuils sont inchangés. Non-régression portée par `test-features-for-path-relevance-ranking.sh`; la correction substantielle reste documentée dans `core/session-injection-dedup`.

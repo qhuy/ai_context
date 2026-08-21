@@ -36,10 +36,10 @@ doc:
     observability: false
 progress:
   phase: review
-  step: "dédup livrée, 9 cas unitaires verts, gain mesuré -82,7 % en régime stable"
+  step: "dédup livrée ; invalidation mtime portable et tokens . / .. confinés, relecture longue durée planifiée"
   blockers: []
   resume_hint: "échéance de relecture 2026-09-03 (STALE à 14 j) : re-mesurer le régime stable sur une session longue multi-paths (défaut vs AI_CONTEXT_FEATURE_DOC_SESSION_DEDUP=0), puis passer done si le gain tient et si aucune perte de corps après compaction n'a gêné ; sinon documenter le cas observé et arbitrer un TTL de réinjection."
-  updated: 2026-08-20
+  updated: 2026-08-21
 ---
 
 # Dédup par session du corps des fiches injectées en hook
@@ -79,6 +79,7 @@ Mesure sur la session `670708a8` (2529 tours) : 248 injections de fiches pour se
 - Le corps d'une fiche donnée n'est injecté qu'une fois par `session_id`, tant que la fiche n'est pas modifiée.
 - Une fiche modifiée (`mtime` différent) est réinjectée dans la même session.
 - Deux sessions différentes ne partagent jamais d'état.
+- Un `session_id` littéral `.` ou `..` reste un composant ordinaire sous `.session-injected-docs` : il ne peut ni fusionner avec la racine d'état ni remonter dans `.ai/`.
 - Une fiche dédupliquée reste visible en sortie : jamais de disparition silencieuse, toujours chemin + invitation à relire.
 - Sans `session_id` (mode CLI), le comportement historique est strictement conservé.
 - Tout échec de l'état (dossier non créable, non inscriptible, illisible) retombe silencieusement sur l'injection complète, sans erreur et sans `exit` non nul.
@@ -107,13 +108,13 @@ Dans une session Claude, à chaque `Write`/`Edit`/`MultiEdit` sur un path couver
 
 - Lit `.session_id` du payload `PreToolUse` (vérifié : le payload expose `session_id`, `transcript_path`, `cwd`, `prompt_id`, `hook_event_name`, `tool_name`, `tool_input`, `tool_use_id`).
 - Écrit sous `.ai/.session-injected-docs/<session_id sanitisé>/<scope>_<id>.<mtime>` — fichiers vides, gitignorés.
-- `session_id` et clés sont sanitisés (`[:alnum:]._-`, tronqués à 120 caractères) avant usage comme chemin.
+- `session_id` et clés sont sanitisés (`[:alnum:]._-`, tronqués à 120 caractères) avant usage comme chemin. Les résultats réservés `.` et `..` sont préfixés par `_` avant toute construction de chemin.
 - Nouvelle borne documentée en tête de script : `AI_CONTEXT_FEATURE_DOC_SESSION_DEDUP=0`.
 - `.ai/.session-injected-docs` est déclaré volatile dans `dogfood-runtime-lib.sh` (exclusion rsync + `dogfood_is_ai_runtime_extra_ignored`), sinon `check-dogfood-drift.sh` le signale en `extra-runtime`.
 
 ## Validation
 
-Couvert par `tests/unit/test-features-for-path-session-dedup.sh` (9 assertions) :
+Couvert par `tests/unit/test-features-for-path-session-dedup.sh` :
 
 - premier appel = corps, second appel = rappel court ;
 - session différente = corps réinjecté ;
@@ -121,6 +122,7 @@ Couvert par `tests/unit/test-features-for-path-session-dedup.sh` (9 assertions) 
 - `AI_CONTEXT_FEATURE_DOC_SESSION_DEDUP=0` = injection complète ;
 - mode CLI `--with-docs` = jamais dédupliqué, stable sur deux appels ;
 - état non inscriptible = fallback injection complète, sans erreur.
+- sessions littérales `.` et `..` = états distincts confinés sous `.session-injected-docs`, sans marqueur à sa racine ni dans `.ai/`.
 
 Gain mesuré sur `.ai/scripts/features-for-path.sh` (7 fiches dans la clôture `depends_on`), taille du `additionalContext` du hook :
 
@@ -159,4 +161,6 @@ Latence du hook (le câblage `.claude/settings.json` impose un `timeout: 3` seco
 
 ## Historique / décisions
 
+- 2026-08-21 : correction pré-release Linux — GNU `stat -f %m` réussissait en renvoyant un rapport de système de fichiers, donc le marqueur de dédup ne changeait pas après édition d'une fiche et empêchait sa réinjection. Les deux lectures d'horodatage essaient désormais la forme GNU `stat -c %Y` avant le fallback BSD/macOS ; le miroir Copier est aligné.
+- 2026-08-21 : durcissement du composant de chemin après audit pré-tag. La whitelist autorisait littéralement `.` et `..` ; le second résolvait le dossier de session vers `.ai/`. Les deux valeurs réservées sont désormais préfixées par `_`, sans changer les tokens ordinaires ni le format des marqueurs existants.
 - 2026-08-20 : création. Mesure d'origine : 46,3 % du coût de la session `670708a8` en reminders/hooks, dont ~404 500 tokens de pur doublon d'injection de fiches (87 % de duplication sur 248 injections). Dédup par `(session_id, fiche, mtime)` livrée, gain re-mesuré −82,7 % par appel en régime stable.

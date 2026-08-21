@@ -152,3 +152,18 @@
 
 - Touchée seulement par le snapshot de clés de `tests/unit/test-build-feature-index-contract.sh`
   (ajout de `title` et `keywords` à l'index). Aucun impact sur l'abstraction VCS ; test PASS.
+
+## 2026-08-21 — couverture incidente aide Copier Copilot
+
+- `copier.yml` reformule `enable_copilot_shim` sans changer la question, son défaut, son prédicat ni aucune sélection de provider VCS.
+- Validation : manifeste de surface et smoke Git/TFVC complet PASS.
+
+## 2026-08-21 — HANDOFF portabilité du test d'index
+
+- `tests/unit/test-build-feature-index-contract.sh`, partagé avec `core/index-contract-v2`, inverse l'ordre des variantes de `stat` afin d'obtenir un timestamp sur GNU/Linux comme sur BSD/macOS.
+- Aucun comportement du provider VCS ni du contrat JSON ne change. La preuve finale est portée par le test ciblé local et la matrice CI Linux/macOS.
+
+## 2026-08-21 — HANDOFF fixture fallback déterministe
+
+- `tests/unit/test-build-feature-index-fallback-frontmatter.sh`, surface partagée avec `core/feature-index-cache`, masque explicitement yq par un shim non-v4 au lieu de supposer qu'un `PATH` système réduit l'exclut.
+- Aucun comportement VCS n'est modifié ; la propriété et la validation substantielle restent dans `core/feature-index-cache`.

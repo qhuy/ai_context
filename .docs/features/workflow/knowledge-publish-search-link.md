@@ -32,10 +32,10 @@ doc:
     observability: true
 progress:
   phase: done
-  step: "commandes aic knowledge publish/search/link/import/freshness livrees"
+  step: "commandes aic knowledge livrées ; temporaires publish confinés sur Bash 3.2/5"
   blockers: []
   resume_hint: "aucune action workflow immediate ; prochaine suite possible : quality/knowledge-freshness-checks ou vue non-tech dediee"
-  updated: 2026-07-03
+  updated: 2026-08-21
 ---
 
 # Flux knowledge publish/search/link/import
@@ -194,6 +194,7 @@ Reference knowledge acceptee :
 
 ## Historique / décisions
 
+- 2026-08-21 : correction pré-release Linux — les temporaires de `publish` utilisaient deux `trap RETURN` imbriqués. Sous Bash 5, le trap interne survivait avec une variable locale hors scope et faisait échouer le dry-run (`tmp_hub: unbound variable`). `validate_candidate_file` et `run_publish` sont désormais confinés en sous-shell avec nettoyage `EXIT`, sans changer la CLI ni les fichiers produits.
 - 2026-07-03 : creation depuis le HANDOFF `product -> workflow` de
   `product/knowledge-federation`, apres livraison du contrat core.
 - 2026-07-03 : livraison — `knowledge.sh`, routage `aic.sh knowledge`, miroir

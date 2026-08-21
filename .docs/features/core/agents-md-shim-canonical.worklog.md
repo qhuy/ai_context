@@ -127,3 +127,10 @@
 - Validation : `bash -n` PASS ; `shellcheck -S error` PASS ; test dynamique PASS, dont suppression complète du bloc ; `check-shims` PASS ; `check-dogfood-drift` PASS ; `tests/smoke-test.sh` PASS.
 - Risques : aucun breaking change pour les anciens scaffolds dont la source canonique ne porte pas les marqueurs ; aucun impact données, sécurité, authentification ou tenancy.
 - Next : aucune action core immédiate ; delta prêt pour les gates documentaires puis commit.
+
+## 2026-08-21 — HANDOFF Copilot Code Review natif
+
+- Source du constat : `core/agents-md-native-collapse-path`, avec preuve officielle GitHub datée du 2026-06-18.
+- Contrat réconcilié : Copilot Code Review lit désormais `AGENTS.md` nativement ; `enable_copilot_shim=false` reste le défaut et le fichier opt-in conserve uniquement sa valeur comme canal de consignes spécifiques à Copilot.
+- Aucun changement de rendu, de défaut ou de logique `check-shims` ; seule la promesse utilisateur est corrigée dans la fiche et les docs de migration.
+- Validation portée par le lot `core/agents-md-native-collapse-path` : registre, aide Copier, rendu opt-in, manifeste et drift.

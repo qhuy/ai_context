@@ -28,3 +28,38 @@
 - La fiche avait été créée avant `core/feature-intent-retrieval`, puis retouchée après sa livraison sans renseigner `keywords` : la chronologie « première feature créée après » était inexacte, mais le trou d'adoption à la première touche réelle est confirmé.
 - Ajout des formulations « coût du contexte », « doublon d'injection », « budget de tokens » et « réinjection répétée » afin que la fiche soit retrouvée sans connaître son id technique.
 - Validation prévue : reconstruction de l'index puis recherche `coût contexte doublon budget tokens` ; la fiche doit sortir en tête.
+
+## 2026-08-21 — durcissement des identifiants de session réservés
+
+- Constat reproduit avant correction avec le sanitizer courant : `.` reste la racine
+  `.ai/.session-injected-docs`, tandis que `..` se résout vers `.ai/`. Un marqueur de la session
+  `..` peut donc sortir du répertoire d'état prévu.
+- Décision : conserver la whitelist et la borne de 120 caractères, mais préfixer uniquement les
+  résultats réservés `.` et `..` par `_`. Les identifiants ordinaires et leurs marqueurs existants
+  ne changent pas.
+- Régression ajoutée avant le correctif : les deux sessions doivent rester distinctes, se dédupliquer
+  normalement, créer leurs sous-dossiers `_.` / `_..` et ne laisser aucun marqueur à la racine de
+  `.session-injected-docs` ni dans `.ai/`.
+- Validation prévue : test unitaire discriminant, syntaxe Bash 3.2, miroir Copier puis drift dogfood.
+
+## 2026-08-21 — validation du confinement
+
+- Le test enrichi échoue sur l'implémentation précédente avec
+  `FAIL: sous-dossier attendu pour la session . absent`, après avoir prouvé que `.` et `..`
+  réutilisent respectivement la racine d'état et `.ai/`.
+- `sanitize_state_token` préfixe maintenant uniquement `.` et `..` ; runtime et miroir Jinja sont
+  alignés. Les sessions produisent `_.` et `_..` sous `.session-injected-docs`.
+- `bash tests/unit/test-features-for-path-session-dedup.sh` : PASS, dont les deux sessions
+  distinctes, leur dédup, et l'absence de marqueur à la racine d'état ou dans `.ai/`.
+- `bash -n` sur runtime, miroir et test, puis
+  `tests/unit/test-features-for-path-relevance-ranking.sh` : PASS.
+- Risque restant : aucun changement pour les identifiants ordinaires ; la re-mesure longue durée
+  déjà planifiée au 2026-09-03 reste nécessaire avant de clore la feature entière.
+- Next : drift dogfood et quality gate dans la clôture pré-tag.
+
+## 2026-08-21 — invalidation mtime réparée sous GNU/Linux
+
+- Constat discriminant dans la suite Ubuntu de la PR : après `touch` de la fiche, `test-features-for-path-session-dedup.sh` recevait encore le rappel court au lieu du corps.
+- Cause : `stat -f %m` était essayé avant `stat -c %Y`. Sous GNU, cette commande réussit mais renvoie un rapport de système de fichiers stable ; la clé `(fiche, mtime)` ne variait donc jamais après modification.
+- Correction : priorité à `stat -c %Y`, fallback `stat -f %m` pour BSD/macOS, dans la clé de dédup et dans la télémétrie `index_mtime`. Runtime et miroir Copier restent identiques.
+- Validation prévue : test de dédup ciblé, ranking adjacent, shellcheck, drift dogfood, puis suite Ubuntu complète.

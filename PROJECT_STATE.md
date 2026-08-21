@@ -3,7 +3,7 @@
 **But** : template `copier` qui industrialise le setup AI context (multi-agent : Claude / Codex / Cursor / Copilot) d'un nouveau projet.
 **Remote** : [github.com/qhuy/ai_context](https://github.com/qhuy/ai_context) (public)
 **Local** : chemin de développement local, non versionné.
-**Dernière version publiée** : v1.0.1 — « Faux positifs de `check-product-links` (fusion des champs vides en TSV) et parité skills resserrée au namespace `aic`/`aic-*` » (voir [CHANGELOG.md](CHANGELOG.md))
+**Dernière version publiée** : v1.1.0 — « Recherche des fiches par intention, restitution multi-agent et fiabilisation des mises à jour, de l'index et des sessions » (voir [CHANGELOG.md](CHANGELOG.md))
 
 > Ce fichier est un **point d'entrée rapide** — pas l'historique détaillé (→ [CHANGELOG.md](CHANGELOG.md)), pas l'architecture du code (→ le code et [README.md](README.md)), pas la migration (→ [MIGRATION.md](MIGRATION.md)). Pour les audits historiques clos, [docs/archive/](docs/archive/).
 
@@ -24,7 +24,7 @@
    - apply : `bash .ai/scripts/dogfood-update.sh --apply`
    - drift : `bash .ai/scripts/check-dogfood-drift.sh`
 
-## État actuel (v1.0.0)
+## État actuel (v1.1.0)
 
 **Le contrat public est gelé.** Ce qui est gelé, et la règle SemVer associée :
 `CONTRIBUTING.md` § « Moratoire de surface (v1.0+) ». Le contrat est **gaté en
@@ -39,7 +39,7 @@ impose une décision de bump explicite.
   matrice de capacités par profil.
 - **Surface CLI classée** — `stable` (10 intentions), `stable-maintenance` (17),
   `deprecated` (`frame-bootstrap`, `frame-context`, `knowledge`), `interne`
-  (`reminder`). Voir `bash .ai/scripts/aic.sh --help`.
+  (`search`, `reminder`). Voir `bash .ai/scripts/aic.sh --help`.
 - **`aic init`** — parcours guidé post-scaffold (successeur du `first-run` retiré
   en v0.13) : diagnostic, activation idempotente des git hooks, prochaine étape.
 - **Champ `type` requis** — rollout `warn → fail` tenu (warn v0.14, fail v1.0) ;
@@ -57,7 +57,15 @@ impose une décision de bump explicite.
 - **Release outillée** — `aic-release.sh` (source-only) exécute les étapes
   mécaniques de `RELEASE.md` ; `check-release-coherence.sh` garde
   CHANGELOG↔PROJECT_STATE↔`copier.yml`↔`docs/variables.md`.
-- **Tags versionnés** : `v0.7.2` → `v1.0.0`.
+- **Recherche juste-à-temps par intention** — `features-search.sh` classe les fiches
+  par identifiant, titre, mots-clés et scope ; la route `aic search` reste interne
+  jusqu'à une mesure de rappel sur un corpus consommateur indépendant.
+- **Restitution multi-agent active** — condensé canonique dans `AGENTS.md`, output
+  style Claude et hooks Codex générés par défaut avec opt-out explicite.
+- **Runtime fiabilisé** — injection de fiches dédupliquée par session, témoin de
+  fraîcheur d'index sans réécriture du JSON, reprise sur index rafraîchi et benchmark
+  auto-suffisant depuis un clone frais.
+- **Tags versionnés** : `v0.7.2` → `v1.1.0`.
 
 Historique complet des versions précédentes (v0.7 → v0.14) : [CHANGELOG.md](CHANGELOG.md).
 

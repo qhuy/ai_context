@@ -20,7 +20,7 @@ fail() {
 }
 
 mtime() {
-  stat -f %m "$1" 2>/dev/null || stat -c %Y "$1"
+  stat -c %Y "$1" 2>/dev/null || stat -f %m "$1"
 }
 
 mkdir -p "$tmp/.ai/scripts" "$tmp/.ai/schema" "$tmp/.docs/features/core" "$tmp/.docs/features/quality"

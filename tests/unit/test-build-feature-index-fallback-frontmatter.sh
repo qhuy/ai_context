@@ -14,11 +14,20 @@ trap 'rm -rf "$tmp"' EXIT
 
 fail() { echo "✗ $*" >&2; exit 1; }
 
-mkdir -p "$tmp/.ai/scripts" "$tmp/.ai/schema" "$tmp/.docs/features/test"
+mkdir -p "$tmp/.ai/scripts" "$tmp/.ai/schema" "$tmp/.docs/features/test" "$tmp/bin"
 cp "$repo_root/.ai/scripts/build-feature-index.sh" "$tmp/.ai/scripts/build-feature-index.sh"
 cp "$repo_root/.ai/scripts/_lib.sh" "$tmp/.ai/scripts/_lib.sh"
 cp "$repo_root/.ai/schema/feature.schema.json" "$tmp/.ai/schema/feature.schema.json"
 printf 'docs_root: ".docs"\nproject_id: "bfi-fm-test"\n' > "$tmp/.ai/config.yml"
+
+# Le runner GitHub Actions fournit déjà yq dans ses chemins système. Un PATH
+# supposé « minimal » ne garantit donc plus le fallback. Ce shim volontairement
+# non-v4 rend la branche testée déterministe tout en gardant les vrais awk/sed/jq.
+cat > "$tmp/bin/yq" <<'SH'
+#!/bin/sh
+printf '%s\n' 'yq désactivé pour le test du fallback'
+SH
+chmod +x "$tmp/bin/yq"
 
 # Fiche piège : frontmatter avec commentaires inline, depends_on vide, mais le
 # corps imite du frontmatter (status:/depends_on: en colonne 0). Ne doit JAMAIS fuiter.
@@ -103,8 +112,8 @@ MD
 
 (
   cd "$tmp"
-  # PATH minimal = pas de yq → force le parseur fallback awk/sed.
-  out="$(PATH="/usr/bin:/bin:/usr/sbin:/sbin" bash .ai/scripts/build-feature-index.sh)"
+  # Le shim yq non-v4 force le parseur fallback awk/sed sur tous les runners.
+  out="$(PATH="$tmp/bin:$PATH" bash .ai/scripts/build-feature-index.sh)"
 
   printf '%s\n' "$out" | jq -e . >/dev/null 2>&1 || fail "index fallback : JSON invalide"
 

@@ -15,7 +15,9 @@
 #   find_feature_docs [features_root]
 #                               — émet les fiches canoniques en NUL, ordre find
 #   feature_docs_newer_than <features_root> <reference>
-#                               — 0 si une fiche canonique est plus récente
+#                               — 0 si une fiche canonique est plus récente ;
+#                                 pour .feature-index.json, utilise le témoin
+#                                 .feature-index.checked lorsqu'il existe
 #   with_index_lock <cmd...>    — acquiert un lock exclusif via mkdir (portable)
 #   path_matches_touch <path> <touch>
 #                               — 0 si un chemin repo matche une entrée touches:
@@ -218,6 +220,12 @@ feature_docs_newer_than() {
   local reference="$2"
   local file_path
   [[ -e "$reference" ]] || return 0
+  if [[ "${reference##*/}" == ".feature-index.json" ]]; then
+    local freshness_file="${reference%.feature-index.json}.feature-index.checked"
+    if [[ -f "$freshness_file" ]]; then
+      reference="$freshness_file"
+    fi
+  fi
   [[ -d "$features_root" ]] || return 1
   # Bash 3.2 compare -nt à la seconde sur macOS. find -newer conserve la
   # précision du filesystem et évite un sous-processus par fiche.
