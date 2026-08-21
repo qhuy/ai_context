@@ -36,10 +36,10 @@ doc:
     observability: false
 progress:
   phase: review
-  step: "dédup livrée ; tokens . et .. confinés, relecture longue durée toujours planifiée"
+  step: "dédup livrée ; invalidation mtime portable et tokens . / .. confinés, relecture longue durée planifiée"
   blockers: []
   resume_hint: "échéance de relecture 2026-09-03 (STALE à 14 j) : re-mesurer le régime stable sur une session longue multi-paths (défaut vs AI_CONTEXT_FEATURE_DOC_SESSION_DEDUP=0), puis passer done si le gain tient et si aucune perte de corps après compaction n'a gêné ; sinon documenter le cas observé et arbitrer un TTL de réinjection."
-  updated: 2026-08-20
+  updated: 2026-08-21
 ---
 
 # Dédup par session du corps des fiches injectées en hook
@@ -161,5 +161,6 @@ Latence du hook (le câblage `.claude/settings.json` impose un `timeout: 3` seco
 
 ## Historique / décisions
 
+- 2026-08-21 : correction pré-release Linux — GNU `stat -f %m` réussissait en renvoyant un rapport de système de fichiers, donc le marqueur de dédup ne changeait pas après édition d'une fiche et empêchait sa réinjection. Les deux lectures d'horodatage essaient désormais la forme GNU `stat -c %Y` avant le fallback BSD/macOS ; le miroir Copier est aligné.
 - 2026-08-21 : durcissement du composant de chemin après audit pré-tag. La whitelist autorisait littéralement `.` et `..` ; le second résolvait le dossier de session vers `.ai/`. Les deux valeurs réservées sont désormais préfixées par `_`, sans changer les tokens ordinaires ni le format des marqueurs existants.
 - 2026-08-20 : création. Mesure d'origine : 46,3 % du coût de la session `670708a8` en reminders/hooks, dont ~404 500 tokens de pur doublon d'injection de fiches (87 % de duplication sur 248 injections). Dédup par `(session_id, fiche, mtime)` livrée, gain re-mesuré −82,7 % par appel en régime stable.

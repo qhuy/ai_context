@@ -208,7 +208,7 @@ load_feature_context() {
     # Corps déjà injecté dans cette session (et fiche inchangée) ⇒ rappel court.
     marker=""
     if [[ -n "$dedup_session_dir" ]]; then
-      doc_mtime=$(stat -f %m "$abs_path" 2>/dev/null || stat -c %Y "$abs_path" 2>/dev/null || echo 0)
+      doc_mtime=$(stat -c %Y "$abs_path" 2>/dev/null || stat -f %m "$abs_path" 2>/dev/null || echo 0)
       marker="$(feature_doc_marker_path "$key" "$doc_mtime")"
       if [[ -f "$marker" ]]; then
         feature_context+=$'\n''--- '"$key"' ('"$path"') — fiche déjà injectée plus haut dans cette session ; relis-la si la décision en dépend ---'$'\n'
@@ -421,7 +421,7 @@ log_inject_event() {
       fi
     fi
 
-    index_mtime=$(stat -f %m "$index_file" 2>/dev/null || stat -c %Y "$index_file" 2>/dev/null || echo "")
+    index_mtime=$(stat -c %Y "$index_file" 2>/dev/null || stat -f %m "$index_file" 2>/dev/null || echo "")
     # Finding 3 Codex : truncated reflète l'état réel APRÈS load_feature_context.
     truncated_str="false"
     [[ "${feature_context_truncated:-0}" == "1" ]] && truncated_str="true"

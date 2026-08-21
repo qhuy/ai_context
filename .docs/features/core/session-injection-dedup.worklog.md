@@ -56,3 +56,10 @@
 - Risque restant : aucun changement pour les identifiants ordinaires ; la re-mesure longue durée
   déjà planifiée au 2026-09-03 reste nécessaire avant de clore la feature entière.
 - Next : drift dogfood et quality gate dans la clôture pré-tag.
+
+## 2026-08-21 — invalidation mtime réparée sous GNU/Linux
+
+- Constat discriminant dans la suite Ubuntu de la PR : après `touch` de la fiche, `test-features-for-path-session-dedup.sh` recevait encore le rappel court au lieu du corps.
+- Cause : `stat -f %m` était essayé avant `stat -c %Y`. Sous GNU, cette commande réussit mais renvoie un rapport de système de fichiers stable ; la clé `(fiche, mtime)` ne variait donc jamais après modification.
+- Correction : priorité à `stat -c %Y`, fallback `stat -f %m` pour BSD/macOS, dans la clé de dédup et dans la télémétrie `index_mtime`. Runtime et miroir Copier restent identiques.
+- Validation prévue : test de dédup ciblé, ranking adjacent, shellcheck, drift dogfood, puis suite Ubuntu complète.
