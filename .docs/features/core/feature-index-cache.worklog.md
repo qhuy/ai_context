@@ -258,3 +258,9 @@
 ### Commit suggéré
 
 `fix(core): éviter les reconstructions permanentes de l’index`
+
+## 2026-08-21 — fixture fallback déterministe en CI
+
+- Constat sur Ubuntu 24.04 (image GitHub Actions `20260816.277.1`) : la suite atteint désormais `test-build-feature-index-fallback-frontmatter.sh`, mais le cas `quotehash` conserve la valeur citée au lieu de reproduire la limite du fallback. L'image annonce `yq 4.53.3` préinstallé ; réduire le `PATH` à des chemins système ne garantissait donc plus l'absence de yq.
+- Correction limitée au test : un shim `yq` volontairement non-v4 est préfixé au `PATH`. Le builder sélectionne ainsi réellement son parseur awk/sed, tout en continuant d'utiliser les outils système réels.
+- Aucun changement du runtime, du JSON ou de la limite documentée. Validation : test ciblé local, puis suite Ubuntu de la PR.

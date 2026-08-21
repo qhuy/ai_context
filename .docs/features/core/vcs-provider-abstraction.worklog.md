@@ -162,3 +162,8 @@
 
 - `tests/unit/test-build-feature-index-contract.sh`, partagé avec `core/index-contract-v2`, inverse l'ordre des variantes de `stat` afin d'obtenir un timestamp sur GNU/Linux comme sur BSD/macOS.
 - Aucun comportement du provider VCS ni du contrat JSON ne change. La preuve finale est portée par le test ciblé local et la matrice CI Linux/macOS.
+
+## 2026-08-21 — HANDOFF fixture fallback déterministe
+
+- `tests/unit/test-build-feature-index-fallback-frontmatter.sh`, surface partagée avec `core/feature-index-cache`, masque explicitement yq par un shim non-v4 au lieu de supposer qu'un `PATH` système réduit l'exclut.
+- Aucun comportement VCS n'est modifié ; la propriété et la validation substantielle restent dans `core/feature-index-cache`.
