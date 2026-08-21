@@ -16,3 +16,9 @@
 - Décision : hub root contenant `knowledge/<source_project>/<id>.md`, `index.json` derive a la racine en mode `--write`, absence de `knowledge/` acceptee comme hub vide.
 - Validation : `bash -n` scripts + test ; `jq` schemas ; `bash tests/unit/test-knowledge-source-contract.sh` PASS ; `bash .ai/scripts/check-knowledge.sh` PASS ; `bash .ai/scripts/build-knowledge-index.sh | jq ...` PASS ; `bash tests/unit/test-template-jinja-raw-braces.sh` PASS ; `bash .ai/scripts/check-feature-docs.sh --strict core/knowledge-source-contract` PASS ; `bash .ai/scripts/check-feature-freshness.sh --worktree --strict` PASS ; `bash .ai/scripts/check-dogfood-drift.sh` PASS.
 - Next : reprendre le HANDOFF workflow via `workflow/knowledge-publish-search-link` pour exposer `publish`, `search`, `link`, `import` au-dessus de ce contrat.
+
+## 2026-08-21 — helper mtime du contrat rendu portable
+
+- Audit pré-release des variantes de `stat` après deux échecs Ubuntu : le test knowledge essayait encore la syntaxe BSD avant GNU. GNU `stat -f %m` peut réussir avec un rapport multi-ligne, ce que la simple comparaison d'égalité ne révélait pas.
+- Correction : priorité à `stat -c %Y`, fallback BSD/macOS `stat -f %m`, avec assertion explicite que les deux timestamps sont numériques.
+- Aucun changement du builder knowledge ni de son index ; test ciblé et suite CI portent la validation.

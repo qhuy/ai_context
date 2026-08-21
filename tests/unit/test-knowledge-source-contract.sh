@@ -13,7 +13,7 @@ fail() {
 }
 
 mtime() {
-  stat -f %m "$1" 2>/dev/null || stat -c %Y "$1"
+  stat -c %Y "$1" 2>/dev/null || stat -f %m "$1"
 }
 
 mkdir -p "$tmp/.ai/scripts" "$tmp/.ai/schema" "$tmp/hub/knowledge/legacy-erp"
@@ -67,10 +67,12 @@ MD
   bash .ai/scripts/build-knowledge-index.sh --write hub >/dev/null
   [[ -f hub/index.json ]] || fail "--write n'a pas créé hub/index.json"
   before_mtime="$(mtime hub/index.json)"
+  [[ "$before_mtime" =~ ^[0-9]+$ ]] || fail "mtime initial non numérique : $before_mtime"
   before_contract="$(jq -S 'del(.generated_at)' hub/index.json)"
   sleep 1
   bash .ai/scripts/build-knowledge-index.sh --write hub >/dev/null
   after_mtime="$(mtime hub/index.json)"
+  [[ "$after_mtime" =~ ^[0-9]+$ ]] || fail "mtime final non numérique : $after_mtime"
   after_contract="$(jq -S 'del(.generated_at)' hub/index.json)"
   [[ "$before_mtime" == "$after_mtime" ]] || fail "--write a réécrit un index contractuellement identique"
   [[ "$before_contract" == "$after_contract" ]] || fail "contrat index instable hors generated_at"
