@@ -2145,6 +2145,10 @@ EOF
   if [[ ! -d "$UPD_OUT/.git" ]]; then
     git -C "$UPD_OUT" init >/dev/null
   fi
+  # Le scénario doit rester autonome sur les runners CI sans identité Git globale.
+  # Configuration strictement locale au dépôt jetable, sans modifier l'environnement.
+  git -C "$UPD_OUT" config user.email "smoke-test@ai-context.invalid"
+  git -C "$UPD_OUT" config user.name "ai_context smoke-test"
   git -C "$UPD_OUT" add . >/dev/null
   git -C "$UPD_OUT" commit -m "test: scaffold v0.11.0" >/dev/null
 

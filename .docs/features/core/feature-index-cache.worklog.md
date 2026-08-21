@@ -264,3 +264,10 @@
 - Constat sur Ubuntu 24.04 (image GitHub Actions `20260816.277.1`) : la suite atteint désormais `test-build-feature-index-fallback-frontmatter.sh`, mais le cas `quotehash` conserve la valeur citée au lieu de reproduire la limite du fallback. L'image annonce `yq 4.53.3` préinstallé ; réduire le `PATH` à des chemins système ne garantissait donc plus l'absence de yq.
 - Correction limitée au test : un shim `yq` volontairement non-v4 est préfixé au `PATH`. Le builder sélectionne ainsi réellement son parseur awk/sed, tout en continuant d'utiliser les outils système réels.
 - Aucun changement du runtime, du JSON ou de la limite documentée. Validation : test ciblé local, puis suite Ubuntu de la PR.
+
+## 2026-08-21 — HANDOFF quality/smoke-test : identité Git de la fixture d'upgrade
+
+- `tests/smoke-test.sh`, partagé avec cette feature, configure désormais une identité Git locale
+  dans le seul dépôt jetable de l'étape `[28c/28]`.
+- Aucun scénario, invariant, format ni consommateur du cache d'index n'est modifié ; la propriété et
+  la validation de ce correctif restent dans `quality/smoke-test`.
