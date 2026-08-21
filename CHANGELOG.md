@@ -34,7 +34,7 @@
 - **Benchmark reproductible sur clone frais** : `docs/benchmarks/runs/.gitkeep` matérialise le parent attendu par la garde de chemin ; `run-bench.sh --self-check` et le smoke démarrent désormais sans préparation locale préalable.
 - **Mise à jour Copier des anciens scaffolds** : la procédure répare d'abord les métadonnées absentes, documente `--trust` pour franchir la migration native v0.14, `--defaults` en non-interactif et le vrai comportement de `--conflict=rej`.
 - **Support Copilot Code Review clarifié** : `AGENTS.md` est l'entrée native commune ; `.github/copilot-instructions.md` reste un canal optionnel de consignes propres à Copilot, pas un fallback requis pour la review.
-- **Portabilité de la CI pré-release** : le test d'idempotence de l'index choisit désormais la syntaxe `stat` GNU/Linux avant le fallback BSD/macOS, et le smoke multi-OS ajoute dynamiquement au `PATH` le répertoire utilisateur de l'interpréteur Python qui a réellement installé Copier.
+- **Portabilité de la CI pré-release** : le test d'idempotence de l'index choisit désormais la syntaxe `stat` GNU/Linux avant le fallback BSD/macOS, le test du parseur awk/sed masque explicitement le `yq` préinstallé au lieu de l'inférer depuis un `PATH` réduit, et le smoke multi-OS expose dynamiquement le répertoire utilisateur de l'interpréteur Python qui a réellement installé Copier.
 
 ### Tests
 
