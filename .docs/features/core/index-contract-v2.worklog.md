@@ -123,3 +123,9 @@
 
 - Le nouveau `.ai/.feature-index.checked` mémorise un scan réussi sans modifier l'enveloppe JSON v2, son `schema_version`, son mtime idempotent ni `generated_at`.
 - Validation commune : test de contrat, test de fraîcheur de reprise et smoke complet PASS.
+
+## 2026-08-21 — portabilité GNU/Linux du test de mtime
+
+- Constat CI pré-release : sous GNU `stat`, `stat -f %m` réussit en produisant un rapport de système de fichiers au lieu d'un timestamp. La comparaison arithmétique interprétait alors `File` comme une variable non définie et interrompait la suite unitaire.
+- Correction : le helper essaie d'abord la forme GNU `stat -c %Y`, puis la forme BSD/macOS `stat -f %m` en fallback. Le contrat d'idempotence de l'index reste inchangé ; seul son test devient portable.
+- HANDOFF vers `core/vcs-provider-abstraction` : le test est une surface partagée des deux fiches ; aucune logique VCS n'est modifiée.
