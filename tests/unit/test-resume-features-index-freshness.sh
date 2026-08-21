@@ -43,7 +43,9 @@ MD
 (
   cd "$tmp"
   bash .ai/scripts/build-feature-index.sh --write >/dev/null
-  touch -t 202608200100.00 .ai/.feature-index.json
+  # Le cache et son témoin représentent le même scan ancien. Backdater les
+  # deux garde la fixture cohérente avec le contrat de fraîcheur courant.
+  touch -t 202608200100.00 .ai/.feature-index.json .ai/.feature-index.checked
 
   # La source évolue après le cache, comme après une édition manuelle de fiche
   # sans post-checkout ni appel préalable à features-for-path.

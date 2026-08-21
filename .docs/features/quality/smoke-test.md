@@ -89,6 +89,8 @@ Rejoué automatiquement par `ci-guard` sur push/PR.
 
 ## Historique / décisions
 
+- 2026-08-21 : le scénario `[9/28]` couvre désormais une édition body-only : un seul des quatre consommateurs reconstruit, le témoin avance, puis le mtime JSON et `generated_at` restent stables. Le smoke complet PASS après les remédiations benchmark, session et Copilot.
+
 - 2026-05-03 : ajout des tests unitaires `[0c]` et `[0d]` dans le smoke-test : freshness multi-feature et drift dogfood destination-only.
 - 2026-05-03 : ajout du test unitaire `[0e]` pour vérifier que `touches_shared` ne bloque pas `check-feature-freshness --staged` mais reste visible dans `review-delta.sh`.
 - 2026-05-03 : l'assertion skills attend désormais les skills intentionnels `/aic-frame`, `/aic-status`, `/aic-review`, `/aic-ship` en plus des primitives historiques conservées.

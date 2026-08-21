@@ -25,6 +25,7 @@ require_cmd jq
 repo_root="$(cd "$script_dir/../.." && pwd)"
 features_dir="$repo_root/$AI_CONTEXT_FEATURES_DIR"
 index_file="$repo_root/.ai/.feature-index.json"
+freshness_file="$repo_root/.ai/.feature-index.checked"
 
 write=0
 [[ "${1:-}" == "--write" ]] && write=1
@@ -466,7 +467,9 @@ write_index() {
     existing_contract=$(jq -S 'del(.generated_at)' "$index_file" 2>/dev/null || true)
     output_contract=$(printf '%s\n' "$output" | jq -S 'del(.generated_at)' 2>/dev/null || true)
     if [[ -n "$existing_contract" && "$existing_contract" == "$output_contract" ]]; then
+      touch "$freshness_file"
       log_debug "index inchangé : $index_file"
+      log_debug "scan index validé : $freshness_file"
       return 0
     fi
   fi
@@ -474,7 +477,9 @@ write_index() {
   tmp=$(mktemp "${index_file}.XXXXXX")
   printf '%s\n' "$output" > "$tmp"
   mv "$tmp" "$index_file"
+  touch "$freshness_file"
   log_debug "index écrit : $index_file"
+  log_debug "scan index validé : $freshness_file"
 }
 
 if [[ $write -eq 1 ]]; then

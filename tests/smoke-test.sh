@@ -26,6 +26,7 @@ fi
 rsync -a --delete \
   --exclude='.git' \
   --exclude='.ai/.feature-index.json' \
+  --exclude='.ai/.feature-index.checked' \
   --exclude='.ai/.progress-history.jsonl' \
   --exclude='.ai/.session-edits.log' \
   --exclude='.ai/.session-edits.flushed' \
@@ -758,23 +759,56 @@ fi
 echo "  ✓ index expose project_id"
 
 echo
-echo "[9/28] build-feature-index : write idempotent sur touch sans changement (index-contract-v2)"
-before_marker=$(mktemp)
-touch -r "$idx" "$before_marker"
-sleep 1
-# Contrat index-contract-v2 : un `touch` qui ne change PAS le contenu (donc pas
-# le JSON hors generated_at) ne doit PAS réécrire l'index. ensure_index relance
-# build-feature-index, mais write_index détecte un contrat inchangé et n'écrit
-# rien — le mtime de l'index est préservé (évite d'invalider les caches aval).
-touch "$OUT/.docs/features/back/sample.md"
-( cd "$OUT" && bash .ai/scripts/features-for-path.sh src/foo.ts >/dev/null ) || true
-if [[ "$idx" -nt "$before_marker" ]]; then
-  echo "  ✗ index réécrit alors que le contenu est inchangé (idempotence index-contract-v2 cassée)"
-  rm -f "$before_marker"
+echo "[9/28] build-feature-index : fraîcheur body-only sans réécriture ni rebuild permanent"
+checked="$OUT/.ai/.feature-index.checked"
+if [[ ! -f "$checked" ]]; then
+  echo "  ✗ témoin de fraîcheur absent après le premier build : $checked"
   exit 1
 fi
-rm -f "$before_marker"
-echo "  ✓ index non réécrit sur touch sans changement de contenu"
+before_marker=$(mktemp)
+before_checked_marker=$(mktemp)
+touch -r "$idx" "$before_marker"
+touch -r "$checked" "$before_checked_marker"
+before_generated_at=$(jq -r '.generated_at' "$idx")
+sleep 1
+# Une édition du corps rend la source plus récente sans changer la projection
+# JSON. Le premier consommateur doit scanner une fois et avancer uniquement le
+# témoin ; le JSON contractuel conserve son mtime et son generated_at.
+printf '\n<!-- édition body-only pour la fraîcheur -->\n' >> "$OUT/.docs/features/back/sample.md"
+( cd "$OUT" && bash .ai/scripts/features-for-path.sh src/foo.ts >/dev/null ) || true
+if [[ "$idx" -nt "$before_marker" ]]; then
+  echo "  ✗ index réécrit alors que la projection est inchangée"
+  rm -f "$before_marker" "$before_checked_marker"
+  exit 1
+fi
+after_generated_at=$(jq -r '.generated_at' "$idx")
+if [[ "$after_generated_at" != "$before_generated_at" ]]; then
+  echo "  ✗ generated_at modifié alors que le fichier index devait rester intact"
+  rm -f "$before_marker" "$before_checked_marker"
+  exit 1
+fi
+if [[ ! "$checked" -nt "$before_checked_marker" ]]; then
+  echo "  ✗ le premier consommateur n'a pas avancé le témoin de fraîcheur"
+  rm -f "$before_marker" "$before_checked_marker"
+  exit 1
+fi
+
+# Les trois autres consommateurs partagent feature_docs_newer_than. Le JSON
+# reste plus vieux que la source ; s'ils ignoraient le témoin, chacun relancerait
+# le build et avancerait à nouveau le témoin.
+after_first_checked_marker=$(mktemp)
+touch -r "$checked" "$after_first_checked_marker"
+sleep 1
+( cd "$OUT" && bash .ai/scripts/pre-turn-reminder.sh >/dev/null )
+( cd "$OUT" && bash .ai/scripts/features-search.sh sample >/dev/null )
+( cd "$OUT" && bash .ai/scripts/resume-features.sh >/dev/null )
+if [[ "$checked" -nt "$after_first_checked_marker" ]]; then
+  echo "  ✗ un consommateur a relancé le build malgré le témoin frais"
+  rm -f "$before_marker" "$before_checked_marker" "$after_first_checked_marker"
+  exit 1
+fi
+rm -f "$before_marker" "$before_checked_marker" "$after_first_checked_marker"
+echo "  ✓ 4 consommateurs alignés ; mtime JSON et generated_at stables"
 
 echo
 echo "[9b/28] build-feature-index : concurrence (lock atomique)"

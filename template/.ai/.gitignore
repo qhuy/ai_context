@@ -1,5 +1,6 @@
 # Cache du maillage feature — régénéré par build-feature-index.sh
 .feature-index.json
+.feature-index.checked
 
 # Log volatile des éditions de la session Claude — flushé à chaque Stop hook
 .session-edits.log

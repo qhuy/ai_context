@@ -123,6 +123,8 @@ Faire consommer au repo source `ai_context` la même couche runtime que celle g�
 
 ## Historique / décisions
 
+- 2026-08-21 : HANDOFF du lot de fraîcheur d'index. Le runtime et les miroirs ajoutent `.feature-index.checked` comme artefact volatil reconstructible ; `check-dogfood-drift.sh` et le smoke multi-profils restent verts.
+
 - 2026-05-03 : correction du drift destination-only. Le drift check signale maintenant les fichiers runtime présents côté repo source mais absents du rendu Copier, et `dogfood-update.sh --apply` utilise `rsync --delete` avec exclusions explicites pour caches et scripts source-only. Ajout d'un test unitaire dédié.
 - 2026-05-03 : dogfooding des nouveaux skills intentionnels (`aic-frame`, `aic-status`, `aic-review`, `aic-ship`) dans `.claude/skills/` et mise à jour de `.ai/index.md` / `README_AI_CONTEXT.md`.
 - 2026-05-03 : dogfooding de la migration des primitives procédurales vers `.ai/workflows/` ; le runtime source exposait alors 6 skills Claude publics et 8 workflows internes partagés avec Codex.

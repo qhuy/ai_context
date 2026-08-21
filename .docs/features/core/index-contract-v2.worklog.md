@@ -118,3 +118,8 @@
 - Le builder normalise une forme invalide supplémentaire (`keywords: [123]`) mais l'objet émis
   conserve exactement les mêmes clés et types contractuels (`keywords` reste toujours un tableau).
 - `schema_version` reste à `1`; les tests de contrat et de recherche doivent rester verts.
+
+## 2026-08-21 — HANDOFF témoin hors contrat JSON
+
+- Le nouveau `.ai/.feature-index.checked` mémorise un scan réussi sans modifier l'enveloppe JSON v2, son `schema_version`, son mtime idempotent ni `generated_at`.
+- Validation commune : test de contrat, test de fraîcheur de reprise et smoke complet PASS.
