@@ -123,6 +123,8 @@ Faire consommer au repo source `ai_context` la même couche runtime que celle g�
 
 ## Historique / décisions
 
+- 2026-08-21 : HANDOFF du lot Copilot. Le registre natif runtime et son miroir sont synchronisés sur la preuve Code Review du 2026-06-18 ; aucun script dogfood ni prédicat de rendu n'est modifié.
+
 - 2026-08-21 : HANDOFF du lot de confinement des sessions. `features-for-path.sh` et son miroir préfixent les seuls composants réservés `.` et `..` ; le rendu dogfood reste identique pour tous les identifiants ordinaires et les tests ciblés sont verts.
 
 - 2026-08-21 : HANDOFF du lot de fraîcheur d'index. Le runtime et les miroirs ajoutent `.feature-index.checked` comme artefact volatil reconstructible ; `check-dogfood-drift.sh` et le smoke multi-profils restent verts.

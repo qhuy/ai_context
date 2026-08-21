@@ -83,8 +83,10 @@ jetable hors du workspace, puis application contrôlée) : voir
 
 ## Shims Copilot / Cursor — élagage AGENTS.md natif
 
-Copilot (coding agent) et Cursor lisent `AGENTS.md` nativement (registre
-`.ai/native-context-support.tsv`, statut `confirmed` avec evidence officielle).
+Copilot (coding agent et Code Review) et Cursor lisent `AGENTS.md` nativement
+(registre `.ai/native-context-support.tsv`, statut `confirmed` avec preuve
+officielle). Pour Code Review, GitHub l'a annoncé disponible généralement le
+2026-06-18 ([GitHub Changelog](https://github.blog/changelog/2026-06-18-copilot-code-review-agents-md-support-and-ui-improvements/)).
 Conséquences au prochain `copier update` (comportement vérifié — `copier update`
 ne supprime JAMAIS un chemin passé en `_exclude`, seules les suppressions de
 fichiers du template se propagent) :
@@ -94,7 +96,8 @@ fichiers du template se propagent) :
   existant reste en place, non géré, et divergera d'`AGENTS.md`. Deux options :
   le supprimer toi-même (`git rm .github/copilot-instructions.md` — le coding
   agent lit AGENTS.md), ou le garder géré avec `enable_copilot_shim=true`
-  (Copilot Chat/review IDE lisent encore ce fichier).
+  comme canal de consignes spécifiques à Copilot, en complément des règles
+  communes lues dans `AGENTS.md`.
 - `.cursor/rules/protocol-reminder.mdc` : supprimé par l'update **seulement si
   ton profil a un scope back/front** (`.cursor` reste géré). En profil sans
   back/front, `.cursor` entier sort de la gestion du template : supprime

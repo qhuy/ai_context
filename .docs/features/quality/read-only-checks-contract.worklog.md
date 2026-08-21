@@ -265,3 +265,8 @@
 ## 2026-08-06 19:05 — auto
 - Fichiers modifiés :
   - .ai/workflows/quality-gate.md
+
+## 2026-08-21 — couverture incidente documentation Copilot
+
+- `MIGRATION.md` corrige uniquement la promesse sur Copilot Code Review à partir d'une source GitHub officielle ; aucun check, diagnostic ni contrat read-only n'est modifié.
+- Validation : registre natif, références markdown, manifeste de surface et smoke complet PASS.

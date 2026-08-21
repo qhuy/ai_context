@@ -223,6 +223,8 @@ nommés explicitement en cas d'échec (`aic-release-smoke.XXXXXX.log`, etc.).
 
 ## Historique / décisions
 
+- 2026-08-21 : couverture incidente de l'aide `enable_copilot_shim` dans `copier.yml`. La migration native, la cohérence de release et les commandes de publication restent inchangées ; manifeste de surface et smoke complet PASS. Aucun tag ni push dans ce lot.
+
 - 2026-07-24 : création + implémentation. Faux pas initial détecté et corrigé en
   cours de route : `aic-release.sh` avait été câblé dans `aic.sh` et templaté
   avant de réaliser que `RELEASE.md`/`check-release-coherence.sh` (dont il

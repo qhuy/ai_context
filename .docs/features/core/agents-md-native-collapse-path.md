@@ -28,6 +28,7 @@ touches_shared:
   - MIGRATION.md
   - docs/upgrading.md
   - CHANGELOG.md
+  - copier.yml
 product: {}
 external_refs:
   pilot: ".docs/pilots/2026-06-30-ze-solution.md"
@@ -43,10 +44,10 @@ doc:
     observability: false
 progress:
   phase: done
-  step: "registre : copilot + cursor confirmés (docs officielles 2026-07-06) ; claude reste pending, CLAUDE.md conservé"
+  step: ""
   blockers: []
-  resume_hint: "surveiller .ai/native-context-support.tsv ; ne rendre CLAUDE.md optionnel que si check-agent-native-context.sh --require-confirmed claude passe."
-  updated: 2026-07-06
+  resume_hint: "feature clôturée le 2026-08-21"
+  updated: 2026-08-21
 ---
 
 # Chemin de collapse — AGENTS.md auto-suffisant, indirection .ai/index.md optionnelle
@@ -104,6 +105,7 @@ shim (`agents-md-shim-canonical`) et de la surface (`aic-surface-canonical`).
 - AGENTS.md auto-suffisant = **entrée + protocole lean minimal inline**, pas duplication de `.ai/index.md` (sinon on regrossit Pack A et on viole l'invariant source).
 - Le collapse est **gouverné par le kill_criterion #34235**, par agent, pas global.
 - Le signal externe est matérialisé dans `.ai/native-context-support.tsv` ; un statut `pending` bloque tout retrait du shim dédié via `check-agent-native-context.sh --require-confirmed <agent>`.
+- Pour Copilot, distinguer les deux contrats : `AGENTS.md` est lu nativement par le coding agent et par Code Review ; `.github/copilot-instructions.md` reste un canal complémentaire de consignes propres à Copilot, pas un fallback requis pour la review.
 
 ## Comportement attendu
 
@@ -118,6 +120,7 @@ shim (`agents-md-shim-canonical`) et de la surface (`aic-surface-canonical`).
 - **Mode indirection** : `.ai/index.md` actif par défaut ; optionnel seulement quand le kill_criterion est satisfait pour l'agent.
 - **check-shims** : la base AGENTS.md reste valide dans les deux modes (lean conservé).
 - **Registre natif** : `.ai/native-context-support.tsv` trace `agent`, `shared_entrypoint`, `status`, `checked_at`, `evidence` et `note`.
+- **Copilot** : la preuve officielle datée couvre explicitement Code Review ; l'option `enable_copilot_shim` est présentée comme canal supplémentaire pour des consignes spécifiques, jamais comme condition de lecture des règles communes.
 - **check-agent-native-context** : `--require-confirmed <agent>` sort non-zéro tant que le statut n'est pas `confirmed`.
 
 ## Validation
@@ -126,6 +129,7 @@ shim (`agents-md-shim-canonical`) et de la surface (`aic-surface-canonical`).
 - `.ai/index.md` reste fonctionnel et défaut (non-régression).
 - `check-shims` + `check-dogfood-drift` verts ; migration downstream documentée.
 - `check-agent-native-context.sh` valide le registre ; `--require-confirmed claude` échoue tant que la lecture native reste non confirmée.
+- Le test du registre verrouille la date et l'URL GitHub officielles du support Code Review, ainsi que l'absence de l'ancienne promesse « review IDE lit encore le shim » dans l'aide Copier.
 - DONE : AGENTS.md auto-suffisant livré + kill_criterion opérationnalisé (veille/check) + doc migration warn, sans violer l'invariant source.
 
 ## Droits / accès
@@ -167,6 +171,7 @@ Non requis (`doc.requires.observability: false`). Preuves = sorties `check-shims
 
 ## Historique / décisions
 
+- 2026-08-21 : GitHub a annoncé le 2026-06-18 que Copilot Code Review lit automatiquement le `AGENTS.md` racine. La note du registre et l'aide Copier sont réconciliées : le shim opt-in reste un canal distinct de consignes repository-wide spécifiques à Copilot, également exploitable par Chat/review, mais n'est plus décrit comme une compatibilité nécessaire faute de support `AGENTS.md` en review.
 - 2026-06-30 : création via pilotage `aic-pilot` (pilot `2026-06-30-ze-solution`, item P2),
   après HANDOFF product→core. Posture tranchée = **hedge** (préparer le collapse sans pivoter
   ni retirer l'indirection). Cadre : AGENTS.md auto-suffisant = entrée + protocole lean minimal

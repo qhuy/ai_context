@@ -152,3 +152,8 @@
 
 - Touchée seulement par le snapshot de clés de `tests/unit/test-build-feature-index-contract.sh`
   (ajout de `title` et `keywords` à l'index). Aucun impact sur l'abstraction VCS ; test PASS.
+
+## 2026-08-21 — couverture incidente aide Copier Copilot
+
+- `copier.yml` reformule `enable_copilot_shim` sans changer la question, son défaut, son prédicat ni aucune sélection de provider VCS.
+- Validation : manifeste de surface et smoke Git/TFVC complet PASS.
