@@ -321,3 +321,10 @@
 - Le script direct demeure le point d'entrée prescrit ; aucun contrat public n'est figé avant mesure
   du rappel consommateur.
 - Validation ciblée : `bash tests/unit/test-surface-manifest.sh` PASS.
+
+## 2026-08-21 — release v1.1.0
+
+- `PROJECT_STATE.md` passe la version publiée et l'état courant à v1.1.0.
+- L'inventaire de surface reflète les deux routes internes `search` et `reminder` ; aucune route stable, stable-maintenance ou deprecated n'est retirée ni renommée.
+- Les capacités livrées depuis v1.0.1 sont synthétisées sans modifier le contrat propre de cette fiche : recherche par intention encore expérimentale, restitution multi-agent et fiabilisation du runtime.
+- Validation du commit de release : manifeste de surface, cohérence release, quality gate, huit rendus Copier et smoke complet PASS.
