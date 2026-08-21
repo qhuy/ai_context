@@ -88,6 +88,13 @@ jobs:
             yq --version
           fi
 
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            python_cmd=python
+          else
+            python_cmd=python3
+          fi
+          "$python_cmd" -c 'import os, sysconfig; print(sysconfig.get_path("scripts", f"{os.name}_user"))' >> "$GITHUB_PATH"
+
       - name: shellcheck scripts, hooks et tests
         if: runner.os != 'Windows'
         run: |
@@ -108,6 +115,4 @@ jobs:
         run: bash .ai/scripts/check-dogfood-drift.sh
 
       - name: smoke-test template
-        run: |
-          export PATH="$HOME/.local/bin:$HOME/Library/Python/3.12/bin:$HOME/Library/Python/3.9/bin:$APPDATA/Python/Python311/Scripts:$APPDATA/Python/Python312/Scripts:$PATH"
-          bash tests/smoke-test.sh
+        run: bash tests/smoke-test.sh
