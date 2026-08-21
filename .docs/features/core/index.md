@@ -11,6 +11,7 @@ Fiches canoniques de ce scope.
 - [Installer les skills Codex avec ai_context](codex-skills-install.md) — `codex-skills-install` · `done` · `feature`
 - [Synchronisation dogfooding du runtime ai_context](dogfood-runtime-sync.md) — `dogfood-runtime-sync` · `done` · `feature`
 - [Cache JSON déterministe du feature mesh](feature-index-cache.md) — `feature-index-cache` · `done` · `feature`
+- [Récupération des fiches par intention](feature-intent-retrieval.md) — `feature-intent-retrieval` · `active` · `feature`
 - [Feature mesh markdown (frontmatter + dépendances cross-scope)](feature-mesh.md) — `feature-mesh` · `done` · `feature`
 - [Alignement schema et parser du feature mesh](feature-mesh-contract-alignment.md) — `feature-mesh-contract-alignment` · `done` · `feature`
 - [Index Markdown progressifs du feature mesh](feature-mesh-progressive-indexes.md) — `feature-mesh-progressive-indexes` · `done` · `feature`
@@ -22,5 +23,6 @@ Fiches canoniques de ce scope.
 - [Squelettes bootstrap pour DS registry et atomic map](preset-ds-skeletons.md) — `preset-ds-skeletons` · `done` · `feature`
 - [Overlay projet comme registre de scopes](project-overlay-scope-registry.md) — `project-overlay-scope-registry` · `done` · `feature`
 - [Overlay projet stable](project-overlay-stable.md) — `project-overlay-stable` · `done` · `feature`
+- [Dédup par session du corps des fiches injectées en hook](session-injection-dedup.md) — `session-injection-dedup` · `active` · `feature`
 - [Moteur de template copier (profils + scopes conditionnels)](template-engine.md) — `template-engine` · `done` · `feature`
 - [Abstraction VCS Git / TFVC](vcs-provider-abstraction.md) — `vcs-provider-abstraction` · `done` · `feature`

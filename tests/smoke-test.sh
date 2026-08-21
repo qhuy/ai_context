@@ -44,6 +44,10 @@ echo "[0c/28] tests unitaires (freshness multi-feature)"
 bash tests/unit/test-check-feature-freshness.sh
 echo
 
+echo "[0c2/28] tests unitaires (fraîcheur index de reprise)"
+bash tests/unit/test-resume-features-index-freshness.sh
+echo
+
 echo "[0d/28] tests unitaires (dogfood drift destination-only)"
 bash tests/unit/test-dogfood-drift-extra.sh
 echo

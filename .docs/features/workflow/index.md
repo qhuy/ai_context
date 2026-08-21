@@ -15,6 +15,7 @@ Fiches canoniques de ce scope.
 - [Pilote hooks Codex déterministes](codex-hooks-parity.md) — `codex-hooks-parity` · `done` · `feature`
 - [Auto-progression invisible (+ skill /aic en override)](conversational-skills.md) — `conversational-skills` · `done` · `feature`
 - [Structurer les développements multi-techno](dev-plan-skill.md) — `dev-plan-skill` · `done` · `feature`
+- [Veille écosystème et radar des usages IA](ecosystem-usage-watch.md) — `ecosystem-usage-watch` · `active` · `workflow`
 - [Discipline de preuve — aucune affirmation sans source ni étiquette](evidence-discipline.md) — `evidence-discipline` · `done` · `contract`
 - [Procédure feature-audit — rétro-doc & re-sync des fiches feature](feature-audit.md) — `feature-audit` · `done` · `feature`
 - [Nudge de consolidation à l'édition d'une fiche](feature-consolidation-nudge.md) — `feature-consolidation-nudge` · `done` · `feature`
@@ -27,6 +28,7 @@ Fiches canoniques de ce scope.
 - [Injection contextuelle au début de chaque tour Claude/Codex](pre-turn-reminder.md) — `pre-turn-reminder` · `done` · `feature`
 - [Procédure project-guardrails — non-goals + glossaire métier pour orienter l'agent](project-guardrails.md) — `project-guardrails` · `done` · `feature`
 - [Skill aic-onboard — init/sync/migrate de l'overlay projet](project-overlay-onboarding.md) — `project-overlay-onboarding` · `done` · `feature`
+- [Reprise alignée sur la source du feature mesh](resume-index-freshness.md) — `resume-index-freshness` · `done` · `feature`
 - [Rendre le hook Stop idempotent sur tour sans édit structurel](stop-hook-idempotence.md) — `stop-hook-idempotence` · `done` · `feature`
 - [Forcer la fraîcheur documentaire en fin de tour (gate Stop)](stop-turn-doc-gate.md) — `stop-turn-doc-gate` · `done` · `feature`
 - [Contrat subagents multi-agent](subagent-contract.md) — `subagent-contract` · `done` · `feature`

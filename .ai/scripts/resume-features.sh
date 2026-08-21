@@ -23,6 +23,7 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 require_cmd jq
 
 repo_root="$(cd "$script_dir/../.." && pwd)"
+features_dir="$repo_root/$AI_CONTEXT_FEATURES_DIR"
 index_file="$repo_root/.ai/.feature-index.json"
 config_file="$repo_root/.ai/config.yml"
 
@@ -40,8 +41,11 @@ for arg in "$@"; do
   esac
 done
 
-# Rebuild index si absent
+# Même politique de fraîcheur que les autres consommateurs interactifs : un
+# index présent mais antérieur à une fiche ne doit jamais piloter la reprise.
 if [[ ! -f "$index_file" ]]; then
+  bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
+elif [[ -d "$features_dir" ]] && feature_docs_newer_than "$features_dir" "$index_file"; then
   bash "$script_dir/build-feature-index.sh" --write >/dev/null 2>&1 || true
 fi
 

@@ -625,3 +625,14 @@
 - Aucun changement du mécanisme de dogfood ; cette entrée satisfait la propriété historique large
   du starter. `check-dogfood-drift.sh` PASS sur les profils dogfood-minimal, fullstack-cursor et
   codex-hooks.
+
+## 2026-08-20 — HANDOFF workflow/resume-index-freshness
+
+- Surface incidente : `.ai/scripts/resume-features.sh`, rattachée au catch-all `.ai/**`, et son
+  miroir `template/.ai/scripts/resume-features.sh.jinja`.
+- Le comportement de dogfood update/drift ne change pas ; le workflow de reprise ajoute seulement
+  la détection d'une fiche plus récente que le cache.
+- Parité maintenue par la même édition sur le runtime et le template ; validation attendue via
+  `check-dogfood-drift.sh`.
+- L'ownership fonctionnel reste `workflow/resume-index-freshness` ; cette entrée satisfait la
+  traçabilité du catch-all core sans rouvrir `dogfood-runtime-sync`.

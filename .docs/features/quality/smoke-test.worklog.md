@@ -394,3 +394,10 @@
 - Trois assertions d'inventaire réalignées sur le nouveau format du reminder : `legacy(done)`,
   `api(active)`, `ui(active)` et `unrelated(active)` deviennent `<id> (<status>)` en `grep -qE`.
 - Le changement de format vient de l'affichage du titre par feature ; le smoke-test reste PASS.
+
+## 2026-08-20 — HANDOFF workflow/resume-index-freshness
+
+- Ajout de l'étape `[0c2/28]`, qui exécute `tests/unit/test-resume-features-index-freshness.sh` avant les scénarios end-to-end.
+- La régression reproduit un cache présent en phase `implement` et une fiche plus récente en phase `review`; elle exige que la reprise et le cache reconstruit exposent `review`.
+- Aucun changement de la numérotation globale, du scaffold Copier ni des 28 assertions end-to-end.
+- Validation portée par `workflow/resume-index-freshness` puis par le smoke complet.
