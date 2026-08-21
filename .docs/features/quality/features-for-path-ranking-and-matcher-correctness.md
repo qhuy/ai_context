@@ -244,6 +244,8 @@ Consommateurs directs de `features_matching_path` ou de `features-for-path.sh` q
 
 ## Historique / décisions
 
+- 2026-08-21 : couverture incidente du durcissement des identifiants de session. `features-for-path.sh` préfixe uniquement les tokens réservés `.` et `..` avant construction du dossier d'état ; le matcher et le ranking restent inchangés. Tests session-dedup et relevance-ranking PASS, puis smoke complet PASS.
+
 - 2026-05-06 : création en draft suite au cross-check Claude/Codex (4 rounds) sur `workflow/intentional-skills`. Bug bash 3.2 confirmé en local : `_lib.sh:82-84` (`enable_globstar()` no-op sur 3.2) + branche spéciale partielle `_lib.sh:118-121` (couvre `prefix/**` simple, pas multi-niveaux). Choix Option B : un seul livrable cohérent ranking+correctness, acceptance bloque livraison sur matcher correct.
 - 2026-05-07 (post-review Codex) : **contrat dual exit code** ajouté. Le draft initial demandait « erreur claire + code retour ≠ 0 » sans distinguer les consommateurs. Risque pointé par Codex : `features-for-path.sh` est consommé par le hook PreToolUse Claude ([settings.json:31](.claude/settings.json:31)), et un exit ≠ 0 sur pattern cassé peut bloquer toute édition de l'agent. Fix : détection mode strict / mode hook (best-effort par défaut). Cible 5 consommateurs identifiés : `aic.sh`, `auto-worklog-log.sh`, `measure-context-size.sh`, hook PreToolUse, hook PostToolUse via `auto-worklog-log.sh`.
 - 2026-07-02 : R2 exploite le tracker de pertinence comme tie-break de ranking. Les features injectées plusieurs fois sans intersection sont pénalisées après la spécificité du matcher, avec opt-out et seuils configurables.

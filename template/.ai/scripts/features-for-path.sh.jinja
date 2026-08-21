@@ -140,7 +140,12 @@ add_feature_key() {
 dedup_session_dir=""
 
 sanitize_state_token() {
-  printf '%s' "$1" | tr -c '[:alnum:]._-' '_' | LC_ALL=C cut -c1-120
+  local token
+  token=$(printf '%s' "$1" | tr -c '[:alnum:]._-' '_' | LC_ALL=C cut -c1-120)
+  case "$token" in
+    .|..) token="_$token" ;;
+  esac
+  printf '%s' "$token"
 }
 
 init_doc_dedup_state() {
