@@ -397,6 +397,11 @@ Oui. Utilise `docs_root=docs` si nécessaire et crée des scopes adaptés
 - [CHANGELOG.md](CHANGELOG.md) - versions et breaking changes
 - [PROJECT_STATE.md](PROJECT_STATE.md) - état et roadmap mainteneur
 
+Routines mainteneur (prompts versionnés, exécutés par un agent) :
+
+- [docs/audit/REVIEW_PROMPT.md](docs/audit/REVIEW_PROMPT.md) - audit interne du dépôt à `HEAD` (qualité, parité, sécurité) ; rapports dans [docs/audit/reports/](docs/audit/reports/)
+- [docs/veille/WATCH_PROMPT.md](docs/veille/WATCH_PROMPT.md) - veille hebdomadaire sur l'écosystème Claude/Codex, les standards agents et les usages IA métiers ; rapports dans [docs/veille/reports/](docs/veille/reports/)
+
 ## Contribuer
 
 Pour modifier le template :

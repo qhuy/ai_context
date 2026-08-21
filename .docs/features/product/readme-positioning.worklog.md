@@ -81,3 +81,14 @@ docs(product): clôturer le repositionnement README
 ## 2026-08-07 14:27 — auto
 - Fichiers modifiés :
   - README.md
+
+## 2026-08-13 10:49 — auto
+- Fichiers modifiés :
+  - README.md
+
+## 2026-08-20 — couverture incidente (workflow/ecosystem-usage-watch)
+
+- HANDOFF workflow → product accepté pour une édition documentaire minimale de `README.md`.
+- Ajout, dans la section Documentation, des deux routines mainteneur versionnées : audit interne (`docs/audit/REVIEW_PROMPT.md`) et veille externe technique + usages (`docs/veille/WATCH_PROMPT.md`).
+- Le positionnement, la promesse et le quickstart restent inchangés ; `product/readme-positioning` demeure `done` et propriétaire exact de `README.md`.
+- Validation portée conjointement par `workflow/ecosystem-usage-watch` et les checks documentaires du README.
