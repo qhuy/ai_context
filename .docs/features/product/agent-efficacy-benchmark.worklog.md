@@ -185,3 +185,19 @@
 
 ## 2026-07-24 — couverture incidente (v1.0, retrait gemini)
 - `tests/bench/run-bench.sh` : `GEMINI.md` retiré de la liste de nettoyage `strip_ai_context` (le fichier n'est plus rendu). Aucun changement du protocole, du runner ni du grading.
+
+## 2026-08-21 — self-check reproductible sur clone frais
+
+- Cause confirmée : `BENCH_RUN_DIR` cible `docs/benchmarks/runs/<stamp>`, mais
+  `resolved_target_path` exige que son parent existe avant la création du run.
+  Depuis la déversion de `docs/benchmarks/runs/`, un clone frais échouait donc au
+  self-check avant toute exécution d'agent.
+- Décision : versionner uniquement `docs/benchmarks/runs/.gitkeep`. Le self-check
+  reste sans mutation et la garde de chemin existante n'est pas affaiblie.
+- HANDOFF `product/agent-efficacy-benchmark` → `core/dogfood-runtime-sync` :
+  `.gitignore` ignore toujours tous les artefacts sous `runs/`, avec une exception
+  limitée au seul `.gitkeep`.
+- Validation : un dépôt jetable contenant ce delta a été committé puis recloné ;
+  `test -f docs/benchmarks/runs/.gitkeep`,
+  `bash tests/bench/run-bench.sh --self-check` et
+  `bash tests/smoke-test.sh` terminent tous avec exit 0 (`smoke-test PASS`).

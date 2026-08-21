@@ -636,3 +636,22 @@
   `check-dogfood-drift.sh`.
 - L'ownership fonctionnel reste `workflow/resume-index-freshness` ; cette entrée satisfait la
   traçabilité du catch-all core sans rouvrir `dogfood-runtime-sync`.
+
+## 2026-08-21 — HANDOFF product/agent-efficacy-benchmark
+
+- `.gitignore` remplace l'exclusion du dossier `docs/benchmarks/runs/` par une
+  exclusion de son contenu et réinclut uniquement `.gitkeep`.
+- Objectif : rendre le dossier présent dans un clone frais pour le self-check du
+  benchmark, sans recommencer à versionner les résultats de runs.
+- Aucun contrat de synchronisation dogfood ne change ; ownership fonctionnel et
+  validation du comportement restent dans `product/agent-efficacy-benchmark`.
+
+## 2026-08-21 — HANDOFF core/feature-index-cache
+
+- `.ai/.feature-index.checked` rejoint les artefacts runtime volatils exclus de la copie et du
+  contrôle de drift, au même titre que `.ai/.feature-index.json`.
+- Le fichier est produit par `build-feature-index.sh --write`, gitignoré dans le runtime et son
+  miroir Copier, puis intégralement reconstructible ; il ne doit jamais être synchronisé vers ou
+  depuis le rendu dogfood.
+- Ownership fonctionnel : `core/feature-index-cache`. Validation attendue : smoke Copier et
+  `check-dogfood-drift.sh`.

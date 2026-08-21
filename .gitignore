@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 .DS_Store
 /tmp-smoke/
-/docs/benchmarks/runs/
+/docs/benchmarks/runs/*
+!/docs/benchmarks/runs/.gitkeep
 .claude/scheduled_tasks.lock
 .claude/*.lock
