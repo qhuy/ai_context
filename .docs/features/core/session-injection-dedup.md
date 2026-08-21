@@ -2,6 +2,11 @@
 id: session-injection-dedup
 scope: core
 title: Dédup par session du corps des fiches injectées en hook
+keywords:
+  - coût du contexte injecté
+  - doublon d'injection de fiches
+  - budget de tokens des hooks
+  - réinjection répétée par session
 status: active
 type: feature
 description: "Le corps d'une fiche n'est injecté qu'une fois par session ; les appels suivants n'émettent qu'un rappel court."

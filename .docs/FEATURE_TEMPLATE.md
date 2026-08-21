@@ -2,6 +2,9 @@
 id: <feature-id-kebab-case>
 scope: <product | back | front | architecture | security>
 title: <Titre court de la feature>
+# Optionnel : formulations métier utilisées pour retrouver la fiche par intention.
+# Renseigner la liste, ou retirer la clé si id/title couvrent déjà les requêtes.
+keywords: []
 status: draft
 # Profil strict OKF (core/okf-strict-profile) : nature de l'asset documenté.
 # feature | contract | workflow | reference. REQUIS depuis v1.0.
@@ -179,6 +182,7 @@ Choix marquants, ADRs liées, décisions produit.
 
 **Frontmatter optionnel (reprise entre sessions)** :
 
+- `keywords` : formulations métier utilisées par `features-search.sh` quand l'id et le titre ne suffisent pas. Le placeholder `[]` déclenche un warning jusqu'à ce qu'il soit renseigné ou retiré explicitement.
 - `touches_shared` : surfaces transverses liées à la feature (`tests/smoke-test.sh`, `CHANGELOG.md`, docs d'état). Ces chemins apparaissent dans les rapports mais ne déclenchent pas l'obligation de fiche/worklog dans `check-feature-freshness --staged`.
 - `product` : lien produit typé. Pour une initiative `scope: product`, utiliser `product.type: initiative`, `bet`, `success_metric`, `leading_indicator`, `decision_state`, `next_decision_date`, `kill_criteria`, `portfolio.*`. Pour une feature dev, utiliser `product.initiative`, `contribution`, `evidence`.
 - `external_refs` : index de références externes (`speckit`, `bmad_story`, `linear`, `jira`, `github`, etc.). Sert à relier sans copier les artefacts produits par d'autres workflows.

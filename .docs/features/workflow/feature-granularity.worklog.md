@@ -49,3 +49,10 @@ docs(workflow): formaliser la granularité des fiches feature
 
 ## 2026-07-24 — couverture incidente (v1.0, type requis)
 - `.docs/FEATURE_TEMPLATE.md` : `type` documenté comme requis depuis v1.0 (commentaire inline + liste « Frontmatter obligatoire »). Aucun changement des règles de granularité/nommage.
+
+## 2026-08-21 — HANDOFF depuis core / starter keywords
+
+- Le starter expose `keywords: []` afin de forcer une décision de vocabulaire au moment de rédiger
+  une fiche. Les règles de granularité, de nommage et de split restent inchangées.
+- Freshness uniquement ; aucun comportement workflow ajouté. Retour au scope primaire
+  `core/feature-intent-retrieval` après validation stricte.

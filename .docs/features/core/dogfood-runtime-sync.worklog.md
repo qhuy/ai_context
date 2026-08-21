@@ -617,3 +617,11 @@
 - Limite : retirer ce catch-all exige une tâche dédiée qui attribue d'abord chaque script
   historique à une feature propriétaire ; ce refactor de gouvernance sort du présent intent.
 - Validation à relancer : couverture stricte, freshness staged/worktree et gate complète.
+
+## 2026-08-21 — miroir du nudge keywords
+
+- `check-features.sh`, `build-feature-index.sh` et `FEATURE_TEMPLATE.md` ont été modifiés avec leurs
+  miroirs Copier dans le même delta.
+- Aucun changement du mécanisme de dogfood ; cette entrée satisfait la propriété historique large
+  du starter. `check-dogfood-drift.sh` PASS sur les profils dogfood-minimal, fullstack-cursor et
+  codex-hooks.

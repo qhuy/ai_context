@@ -37,6 +37,8 @@ touches_shared:
   - tests/smoke-test.sh
   - docs/variables.md
   - CHANGELOG.md
+  - .docs/FEATURE_TEMPLATE.md
+  - template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja
 doc:
   level: standard
   requires:
@@ -48,10 +50,10 @@ doc:
     observability: false
 progress:
   phase: review
-  step: "implémentation et handoff product réconciliés ; quality gate finale en cours"
+  step: "retour Claude challengé : nudge keywords et preuves de robustesse renforcés"
   blockers: []
   resume_hint: "vérifier la mesure de reprise côté dépôt consommateur après copier update"
-  updated: 2026-08-20
+  updated: 2026-08-21
 type: feature
 ---
 
@@ -80,6 +82,8 @@ une déduction d'agent sur la proximité lexicale d'un id.
   `features-for-path.sh`.
 - Affichage du titre dans l'inventaire injecté par `pre-turn-reminder.sh`.
 - Prescription explicite du point d'entrée intent dans la section *On Demand* de `.ai/index.md`.
+- Nudge de rédaction : le modèle crée `keywords: []` et `check-features.sh` avertit tant que
+  l'auteur n'a pas renseigné le vocabulaire métier ou retiré explicitement la clé.
 - Parité runtime/template et mise à jour du snapshot de clés du contrat d'index.
 
 ### Hors périmètre
@@ -102,9 +106,12 @@ une déduction d'agent sur la proximité lexicale d'un id.
   le même haystack.
 - Les termes de deux caractères ou moins matchent un mot entier : les acronymes `UI`, `UX`, `RH`,
   `IA`, `IT`, `BI` et `QA` ne matchent pas des fragments comme « guidé » ou « audit ».
-- Une fiche dont `keywords` est mal typé est bloquée par `check-features.sh`. L'indexeur la
-  normalise avec warning et le consommateur ignore défensivement la valeur fautive : les autres
-  fiches restent cherchables.
+- Avec `yq` + `jq`, une fiche dont `keywords` est mal typé est bloquée par `check-features.sh`.
+  Le fallback sans `yq` bloque au moins les scalaires et types non-string inline évidents.
+  L'indexeur normalise avec warning et le consommateur ignore défensivement toute valeur résiduelle
+  fautive : les autres fiches restent cherchables.
+- Un `keywords: []` explicite reste valide et produit un warning de décision ; l'absence de la clé
+  reste silencieuse pour préserver les fiches existantes.
 - L'inventaire injecté par `pre-turn-reminder.sh` affiche désormais le titre de chaque feature
   visible, et pointe vers la recherche par intention pour les fiches masquées.
 
@@ -128,9 +135,10 @@ une déduction d'agent sur la proximité lexicale d'un id.
   de `tests/unit/test-build-feature-index-contract.sh` est mis à jour en conséquence.
 - `features-search.sh` sort en code 0 si au moins une fiche matche, 1 sinon : utilisable en garde
   dans un script appelant.
-- Le fallback sans `yq` doit produire les mêmes `title`/`keywords` que le chemin `yq`, apostrophes
-  comprises — d'où `extract_text_scalar_awk` / `extract_text_list_awk`, qui ne strippent que les
-  quotes englobantes, là où `extract_scalar_awk` reste réservé aux valeurs kebab-case.
+- Pour les listes block-style supportées, le fallback sans `yq` doit produire les mêmes
+  `title`/`keywords` que le chemin `yq`, apostrophes comprises — d'où
+  `extract_text_scalar_awk` / `extract_text_list_awk`, qui ne strippent que les quotes englobantes,
+  là où `extract_scalar_awk` reste réservé aux valeurs kebab-case.
 - La route `aic search` reste classée `interne` et non contractuelle jusqu'à mesure du rappel sur un
   corpus consommateur. Le point d'entrée prescrit et stable pendant l'expérimentation est le script
   `bash .ai/scripts/features-search.sh <mots>`.
@@ -151,8 +159,9 @@ une déduction d'agent sur la proximité lexicale d'un id.
 ## Validation
 
 - `bash tests/unit/test-features-search.sh` — recherche métier sur fiche `done`, repli des
-  diacritiques, code 1 sans résultat, `--status`/`--limit`/`--json`, `keywords` scalaire isolé,
-  acronymes courts exacts seuls ou dans une requête mixte, et parité du fallback sans `yq`.
+  diacritiques, code 1 sans résultat, `--status`/`--limit`/`--json`, `keywords` scalaire et
+  `[123]`, index pré-corrompu, nudge `keywords: []`, acronymes courts exacts seuls ou dans une
+  requête mixte, et parité du fallback sans `yq`.
 - `bash .ai/scripts/check-features.sh --no-write` — type de `keywords` validé à l'écriture.
 - `bash tests/unit/test-build-feature-index-contract.sh` — snapshot de clés mis à jour, MINOR sans
   bump de `schema_version`.
@@ -176,16 +185,17 @@ une déduction d'agent sur la proximité lexicale d'un id.
 ## Risques
 
 - Coût contexte de l'inventaire pre-turn, re-mesuré après les corrections dans le worktree isolé :
-  68 fiches, dont 2 `active|draft`. Les titres ajoutent 86 octets en affichage par défaut et
-  3651 octets avec tous les statuts ; la sortie pre-turn complète mesure respectivement 1370 et
-  7175 octets. Commandes : `jq '[.features[] | select(.status == "active" or .status == "draft") | 5 + (.title | utf8bytelength)] | add' .ai/.feature-index.json`, même expression sans `select` pour tous les statuts, puis `bash .ai/scripts/pre-turn-reminder.sh | wc -c` et `AI_CONTEXT_SHOW_ALL_STATUS=1 bash .ai/scripts/pre-turn-reminder.sh | wc -c`. Sur un mesh à forte proportion de features actives, utiliser `AI_CONTEXT_FOCUS=<scope>`.
-- Couverture métier initiale limitée : les 68 fiches ont un titre, une seule porte encore des
+  69 fiches, dont 3 `active|draft`. Les titres ajoutent 148 octets en affichage par défaut et
+  3713 octets avec tous les statuts ; la sortie pre-turn complète mesure respectivement 1473 et
+  7278 octets. Commandes : `jq '[.features[] | select(.status == "active" or .status == "draft") | 5 + (.title | utf8bytelength)] | add' .ai/.feature-index.json`, même expression sans `select` pour tous les statuts, puis `bash .ai/scripts/pre-turn-reminder.sh | wc -c` et `AI_CONTEXT_SHOW_ALL_STATUS=1 bash .ai/scripts/pre-turn-reminder.sh | wc -c`. Sur un mesh à forte proportion de features actives, utiliser `AI_CONTEXT_FOCUS=<scope>`.
+- Couverture métier initiale limitée : les 69 fiches ont un titre, deux portent désormais des
   `keywords` non vides (`jq` sur `.ai/.feature-index.json`). Le bénéfice sur les synonymes historiques
   reste à confirmer et à enrichir à partir de requêtes réelles, pas de requêtes écrites après coup.
 - La recherche reste lexicale : une fiche sans `keywords` métier et nommée d'après le code reste
   difficile à retrouver. Le champ est le remède, son remplissage est une discipline de rédaction.
-- Le prompt agent peut ignorer la prescription. Elle est donc placée dans `.ai/reminder.md`, injecté
-  à chaque tour, et pas seulement dans `.ai/index.md`.
+- La prescription en prose peut être ignorée : la première fiche retouchée après livraison de la
+  recherche n'a pas reçu ses `keywords`. Le modèle et le checker portent désormais un nudge
+  mécanique et explicite, sans rendre le champ obligatoire pour les 69 fiches existantes.
 
 ## Historique / décisions
 
@@ -200,3 +210,8 @@ une déduction d'agent sur la proximité lexicale d'un id.
 - 2026-08-20 — arbitrage : enrichir l'index (`title` déjà présent dans toutes les fiches mais jeté à
   l'indexation, plus `keywords` optionnel) et prescrire `features-search.sh`, plutôt qu'étendre le
   hook aux outils de lecture ou activer le knowledge hub.
+- 2026-08-21 — retour contradictoire : la feature `session-injection-dedup` précédait ce commit dans
+  l'historique Git, mais sa première retouche postérieure a bien ignoré la prescription. Décision :
+  conserver `keywords` optionnel et ajouter un nudge mécanique (`keywords: []` dans le starter,
+  warning tant que la décision n'est pas prise), puis verrouiller les cas scalaire, `[123]` et index
+  déjà corrompu dans le test de recherche.

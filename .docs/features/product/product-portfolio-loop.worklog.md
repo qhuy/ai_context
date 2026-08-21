@@ -175,3 +175,10 @@
 - Décision : déplacer les deux schémas de `touches` vers `touches_shared` ; un changement générique comme le contrat optionnel `keywords` ne modifie ni la boucle de traceability produit ni ses rapports.
 - Validation : `check-feature-freshness.sh --staged --strict` et wrapper de commit à relancer après reconstruction de l'index.
 - Next : aucun travail produit ; la validation et la clôture reviennent au scope primaire `core/feature-intent-retrieval`.
+
+## 2026-08-21 — HANDOFF depuis core / starter keywords
+
+- `.docs/FEATURE_TEMPLATE.md` et son miroir énumèrent le champ générique `keywords`; aucun champ
+  `product.*`, aucun score et aucun rapport portfolio ne changent.
+- Freshness uniquement, due à la co-propriété historique du starter. Le scope produit n'est pas
+  rouvert ; validation et décision restent dans `core/feature-intent-retrieval`.

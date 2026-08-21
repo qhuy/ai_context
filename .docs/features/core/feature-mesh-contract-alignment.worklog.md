@@ -86,3 +86,10 @@
   comprises. Parité vérifiée par `tests/unit/test-features-search.sh` (cas 6, `PATH` restreint).
 - Le chemin `yq` lit 9 scalaires par ligne au lieu de 8 ; la convention mono-ligne du schéma reste
   la limite connue, documentée dans le script.
+
+## 2026-08-21 — couverture incidente du fallback keywords
+
+- Le fallback sans `yq` signale désormais aussi le type non-string inline évident `[123]` avant de
+  le normaliser en `[]` ; aucun champ d'index ajouté ou retiré.
+- La portée du fallback est explicitement documentée comme bornée, sans promesse de parseur YAML
+  complet. Test ciblé `test-features-search.sh` PASS.

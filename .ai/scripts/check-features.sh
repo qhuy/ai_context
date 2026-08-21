@@ -135,32 +135,43 @@ for f in "${files[@]}"; do
 
   # `keywords` est optionnel, mais son type est contractuel : le consommateur
   # de recherche doit pouvoir itérer sans qu'une seule fiche neutralise tout le
-  # rappel. Avec yq+jq, vérifier aussi le type des items ; sans yq, le fallback
-  # minimal rejette au moins un scalaire inline évident (`keywords: billet`).
+  # rappel. Un tableau vide reste valide mais produit un nudge : le template le
+  # pose volontairement pour forcer la décision « renseigner ou retirer ».
   if printf '%s\n' "$fm" | grep -qE '^keywords:'; then
-    keywords_valid=1
+    keywords_state="valid"
     if command -v yq >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
-      if ! printf '%s' "$fm" | yq -o=json -I=0 '.' 2>/dev/null \
-        | jq -e '
-            if has("keywords")
-            then ((.keywords | type) == "array"
-                  and all(.keywords[]; if type == "string" then length > 0 else false end))
-            else true
-            end
-          ' >/dev/null; then
-        keywords_valid=0
-      fi
+      keywords_state=$(
+        printf '%s' "$fm" | yq -o=json -I=0 '.' 2>/dev/null \
+          | jq -r '
+              if (has("keywords") | not)
+                 or ((.keywords | type) != "array")
+                 or (all(.keywords[]; if type == "string" then length > 0 else false end) | not)
+              then "invalid"
+              elif (.keywords | length) == 0 then "empty"
+              else "valid"
+              end
+            '
+      ) || keywords_state="invalid"
     else
       keywords_inline=$(printf '%s\n' "$fm" | awk '
         /^keywords:/ { sub(/^keywords:[[:space:]]*/, ""); print; exit }
       ')
       if [[ -n "$keywords_inline" && ! "$keywords_inline" =~ ^\[.*\]$ ]]; then
-        keywords_valid=0
+        keywords_state="invalid"
+      elif printf '%s' "$keywords_inline" \
+        | grep -Eq '(^|\[|,)[[:space:]]*(-?[0-9]+([.][0-9]+)?|true|false|null|~)[[:space:]]*(,|\])'; then
+        # Sans parseur YAML, bloquer au moins les types non-string évidents en
+        # flow style (`[123]`, `[true]`, `[null]`).
+        keywords_state="invalid"
+      elif [[ "$keywords_inline" == "[]" ]]; then
+        keywords_state="empty"
       fi
     fi
-    if [[ "$keywords_valid" -ne 1 ]]; then
+    if [[ "$keywords_state" == "invalid" ]]; then
       ko "$f : keywords invalide (attendu : tableau de chaînes non vides)"
       file_fail=1
+    elif [[ "$keywords_state" == "empty" ]]; then
+      warn "$f : keywords vide — renseigner du vocabulaire métier ou retirer la clé si id/title suffisent"
     fi
   fi
 

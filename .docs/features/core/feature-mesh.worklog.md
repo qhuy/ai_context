@@ -119,3 +119,15 @@
 - La fiche canonique expose désormais ce champ optionnel et son contrat.
 - Validation ciblée : la fixture `keywords: billet` fait échouer le checker tout en laissant
   `build-feature-index` et la recherche disponibles pour les autres fiches.
+
+## 2026-08-21 — nudge de rédaction keywords et contrat du starter aligné
+
+- Intent : rendre visible le champ optionnel au moment où une fiche est créée, sans imposer de
+  backfill aux fiches historiques.
+- Fichiers/surfaces : `.docs/FEATURE_TEMPLATE.md`, son miroir Copier, `check-features.sh` et son
+  miroir runtime/template.
+- Décision : le starter pose `keywords: []`. Le checker avertit jusqu'à ce que l'auteur renseigne
+  du vocabulaire métier ou retire la clé parce que l'id et le titre suffisent. Le warning n'est pas
+  bloquant ; un type invalide reste bloquant.
+- Validation prévue : test de recherche ciblé, check du mesh, parité dogfood et gate finale.
+- Next : mesurer l'adoption sur les prochaines fiches touchées avant de considérer un gate strict.

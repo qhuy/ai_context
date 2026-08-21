@@ -9,9 +9,11 @@
 #   4. aucun résultat ⇒ code 1 (utilisable en garde) ;
 #   5. --status filtre, --limit borne, --json sort du JSON ;
 #   6. title et keywords sont indexés par le fallback awk (sans yq) ;
-#   7. un keywords scalaire est bloqué à l'écriture et dégradé localement à l'index ;
+#   7. des keywords scalaire ou avec item non-string sont bloqués à l'écriture,
+#      normalisés localement et ignorés dans un index déjà corrompu ;
 #   8. un acronyme court, seul ou mêlé à des mots longs, matche un mot entier,
-#      pas un fragment de "guidé" ou "audit".
+#      pas un fragment de "guidé" ou "audit" ;
+#   9. le template et le checker nudgent explicitement la décision keywords.
 
 set -euo pipefail
 
@@ -22,7 +24,7 @@ trap 'rm -rf "$tmp"' EXIT
 fail() { echo "✗ $*" >&2; exit 1; }
 
 mkdir -p "$tmp/.ai/scripts" "$tmp/.ai/schema" "$tmp/.docs/features/back" "$tmp/.docs/features/core" \
-  "$tmp/src/legacy" "$tmp/src/crypto" "$tmp/src/ui" "$tmp/src/noise" "$tmp/src/bad"
+  "$tmp/src/legacy" "$tmp/src/crypto" "$tmp/src/ui" "$tmp/src/noise" "$tmp/src/bad" "$tmp/src/empty"
 for s in features-search.sh build-feature-index.sh check-features.sh _lib.sh; do
   cp "$repo_root/.ai/scripts/$s" "$tmp/.ai/scripts/$s"
 done
@@ -110,21 +112,83 @@ touches:
 # Contrat de rappel corrompu
 MD
 
+cat > "$tmp/.docs/features/core/bad-keywords-array.md" <<'MD'
+---
+id: bad-keywords-array
+scope: core
+title: Contrat de rappel avec item numérique
+keywords: [123]
+status: done
+type: feature
+depends_on: []
+touches:
+  - src/bad/**
+---
+
+# Contrat de rappel avec item numérique
+MD
+
+cat > "$tmp/.docs/features/core/empty-keywords.md" <<'MD'
+---
+id: empty-keywords
+scope: core
+title: Décision de vocabulaire à prendre
+keywords: []
+status: draft
+type: feature
+depends_on: []
+touches:
+  - src/empty/**
+---
+
+# Décision de vocabulaire à prendre
+MD
+
+# 9 — le starter rend la décision visible ; le checker porte le nudge.
+for feature_template in \
+  "$repo_root/.docs/FEATURE_TEMPLATE.md" \
+  "$repo_root/template/{{docs_root}}/FEATURE_TEMPLATE.md.jinja"; do
+  grep -q '^keywords: \[\]$' "$feature_template" \
+    || fail "template : placeholder keywords absent de $feature_template"
+  grep -q 'placeholder `\[\]` déclenche un warning' "$feature_template" \
+    || fail "template : contrat du nudge keywords absent de $feature_template"
+done
+
 (
   cd "$tmp"
 
-  # 7 — l'indexeur reste disponible malgré une fiche mal typée, mais le checker
-  # bloque l'erreur pour que son auteur la corrige.
+  # 7 — l'indexeur reste disponible malgré deux formes mal typées, mais le
+  # checker bloque les erreurs pour que leur auteur les corrige.
   bash .ai/scripts/build-feature-index.sh --write >/dev/null 2>"$tmp/build.err"
   grep -q "keywords invalide.*bad-keywords.md" "$tmp/build.err" \
     || fail "keywords scalaire : warning de normalisation absent"
+  grep -q "keywords invalide.*bad-keywords-array.md" "$tmp/build.err" \
+    || fail "keywords [123] : warning de normalisation absent"
   jq -e '.features[] | select(.id == "bad-keywords") | .keywords == []' .ai/.feature-index.json >/dev/null \
     || fail "keywords scalaire : l'index n'a pas normalisé localement en []"
+  jq -e '.features[] | select(.id == "bad-keywords-array") | .keywords == []' .ai/.feature-index.json >/dev/null \
+    || fail "keywords [123] : l'index n'a pas normalisé localement en []"
   if bash .ai/scripts/check-features.sh --no-write >"$tmp/check.out" 2>&1; then
-    fail "keywords scalaire : check-features aurait dû échouer"
+    fail "keywords invalides : check-features aurait dû échouer"
   fi
-  grep -q "keywords invalide.*tableau de chaînes" "$tmp/check.out" \
+  grep -q "bad-keywords.md.*keywords invalide.*tableau de chaînes" "$tmp/check.out" \
     || fail "keywords scalaire : check-features n'explique pas le contrat attendu"
+  grep -q "bad-keywords-array.md.*keywords invalide.*tableau de chaînes" "$tmp/check.out" \
+    || fail "keywords [123] : check-features n'explique pas le contrat attendu"
+  grep -q "empty-keywords.md.*keywords vide" "$tmp/check.out" \
+    || fail "keywords [] : nudge du checker absent"
+
+  # Un index ancien ou construit hors checker peut encore contenir les deux
+  # formes fautives : le consommateur doit les ignorer sans perdre les fiches saines.
+  jq '
+      (.features[] | select(.id == "bad-keywords") | .keywords) = "billet"
+      | (.features[] | select(.id == "bad-keywords-array") | .keywords) = [123]
+    ' .ai/.feature-index.json > "$tmp/index-mutated.json"
+  mv "$tmp/index-mutated.json" .ai/.feature-index.json
+  touch .ai/.feature-index.json
+  bash .ai/scripts/features-search.sh --json "téléchargement billet" \
+    | jq -e 'length == 1 and .[0].id == "getticketinfo-isdownloadable"' >/dev/null \
+    || fail "index corrompu : une valeur keywords fautive neutralise ou pollue la recherche"
 
   # 1 + 2 — vocabulaire métier, fiche `done`, aucun mot du titre ni de l'id.
   out="$(bash .ai/scripts/features-search.sh "téléchargement billet")" \
@@ -177,6 +241,8 @@ MD
       ' >/dev/null || fail "fallback sans yq : title/keywords absents ou tronqués"
   grep -q "keywords invalide.*bad-keywords.md" "$tmp/fallback-build.err" \
     || fail "fallback sans yq : warning du keywords scalaire absent"
+  grep -q "keywords invalide.*bad-keywords-array.md" "$tmp/fallback-build.err" \
+    || fail "fallback sans yq : warning du keywords [123] absent"
   rm -f .ai/.feature-index.json
   PATH="/usr/bin:/bin:/usr/sbin:/sbin" bash .ai/scripts/features-search.sh --json "ui" \
     | jq -e 'length == 1 and .[0].id == "ui-library"' >/dev/null \

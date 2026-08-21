@@ -163,3 +163,11 @@
   servant la récupération par intention quand la fiche est nommée d'après le code.
 - Aucune fiche existante à migrer, aucun champ requis ajouté ; `additionalProperties: true` rend
   le rollback non cassant pour les fiches déjà rédigées.
+
+## 2026-08-21 — couverture incidente du starter
+
+- `FEATURE_TEMPLATE.md` et son miroir énumèrent désormais `keywords` et posent `keywords: []` comme
+  décision visible. Le champ reste optionnel dans le schéma ; aucun changement du profil `type`
+  requis ni de ses règles strictes.
+- Le checker avertit sur `[]` mais ne bloque que les types invalides : compatibilité du contrat OKF
+  conservée.

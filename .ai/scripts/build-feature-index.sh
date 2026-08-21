@@ -262,7 +262,9 @@ feature_to_json() {
     touches_shared_json=$(extract_list_awk "$file" "touches_shared" | jq -R . | jq -s .)
     deps_json=$(extract_list_awk "$file" "depends_on" | jq -R . | jq -s .)
     keywords_inline=$(extract_text_scalar_awk "$file" "keywords")
-    if [[ -n "$keywords_inline" && ! "$keywords_inline" =~ ^\[.*\]$ ]]; then
+    if [[ -n "$keywords_inline" && ! "$keywords_inline" =~ ^\[.*\]$ ]] \
+      || printf '%s' "$keywords_inline" \
+        | grep -Eq '(^|\[|,)[[:space:]]*(-?[0-9]+([.][0-9]+)?|true|false|null|~)[[:space:]]*(,|\])'; then
       echo "⚠️  build-feature-index : keywords invalide (tableau de chaînes non vides attendu), normalisé : $rel" >&2
     fi
     keywords_json=$(extract_text_list_awk "$file" "keywords" | jq -R . | jq -s .)

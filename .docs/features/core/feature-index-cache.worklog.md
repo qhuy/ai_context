@@ -198,3 +198,10 @@
   consommés par `features-search.sh`. L'entrée historique du 2026-07-24 reste conservée et marquée
   comme décision remplacée.
 - Validation ciblée : `bash tests/unit/test-features-search.sh` PASS ; contrats index à relancer.
+
+## 2026-08-21 — preuve complémentaire keywords (couverture directe)
+
+- `build-feature-index.sh` reconnaît aussi le cas inline évident `keywords: [123]` dans son fallback
+  sans `yq`, avertit et le normalise en `[]`; le chemin `yq` conserve son filtrage général des items.
+- Aucun changement de schéma ni d'enveloppe JSON ; seule la défense locale d'une entrée invalide est
+  étendue. Validation portée par `tests/unit/test-features-search.sh`.

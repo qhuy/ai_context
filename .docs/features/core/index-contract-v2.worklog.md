@@ -112,3 +112,9 @@
 - Snapshot de clés de `tests/unit/test-build-feature-index-contract.sh` mis à jour en conséquence
   (13 clés au lieu de 11). Test PASS.
 - Aucun consommateur downstream ne perd de champ ; le contrat reste additif.
+
+## 2026-08-21 — couverture incidente, contrat JSON inchangé
+
+- Le builder normalise une forme invalide supplémentaire (`keywords: [123]`) mais l'objet émis
+  conserve exactement les mêmes clés et types contractuels (`keywords` reste toujours un tableau).
+- `schema_version` reste à `1`; les tests de contrat et de recherche doivent rester verts.

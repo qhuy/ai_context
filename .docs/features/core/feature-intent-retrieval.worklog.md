@@ -97,3 +97,58 @@
   le rappel top-1/top-3 doit encore être mesuré sur des requêtes consommateur figées avant enrichissement
   des `keywords`.
 - Next : exécuter ce benchmark consommateur, puis décider de stabiliser ou d'ajuster le point d'entrée.
+
+## 2026-08-21 — challenge Claude : adoption et preuve de robustesse
+
+- Intent : traiter les signaux valides du retour sans accepter sa prémisse chronologique erronée.
+- Preuve de séquence : `6e814c0` (`session-injection-dedup`) est parent de `d6820de`; la feature
+  n'a donc pas été créée après. En revanche, `2caf478` l'a retouchée après sans `keywords`, et la
+  requête `coût contexte doublon budget tokens` ne la retrouvait pas.
+- Décision adoption : conserver le champ optionnel, ajouter `keywords: []` dans le starter et un
+  warning de décision dans `check-features`; enrichir immédiatement la fiche témoin avec son
+  vocabulaire métier. Pas de heuristique fragile visant à deviner un « id code-name ».
+- Décision contrat : ajouter `keywords` à l'énumération du frontmatter optionnel dans les deux
+  templates, qui pointent déjà vers le schéma formel.
+- Décision preuve : étendre `test-features-search.sh` aux fixtures `keywords: billet` et
+  `keywords: [123]`, puis injecter ces deux formes dans un index déjà construit pour exercer la
+  défense du consommateur. Le fallback sans `yq` signale aussi ces deux formes évidentes ; le
+  contrat documente désormais sa portée au lieu de promettre un parseur YAML complet.
+- Validation ciblée : `bash tests/unit/test-features-search.sh` PASS après implémentation.
+- Next : lancer les checks core, dogfood et la quality gate avant proposition de commit.
+
+## HANDOFF — core -> product/workflow (2026-08-21)
+
+- Feature source : `core/feature-intent-retrieval`.
+- Status : accepté dans le cadre du « go » utilisateur ; traçabilité documentaire uniquement.
+- Contexte : `.docs/FEATURE_TEMPLATE.md` est couvert directement par plusieurs features historiques,
+  et la freshness stricte exige leurs worklogs même quand leur comportement ne change pas.
+- Fichiers touchés : worklogs `product/product-portfolio-loop` et
+  `workflow/feature-granularity`.
+- Travail restant : aucun dans ces scopes ; constater que `keywords` n'altère ni la boucle produit
+  ni la règle de granularité.
+- Contrats / décisions : aucun contrat product ou workflow modifié ; le comportement appartient au
+  scope `core` et à `core/feature-mesh`.
+- Risques : taxe de sur-couverture persistante sur le starter, déjà visible dans
+  `check-touches-breadth.sh`.
+- Validation attendue : `check-feature-freshness.sh --staged --strict` puis retour au scope `core`.
+- Resume hint : poursuivre la gate et ne pas ouvrir de chantier product/workflow dans ce lot.
+
+## 2026-08-21 — gate finale verte après handoff
+
+- Fait : validation complète du durcissement `keywords`, du cas d'usage
+  `session-injection-dedup` et du comportement défensif du consommateur face à un index déjà
+  corrompu.
+- Vérifié : `tests/unit/test-features-search.sh` passe ; les 57 scripts unitaires passent ;
+  `tests/smoke-test.sh` passe après création du répertoire ignoré attendu
+  `docs/benchmarks/runs` ; contrôles structurels, fraîcheur staged stricte, dérive dogfood et
+  couverture documentaire passent (`117/117`, aucun orphelin).
+- Vérifié : la requête `coût contexte doublon budget tokens` classe désormais
+  `core/session-injection-dedup` en tête avec `5/5` termes reconnus.
+- Vérifié : aucun nouveau diagnostic ShellCheck ; le seul `SC2034` sur `start_ts` dans
+  `build-feature-index.sh` est déjà présent dans la révision de base.
+- Décision : GO technique pour proposer le commit. La fiche reste en `review` tant que le
+  benchmark d'usage du consommateur n'est pas consolidé.
+- Risque restant : `keywords` reste volontairement optionnel et non bloquant ; son adoption doit
+  être suivie par la mesure plutôt que forcée sur toutes les fiches.
+- Next : obtenir la confirmation explicite du commit, puis intégrer le lot avec les commits de
+  veille déjà préparés.
