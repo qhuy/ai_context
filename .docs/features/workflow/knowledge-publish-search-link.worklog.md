@@ -42,3 +42,10 @@
 ## 2026-07-07 — couverture incidente audit
 - `aic.sh` touché pour nettoyage de fichiers temporaires. Aucun changement du dispatch `knowledge`.
 - Validation portée par `core/aic-surface-canonical`; test knowledge à relancer dans la suite si nécessaire.
+
+## 2026-08-21 — nettoyage publish portable sous Bash 5
+
+- Constat dans la suite Ubuntu de la PR : le premier `knowledge publish` dry-run échoue au retour avec `tmp_hub: unbound variable`, alors que Bash 3.2 local passe.
+- Cause : `run_publish` pose un `trap RETURN` pour `candidate`, puis `validate_candidate_file` le remplace par un second `trap RETURN` capturant `tmp_hub`. Sous Bash 5, ce trap interne reste actif au retour suivant, hors de la portée de sa variable locale.
+- Correction : les deux fonctions s'exécutent dans leur propre sous-shell et nettoient leur temporaire via `trap EXIT`. Le `mv` du mode `--apply` reste compatible : le cleanup final sur le path devenu absent est sans effet.
+- Validation prévue : test workflow complet, syntaxe Bash 3.2, shellcheck, miroir Copier/dogfood, puis suite Ubuntu.
