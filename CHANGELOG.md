@@ -36,7 +36,7 @@
 - **Support Copilot Code Review clarifié** : `AGENTS.md` est l'entrée native commune ; `.github/copilot-instructions.md` reste un canal optionnel de consignes propres à Copilot, pas un fallback requis pour la review.
 - **Réinjection des fiches modifiées sous Linux** : `features-for-path` choisit désormais la syntaxe GNU de `stat` avant le fallback BSD/macOS. Une fiche éditée change réellement de clé de déduplication et son corps est réinjecté dans la session, au lieu de rester remplacé par un rappel court.
 - **Publication knowledge sous Bash 5** : les temporaires de `knowledge publish` sont confinés dans des sous-shells et nettoyés à leur sortie. Le dry-run ne récupère plus un `trap RETURN` interne dont la variable locale a disparu.
-- **Portabilité de la CI pré-release** : le test d'idempotence de l'index choisit désormais la syntaxe `stat` GNU/Linux avant le fallback BSD/macOS, le test du parseur awk/sed masque explicitement le `yq` préinstallé au lieu de l'inférer depuis un `PATH` réduit, et le smoke multi-OS expose dynamiquement le répertoire utilisateur de l'interpréteur Python qui a réellement installé Copier.
+- **Portabilité de la CI pré-release** : le test d'idempotence de l'index choisit désormais la syntaxe `stat` GNU/Linux avant le fallback BSD/macOS, le test du parseur awk/sed masque explicitement le `yq` préinstallé au lieu de l'inférer depuis un `PATH` réduit, le smoke multi-OS expose dynamiquement le répertoire utilisateur de l'interpréteur Python qui a réellement installé Copier, et son dépôt d'upgrade jetable configure sa propre identité Git locale.
 
 ### Tests
 
